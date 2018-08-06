@@ -128,6 +128,7 @@
 						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
+						<a href="#" style="vertical-align: bottom" title="Show path" th:onclick="|showPlayerPath(${player.playerId})|"><i class="fa fa-road"></i></a>
 					</td>
 				</tr>
 				<tr th:if="${inProgressEvent.favorite2}">
@@ -136,6 +137,7 @@
 						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
+						<a href="#" style="vertical-align: bottom" title="Show path" th:onclick="|showPlayerPath(${player.playerId})|"><i class="fa fa-road"></i></a>
 					</td>
 				</tr>
 				<tr th:if="${inProgressEvent.favorite3}">
@@ -144,6 +146,7 @@
 						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
+						<a href="#" style="vertical-align: bottom" title="Show path" th:onclick="|showPlayerPath(${player.playerId})|"><i class="fa fa-road"></i></a>
 					</td>
 				</tr>
 				<tr th:if="${inProgressEvent.favorite4}">
@@ -152,6 +155,7 @@
 						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
+						<a href="#" style="vertical-align: bottom" title="Show path" th:onclick="|showPlayerPath(${player.playerId})|"><i class="fa fa-road"></i></a>
 					</td>
 				</tr>
 			</table>
