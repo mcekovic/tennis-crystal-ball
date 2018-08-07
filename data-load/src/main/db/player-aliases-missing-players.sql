@@ -65,6 +65,7 @@ VALUES
    ('Pedro Martinez', 'Pedro Martinez Portero'),
    ('Roberto Cid Subervi', 'Roberto Cid'),
    ('Rubin Statham', 'Jose Rubin Statham'),
+   ('Rudolf Hoskowetz', 'Ruby Hoskowetz'),
    ('Sam Groth', 'Samuel Groth'),
    ('Soonwoo Kwon', 'Soon Woo Kwon'),
    ('Stan Wawrinka', 'Stanislas Wawrinka'),

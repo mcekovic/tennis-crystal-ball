@@ -157,18 +157,19 @@ public abstract class RankingCategory extends RecordCategory {
 			"  WHERE best_" + domain.columnPrefix + rankDBName + "rank " + bestCondition + dateCondition + "\n" +
 			"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
 			"), player_ranking_weeks2 AS (\n" +
-			"  SELECT player_id, rank, rank_date, prev_rank, weeks, count(player_id) FILTER (WHERE NOT(prev_rank " + condition + ")) OVER (PARTITION BY player_id ORDER BY rank_date) AS not_rank\n" +
+			"  SELECT player_id, rank, rank_date, prev_rank, weeks, count(player_id) FILTER (WHERE NOT(prev_rank " + condition + ") OR prev_rank IS NULL) OVER (PARTITION BY player_id ORDER BY rank_date) AS not_rank\n" +
 			"  FROM player_ranking_weeks\n" +
 			"), player_consecutive_weeks AS (\n" +
 			"  SELECT player_id, rank, prev_rank, ceil(sum(weeks) FILTER (WHERE weeks <= 54) OVER rs) AS weeks,\n" +
 			"    first_value(rank_date) OVER rs AS start_date,\n" +
 			"    (last_value(rank_date) OVER (PARTITION BY player_id, not_rank ORDER BY rank_date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) - INTERVAL '1 day')::DATE AS end_date\n" +
 			"  FROM player_ranking_weeks2\n" +
+			"  WHERE rank " + condition + "\n" +
 			"  WINDOW rs AS (PARTITION BY player_id, not_rank ORDER BY rank_date)\n" +
 			")\n" +
 			"SELECT player_id, name, start_date, end_date, max(weeks) AS value\n" +
 			"FROM player_consecutive_weeks INNER JOIN player_v USING (player_id)\n" +
-			"WHERE rank " + condition + " AND prev_rank " + condition + "\n" +
+			"WHERE prev_rank " + condition + "\n" +
 			"GROUP BY player_id, name, start_date, end_date",
 			"r.value, r.start_date, r.end_date", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.end_date",
 			DateRangeIntegerRecordDetail.class, null,

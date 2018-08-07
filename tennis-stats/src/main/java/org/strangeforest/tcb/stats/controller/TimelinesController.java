@@ -122,6 +122,8 @@ public class TimelinesController extends PageController {
 
 	@GetMapping("/statsTimeline")
 	public ModelAndView statsTimeline(
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
@@ -130,16 +132,19 @@ public class TimelinesController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
-		PerfStatsFilter filter = new PerfStatsFilter(null, null, level, bestOf, surface, indoor, round, null, tournamentId, null);
+		PerfStatsFilter filter = new PerfStatsFilter(null, DateUtil.toDateRange(fromSeason, toSeason), level, bestOf, surface, indoor, round, null, tournamentId, null);
 		Map<Integer, PlayerStats> seasonsStats = statisticsService.getStatisticsTimeline(filter);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("tournaments", tournamentService.getTournaments());
+		modelMap.addAttribute("fromSeason", fromSeason);
+		modelMap.addAttribute("toSeason", toSeason);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);

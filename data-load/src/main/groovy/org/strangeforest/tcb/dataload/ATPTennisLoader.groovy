@@ -160,6 +160,7 @@ class ATPTennisLoader {
 			atpWorldTourMatchLoader.loadTournament(1972, 'macon', 2066)
 			atpWorldTourMatchLoader.loadTournament(1972, 'tokyo', 329, false, null, null, ['R32'])
 			atpWorldTourMatchLoader.loadTournament(1973, 'charleston', 6945)
+			atpWorldTourMatchLoader.loadTournament(1973, 'kitzbuehel', 319)
 			atpWorldTourMatchLoader.loadTournament(1974, 'lakeway', 6836)
 			atpWorldTourMatchLoader.loadTournament(1974, 'hong-kong', 336)
 			atpWorldTourMatchLoader.loadTournament(1976, 'birmingham', 350, false, null, 'G')

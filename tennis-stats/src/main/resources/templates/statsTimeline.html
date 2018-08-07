@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
+<!--/*@thymesVar id="fromSeason" type="java.lang.String"*/-->
+<!--/*@thymesVar id="toSeason" type="java.lang.String"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
@@ -28,6 +31,10 @@
 		});
 		function reloadStatsTimeline() {
 			var url = "/statsTimeline?rawData=" + rawData;
+			var fromSeason = $("#fromSeason").val();
+			if (fromSeason) url += "&fromSeason=" + fromSeason;
+			var toSeason = $("#toSeason").val();
+			if (toSeason) url += "&toSeason=" + toSeason;
 			var level = $("#level").val();
 			if (level) url += "&level=" + level;
 			var bestOf = $("#bestOf").val();
@@ -43,6 +50,8 @@
 			window.location.href = url;
 		}
 		function clearStatsTimelineFilter() {
+			$("#fromSeason").val("");
+			$("#toSeason").val("");
 			$("#level").val("");
 			$("#bestOf").val("");
 			$("#surface").val("");
@@ -124,7 +133,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="statsTimelineAdvancedFilter" class="collapse" th:attrappend="class=${bestOf != null || indoor != null ? ' in' : _}">
+	<div id="statsTimelineAdvancedFilter" class="collapse" th:attrappend="class=${bestOf != null || indoor != null || fromSeason != null || toSeason != null? ' in' : _}">
 		<div class="row margin-top">
 			<div class="col-md-2">
 				<select id="bestOf" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
@@ -139,6 +148,20 @@
 					<option value="false" th:selected="${indoor == false}">Outdoor</option>
 					<option value="true" th:selected="${indoor}">Indoor</option>
 				</select>
+			</div>
+			<div class="col-md-4">
+				<div class="input-group">
+					<label for="fromSeason" class="input-group-addon">From:</label>
+					<select id="fromSeason" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Select from season">
+						<option value="">All seasons</option>
+						<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}" th:selected="${season == fromSeason}">2005</option>
+					</select>
+					<label for="toSeason" class="input-group-addon">To:</label>
+					<select id="toSeason" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Select to season">
+						<option value="">All seasons</option>
+						<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}" th:selected="${season == toSeason}">2005</option>
+					</select>
+				</div>
 			</div>
 		</div>
 	</div>
