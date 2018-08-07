@@ -26,6 +26,7 @@ class EloRatings {
 	EloSurfaceFactors eloSurfaceFactors
 	Map<Integer, EloRating> playerRatings
 	Map<String, Map<Integer, EloRating>> playerRatingsByType
+	Set<LocalDate> dates
 	PredictionResult predictionResult
 	Map<String, PredictionResult> predictionResultByType
 	BlockingQueue<MatchEloRating> matchRatings
@@ -65,8 +66,11 @@ class EloRatings {
 		"  :set_rank, :set_elo_rating, :game_rank, :game_elo_rating, :service_game_rank, :service_game_elo_rating, :return_game_rank, :return_game_elo_rating, :tie_break_rank, :tie_break_elo_rating" +
 		")}"
 
-	static final String DELETE_ALL = //language=SQL
-		"DELETE FROM player_elo_ranking"
+	static final String QUERY_RANKING_DATES = //language=SQL
+		"SELECT DISTINCT rank_date FROM player_elo_ranking"
+
+	static final String DELETE_FOR_DATE = //language=SQL
+		"DELETE FROM player_elo_ranking WHERE rank_date = :rank_date"
 
 	static final String UPDATE_MATCH_ELO_RATINGS = //language=SQL
 		"UPDATE match SET winner_elo_rating = :winner_elo_rating, winner_next_elo_rating = :winner_next_elo_rating, loser_elo_rating = :loser_elo_rating, loser_next_elo_rating = :loser_next_elo_rating\n" +
@@ -126,6 +130,7 @@ class EloRatings {
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
 		playerRatingsByType = [:]
+		dates = []
 		predictionResult = new PredictionResult()
 		predictionResultByType = [:]
 		RATING_TYPES.each {
@@ -151,7 +156,7 @@ class EloRatings {
 		}
 		if (save) {
 			if (fullSave)
-				deleteAll()
+				fetchRankingDates()
 			else
 				this.saveFromDate = saveFromDate ? saveFromDate : lastDate()
 			saveExecutor = Executors.newFixedThreadPool(saveThreads)
@@ -191,6 +196,13 @@ class EloRatings {
 				rankExecutor?.shutdownNow()
 				saveExecutor?.shutdown()
 				saveExecutor?.awaitTermination(1L, TimeUnit.DAYS)
+			}
+		}
+		if (fullSave && dates) {
+			println "Deleting remaining dates: ${dates.size()}"
+			for (LocalDate date : new ArrayList<>(dates)) {
+				deleteForDate(toDate(date))
+				println date
 			}
 		}
 		println "\nElo Ratings computed in $stopwatch"
@@ -526,13 +538,21 @@ class EloRatings {
 		}
 	}
 
-	private deleteAll() {
-		print 'Deleting all Elo ratings'
+	private fetchRankingDates() {
+		print 'Fetching all Elo ranking dates'
 		def stopwatch = Stopwatch.createStarted()
 		sqlPool.withSql { sql ->
-			sql.execute(DELETE_ALL)
+			sql.eachRow(QUERY_RANKING_DATES) { date -> dates << date.rank_date.toLocalDate()	}
 		}
 		println " $stopwatch"
+	}
+
+	private deleteForDate(Date date) {
+		def sqlDate = new java.sql.Date(date.time)
+		sqlPool.withSql { sql ->
+			sql.execute([rank_date: sqlDate], DELETE_FOR_DATE)
+		}
+		dates.remove(sqlDate.toLocalDate())
 	}
 
 	private Integer playerRank(int playerId, Date date) {
@@ -619,6 +639,7 @@ class EloRatings {
 	}
 
 	private saveRatings(Collection<EloRatingValue> eloRatings, Date date) {
+		deleteForDate(date)
 		if (eloRatings.empty)
 			return
 		sqlPool.withSql { sql ->

@@ -63,6 +63,7 @@ VALUES
    ('Pancho JF Guzman', 'Pancho Guzman'),
    ('Patricio Rodriguez', 'Patricio Rodriguez Chi'),
    ('Pedro Martinez', 'Pedro Martinez Portero'),
+   ('Rick Meyer', 'Rick Meyers'),
    ('Roberto Cid Subervi', 'Roberto Cid'),
    ('Rubin Statham', 'Jose Rubin Statham'),
    ('Rudolf Hoskowetz', 'Ruby Hoskowetz'),

@@ -135,6 +135,16 @@ abstract class BaseATPWorldTourTournamentLoader {
 		String gamesScore = tb >= 0 ? setScore.substring(0, tb) : setScore
 		if (allDigits(gamesScore)) {
 			int len = gamesScore.length()
+			if (len == 0)
+				throw new IllegalArgumentException("Invalid set score: $setScore")
+			if (len == 1) {
+				def oldGamesScore = gamesScore
+				int leftGames = Integer.parseInt(gamesScore)
+				int rightGames = Math.max(6, leftGames + 2)
+				gamesScore += rightGames
+				len = gamesScore.length()
+				System.err.println("WARN: Invalid set games score: $oldGamesScore, approximating to: $gamesScore")
+			}
 			int half = (len + 1) / 2
 			def leftGames = gamesScore.substring(0, half)
 			def rightGames = gamesScore.substring(half)
