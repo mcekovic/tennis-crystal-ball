@@ -14,16 +14,18 @@ public class FavoriteSurface {
 	private Surface surface;
 	private SurfaceGroup surfaceGroup;
 	private boolean allRounder;
+	private boolean none;
+	private double specialization;
 
 	private static final int MIN_MATCHES = 10;
 	private static final double MIN_SURFACE_MATCHES = 5;
-	private static final double MIN_SURFACE_PCT = 4.0;
-	private static final double ALL_ROUNDER_SPREAD_PCT = 4.0;
-	private static final double BEST_SURFACE_GAP_PCT = 8.0;
-	private static final double SECOND_BEST_SURFACE_GAP_PCT = 4.0;
+	private static final double MIN_SURFACE_PCT = 3.0;
+	private static final double ALL_ROUNDER_SPREAD_PCT = 10.0;
+	private static final double BEST_SURFACE_GAP_PCT = 20.0;
+	private static final double SECOND_BEST_SURFACE_GAP_PCT = 10.0;
 	private static final double SECOND_BEST_SURFACE_GAP_FACTOR = 2.0;
-	private static final int ALL_ROUNDER_MIN_SURFACES = 3;
 	private static final String ALL_ROUNDER = "All-Rounder";
+	private static final String NONE = "None";
 
 	public FavoriteSurface(PlayerPerformance performance) {
 		WonLost overall = performance.getMatches();
@@ -43,24 +45,27 @@ public class FavoriteSurface {
 		}
 		if (surfaceCount == 1) {
 			setSurface(surfaces.get(0).surface);
+			specialization = PCT;
 			return;
 		}
 		surfaces.sort(naturalOrder());
 		SurfaceWonPct worstSurface = surfaces.get(0);
 		SurfaceWonPct bestSurface = surfaces.get(surfaceCount - 1);
-		if (bestSurface.wonPct - worstSurface.wonPct <= ALL_ROUNDER_SPREAD_PCT && surfaceCount >= ALL_ROUNDER_MIN_SURFACES) {
+		double bestWorstGap = pctDiff(bestSurface.wonPct, worstSurface.wonPct);
+		specialization = Math.min(bestWorstGap, PCT);
+		if (bestWorstGap <= ALL_ROUNDER_SPREAD_PCT && surfaceCount >= 3) {
 			setAllRounder();
 			return;
 		}
+		SurfaceWonPct secondBestSurface = surfaces.get(surfaceCount - 2);
+		double bestSurfaceGap = pctDiff(bestSurface.wonPct, secondBestSurface.wonPct);
+		if (bestSurfaceGap >= BEST_SURFACE_GAP_PCT) {
+			setSurface(bestSurface.surface);
+			return;
+		}
 		if (surfaceCount > 2) {
-			SurfaceWonPct secondBestSurface = surfaces.get(surfaceCount - 2);
-			double bestSurfaceGap = bestSurface.wonPct - secondBestSurface.wonPct;
-			if (bestSurfaceGap >= BEST_SURFACE_GAP_PCT) {
-				setSurface(bestSurface.surface);
-				return;
-			}
 			SurfaceWonPct thirdBestSurface = surfaces.get(surfaceCount - 3);
-			double secondBestSurfaceGap = secondBestSurface.wonPct - thirdBestSurface.wonPct;
+			double secondBestSurfaceGap = pctDiff(secondBestSurface.wonPct, thirdBestSurface.wonPct);
 			if (bestSurfaceGap >= SECOND_BEST_SURFACE_GAP_PCT && bestSurfaceGap * SECOND_BEST_SURFACE_GAP_FACTOR >= secondBestSurfaceGap) {
 				setSurface(bestSurface.surface);
 				return;
@@ -82,7 +87,8 @@ public class FavoriteSurface {
 					EnumSet<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
 					int groupSurfaceCount = groupSurfaces.size();
 					if (groupSurfaceCount >= 2 && groupSurfaceCount < favoriteSurfaceCount) {
-						if (groupSurfaces.equals(favoriteSurfaces.stream().skip(getMaxWonPctGapIndex(favoriteSurfaces)).map(s -> s.surface).collect(toSet()))) {
+						maxWonPctGapIndex = getMaxWonPctGapIndex(favoriteSurfaces);
+						if (groupSurfaces.equals(favoriteSurfaces.stream().skip(maxWonPctGapIndex).map(s -> s.surface).collect(toSet()))) {
 							setSurfaceGroup(group);
 							return;
 						}
@@ -90,14 +96,14 @@ public class FavoriteSurface {
 				}
 			}
 		}
-		setSurface(bestSurface.surface);
+		setNone();
 	}
 
 	private static int getMaxWonPctGapIndex(List<SurfaceWonPct> surfaces) {
 		double maxWonPctGap = 0.0;
 		int maxWonPctGapIndex = 0;
 		for (int index = 1, count = surfaces.size(); index < count; index++) {
-			double wonPctGap = surfaces.get(index).wonPct - surfaces.get(index - 1).wonPct;
+			double wonPctGap = pctDiff(surfaces.get(index).wonPct, surfaces.get(index - 1).wonPct);
 			if (wonPctGap >= maxWonPctGap) {
 				maxWonPctGap = wonPctGap;
 				maxWonPctGapIndex = index;
@@ -124,6 +130,12 @@ public class FavoriteSurface {
 		allRounder = true;
 	}
 
+	private void setNone() {
+		surface = null;
+		surfaceGroup = null;
+		none = true;
+	}
+
 	private void setNotAvailable() {
 		surface = null;
 		surfaceGroup = null;
@@ -147,6 +159,10 @@ public class FavoriteSurface {
 		return allRounder;
 	}
 
+	public boolean isNone() {
+		return none;
+	}
+
 	public String getCode() {
 		if (surface != null)
 			return surface.getCode();
@@ -156,12 +172,25 @@ public class FavoriteSurface {
 			return null;
 	}
 
+	public double getSpecialization() {
+		return specialization;
+	}
+
 	public boolean isEmpty() {
-		return surface == null && surfaceGroup == null && !allRounder;
+		return surface == null && surfaceGroup == null && !allRounder && !none;
 	}
 
 	@Override public String toString() {
-		return allRounder ? ALL_ROUNDER : (surfaceGroup != null ? surfaceGroup.getText() : (surface != null ? surface.getText() : ""));
+		if (allRounder)
+			return ALL_ROUNDER;
+		else if (none)
+			return NONE;
+		else if (surfaceGroup != null)
+			return surfaceGroup.getText();
+		else if (surface != null)
+			return surface.getText();
+		else
+			return "";
 	}
 
 	private static final class SurfaceWonPct implements Comparable<SurfaceWonPct> {
@@ -176,6 +205,14 @@ public class FavoriteSurface {
 
 		@Override public int compareTo(SurfaceWonPct other) {
 			return Double.compare(wonPct, other.wonPct);
+		}
+
+		public Surface getSurface() {
+			return surface;
+		}
+
+		public double getWonPct() {
+			return wonPct;
 		}
 	}
 }
