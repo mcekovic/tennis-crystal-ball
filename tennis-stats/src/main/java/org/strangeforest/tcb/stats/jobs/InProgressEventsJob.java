@@ -18,7 +18,16 @@ public class InProgressEventsJob {
 
 	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events:0 0/30 * * * *}")
 	public void reloadInProgressEvents() {
-		if (dataLoadCommand.execute("ReloadInProgressEvents", "-ip", "-c 1") == 0)
+		reloadInProgressEvents(new String[] {"-ip", "-c 1"});
+	}
+
+	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events-forced:0 5 6 * * MON}")
+	public void reloadInProgressEventsForced() {
+		reloadInProgressEvents(new String[] {"-ip", "-c 1", "-ff"});
+	}
+
+	private void reloadInProgressEvents(String[] params) {
+		if (dataLoadCommand.execute("ReloadInProgressEvents", params) == 0)
 			clearCaches();
 	}
 
