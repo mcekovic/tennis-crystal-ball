@@ -20,6 +20,7 @@ VALUES
    ('Duckhee Lee', 'Duck Hee Lee'),
    ('Elio Lito Alvarez', 'Lito Alvarez'),
    ('Eugene Cantin', 'Eugene T Cantin'),
+   ('Evgenii Tiurnev', 'Evgeny Tyurnev'),
    ('Frances Tiafoe', 'Francis Tiafoe'),
    ('Franko Skugor', 'Franco Skugor'),
    ('Fred Hemmes Sr', 'Fred Hemmes'),
