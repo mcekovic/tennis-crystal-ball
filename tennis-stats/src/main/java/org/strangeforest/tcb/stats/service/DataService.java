@@ -5,8 +5,11 @@ import java.util.*;
 import java.util.function.*;
 import java.util.regex.*;
 
+import javax.annotation.*;
+
 import org.postgresql.core.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.actuate.metrics.cache.*;
 import org.springframework.cache.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
@@ -20,6 +23,7 @@ public class DataService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 	@Autowired private CacheManager cacheManager;
+	@Autowired private CacheMetricsRegistrar cacheMetricsRegistrar;
 	@Autowired private MatchPredictionService matchPredictionService;
 
 	private static final String DB_SERVER_VERSION_QUERY = "SELECT version()";
@@ -35,6 +39,11 @@ public class DataService {
 
 	private final Supplier<String> dbServerVersionString = Memoizer.of(this::dbServerVersionString);
 	private final Supplier<Version> dbServerVersion = Memoizer.of(this::dbServerVersion);
+
+	@PostConstruct
+	public void init() {
+		matchPredictionService.registerCaches(cacheMetricsRegistrar);
+	}
 
 	private String dbServerVersionString() {
 		return jdbcTemplate.queryForObject(DB_SERVER_VERSION_QUERY, String.class);
