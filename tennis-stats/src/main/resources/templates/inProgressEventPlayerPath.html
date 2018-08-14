@@ -51,9 +51,9 @@
 			<th>Outcome</th>
 			<th>Opponent</th>
 			<th class="text-right hidden-xs" title="Opponent rank">Opp. Rank</th>
-			<th class="text-right hidden-md hidden-sm hidden-xs" th:title="'Player ' + ${eloType.description}">Player Elo</th>
+			<th class="text-right visible-lg" th:title="'Player ' + ${eloType.description}">Player Elo</th>
 			<th class="text-right">Score</th>
-			<th class="text-right hidden-md hidden-sm hidden-xs">H2H</th>
+			<th class="text-right visible-lg">H2H</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -74,7 +74,7 @@
 			<td class="text-right hidden-xs">
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent" th:text="${opponent != null ? opponent.rank : _}">6</div>
 			</td>
-			<td class="text-right hidden-md hidden-sm hidden-xs">
+			<td class="text-right visible-lg">
 				<div th:each="match : ${matches}" th:with="player=${match.winner.id == playerId ? match.winner : match.loser}, eloRatingDelta=${player.getEloRatingDelta(eloType)}" class="opponent">
 					<span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${player.getNextEloRating(eloType)})]
 				</div>
@@ -82,7 +82,7 @@
 			<td class="text-right">
 				<div th:each="match : ${matches}" class="opponent" th:utext="${match.formattedScore}">6-3 6-4</div>
 			</td>
-			<td class="text-right hidden-md hidden-sm hidden-xs">
+			<td class="text-right visible-lg">
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent">
 					<a th:if="${opponent != null && opponent.known}" th:href="@{/headToHead(playerId1=${playerId}, playerId2=${opponent.id})}" class="label label-primary label-btn h2h" title="Show Head-to-Head">H2H</a>
 				</div>
@@ -97,9 +97,9 @@
 			<th class="text-right" title="Probability to meet the player in this round">Matchup Prob.</th>
 			<th>Opponent</th>
 			<th class="text-right hidden-xs" title="Opponent rank">Opp. Rank</th>
-			<th class="text-right hidden-md hidden-sm hidden-xs" th:title="'Opponent ' + ${eloType.description}">Opponent Elo</th>
+			<th class="text-right visible-lg" th:title="'Opponent ' + ${eloType.description}">Opponent Elo</th>
 			<th class="text-right" title="Probability to win over the potential opponent if they eventually meet in this round">Win Prob.</th>
-			<th class="text-right hidden-md hidden-sm hidden-xs">H2H</th>
+			<th class="text-right visible-lg">H2H</th>
 		</tr>
 		</thead>
 		<tbody id="playerPathProbableBody">
@@ -128,7 +128,7 @@
 			<td class="text-right hidden-xs">
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent" th:text="${opponent.rank}">6</div>
 			</td>
-			<td class="text-right hidden-md hidden-sm hidden-xs">
+			<td class="text-right visible-lg">
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}, eloRatingDelta=${opponent.getEloRatingDelta(eloType)}" class="opponent">
 					<span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${opponent.getNextEloRating(eloType)})]
 				</div>
@@ -137,7 +137,7 @@
 				<div th:each="match : ${matches}" th:with="player=${match.winner.id == playerId ? match.winner : match.loser}, opponent=${match.winner.id == playerId ? match.loser : match.winner}, matchRef=${'M_' + round + '_' + opponent.id}" class="opponent"
 				     th:text="${#numbers.formatDecimal(player.getProbability(matchRef), 1, 1) + '%'}" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(matchRef, priceFormat) : _}">85.2%</div>
 			</td>
-			<td class="text-right hidden-md hidden-sm hidden-xs">
+			<td class="text-right visible-lg">
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent">
 					<a th:if="${opponent.known}" th:href="@{/headToHead(playerId1=${playerId}, playerId2=${opponent.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, indoor=${inProgressEvent.indoor}, round=${round})}" class="label label-primary label-btn h2h" title="Show Head-to-Head Hypothetical Matchup">H2H</a>
 				</div>

@@ -224,9 +224,9 @@
 								<th></th>
 								<th th:each="result : ${playersForecast.results}" class="text-center" th:text="${result}">W</th>
 								<th:block th:if="${baseResultStat.first}">
-								<!--/*<th class="text-center hidden-xs hidden-sm hidden-md" title="Draw Luck"><a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawLuckPopover"><strong><i class="fa fa-sitemap"></i> Draw Luck</strong></a></th>
-								<th class="text-center hidden-xs hidden-sm hidden-md" title="Draw Seeding"><i class="fa fa-sitemap"></i> Seed</th>*/-->
-								<th class="text-center hidden-xs hidden-sm hidden-md" title="Draw Bonus"><a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Bonus</strong></a></th>
+								<!--/*<th class="text-center visible-lg" title="Draw Luck"><a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawLuckPopover"><strong><i class="fa fa-sitemap"></i> Draw Luck</strong></a></th>
+								<th class="text-center visible-lg" title="Draw Seeding"><i class="fa fa-sitemap"></i> Seed</th>*/-->
+								<th class="text-center visible-lg" title="Draw Bonus"><a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Bonus</strong></a></th>
 								</th:block>
 								<th th:if="${priceFormat}" class="text-right" title="Tournament winning odds">Odds</th>
 							</tr>
@@ -256,9 +256,9 @@
 							<td th:unless="${showH2H}" class="player-noh2h"></td>
 							<td th:each="result : ${playersForecast.results}" th:with="probability=${playerForecast.getProbability(result)}, price=${priceFormat != null ? playerForecast.getPrice(result, priceFormat) : null}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${price != null ? 'Odds ' + price : _}">58.2%</td>
 							<th:block th:if="${baseResultStat.first}">
-								<!--/*<td th:with="drawLuck=${playerForecast.drawLuck}, avgDrawProbability=${playerForecast.avgDrawWinProbability}" class="text-right hidden-xs hidden-sm hidden-md" th:attrappend="class=${drawLuck != null ? (drawLuck > 0 ? ' positive' : (drawLuck < 0 ? ' negative' : _)) : _}" th:text="${drawLuck != null ? (drawLuck > 0 ? '+' : '') + #numbers.formatDecimal(drawLuck, 1, 1) + '%' : _}" th:title="${avgDrawProbability != null ? 'Average draw title ' + #numbers.formatDecimal(avgDrawProbability, 1, 1) + '%' : _}">25.7%</td>
-								<td th:with="drawSeeding=${playerForecast.drawSeeding}" class="text-right hidden-xs hidden-sm hidden-md" th:attrappend="class=${drawSeeding != null ? (drawSeeding > 0 ? ' positive' : (drawSeeding < 0 ? ' negative' : _)) : _}" th:text="${drawSeeding != null ? (drawSeeding > 0 ? '+' : '') + #numbers.formatDecimal(drawSeeding, 1, 1) + '%' : _}">+15.2%</td>*/-->
-								<td th:with="drawBonus=${playerForecast.drawBonus}, noDrawProbability=${playerForecast.noDrawWinProbability}" class="text-right hidden-xs hidden-sm hidden-md" th:attrappend="class=${drawBonus != null ? (drawBonus > 0 ? ' positive' : (drawBonus < 0 ? ' negative' : _)) : _}" th:text="${drawBonus != null ? (drawBonus > 0 ? '+' : '') + #numbers.formatDecimal(drawBonus, 1, 1) + '%' : _}" th:title="${noDrawProbability != null ? 'No draw title ' + #numbers.formatDecimal(noDrawProbability, 1, 1) + '%' : _}">25.7%</td>
+								<!--/*<td th:with="drawLuck=${playerForecast.drawLuck}, avgDrawProbability=${playerForecast.avgDrawWinProbability}" class="text-right visible-lg" th:attrappend="class=${drawLuck != null ? (drawLuck > 0 ? ' positive' : (drawLuck < 0 ? ' negative' : _)) : _}" th:text="${drawLuck != null ? (drawLuck > 0 ? '+' : '') + #numbers.formatDecimal(drawLuck, 1, 1) + '%' : _}" th:title="${avgDrawProbability != null ? 'Average draw title ' + #numbers.formatDecimal(avgDrawProbability, 1, 1) + '%' : _}">25.7%</td>
+								<td th:with="drawSeeding=${playerForecast.drawSeeding}" class="text-right visible-lg" th:attrappend="class=${drawSeeding != null ? (drawSeeding > 0 ? ' positive' : (drawSeeding < 0 ? ' negative' : _)) : _}" th:text="${drawSeeding != null ? (drawSeeding > 0 ? '+' : '') + #numbers.formatDecimal(drawSeeding, 1, 1) + '%' : _}">+15.2%</td>*/-->
+								<td th:with="drawBonus=${playerForecast.drawBonus}, noDrawProbability=${playerForecast.noDrawWinProbability}" class="text-right visible-lg" th:attrappend="class=${drawBonus != null ? (drawBonus > 0 ? ' positive' : (drawBonus < 0 ? ' negative' : _)) : _}" th:text="${drawBonus != null ? (drawBonus > 0 ? '+' : '') + #numbers.formatDecimal(drawBonus, 1, 1) + '%' : _}" th:title="${noDrawProbability != null ? 'No draw title ' + #numbers.formatDecimal(noDrawProbability, 1, 1) + '%' : _}">25.7%</td>
 							</th:block>
 							<td th:if="${priceFormat}" class="text-right" th:text="${playerForecast.getPrice('W', priceFormat)}">6.25</td>
 						</tr>

@@ -53,7 +53,7 @@
 			</div>
 			<div id="menuNavbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav" style="width: 100%">
-					<li th:class="${path == '/' ? 'active' : _}"><a href="/" title="Home"><span class="visible-xs pull-left">Home&nbsp;</span><i class="fa fa-home fa-b"></i></a></li>
+					<li th:class="${path == '/' ? 'active' : _}"><a href="/" title="Home"><i class="fa fa-home fa-b"></i><span class="visible-xs-inline"> Home</span></a></li>
 					<li th:class="${path == '/goatList' ? 'active' : _}"><a href="/goatList" title="Open Era GOAT List"><i class="fa fa-flag"></i> GOAT List</a></li>
 					<li th:class="${path != null && path.endsWith('Timeline') ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Timelines<span class="caret"></span></a>
@@ -133,7 +133,7 @@
 						</ul>
 					</li>
 					<li class="dropdown navbar-right">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="User settings"><i class="fa fa-cog fa-b"></i><span class="hidden-lg hidden-md hidden-sm"> Settings</span></a>
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="User settings"><i class="fa fa-cog fa-b"></i><span class="visible-xs-inline"> Settings</span></a>
 						<div class="dropdown-menu" style="width: 200px; padding: 8px" onclick="event.stopPropagation()">
 							<div class="input-group">
 								<label for="settingsPriceFormat" class="input-group-addon" title="Choose odds format">Odds:</label>
