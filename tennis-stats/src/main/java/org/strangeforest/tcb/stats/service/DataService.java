@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.metrics.cache.*;
 import org.springframework.cache.*;
 import org.springframework.cache.annotation.*;
+import org.springframework.cache.caffeine.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.util.*;
@@ -42,7 +43,9 @@ public class DataService {
 
 	@PostConstruct
 	public void init() {
-		matchPredictionService.registerCaches(cacheMetricsRegistrar);
+		cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.Players", matchPredictionService.getPlayersCache()));
+		cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersRankings", matchPredictionService.getPlayersRankingsCache()));
+		cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersMatches", matchPredictionService.getPlayersMatchesCache()));
 	}
 
 	private String dbServerVersionString() {
@@ -103,7 +106,7 @@ public class DataService {
 				cacheCount++;
 			}
 		}
-		matchPredictionService.clearCache();
+		matchPredictionService.clearCaches();
 		return cacheCount;
 	}
 

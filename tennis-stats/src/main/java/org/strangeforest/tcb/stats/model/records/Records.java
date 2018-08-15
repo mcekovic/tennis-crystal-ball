@@ -86,6 +86,7 @@ public abstract class Records {
 		register(TITLES, new YoungestOldestTournamentResultCategory(YoungestOldestTournamentResultCategory.RecordType.OLDEST), false);
 		register(TITLES, new LongestCareerResultSpanCategory(), false);
 		register(TITLES, new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.LEAST), false);
+		register(TITLES, new BreaksWinningTitleCategory(BreaksWinningTitleCategory.RecordType.LEAST), false);
 		register(WINS, new MostMatchesCategory(MostMatchesCategory.RecordType.PLAYED), false);
 		register(WINS, new MostMatchesCategory(MostMatchesCategory.RecordType.WON), false);
 		register(WINS, new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.WINNING), false);
@@ -113,6 +114,7 @@ public abstract class Records {
 		register(TITLES, new TournamentFinalsLostButNeverWonCategory(), true);
 		register(TITLES, new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.LOSING), true);
 		register(TITLES, new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.MOST), true);
+		register(TITLES, new BreaksWinningTitleCategory(BreaksWinningTitleCategory.RecordType.MOST), true);
 		register(LOSES, new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);
 		register(LOSES, new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.LOSING), true);
 		register(RANKING, new InfamousATPRankingCategory(), true);

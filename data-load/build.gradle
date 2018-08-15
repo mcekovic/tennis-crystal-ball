@@ -19,6 +19,7 @@ dependencies {
 	}
 	compile (project(':tennis-stats')) {
 		exclude group: 'org.springframework.boot'
+		exclude group: 'io.micrometer'
 		exclude group: 'org.thymeleaf.extras'
 		exclude group: 'org.webjars'
 		exclude group: 'org.webjars.bower'

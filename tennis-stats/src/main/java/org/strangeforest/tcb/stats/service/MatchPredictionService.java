@@ -6,8 +6,6 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.actuate.metrics.cache.*;
-import org.springframework.cache.caffeine.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.core.*;
@@ -303,13 +301,20 @@ public class MatchPredictionService {
 
 	// Util
 
-	public void registerCaches(CacheMetricsRegistrar metricsRegistrar) {
-		metricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.Players", (Cache)players));
-		metricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersRankings", (Cache)playersRankings));
-		metricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersMatches", (Cache)playersMatches));
+
+	Cache getPlayersCache() {
+		return players;
 	}
 
-	public void clearCache() {
+	Cache getPlayersRankingsCache() {
+		return playersRankings;
+	}
+
+	Cache getPlayersMatchesCache() {
+		return playersMatches;
+	}
+
+	void clearCaches() {
 		players.invalidateAll();
 		playersRankings.invalidateAll();
 		playersMatches.invalidateAll();
