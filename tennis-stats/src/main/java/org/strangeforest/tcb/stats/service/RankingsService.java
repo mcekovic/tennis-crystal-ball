@@ -224,7 +224,7 @@ public class RankingsService {
 				int goatRank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
 				String name = shortenName(rs.getString("last_name"));
-				String countryId = rs.getString("country_id");
+				String countryId = getInternedString(rs, "country_id");
 				int goatPoints = rs.getInt("points");
 				return new PlayerRanking(goatRank, playerId, name, countryId, null, goatPoints);
 			}
@@ -254,7 +254,7 @@ public class RankingsService {
 					return;
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
-				String countryId = rs.getString("country_id");
+				String countryId = getInternedString(rs, "country_id");
 				int points = rs.getInt("points");
 				int bestRank = rs.getInt("best_rank");
 				LocalDate bestRankDate = getLocalDate(rs, "best_rank_date");
@@ -299,7 +299,7 @@ public class RankingsService {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
-				String countryId = rs.getString("country_id");
+				String countryId = getInternedString(rs, "country_id");
 				Boolean active = !filter.hasActive() ? rs.getBoolean("active") : null;
 				int points = rs.getInt("points");
 				int bestRank = rs.getInt("best_rank");
@@ -441,7 +441,7 @@ public class RankingsService {
 			tournamentEventId,
 			rs.getString("tournament"),
 			rs.getInt("season"),
-			rs.getString("level")
+			getInternedString(rs, "level")
 		);
 	}
 
@@ -553,7 +553,7 @@ public class RankingsService {
 						rs.getInt("year_end_rank"),
 						rs.getInt("player_id"),
 						rs.getString("short_name"),
-						rs.getString("country_id"),
+						getInternedString(rs, "country_id"),
 						rs.getBoolean("active")
 					));
 				}

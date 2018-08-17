@@ -251,13 +251,13 @@ public class PlayerService {
 		p.setName(rs.getString("name"));
 		p.setDob(getLocalDate(rs, "dob"));
 		p.setAge(rs.getInt("age"));
-		p.setCountryId(rs.getString("country_id"));
+		p.setCountryId(getInternedString(rs, "country_id"));
 		p.setBirthplace(rs.getString("birthplace"));
 		p.setResidence(rs.getString("residence"));
 		p.setHeight(rs.getInt("height"));
 		p.setWeight(rs.getInt("weight"));
-		p.setHand(rs.getString("hand"));
-		p.setBackhand(rs.getString("backhand"));
+		p.setHand(getInternedString(rs, "hand"));
+		p.setBackhand(getInternedString(rs, "backhand"));
 		p.setActive(rs.getBoolean("active"));
 		p.setTurnedPro(rs.getInt("turned_pro"));
 		p.setCoach(rs.getString("coach"));
@@ -295,7 +295,7 @@ public class PlayerService {
 	private AutocompleteOption playerAutocompleteOptionMapper(ResultSet rs, int rowNum) throws SQLException {
 		String id = rs.getString("player_id");
 		String name = rs.getString("name");
-		String countryId = rs.getString("country_id");
+		String countryId = getInternedString(rs, "country_id");
 		return new AutocompleteOption(id, name, name + " (" + countryId + ')');
 	}
 }

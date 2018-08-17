@@ -33,6 +33,8 @@ public class TournamentForecastService {
 	@Autowired private MatchPredictionService matchPredictionService;
 	@Autowired private PerformanceService performanceService;
 
+	private static final String BYE = "BYE";
+
 	private static final String IN_PROGRESS_EVENTS_QUERY = //language=SQL
 		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
 		"FROM in_progress_event e\n" +
@@ -130,12 +132,12 @@ public class TournamentForecastService {
 			rs.getInt("tournament_id"),
 			getLocalDate(rs, "date"),
 			rs.getString("name"),
-			rs.getString("level"),
-			rs.getString("surface"),
+			getInternedString(rs, "level"),
+			getInternedString(rs, "surface"),
 			rs.getBoolean("indoor")
 		);
 		inProgressEvent.setDraw(
-			rs.getString("draw_type"),
+			getInternedString(rs, "draw_type"),
 			getInteger(rs, "draw_size"),
 			rs.getInt("player_count"),
 			rs.getDouble("participation"),
@@ -197,8 +199,8 @@ public class TournamentForecastService {
 	private void addForecast(InProgressEventForecast forecast, List<PlayerForecast> players, ResultSet rs) throws SQLException {
 		forecast.addForecast(players,
 			rs.getInt("player_id"),
-			rs.getString("base_result"),
-			rs.getString("result"),
+			getInternedString(rs, "base_result"),
+			getInternedString(rs, "result"),
 			rs.getDouble("probability"),
 			getDouble(rs, "avg_draw_probability"),
 			getDouble(rs, "no_draw_probability")
@@ -208,7 +210,7 @@ public class TournamentForecastService {
 	private void addNextEloRatings(InProgressEventForecast forecast) {
 		PlayersForecast currentForecast = forecast.getCurrentForecast();
 		jdbcTemplate.query(IN_PROGRESS_NEXT_ELO_RATINGS_QUERY, params("inProgressEventId", forecast.getEvent().getId()), rs -> {
-			String round = rs.getString("round");
+			String round = getInternedString(rs, "round");
 			PlayersForecast playersForecast = forecast.getPlayersForecast(round);
 			setNextEloRatings(round, currentForecast, playersForecast, rs, "player1_");
 			setNextEloRatings(round, currentForecast, playersForecast, rs, "player2_");
@@ -237,8 +239,8 @@ public class TournamentForecastService {
 		return new PlayerForecast(id,
 			rs.getString(prefix + "name"),
 			getInteger(rs, prefix + "seed"),
-			rs.getString(prefix + "entry"),
-			rs.getString(prefix + "country_id"),
+			getInternedString(rs, prefix + "entry"),
+			getInternedString(rs, prefix + "country_id"),
 			getInteger(rs, prefix + "rank"),
 			getInteger(rs, prefix + "elo_rating"),
 			getInteger(rs, prefix + "recent_elo_rating"),
@@ -260,11 +262,11 @@ public class TournamentForecastService {
 				short winnerIndex = rs.getShort("winner");
 				MatchPlayer winner = mapMatchPlayer(rs, format("player%1$d_", winnerIndex));
 				MatchPlayer loser = mapMatchPlayer(rs, format("player%1$d_", 3 - winnerIndex));
-				String outcome = loser != null ? rs.getString("outcome") : "BYE";
+				String outcome = loser != null ? getInternedString(rs, "outcome") : BYE;
 				results.addMatch(new TournamentEventMatch(
 					rs.getLong("in_progress_match_id"),
 					rs.getShort("match_num"),
-					rs.getString("round"),
+					getInternedString(rs, "round"),
 					winner,
 					loser,
 					mapSetScores(rs, winnerIndex),
@@ -465,7 +467,7 @@ public class TournamentForecastService {
 			rowNum + 1,
 			rs.getInt("player_id"),
 			rs.getString("name"),
-			rs.getString("country_id"),
+			getInternedString(rs, "country_id"),
 			rs.getDouble("probability"),
 			getInteger(rs, "current_rank"),
 			getInteger(rs, "best_rank"),
@@ -486,7 +488,7 @@ public class TournamentForecastService {
 			rowNum + 1,
 			rs.getInt("player_id"),
 			rs.getString("name"),
-			rs.getString("country_id"),
+			getInternedString(rs, "country_id"),
 			rs.getDouble("probability"),
 			priceFormat
 		);

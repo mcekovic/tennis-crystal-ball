@@ -71,11 +71,11 @@ public class PlayerTimelineService {
 					rs.getInt("season"),
 					rs.getInt("tournament_event_id"),
 					getLocalDate(rs, "date"),
-					rs.getString("level"),
-					rs.getString("surface"),
+					getInternedString(rs, "level"),
+					getInternedString(rs, "surface"),
 					rs.getBoolean("indoor"),
 					rs.getString("name"),
-					rs.getString("result")
+					getInternedString(rs, "result")
 				));
 			}
 		);

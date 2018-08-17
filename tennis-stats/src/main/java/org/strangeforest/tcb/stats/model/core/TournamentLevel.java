@@ -64,11 +64,14 @@ public enum TournamentLevel implements CodedEnum {
 	public static EnumSet<TournamentLevel> TOURNAMENT_LEVELS = EnumSet.of(GRAND_SLAM, TOUR_FINALS, ALT_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250, DAVIS_CUP);
 	public static EnumSet<TournamentLevel> ALL_TOURNAMENT_LEVELS = EnumSet.of(GRAND_SLAM, TOUR_FINALS, ALT_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250, OTHERS, DAVIS_CUP, OTHERS_TEAM);
 
+	private static final String GOLD = "G";
+	private static final String SILVER = "S";
+
 	public static String mapResult(String level, String result) {
 		if (Objects.equals(level, "O")) {
 			switch (result) {
-				case "W": return "G";
-				case "F": return "S";
+				case "W": return GOLD;
+				case "F": return SILVER;
 				default: return result;
 			}
 		}

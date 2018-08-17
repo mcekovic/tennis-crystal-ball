@@ -13,6 +13,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
 
 @Service
 public class GOATPointsService {
@@ -76,8 +77,8 @@ public class GOATPointsService {
 	public Map<String, Collection<String>> getLevelResults() {
 		Map<String, Collection<String>> levelResults = new LinkedHashMap<>();
 		jdbcTemplate.query(LEVEL_RESULTS_QUERY, rs -> {
-			String level = rs.getString("level");
-			String result = mapResult(level, rs.getString("result"));
+			String level = getInternedString(rs, "level");
+			String result = mapResult(level, getInternedString(rs, "result"));
 			levelResults.computeIfAbsent(level, aLevel -> new LinkedHashSet<>()).add(result);
 		});
 		// Merge Tour Finals results
@@ -142,8 +143,8 @@ public class GOATPointsService {
 			String tournamentPointsSql = format(TOURNAMENT_POINTS_QUERY, criteria);
 			jdbcTemplate.query(tournamentPointsSql, params, rs -> {
 				int season = rs.getInt("season");
-				String level = rs.getString("level");
-				String result = mapResult(level, rs.getString("result"));
+				String level = getInternedString(rs, "level");
+				String result = mapResult(level, getInternedString(rs, "result"));
 				int count = rs.getInt("count");
 				goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown().addItem(level, result, count);
 			});

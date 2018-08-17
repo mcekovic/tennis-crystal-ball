@@ -13,6 +13,7 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
 
 @Service
 public class TopPerformersService {
@@ -92,7 +93,7 @@ public class TopPerformersService {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
-				String countryId = rs.getString("country_id");
+				String countryId = getInternedString(rs, "country_id");
 				Boolean active = !filter.hasActive() && !filter.isTimeLocalized() ? rs.getBoolean("active") : null;
 				WonLost wonLost = mapWonLost(rs);
 				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, active, wonLost));

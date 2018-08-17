@@ -11,6 +11,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
 
 @Service
 public class GOATLegendService {
@@ -57,8 +58,8 @@ public class GOATLegendService {
 	@Cacheable(value = "Global", key = "'TournamentGOATPoints'")
 	public List<TournamentGOATPoints> getTournamentGOATPoints() {
 		return jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, (rs, rowNum) -> {
-			String level = rs.getString("level");
-			String result = rs.getString("result");
+			String level = getInternedString(rs, "level");
+			String result = getInternedString(rs, "result");
 			int goatPoints = rs.getInt("goat_points");
 			boolean additive = rs.getBoolean("additive");
 			return new TournamentGOATPoints(level, result, goatPoints, additive);
@@ -144,8 +145,8 @@ public class GOATLegendService {
 	@Cacheable(value = "Global", key = "'BigWinMatchFactors'")
 	public List<BigWinMatchFactor> getBigWinMatchFactors() {
 		return jdbcTemplate.query(BIG_WIN_MATCH_FACTOR_QUERY, (rs, rowNum) -> {
-			String level = rs.getString("level");
-			String round = rs.getString("round");
+			String level = getInternedString(rs, "level");
+			String round = getInternedString(rs, "round");
 			int matchFactor = rs.getInt("match_factor");
 			return new BigWinMatchFactor(level, round, matchFactor);
 		});

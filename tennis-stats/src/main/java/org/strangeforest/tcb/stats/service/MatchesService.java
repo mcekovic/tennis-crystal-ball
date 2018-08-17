@@ -143,11 +143,11 @@ public class MatchesService {
 				results.addMatch(new TournamentEventMatch(
 					rs.getLong("match_id"),
 					rs.getShort("match_num"),
-					rs.getString("round"),
+					getInternedString(rs, "round"),
 					mapMatchPlayer(rs, "winner_"),
 					mapMatchPlayer(rs, "loser_"),
 					mapSetScores(rs),
-					rs.getString("outcome"),
+					getInternedString(rs, "outcome"),
 					rs.getBoolean("has_stats")
 				));
 			}
@@ -250,15 +250,15 @@ public class MatchesService {
 			getLocalDate(rs, "date"),
 			rs.getInt("tournament_event_id"),
 			rs.getString("tournament"),
-			rs.getString("level"),
+			getInternedString(rs, "level"),
 			rs.getInt("best_of"),
-			rs.getString("surface"),
+			getInternedString(rs, "surface"),
 			rs.getBoolean("indoor"),
-			rs.getString("round"),
+			getInternedString(rs, "round"),
 			mapMatchPlayerEx(rs, "winner_"),
 			mapMatchPlayerEx(rs, "loser_"),
 			rs.getString("score"),
-			rs.getString("outcome"),
+			getInternedString(rs, "outcome"),
 			rs.getBoolean("has_stats")
 		);
 	}
@@ -270,8 +270,8 @@ public class MatchesService {
 				playerId,
 				rs.getString(prefix + "name"),
 				getInteger(rs, prefix + "seed"),
-				rs.getString(prefix + "entry"),
-				rs.getString(prefix + "country_id")
+				getInternedString(rs, prefix + "entry"),
+				getInternedString(rs, prefix + "country_id")
 			);
 		}
 		else
@@ -285,8 +285,8 @@ public class MatchesService {
 				playerId,
 				rs.getString(prefix + "name"),
 				getInteger(rs, prefix + "seed"),
-				rs.getString(prefix + "entry"),
-				rs.getString(prefix + "country_id"),
+				getInternedString(rs, prefix + "entry"),
+				getInternedString(rs, prefix + "country_id"),
 				getInteger(rs, prefix + "rank"),
 				getInteger(rs, prefix + "elo_rating"),
 				getInteger(rs, prefix + "next_elo_rating")
@@ -304,12 +304,12 @@ public class MatchesService {
 			(rs, rowNum) -> new MatchInfo(
 				rs.getLong("match_id"),
 				rs.getInt("season"),
-				rs.getString("level"),
-				rs.getString("surface"),
+				getInternedString(rs, "level"),
+				getInternedString(rs, "surface"),
 				rs.getBoolean("indoor"),
 				rs.getInt("tournament_event_id"),
 				rs.getString("tournament"),
-				rs.getString("round"),
+				getInternedString(rs, "round"),
 				rs.getInt("winner_id"),
 				rs.getInt("loser_id"),
 				rs.getString("score")

@@ -10,6 +10,7 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
 
 @Service
 public class StatsLeadersService {
@@ -113,7 +114,7 @@ public class StatsLeadersService {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
-				String countryId = rs.getString("country_id");
+				String countryId = getInternedString(rs, "country_id");
 				Boolean active = !filter.hasActive() && !filter.isTimeLocalized() ? rs.getBoolean("active") : null;
 				double value = rs.getDouble("value");
 				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, active, value, statsCategory.getType()));

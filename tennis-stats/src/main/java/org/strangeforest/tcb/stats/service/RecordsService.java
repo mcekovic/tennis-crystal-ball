@@ -146,7 +146,7 @@ public class RecordsService {
 		String recordId = rs.getString("record_id");
 		int playerId = rs.getInt("player_id");
 		String name = rs.getString("name");
-		String countryId = rs.getString("country_id");
+		String countryId = getInternedString(rs, "country_id");
 		boolean active = rs.getBoolean("active");
 		Record record = Records.getRecord(recordId);
 		RecordDetail detail = getDetail(record, rs.getString("detail"));
@@ -178,7 +178,7 @@ public class RecordsService {
 					int rank = rs.getInt("rank");
 					int playerId = rs.getInt("player_id");
 					String name = rs.getString("name");
-					String countryId = rs.getString("country_id");
+					String countryId = getInternedString(rs, "country_id");
 					Boolean active = !activePlayers ? rs.getBoolean("active") : null;
 					RecordDetail detail = getDetail(record, rs.getString("detail"));
 					table.addRow(new RecordDetailRow<RecordDetail>(rank, playerId, name, countryId, active, detail, record.getDetailURLFormatter()));

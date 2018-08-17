@@ -67,12 +67,12 @@ public class TournamentLevelService {
 					rs.getInt("tournament_event_id"),
 					getLocalDate(rs, "date"),
 					level,
-					rs.getString("surface")
+					getInternedString(rs, "surface")
 				);
 				item.setWinner(mapPlayer(rs, "winner_", 1));
 				item.setRunnerUp(mapPlayer(rs, "runner_up_", 2));
 				item.setScore(rs.getString("score"));
-				item.setOutcome(rs.getString("outcome"));
+				item.setOutcome(getInternedString(rs, "outcome"));
 				timeline.addItem(item);
 			}
 		);
@@ -82,12 +82,12 @@ public class TournamentLevelService {
 		TournamentLevelTimelinePlayer player = new TournamentLevelTimelinePlayer(rank,
 			rs.getInt(prefix + "id"),
 			rs.getString(prefix + "name"),
-			rs.getString(prefix + "country_id"),
+			getInternedString(rs, prefix + "country_id"),
 			rs.getBoolean(prefix + "active")
 		);
 		player.setFullName(rs.getString(prefix + "full_name"));
 		player.setSeed(getInteger(rs, prefix + "seed"));
-		player.setEntry(rs.getString(prefix + "entry"));
+		player.setEntry(getInternedString(rs, prefix + "entry"));
 		return player;
 	}
 
@@ -101,10 +101,10 @@ public class TournamentLevelService {
 				TeamTournamentLevelTimelineItem item = new TeamTournamentLevelTimelineItem(
 					rs.getInt("season"),
 					rs.getInt("tournament_event_id"),
-					rs.getString("surface")
+					getInternedString(rs, "surface")
 				);
-				item.setWinnerId(rs.getString("winner_id"));
-				item.setRunnerUpId(rs.getString("runner_up_id"));
+				item.setWinnerId(getInternedString(rs, "winner_id"));
+				item.setRunnerUpId(getInternedString(rs, "runner_up_id"));
 				item.setScore(rs.getString("score"));
 				return item;
 			}

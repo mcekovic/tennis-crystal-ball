@@ -406,8 +406,8 @@ public class TournamentService {
 				rs -> {
 					if (rs.next()) {
 						event.setFinal(
-							countryParticipant(rs.getString("winner_id")),
-							countryParticipant(rs.getString("runner_up_id")),
+							countryParticipant(getInternedString(rs, "winner_id")),
+							countryParticipant(getInternedString(rs, "runner_up_id")),
 							rs.getString("score"), null
 						);
 					}
@@ -428,12 +428,12 @@ public class TournamentService {
 			rs.getInt("season"),
 			getLocalDate(rs, "date"),
 			rs.getString("name"),
-			rs.getString("level"),
-			rs.getString("surface"),
+			getInternedString(rs, "level"),
+			getInternedString(rs, "surface"),
 			rs.getBoolean("indoor")
 		);
 		tournamentEvent.setDraw(
-			rs.getString("draw_type"),
+			getInternedString(rs, "draw_type"),
 			getInteger(rs, "draw_size"),
 			rs.getInt("player_count"),
 			rs.getDouble("participation"),
@@ -444,7 +444,7 @@ public class TournamentService {
 			MatchesService.mapMatchPlayer(rs, "winner_"),
 			MatchesService.mapMatchPlayer(rs, "runner_up_"),
 			rs.getString("score"),
-			rs.getString("outcome")
+			getInternedString(rs, "outcome")
 		);
 		return tournamentEvent;
 	}
@@ -464,7 +464,7 @@ public class TournamentService {
 				rs.getInt("rank"),
 				rs.getInt("player_id"),
 				rs.getString("name"),
-				rs.getString("country_id"),
+				getInternedString(rs, "country_id"),
 				rs.getBoolean("active"),
 				new IntegerRecordDetail(rs.getInt("count")),
 				(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&tournamentId=%2$d%3$s", playerId, tournamentId, resultURLParam(result))
@@ -567,15 +567,15 @@ public class TournamentService {
 						rs.getInt("season"),
 						getLocalDate(rs, "date"),
 						rs.getString("name"),
-						rs.getString("level"),
-						rs.getString("surface"),
+						getInternedString(rs, "level"),
+						getInternedString(rs, "surface"),
 						rs.getBoolean("indoor"),
-						rs.getString("draw_type"),
+						getInternedString(rs, "draw_type"),
 						getInteger(rs, "draw_size"),
 						rs.getDouble("participation"),
 						rs.getInt("strength"),
 						rs.getInt("average_elo_rating"),
-						rs.getString("result")
+						getInternedString(rs, "result")
 					));
 				}
 			}
@@ -587,7 +587,7 @@ public class TournamentService {
 	private TournamentItem tournamentItemMapper(ResultSet rs, int rowNum) throws SQLException {
 		int tournamentId = rs.getInt("tournament_id");
 		String name = rs.getString("name");
-		String level = rs.getString("level");
+		String level = getInternedString(rs, "level");
 		return new TournamentItem(tournamentId, name, level);
 	}
 
@@ -595,7 +595,7 @@ public class TournamentService {
 		int tournamentEventId = rs.getInt("tournament_event_id");
 		String name = rs.getString("name");
 		int season = rs.getInt("season");
-		String level = rs.getString("level");
+		String level = getInternedString(rs, "level");
 		return new TournamentEventItem(tournamentEventId, name, season, level);
 	}
 

@@ -16,6 +16,7 @@ import eu.bitwalker.useragentutils.*;
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
 
 @Repository @VisitorSupport
 public class VisitorRepository {
@@ -67,9 +68,9 @@ public class VisitorRepository {
 		return new Visitor(
 			rs.getLong("visitor_id"),
 			ipAddress,
-			rs.getString("country_id"),
+			getInternedString(rs, "country_id"),
 			rs.getString("country"),
-			rs.getString("agent_type"),
+			getInternedString(rs, "agent_type"),
 			rs.getInt("hits"),
 			rs.getTimestamp("last_hit").toInstant()
 		);

@@ -37,6 +37,11 @@ public abstract class ResultSetUtil {
 		return rs.wasNull() ? null : d;
 	}
 
+	public static String getInternedString(ResultSet rs, String column) throws SQLException {
+		String s = rs.getString(column);
+		return s != null ? s.intern() : null;
+	}
+
 	public static LocalDate getLocalDate(ResultSet rs, String column) throws SQLException {
 		LocalDate date = rs.getObject(column, LocalDate.class);
 		return rs.wasNull() ? null : date;

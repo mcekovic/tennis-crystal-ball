@@ -145,7 +145,7 @@ public class DominanceTimelineService {
 		int playerId = rs.getInt("player_id");
 		String name = rs.getString("name");
 		String lastName = rs.getString("last_name");
-		String countryId = rs.getString("country_id");
+		String countryId = getInternedString(rs, "country_id");
 		boolean active = rs.getBoolean("active");
 		LocalDate dob = getLocalDate(rs, "dob");
 		int goatPoints = rs.getInt("goat_points");

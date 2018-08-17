@@ -194,7 +194,7 @@ public class SeasonsService {
 							1,
 							rs.getInt("player_id"),
 							rs.getString("player_name"),
-							rs.getString("country_id"),
+							getInternedString(rs, "country_id"),
 							rs.getBoolean("active")
 						),
 						rs.getInt("dominant_age")
@@ -221,7 +221,7 @@ public class SeasonsService {
 			rs.getInt("rank"),
 			rs.getInt("player_id"),
 			rs.getString("name"),
-			rs.getString("country_id"),
+			getInternedString(rs, "country_id"),
 			null,
 			new IntegerRecordDetail(rs.getInt("value")),
 			(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&season=%2$d%3$s", playerId, season, resultURLParam(result))
@@ -250,7 +250,7 @@ public class SeasonsService {
 			rs.getInt("rank"),
 			rs.getInt("player_id"),
 			rs.getString("name"),
-			rs.getString("country_id"),
+			getInternedString(rs, "country_id"),
 			null,
 			new IntegerRecordDetail(rs.getInt("value")), (playerId, recordDetail) -> {
 				String url = format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, season);
@@ -311,7 +311,7 @@ public class SeasonsService {
 				int playerSeasonRank = rs.getInt("player_season_rank");
 				if (playerSeasonRank > 1)
 					name += " (" + playerSeasonRank + ')';
-				String countryId = rs.getString("country_id");
+				String countryId = getInternedString(rs, "country_id");
 				int season = rs.getInt("season");
 				int goatPoints = rs.getInt("goat_points");
 				BestSeasonRow row = new BestSeasonRow(seasonRank, playerId, name, countryId, season, season == currentSeason, goatPoints);

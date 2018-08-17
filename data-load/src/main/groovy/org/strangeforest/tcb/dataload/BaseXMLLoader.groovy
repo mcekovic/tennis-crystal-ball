@@ -1,7 +1,7 @@
 package org.strangeforest.tcb.dataload
 
 import java.sql.*
-import java.util.Date
+import java.text.*
 import java.util.concurrent.*
 
 import org.strangeforest.tcb.util.*
@@ -92,7 +92,7 @@ abstract class BaseXMLLoader {
 
 	static java.sql.Date date(d) {
 		d = d?.toString()
-		d ? new java.sql.Date(Date.parse('yyyy-MM-dd', d).time) : null
+		d ? new java.sql.Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time) : null
 	}
 
 	static Array shortArray(Connection conn, a) {

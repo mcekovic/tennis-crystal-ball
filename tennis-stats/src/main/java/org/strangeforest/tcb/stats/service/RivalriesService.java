@@ -19,6 +19,7 @@ import static java.lang.String.*;
 import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
 import static org.strangeforest.tcb.util.RangeUtil.*;
 
 @Service
@@ -267,7 +268,7 @@ public class RivalriesService {
 					int bestRank = rs.getInt("best_rank");
 					int opponentId = rs.getInt("opponent_id");
 					String name = rs.getString("name");
-					String countryId = rs.getString("country_id");
+					String countryId = getInternedString(rs, "country_id");
 					boolean active = rs.getBoolean("active");
 					PlayerRivalryRow row = new PlayerRivalryRow(bestRank, opponentId, name, countryId, active);
 					row.setWonLost(mapWonLost(rs));
@@ -405,7 +406,7 @@ public class RivalriesService {
 		return new RivalryPlayer(
 			rs.getInt("player_id" + suffix),
 			rs.getString("name" + suffix),
-			rs.getString("country_id" + suffix),
+			getInternedString(rs, "country_id" + suffix),
 			rs.getBoolean("active" + suffix),
 			rs.getInt("goat_points" + suffix)
 		);
@@ -415,12 +416,12 @@ public class RivalriesService {
 		return new MatchInfo(
 			rs.getLong("match_id"),
 			rs.getInt("season"),
-			rs.getString("level"),
-			rs.getString("surface"),
+			getInternedString(rs, "level"),
+			getInternedString(rs, "surface"),
 			rs.getBoolean("indoor"),
 			rs.getInt("tournament_event_id"),
 			rs.getString("tournament"),
-			rs.getString("round"),
+			getInternedString(rs, "round"),
 			rs.getInt("winner_id"),
 			rs.getInt("loser_id"),
 			rs.getString("score")

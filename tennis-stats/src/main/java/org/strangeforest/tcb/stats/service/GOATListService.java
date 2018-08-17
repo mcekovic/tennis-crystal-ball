@@ -132,7 +132,7 @@ public class GOATListService {
 				int goatRank = rs.getInt("goat_rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("last_name");
-				String countryId = rs.getString("country_id");
+				String countryId = getInternedString(rs, "country_id");
 				boolean active = rs.getBoolean("active");
 				int goatPoints = rs.getInt("goat_points");
 				return new PlayerRanking(goatRank, playerId, name, countryId, active, goatPoints);
@@ -178,7 +178,7 @@ public class GOATListService {
 				int goatRank = rs.getInt("goat_rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
-				String countryId = rs.getString("country_id");
+				String countryId = getInternedString(rs, "country_id");
 				Boolean active = !filter.hasActive() ? rs.getBoolean("active") : null;
 				LocalDate dob = getLocalDate(rs, "dob");
 				int goatPoints = rs.getInt("goat_points");

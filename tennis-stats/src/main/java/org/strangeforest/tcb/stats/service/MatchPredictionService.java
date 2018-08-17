@@ -202,8 +202,8 @@ public class MatchPredictionService {
 			params("playerId", playerId),
 			rs -> {
 				if (rs.next()) {
-					String hand = rs.getString("hand");
-					String backhand = rs.getString("backhand");
+					String hand = getInternedString(rs, "hand");
+					String backhand = getInternedString(rs, "backhand");
 					return new PlayerData(hand, backhand);
 				}
 				else
@@ -288,9 +288,9 @@ public class MatchPredictionService {
 			rs.getInt("opponent_id"),
 			getInteger(rs, "opponent_rank"),
 			getInteger(rs, "opponent_elo_rating"),
-			rs.getString("opponent_hand"),
-			rs.getString("opponent_backhand"),
-			rs.getString("opponent_entry"),
+			getInternedString(rs, "opponent_hand"),
+			getInternedString(rs, "opponent_backhand"),
+			getInternedString(rs, "opponent_entry"),
 			rs.getInt("p_matches"),
 			rs.getInt("o_matches"),
 			rs.getInt("p_sets"),
