@@ -1,7 +1,7 @@
 package org.strangeforest.tcb.dataload
 
 import java.sql.*
-import java.util.Date
+import java.text.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
@@ -156,7 +156,7 @@ abstract class BaseCSVLoader {
 				case 4: d += '0701'; break
 				case 6: d += '15'; break
 			}
-			new java.sql.Date(Date.parse('yyyyMMdd', d).time)
+			new java.sql.Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time)
 		}
 		else
 			null

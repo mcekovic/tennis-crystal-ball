@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.dataload
 
 import java.sql.*
+import java.text.*
 
 class MatchPricesLoader extends BaseCSVLoader {
 
@@ -86,7 +87,7 @@ class MatchPricesLoader extends BaseCSVLoader {
 	}
 
 	static Date date(String d) {
-		d ? new Date(java.util.Date.parse('M/d/yyyy', d).time) : null
+		d ? new Date(new SimpleDateFormat('yyyy-MM-dd').parse(d)) : null
 	}
 
 	String mapTournament(String name) {
