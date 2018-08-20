@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
 import java.text.*
 
 import com.google.common.base.*
@@ -62,7 +63,7 @@ class ATPWorldTourRankingsLoader {
 		i ? i.toInteger() : null
 	}
 
-	static java.sql.Date date(d) {
-		d ? new java.sql.Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time) : null
+	static Date date(d) {
+		d ? new Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time) : null
 	}
 }

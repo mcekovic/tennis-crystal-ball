@@ -150,13 +150,13 @@ abstract class BaseCSVLoader {
 		f ? f.toFloat() : null
 	}
 
-	static java.sql.Date date(d) {
+	static Date date(d) {
 		if (d) {
 			switch (d.length()) {
 				case 4: d += '0701'; break
 				case 6: d += '15'; break
 			}
-			new java.sql.Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time)
+			new Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time)
 		}
 		else
 			null
