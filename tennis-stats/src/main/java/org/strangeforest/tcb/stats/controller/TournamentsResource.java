@@ -29,6 +29,13 @@ public class TournamentsResource {
 		.put("name", BY_NAME)
 		.put("levels", BY_LEVEL)
 		.put("surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
+		.put("courtSpeeds", (t1, t2) -> {
+			List<Integer> speeds1 = new ArrayList<>(t1.getCourtSpeeds().values());
+			speeds1.sort(reverseOrder());
+			List<Integer> speeds2 = new ArrayList<>(t2.getCourtSpeeds().values());
+			speeds2.sort(reverseOrder());
+			return compareLists(speeds1, speeds2);
+		})
 		.put("eventCount", comparing(Tournament::getEventCount))
 		.put("playerCount", comparing(Tournament::getPlayerCount))
 		.put("participation", comparing(Tournament::getParticipation))

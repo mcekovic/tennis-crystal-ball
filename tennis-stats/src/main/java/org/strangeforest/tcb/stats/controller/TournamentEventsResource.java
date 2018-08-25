@@ -24,6 +24,7 @@ public class TournamentEventsResource {
 		.put("date", "date")
 		.put("name", "name")
 		.put("surface", "surface")
+		.put("courtSpeed", "court_speed NULLS LAST")
 		.put("draw", "draw_type, draw_size")
 		.put("playerCount", "player_count")
 		.put("participation", "participation")

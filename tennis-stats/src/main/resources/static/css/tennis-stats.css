@@ -336,6 +336,18 @@ a.black:focus {
 .points-100 {
 	background-color: #dc1060;
 }
+.points-H {
+	filter: hue-rotate(240deg)
+}
+.points-C {
+	filter: hue-rotate(20deg)
+}
+.points-G {
+	filter: hue-rotate(150deg)
+}
+.points-P {
+	filter: hue-rotate(55deg)
+}
 .rankings-badge {
 	display: inline-block;
 	vertical-align: middle;

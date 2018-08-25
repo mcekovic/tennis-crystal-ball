@@ -13,7 +13,7 @@
 		$(function() {
 			var $tournamentsTable = $("#tournamentsTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($tournamentsTable, ["seasons", "topPlayers"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($tournamentsTable, ["seasons", "topPlayers", "courtSpeeds"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentsTable, ["strength", "averageEloRating"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($tournamentsTable, ["participation"], deviceGreaterOrEqual(device, "sm"));
 			$tournamentsTable.bootgrid({
@@ -57,6 +57,20 @@
 						}
 						return s;
 					},
+					"courtSpeeds": function(column, row) {
+						var surfaces = row.surfaces;
+						var courtSpeeds = row.courtSpeeds;
+						var multi = surfaces.length > 1;
+						var s = "";
+						for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
+							if (s !== "") s += " ";
+							var surface = surfaces[i];
+							var speed = courtSpeeds[surface];
+							if (speed)
+								s += "<span class='label points-" + courtSpeedClassSuffix(speed) + " points-" + surface + "' title='" + courtSpeedTitle(speed) + " " + surfaceName(surface) + "'>" + speed + "</span>";
+						}
+						return s;
+					},
 					"eventCount": function(column, row) {
 					  	return "<a href='/tournamentEvents?tournamentId=" + row.id + filterParams() + "' title='Show tournament events'>" + row.eventCount + "</a>";
 					},
@@ -94,6 +108,7 @@
 			$search.after($("#clearDiv").remove());
 			setBootgridTitle($tournamentsTableHeader, $("#tournamentsTable-title"));
 			setBootgridTitles($tournamentsTable, [
+				{id: "courtSpeeds", title: "[[#{event.courtSpeed.title}]]"},
 				{id: "playerCount", title: "Average players"},
 				{id: "participation", title: "[[#{event.participation.title}]]"},
 				{id: "strength", title: "[[#{event.strength.title}]]"},
@@ -158,6 +173,7 @@
 			<th data-column-id="name" data-formatter="tournament" data-width="200">Name</th>
 			<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
 			<th data-column-id="surfaces" data-formatter="surfaces" data-width="110">Surface</th>
+			<th data-column-id="courtSpeeds" data-formatter="courtSpeeds" data-width="70">Speed</th>
 			<th data-column-id="eventCount" data-formatter="eventCount" data-width="75">Events</th>
 			<th data-column-id="seasons" data-formatter="seasons" data-width="180" data-sortable="false">Seasons</th>
 			<th data-column-id="playerCount" data-type="numeric" data-visible="false" data-width="55" data-align="right" data-header-align="right">Pls.</th>

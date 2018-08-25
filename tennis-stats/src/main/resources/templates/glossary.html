@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
+	<title>Glossary</title>
+	<template>
+	<meta name="description" content="Ultimate Tennis Statistics Glossary"/>
+	<script type="text/javascript">
+		$(function() {
+			loadRankingTopN("RANK");
+			bindPopovers();
+			$("[data-toggle='collapse']").click(collapseClick);
+			$("#goatLegend").on("show.bs.collapse", setGOATLegendWidth);
+		});
+		function goatLegendWidth() {
+			switch (detectDevice()) {
+				case "lg": return "120%";
+				case "md": return "133%";
+				default: return "100%";
+			}
+		}
+		function setGOATLegendWidth() {
+			$("#goatLegend").css("width", goatLegendWidth());
+		}
+		var waitForFinalEvent = function() {
+			var b = {};
+			return function(c, d, a) {
+				a || (a = "dummy");
+				b[a] && clearTimeout(b[a]);
+				b[a] = setTimeout(c, d);
+			}
+		}();
+		var fullDateString = new Date();
+		$(window).resize(function() {
+			waitForFinalEvent(setGOATLegendWidth, 100, fullDateString.getTime());
+		});
+	</script>
+	<style type="text/css">
+		body {
+			background: url("/images/home-bg.jpg") repeat;
+		}
+		.component-header {
+			margin: 0;
+		}
+	</style>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<div class="row">
+		<div class="col-lg-10 col-md-9">
+			<div>
+				<h1 style="margin-top: 10px; margin-bottom: 20px"><a href="/" title="Home"><th:block th:include="fragments/promotion :: logo"/></a></h1>
+			</div>
+			<h4 class="text-nowrap"><i class="fa fa-book"></i> Glossary</h4>
+			<ul>
+				<li><strong><i class="fa fa-flag"></i> 'GOAT' Points</strong> - The points assigned to players for various tennis achievements, like winning or going deep into tournaments, ATP and Elo rankings, Grand Slam (career and calendar year), big wins, head-to-head ratios, title, streak, performance and statistics records.</li>
+				<li><strong>Elo Rating System</strong> - The <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" class="external">Elo rating</a> is a method for calculating the relative skill levels of players in competitor-versus-competitor games such as chess or tennis. It is named after its creator Arpad Elo, a Hungarian-born American physics professor.</li>
+				<li><strong>Points Dominance Ratio</strong> - [[#{stats.pointsDominanceRatio.title}]]</li>
+				<li><strong>Games Dominance Ratio</strong> - [[#{stats.gamesDominanceRatio.title}]]</li>
+				<li><strong>Break Points Ratio</strong> - [[#{stats.breakPointsRatio.title}]]</li>
+				<li><strong>Over-Performing Ratio</strong> - [[#{stats.overPerformingRatio.title}]]</li>
+				<li><strong>Court Speed</strong> - [[#{event.courtSpeed.title}]]</li>
+				<li><strong>Tournament Participation</strong> - [[#{event.participation.title}]]</li>
+				<li><strong>Tournament Strength</strong> - [[#{event.strength.title}]]</li>
+				<li><strong>Tournament Elo Rating</strong> - [[#{event.averageEloRating.title}]]</li>
+				<li><strong>Participation Weights</strong> - [[#{event.participationWeights.title}]]</li>
+				<li><strong>Title Difficulty</strong> - [[#{event.titleDifficulty.title}]]</li>
+				<li><strong>Rivalry Score</strong> - [[#{rivalry.score.title}]]</li>
+				<li><strong>Match Greatness Score</strong> - [[#{match.greatnessScore.title}]]</li>
+				<li><strong>Draw Bonus</strong> - [[#{forecast.drawBonus.title}]]</li>
+				<li><strong>Surface Specialization</strong> - [[#{player.surfaceSpecialization.title}]]</li>
+			</ul>
+		</div>
+		<div class="col-lg-2 col-md-3">
+			<th:block th:include="fragments/goatTopN :: goatTopN"/>
+			<div id="rankingTopN"></div>
+			<th:block th:include="fragments/promotion :: facebook"/>
+			<th:block th:include="fragments/promotion :: twitter('')"/>
+			<th:block th:include="fragments/promotion :: paypal"/>
+			<th:block th:include="fragments/promotion :: license"/>
+		</div>
+	</div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

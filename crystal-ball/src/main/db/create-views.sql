@@ -690,6 +690,20 @@ CREATE MATERIALIZED VIEW player_stats AS SELECT * FROM player_stats_v;
 CREATE UNIQUE INDEX ON player_stats (player_id);
 
 
+-- event_stats
+
+CREATE OR REPLACE VIEW event_stats_v AS
+SELECT tournament_event_id, least(round(50.0 * power(1000.0 * (sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0)) * (sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) - 0.5) * (sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) - 0.6), 1.0 / 3.0)), 100) AS court_speed
+FROM player_match_stats_v
+WHERE level <> 'D'
+GROUP BY tournament_event_id
+HAVING sum(p_sv_pt) IS NOT NULL;
+
+CREATE MATERIALIZED VIEW event_stats AS SELECT * FROM event_stats_v;
+
+CREATE UNIQUE INDEX ON event_stats (tournament_event_id);
+
+
 -- player_h2h
 
 CREATE OR REPLACE VIEW player_h2h_v AS

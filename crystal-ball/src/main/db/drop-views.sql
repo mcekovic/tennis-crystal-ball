@@ -41,6 +41,8 @@ DROP VIEW player_surface_records_goat_points_v;
 DROP VIEW player_performance_goat_points_v;
 DROP VIEW player_statistics_goat_points_v;
 
+DROP MATERIALIZED VIEW event_stats;
+DROP VIEW event_stats_v;
 DROP MATERIALIZED VIEW player_h2h;
 DROP VIEW player_h2h_v;
 DROP MATERIALIZED VIEW title_difficulty;

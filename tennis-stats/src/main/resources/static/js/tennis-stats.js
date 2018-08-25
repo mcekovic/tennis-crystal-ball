@@ -319,13 +319,11 @@ function levelName(level) {
 
 // Surface Formatter
 function surfaceFormatter(column, row) {
-	if (row.surface)
-		return formatSurface(row.surface, row.indoor);
+	return row.surface ? formatSurface(row.surface, row.indoor) : "";
 }
 
 function shortSurfaceFormatter(column, row) {
-	if (row.surface)
-		return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'><span title='" + surfaceName(row.surface) + "'>" + surfaceShortName(row.surface) + "</span>" + indoorMark(row.surface, row.indoor) + "</span>";;
+	return row.surface ? "<span class='label label-" + surfaceClassSuffix(row.surface) + "'><span title='" + surfaceName(row.surface) + "'>" + surfaceShortName(row.surface) + "</span>" + indoorMark(row.surface, row.indoor) + "</span>" : "";
 }
 
 function formatSurface(surface, indoor) {
@@ -370,8 +368,45 @@ function surfaceShortName(surface) {
 function decorateSurface(selector) {
 	$(selector).each(function() {
 		var $this = $(this);
-		var surface = $this.data("surface");
-		$this.addClass("label-" + surfaceClassSuffix(surface));
+		$this.addClass("label-" + surfaceClassSuffix($this.data("surface")));
+	});
+}
+
+function courtSpeedFormatter(column, row) {
+	var speed = row.courtSpeed;
+	if (!speed) return "";
+	return "<span class='label points-" + courtSpeedClassSuffix(speed) + " points-" + row.surface + "' title='" + courtSpeedTitle(speed) + "'>" + speed + "</span>";
+}
+
+function courtSpeedClassSuffix(speed) {
+	return Math.ceil(speed / 10) * 10;
+}
+
+function courtSpeedTitle(speed) {
+	if (speed < 20)
+		return "Extra slow";
+	else if (speed < 30)
+		return "Very slow";
+	else if (speed < 40)
+		return "Slow";
+	else if (speed < 50)
+		return "Medium slow";
+	else if (speed < 60)
+		return "Medium";
+	else if (speed < 70)
+		return "Medium fast";
+	else if (speed < 80)
+		return "Fast";
+	else if (speed < 90)
+		return "Very fast";
+	return "Extra fast";
+}
+
+function decorateCourtSpeed(selector) {
+	$(selector).each(function() {
+		var $this = $(this);
+		var speed = $this.data("court-speed");
+		$this.addClass("points-" + courtSpeedClassSuffix(speed) + " points-" + $this.data("surface")).attr("title", courtSpeedTitle(speed));;
 	});
 }
 

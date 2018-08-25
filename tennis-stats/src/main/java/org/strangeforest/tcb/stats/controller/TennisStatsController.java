@@ -48,6 +48,12 @@ public class TennisStatsController extends PageController {
 		return new ModelAndView("about", "goatTopN", goatTopN);
 	}
 
+	@GetMapping("/glossary")
+	public ModelAndView glossary() {
+		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		return new ModelAndView("glossary", "goatTopN", goatTopN);
+	}
+
 	@GetMapping("/contact")
 	public ModelAndView contact() {
 		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);

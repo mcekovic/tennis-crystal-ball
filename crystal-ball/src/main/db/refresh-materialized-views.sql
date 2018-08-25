@@ -25,6 +25,8 @@ REFRESH MATERIALIZED VIEW player_season_surface_stats;
 REFRESH MATERIALIZED VIEW player_season_stats;
 REFRESH MATERIALIZED VIEW player_surface_stats;
 REFRESH MATERIALIZED VIEW player_stats;
+
+REFRESH MATERIALIZED VIEW event_stats;
 REFRESH MATERIALIZED VIEW player_h2h;
 REFRESH MATERIALIZED VIEW title_difficulty;
 

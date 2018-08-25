@@ -20,7 +20,7 @@
 			var $tournamentEventsTable = $("#tournamentEventsTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($tournamentEventsTable, ["finalEx"], deviceGreaterOrEqual(device, "xl"));
-			setBootgridColumnsVisible($tournamentEventsTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($tournamentEventsTable, ["playerCount", "strength", "averageEloRating", "courtSpeed"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentEventsTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
 			if (device === "md")
 				setBootgridColumnsWidths($tournamentEventsTable, ["final"], [400]);
@@ -49,13 +49,14 @@
 					"event": tournamentEventFormatterExtId,
 					"level": levelFormatter,
 					"surface": surfaceFormatter,
+					"courtSpeed": courtSpeedFormatter,
 					"participation": participationFormatter,
 					"final": finalFormatter,
 					"finalEx": finalExFormatter
 				},
 				labels: {
 					loading: bootgridTemplateLoading,
-					noResults: "No tournaments found"
+					noResults: "No tournament events found"
 				},
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem
@@ -65,6 +66,7 @@
 			$search.before($("#tournamentDiv").remove());
 			$search.after($("#clearDiv").remove());
 			setBootgridTitles($tournamentEventsTable, [
+				{id: "courtSpeed", title: "[[#{event.courtSpeed.title}]]"},
 				{id: "playerCount", title: "Players"},
 				{id: "participation", title: "[[#{event.participation.title}]]"},
 				{id: "strength", title: "[[#{event.strength.title}]]"},
@@ -139,6 +141,7 @@
 			<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
 			<th data-column-id="name" data-formatter="event" data-width="200">Name</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+			<th data-column-id="courtSpeed" data-formatter="courtSpeed" data-width="70" data-align="center" data-header-align="center">Speed</th>
 			<th data-column-id="draw" data-width="65">Draw</th>
 			<th data-column-id="playerCount" data-type="numeric" data-width="55" data-align="right" data-header-align="right">Pls.</th>
 			<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>

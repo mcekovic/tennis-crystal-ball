@@ -9,6 +9,7 @@ public class Tournament {
 	private final String name;
 	private final List<String> levels;
 	private final List<String> surfaces;
+	private Map<String, Integer> courtSpeeds;
 	private final int eventCount;
 	private final String seasons;
 	private double participation;
@@ -17,12 +18,13 @@ public class Tournament {
 	private int averageEloRating;
 	private final List<PlayerRow> topPlayers;
 
-	public Tournament(int id, String extId, String name, List<String> levels, List<String> surfaces, int eventCount, String seasons, int playerCount, double participation, int strength, int averageEloRating, List<PlayerRow> topPlayers) {
+	public Tournament(int id, String extId, String name, List<String> levels, List<String> surfaces, Map<String, Integer> courtSpeeds, int eventCount, String seasons, int playerCount, double participation, int strength, int averageEloRating, List<PlayerRow> topPlayers) {
 		this.id = id;
 		this.extId = extId;
 		this.name = name;
 		this.levels = levels;
 		this.surfaces = surfaces;
+		this.courtSpeeds = courtSpeeds;
 		this.eventCount = eventCount;
 		this.seasons = seasons;
 		this.playerCount = playerCount;
@@ -50,6 +52,10 @@ public class Tournament {
 
 	public List<String> getSurfaces() {
 		return surfaces;
+	}
+
+	public Map<String, Integer> getCourtSpeeds() {
+		return courtSpeeds;
 	}
 
 	public int getEventCount() {
