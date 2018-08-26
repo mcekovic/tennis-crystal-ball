@@ -10,14 +10,19 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
+import static java.util.Arrays.*;
+
 @Controller
 public class BlogController extends PageController {
 
 	@Autowired private GOATListService goatListService;
 
+	private static final String DEFAULT_BLOG_SECTION = "newBlogSection";
+	private static final Collection<String> VALID_BLOG_SECTIONS = asList(DEFAULT_BLOG_SECTION, "eloKfactorTweaks", "gameEvolution");
+
 	@GetMapping("/blog")
 	public ModelAndView blog(
-		@RequestParam(name = "post", defaultValue = "newBlogSection") String post
+		@RequestParam(name = "post", defaultValue = DEFAULT_BLOG_SECTION) String post
 	) {
 		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(20);
 		
@@ -31,6 +36,8 @@ public class BlogController extends PageController {
 	public ModelAndView post(
 		@PathVariable String post
 	) {
+		if (!VALID_BLOG_SECTIONS.contains(post))
+			post = DEFAULT_BLOG_SECTION;
 		return new ModelAndView("blog/" + post);
 	}
 }
