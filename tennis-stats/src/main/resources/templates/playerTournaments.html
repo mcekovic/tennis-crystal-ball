@@ -15,6 +15,7 @@
 	$(function() {
 		var $tournamentsTable = $("#tournamentsTable");
 		var device = detectDevice();
+		setBootgridColumnsVisible($tournamentsTable, ["courtSpeeds"], deviceGreaterOrEqual(device, "xl"));
 		setBootgridColumnsVisible($tournamentsTable, ["seasons"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($tournamentsTable, ["lastResult", "titles"], deviceGreaterOrEqual(device, "md"));
 		setBootgridColumnsVisible($tournamentsTable, ["wonPct", "bestResult", "stats"], deviceGreaterOrEqual(device, "sm"));
@@ -41,7 +42,8 @@
 					var s = "";
 					for (var i = 0, count = Math.min(2, levels.length); i < count; i++) {
 						if (s !== "") s += " ";
-						s += "<a href='/playerProfile" + tournamentsParams("level", levels[i]) + "&tab=events&tournamentId=" + row.id + "' class='label label-" + levels[i] + "' title='Show tournament events'>" + levelName(levels[i]) + "</a>";
+						var name = levelName(levels[i]);
+						s += "<a href='/playerProfile" + tournamentsParams("level", levels[i]) + "&tab=events&tournamentId=" + row.id + "' class='label label-" + levels[i] + "' title='Show " + name + " tournament events'>" + name + "</a>";
 					}
 					return s;
 				},
@@ -52,10 +54,12 @@
 					for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
 						if (s !== "") s += " ";
 						var surface = surfaces[i];
-						s += "<a href='/playerProfile" + tournamentsParams("surface", surface) + "&tab=events&tournamentId=" + row.id + "' class='label label-" + surfaceClassSuffix(surface) + "' title='Show tournament events'>" + (multi ? surfaceShortName(surface) : surfaceName(surface)) + "</a>";
+						var name = surfaceName(surface);
+						s += "<a href='/playerProfile" + tournamentsParams("surface", surface) + "&tab=events&tournamentId=" + row.id + "' class='label label-" + surfaceClassSuffix(surface) + "' title='Show " + name + " tournament events'>" + (multi ? surfaceShortName(surface) : name) + "</a>";
 					}
 					return s;
 				},
+				"courtSpeeds": courtSpeedsFormatter,
 				"eventCount": function(column, row) {
 					return "<a href='/playerProfile" + tournamentsParams() + "&tab=events&tournamentId=" + row.id + "' title='Show tournament events'>" + row.eventCount + "</a>";
 				},
@@ -93,6 +97,7 @@
 		$search.before($("#tournamentsStats").remove());
 		$search.after($("#tournamentsClear").remove());
 		setBootgridTitles($tournamentsTable, [
+			{id: "courtSpeeds", title: "[[#{event.courtSpeed.title}]]"},
 			{id: "bestResult", title: "Best result"},
 			{id: "lastResult", title: "Last result"},
 			{id: "titles", title: "Titles"}
@@ -197,6 +202,7 @@
 		<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
 		<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
 		<th data-column-id="surfaces" data-formatter="surfaces" data-width="110">Surface</th>
+		<th data-column-id="courtSpeeds" data-formatter="courtSpeeds" data-width="70">Speed</th>
 		<th data-column-id="eventCount" data-formatter="eventCount" data-width="75">Events</th>
 		<th data-column-id="seasons" data-formatter="seasons" data-width="180" data-sortable="false">Seasons</th>
 		<th data-column-id="bestResult" data-formatter="bestResult" data-width="60" data-align="center" data-header-align="center">Best</th>

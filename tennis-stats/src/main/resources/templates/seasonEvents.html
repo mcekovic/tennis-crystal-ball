@@ -11,8 +11,8 @@
 	$(function() {
 		var $seasonEventsTable = $("#seasonEventsTable");
 		var device = detectDevice();
-		setBootgridColumnsVisible($seasonEventsTable, ["finalEx"], deviceGreaterOrEqual(device, "xl"));
-		setBootgridColumnsVisible($seasonEventsTable, ["playerCount", "strength", "averageEloRating", "courtSpeed"], deviceGreaterOrEqual(device, "lg"));
+		setBootgridColumnsVisible($seasonEventsTable, ["courtSpeed", "finalEx"], deviceGreaterOrEqual(device, "xl"));
+		setBootgridColumnsVisible($seasonEventsTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($seasonEventsTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
 		if (device === "md")
 			setBootgridColumnsWidths($seasonEventsTable, ["final"], [400]);

@@ -186,10 +186,11 @@ public class TournamentService {
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENTS_QUERY = //language=SQL
-		"SELECT r.tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation, p.strength, p.average_elo_rating, r.result\n" +
+		"SELECT r.tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation, p.strength, p.average_elo_rating, s.court_speed, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"LEFT JOIN event_participation p USING (tournament_event_id)%1$s\n" +
+		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
+		"LEFT JOIN event_stats s USING (tournament_event_id)%1$s\n" +
 		"WHERE r.player_id = :playerId\n" +
 		"AND e.level NOT IN ('D', 'T')%2$s\n" +
 		"ORDER BY %3$s OFFSET :offset";
@@ -206,9 +207,10 @@ public class TournamentService {
 		")\n" +
 		"SELECT tournament_id, name, p_matches, o_matches,\n" +
 		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
-		"    SELECT r.tournament_event_id, e.level, e.surface, e.season, e.date, r.result\n" +
+		"    SELECT r.tournament_event_id, e.level, e.surface, e.season, e.date, s.court_speed, r.result\n" +
 		"    FROM player_tournament_event_result r\n" +
 		"    INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"    LEFT JOIN event_stats s USING (tournament_event_id)\n" +
 		"    WHERE r.player_id = :playerId AND e.tournament_id = t.tournament_id%1$s\n" +
 		"    ORDER BY season\n" +
 		"  ) AS event)) AS events\n" +
@@ -519,6 +521,7 @@ public class TournamentService {
 			(rs, rowNum) -> {
 				Map<String, Integer> levels = new HashMap<>();
 				Map<String, Integer> surfaces = new HashMap<>();
+				Map<String, List<Integer>> courtSpeeds = new HashMap<>();
 				List<Integer> seasons = new ArrayList<>();
 				EventResult bestResult = null;
 				LocalDate lastDate = null;
@@ -529,7 +532,11 @@ public class TournamentService {
 					JsonNode events = READER.readTree(rs.getString("events"));
 					for (JsonNode event : events) {
 						levels.compute(event.get("level").asText(), TournamentService::increment);
-						surfaces.compute(event.get("surface").asText(), TournamentService::increment);
+						String surface = event.get("surface").asText();
+						surfaces.compute(surface, TournamentService::increment);
+						JsonNode courtSpeedNode = event.get("court_speed");
+						if (!courtSpeedNode.isNull())
+							courtSpeeds.computeIfAbsent(surface, aSurface -> new ArrayList<>()).add(courtSpeedNode.asInt());
 						seasons.add(event.get("season").asInt());
 						EventResult result = EventResult.decode(event.get("result").asText());
 						if (nullsLastCompare(result, bestResult) < 0)
@@ -547,11 +554,15 @@ public class TournamentService {
 				catch (IOException ex) {
 					throw new SQLException(ex);
 				}
+				Map<String, Integer> avgCourtSpeeds = courtSpeeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
+					(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().getAsDouble())
+				));
 				return new PlayerTournament(
 					rs.getInt("tournament_id"),
 					rs.getString("name"),
 					sortKeysByValuesDesc(levels, comparing(TournamentLevel::decode)),
 					sortKeysByValuesDesc(surfaces, comparing(Surface::decode)),
+					avgCourtSpeeds,
 					seasons.size(),
 					formatSeasons(seasons),
 					bestResult != null ? bestResult.getCode() : null,
@@ -583,6 +594,7 @@ public class TournamentService {
 						getInternedString(rs, "level"),
 						getInternedString(rs, "surface"),
 						rs.getBoolean("indoor"),
+						getInteger(rs, "court_speed"),
 						getInternedString(rs, "draw_type"),
 						getInteger(rs, "draw_size"),
 						rs.getDouble("participation"),

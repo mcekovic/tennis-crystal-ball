@@ -13,8 +13,8 @@
 			$("#tournamentPills").find("a").click(tabClick);
 			var $tournamentHistoryTable = $("#tournamentHistoryTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($tournamentHistoryTable, ["finalEx"], deviceGreaterOrEqual(device, "xl"));
-			setBootgridColumnsVisible($tournamentHistoryTable, ["playerCount", "strength", "averageEloRating", "courtSpeed"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($tournamentHistoryTable, ["courtSpeed", "finalEx"], deviceGreaterOrEqual(device, "xl"));
+			setBootgridColumnsVisible($tournamentHistoryTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentHistoryTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
 			if (deviceGreaterOrEqual(device, "lg"))
 				setBootgridColumnsWidths($tournamentHistoryTable, ["name"], [175]);

@@ -319,7 +319,7 @@ function levelName(level) {
 
 // Surface Formatter
 function surfaceFormatter(column, row) {
-	return row.surface ? formatSurface(row.surface, row.indoor) : "";
+	return formatSurface(row.surface, row.indoor);
 }
 
 function shortSurfaceFormatter(column, row) {
@@ -327,7 +327,7 @@ function shortSurfaceFormatter(column, row) {
 }
 
 function formatSurface(surface, indoor) {
-	return "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + indoorMark(surface, indoor) + "</span>";
+	return surface ? "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + indoorMark(surface, indoor) + "</span>" : "";
 }
 
 function indoorMark(surface, indoor) {
@@ -373,9 +373,26 @@ function decorateSurface(selector) {
 }
 
 function courtSpeedFormatter(column, row) {
-	var speed = row.courtSpeed;
+	return formatCourtSpeed(row.courtSpeed, row.surface);
+}
+
+function formatCourtSpeed(speed, surface) {
 	if (!speed) return "";
-	return "<span class='label points-" + courtSpeedClassSuffix(speed) + " points-" + row.surface + "' title='" + courtSpeedTitle(speed) + "'>" + speed + "</span>";
+	return "<span class='label points-" + courtSpeedClassSuffix(speed) + " points-" + surface + "' title='" + courtSpeedTitle(speed) + "'>" + speed + "</span>";
+}
+
+function courtSpeedsFormatter(column, row) {
+	var surfaces = row.surfaces;
+	var courtSpeeds = row.courtSpeeds;
+	var s = "";
+	for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
+		if (s !== "") s += " ";
+		var surface = surfaces[i];
+		var speed = courtSpeeds[surface];
+		if (speed)
+			s += "<span class='label points-" + courtSpeedClassSuffix(speed) + " points-" + surface + "' title='" + courtSpeedTitle(speed) + " " + surfaceName(surface) + "'>" + speed + "</span>";
+	}
+	return s;
 }
 
 function courtSpeedClassSuffix(speed) {

@@ -19,8 +19,8 @@
 		$(function() {
 			var $tournamentEventsTable = $("#tournamentEventsTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($tournamentEventsTable, ["finalEx"], deviceGreaterOrEqual(device, "xl"));
-			setBootgridColumnsVisible($tournamentEventsTable, ["playerCount", "strength", "averageEloRating", "courtSpeed"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($tournamentEventsTable, ["courtSpeed", "finalEx"], deviceGreaterOrEqual(device, "xl"));
+			setBootgridColumnsVisible($tournamentEventsTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentEventsTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
 			if (device === "md")
 				setBootgridColumnsWidths($tournamentEventsTable, ["final"], [400]);

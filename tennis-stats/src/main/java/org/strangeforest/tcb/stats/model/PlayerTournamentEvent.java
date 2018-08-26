@@ -13,6 +13,7 @@ public class PlayerTournamentEvent {
 	private final String level;
 	private final String surface;
 	private final boolean indoor;
+	private Integer courtSpeed;
 	private final String drawType;
 	private final Integer drawSize;
 	private double participation;
@@ -20,7 +21,7 @@ public class PlayerTournamentEvent {
 	private int averageEloRating;
 	private final String result;
 
-	public PlayerTournamentEvent(int tournamentEventId, int season, LocalDate date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize, double participation, int strength, int averageEloRating, String result) {
+	public PlayerTournamentEvent(int tournamentEventId, int season, LocalDate date, String name, String level, String surface, boolean indoor, Integer courtSpeed, String drawType, Integer drawSize, double participation, int strength, int averageEloRating, String result) {
 		this.tournamentEventId = tournamentEventId;
 		this.season = season;
 		this.date = date;
@@ -28,6 +29,7 @@ public class PlayerTournamentEvent {
 		this.level = level;
 		this.surface = surface;
 		this.indoor = indoor;
+		this.courtSpeed = courtSpeed;
 		this.drawType = drawType;
 		this.drawSize = drawSize;
 		this.participation = participation;
@@ -62,6 +64,10 @@ public class PlayerTournamentEvent {
 
 	public boolean isIndoor() {
 		return indoor;
+	}
+
+	public Integer getCourtSpeed() {
+		return courtSpeed;
 	}
 
 	public String getDrawType() {

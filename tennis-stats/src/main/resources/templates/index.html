@@ -17,8 +17,7 @@
 			var $inProgressEventsTable = $("#inProgressEventsTable");
 			setBootgridColumnsVisible($inProgressEventsTable, ["surface", "draw"], sm);
 			setBootgridColumnsVisible($inProgressEventsTable, ["favorite2"], lg);
-			if (!md)
-				setBootgridColumnsWidths($inProgressEventsTable, ["name"], [175]);
+			if (!md)	setBootgridColumnsWidths($inProgressEventsTable, ["name"], [175]);
 			$inProgressEventsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -50,12 +49,12 @@
 			});
 			[/]
 			var $latestEvents = $("#latestEvents");
-			setBootgridColumnsVisible($latestEvents, ["finalEx", "courtSpeed"], xl);
+			setBootgridColumnsVisible($latestEvents, ["finalEx", "participation"], xl);
 			setBootgridColumnsVisible($latestEvents, ["final"], lg && !xl);
 			setBootgridColumnsVisible($latestEvents, ["winner"], !lg);
 			setBootgridColumnsVisible($latestEvents, ["date", "draw"], sm);
-			if (!lg)
-				setBootgridColumnsWidths($latestEvents, ["name"], [175]);
+			if (!lg) setBootgridColumnsWidths($latestEvents, ["name"], [175]);
+			if (xl) setBootgridColumnsWidths($latestEvents, ["surface"], [100]);
 			$latestEvents.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -70,8 +69,10 @@
 					"date": dateFormatter,
 					"event": tournamentEventFormatterExtId,
 					"level": levelFormatter,
-					"surface": surfaceFormatter,
-					"courtSpeed": courtSpeedFormatter,
+					"surface": function(column, row) {
+						return formatSurface(row.surface, row.indoor) + (xl ? " " + formatCourtSpeed(row.courtSpeed, row.surface) : "");
+					},
+					"participation": participationFormatter,
 					"final": finalFormatter,
 					"finalEx": finalExFormatter,
 					"winner": function(column, row) {
@@ -84,7 +85,7 @@
 				}
 			});
 			setBootgridTitles($latestEvents, [
-				{id: "courtSpeed", title: "[(#{event.courtSpeed.title})]"}
+				{id: "participation", title: "[(#{event.participation.title})]"}
 			]);
 			bindPopovers();
 			loadRankingTopN("RANK");
@@ -145,8 +146,8 @@
 					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
 					<th data-column-id="name" data-formatter="event" data-width="200">Tournament</th>
 					<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-					<th data-column-id="courtSpeed" data-formatter="courtSpeed" data-width="70" data-align="center" data-header-align="center">Speed</th>
 					<th data-column-id="draw" data-width="65">Draw</th>
+					<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
 					<th data-column-id="final" data-formatter="final" data-width="500">Final</th>
 					<th data-column-id="finalEx" data-formatter="finalEx" data-visible="false" data-width="550">Final</th>
 					<th data-column-id="winner" data-formatter="winner" data-width="200">Winner</th>
@@ -159,7 +160,7 @@
 			</div>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature"></sup></h4>
 			<ul>
-				<li>Court Speed Index (0 - 100) for tournaments and tournament events (more info about the formula used at <a href="/glossary">Glosarry</a> page)</li>
+				<li>Court Speed Index (0 - 100) for tournaments and tournament events (more info about the formula used at <a href="/glossary">Glosarry</a> page, visible by default on 1440+ pixels screens)</li>
 				<li>New Records for the <a href="/records?category=LeastMostBreaksWinningTitle">Least Breaks Against / Most Breaks scored while Winning Title</a></li>
 				<li>Player nicknames - Players are searchable by nicknames too: Maestro, Bull, Joker...</li>
 				<li><a href="/greatestMatches">Greatest Matches</a> - Greatest matches of Open Era ranked by special <span th:title="#{match.greatnessScore.title}">Match Greatness Score</span> formula</li>

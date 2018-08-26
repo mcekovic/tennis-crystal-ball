@@ -13,7 +13,8 @@
 		$(function() {
 			var $tournamentsTable = $("#tournamentsTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($tournamentsTable, ["seasons", "topPlayers", "courtSpeeds"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($tournamentsTable, ["courtSpeeds"], deviceGreaterOrEqual(device, "xl"));
+			setBootgridColumnsVisible($tournamentsTable, ["seasons", "topPlayers"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentsTable, ["strength", "averageEloRating"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($tournamentsTable, ["participation"], deviceGreaterOrEqual(device, "sm"));
 			$tournamentsTable.bootgrid({
@@ -57,20 +58,7 @@
 						}
 						return s;
 					},
-					"courtSpeeds": function(column, row) {
-						var surfaces = row.surfaces;
-						var courtSpeeds = row.courtSpeeds;
-						var multi = surfaces.length > 1;
-						var s = "";
-						for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
-							if (s !== "") s += " ";
-							var surface = surfaces[i];
-							var speed = courtSpeeds[surface];
-							if (speed)
-								s += "<span class='label points-" + courtSpeedClassSuffix(speed) + " points-" + surface + "' title='" + courtSpeedTitle(speed) + " " + surfaceName(surface) + "'>" + speed + "</span>";
-						}
-						return s;
-					},
+					"courtSpeeds": courtSpeedsFormatter,
 					"eventCount": function(column, row) {
 					  	return "<a href='/tournamentEvents?tournamentId=" + row.id + filterParams() + "' title='Show tournament events'>" + row.eventCount + "</a>";
 					},

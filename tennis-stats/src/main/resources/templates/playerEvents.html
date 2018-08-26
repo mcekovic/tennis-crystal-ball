@@ -23,6 +23,7 @@
 	$(function() {
 		var $eventsTable = $("#eventsTable");
 		var device = detectDevice();
+		setBootgridColumnsVisible($eventsTable, ["courtSpeed"], deviceGreaterOrEqual(device, "xl"));
 		setBootgridColumnsVisible($eventsTable, ["averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($eventsTable, ["participation", "strength"], deviceGreaterOrEqual(device, "md"));
 		setBootgridColumnsVisible($eventsTable, ["season", "draw"], deviceGreaterOrEqual(device, "sm"));
@@ -56,6 +57,7 @@
 				"date": dateFormatter,
 				"tournament": tournamentEventFormatter,
 				"surface": surfaceFormatter,
+				"courtSpeed": courtSpeedFormatter,
 				"participation": participationFormatter,
 				"result": function(column, row) {
 					return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[(${playerId})]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
@@ -84,6 +86,7 @@
 		$search.after($("#eventsClear").remove());
 		dateRangePicker("eventsFromDate", "eventsToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		setBootgridTitles($eventsTable, [
+			{id: "courtSpeed", title: "[[#{event.courtSpeed.title}]]"},
 			{id: "participation", title: "[[#{event.participation.title}]]"},
 			{id: "strength", title: "[[#{event.strength.title}]]"},
 			{id: "averageEloRating", title: "[[#{event.averageEloRating.title}]]"}
@@ -285,6 +288,7 @@
 		<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
 		<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
 		<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+		<th data-column-id="courtSpeed" data-formatter="courtSpeed" data-width="70" data-align="center" data-header-align="center">Speed</th>
 		<th data-column-id="draw" data-width="65">Draw</th>
 		<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
 		<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>
