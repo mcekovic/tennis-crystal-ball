@@ -49,7 +49,7 @@ public class BreaksWinningTitleCategory extends RecordCategory {
 	private static final String MATCHES_WIDTH =       "80";
 
 	public BreaksWinningTitleCategory(RecordType type) {
-		super(type.name + " / " + invert(type).name + " Breaks Winning Title <sup class=\"new-feature\"></sup>");
+		super(type.name + " / " + invert(type).name + " Breaks Winning Title");
 		register(breaksWinningTitle(type, BREAKS_AGAINST, ALL_WO_TEAM));
 		register(breaksWinningTitle(type, BREAKS_AGAINST, GRAND_SLAM));
 		register(breaksWinningTitle(type, BREAKS_AGAINST, TOUR_FINALS));
