@@ -12,15 +12,15 @@ public class PercentageUtilTest {
 
 	@Test
 	public void positivePctDiffTest() {
-		assertThat(pctDiff(1.0, 0.0)).isCloseTo(Double.POSITIVE_INFINITY, OFFSET);
-		assertThat(pctDiff(2.0, 1.0)).isCloseTo(100.0, OFFSET);
-		assertThat(pctDiff(6.0, 5.0)).isCloseTo(20.0, OFFSET);
-		assertThat(pctDiff(11.0, 10.0)).isCloseTo(10.0, OFFSET);
-		assertThat(pctDiff(21.0, 20.0)).isCloseTo(5.0, OFFSET);
-		assertThat(pctDiff(26.0, 25.0)).isCloseTo(4.0, OFFSET);
-		assertThat(pctDiff(41.0, 40.0)).isCloseTo(2.5, OFFSET);
-		assertThat(pctDiff(51.0, 50.0)).isCloseTo(2.0, OFFSET);
-		assertThat(pctDiff(61.0, 60.0)).isCloseTo(2.5, OFFSET);
+		assertThat(pctDiff(1.0, 0.0)).isCloseTo(100.0, OFFSET);
+		assertThat(pctDiff(2.0, 1.0)).isCloseTo(50.0, OFFSET);
+		assertThat(pctDiff(5.0, 4.0)).isCloseTo(20.0, OFFSET);
+		assertThat(pctDiff(10.0, 9.0)).isCloseTo(10.0, OFFSET);
+		assertThat(pctDiff(20.0, 19.0)).isCloseTo(5.0, OFFSET);
+		assertThat(pctDiff(25.0, 24.0)).isCloseTo(4.0, OFFSET);
+		assertThat(pctDiff(40.0, 39.0)).isCloseTo(2.5, OFFSET);
+		assertThat(pctDiff(50.0, 49.0)).isCloseTo(2.0, OFFSET);
+		assertThat(pctDiff(60.0, 59.0)).isCloseTo(2.5, OFFSET);
 		assertThat(pctDiff(76.0, 75.0)).isCloseTo(4.0, OFFSET);
 		assertThat(pctDiff(81.0, 80.0)).isCloseTo(5.0, OFFSET);
 		assertThat(pctDiff(91.0, 90.0)).isCloseTo(10.0, OFFSET);
@@ -40,12 +40,20 @@ public class PercentageUtilTest {
 		assertThat(pctDiff(39.0, 40.0)).isCloseTo(-2.5, OFFSET);
 		assertThat(pctDiff(49.0, 50.0)).isCloseTo(-2.0, OFFSET);
 		assertThat(pctDiff(59.0, 60.0)).isCloseTo(-2.5, OFFSET);
-		assertThat(pctDiff(74.0, 75.0)).isCloseTo(-4.0, OFFSET);
-		assertThat(pctDiff(79.0, 80.0)).isCloseTo(-5.0, OFFSET);
-		assertThat(pctDiff(89.0, 90.0)).isCloseTo(-10.0, OFFSET);
-		assertThat(pctDiff(94.0, 95.0)).isCloseTo(-20.0, OFFSET);
-		assertThat(pctDiff(98.0, 99.0)).isCloseTo(-100.0, OFFSET);
-		assertThat(pctDiff(99.0, 100.0)).isCloseTo(Double.NEGATIVE_INFINITY, OFFSET);
+		assertThat(pctDiff(75.0, 76.0)).isCloseTo(-4.0, OFFSET);
+		assertThat(pctDiff(80.0, 81.0)).isCloseTo(-5.0, OFFSET);
+		assertThat(pctDiff(90.0, 91.0)).isCloseTo(-10.0, OFFSET);
+		assertThat(pctDiff(95.0, 96.0)).isCloseTo(-20.0, OFFSET);
+		assertThat(pctDiff(98.0, 99.0)).isCloseTo(-50.0, OFFSET);
+		assertThat(pctDiff(99.0, 100.0)).isCloseTo(-100.0, OFFSET);
+	}
+
+	@Test
+	public void adHocPctDiffTest() {
+		assertThat(pctDiff(40.0, 20.0)).isCloseTo(50.0, OFFSET);
+		assertThat(pctDiff(20.0, 40.0)).isCloseTo(-50.0, OFFSET);
+		assertThat(pctDiff(90.0, 80.0)).isCloseTo(50.0, OFFSET);
+		assertThat(pctDiff(80.0, 90.0)).isCloseTo(-50.0, OFFSET);
 	}
 
 	@Test

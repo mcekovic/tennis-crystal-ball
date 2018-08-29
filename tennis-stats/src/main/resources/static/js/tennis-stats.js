@@ -396,7 +396,7 @@ function courtSpeedsFormatter(column, row) {
 }
 
 function courtSpeedClassSuffix(speed) {
-	return Math.ceil(speed / 10) * 10;
+	return Math.floor(speed / 10) * 10;
 }
 
 function courtSpeedTitle(speed) {

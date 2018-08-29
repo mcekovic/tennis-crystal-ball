@@ -51,9 +51,8 @@ public class FavoriteSurface {
 		surfaces.sort(naturalOrder());
 		SurfaceWonPct worstSurface = surfaces.get(0);
 		SurfaceWonPct bestSurface = surfaces.get(surfaceCount - 1);
-		double bestWorstGap = pctDiff(bestSurface.wonPct, worstSurface.wonPct);
-		specialization = Math.min(bestWorstGap, PCT);
-		if (bestWorstGap <= ALL_ROUNDER_SPREAD_PCT && surfaceCount >= 3) {
+		specialization = pctDiff(bestSurface.wonPct, worstSurface.wonPct);
+		if (specialization <= ALL_ROUNDER_SPREAD_PCT && surfaceCount >= 3) {
 			setAllRounder();
 			return;
 		}

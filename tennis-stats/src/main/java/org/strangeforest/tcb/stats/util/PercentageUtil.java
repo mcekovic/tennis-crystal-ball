@@ -29,9 +29,9 @@ public abstract class PercentageUtil {
 	public static double pctDiff(double pct1, double pct2) {
 		if (pct1 == pct2)
 			return 0.0;
-		else if (pct1 < 50.0 || pct2 < 50.0)
-			return PCT * (pct1 - pct2) / pct2;
+		if (pct1 < 50.0 || pct2 < 50.0)
+			return PCT * (pct1 - pct2) / Math.max(pct1, pct2);
 		else
-			return PCT * (pct1 - pct2) / (PCT - pct2);
+			return PCT * (pct1 - pct2) / (PCT - Math.min(pct1, pct2));
 	}
 }
