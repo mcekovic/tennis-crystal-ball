@@ -35,6 +35,7 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 		register(mostTournamentEntries(MASTERS));
 		register(mostTournamentEntries(ATP_500));
 		register(mostTournamentEntries(ATP_250));
+		register(mostTournamentEntries(SMALL_TOURNAMENTS));
 		register(mostDifferentTournamentEntries(ALL_WO_TEAM));
 	}
 

@@ -286,6 +286,8 @@ VALUES
 ('TournamentGrandSlamTitles', 3, 1),
 ('TournamentMastersTitles', 1, 2),
 ('TournamentMastersTitles', 2, 1),
+('DifferentMastersSlotTitles', 1, 2),
+('DifferentMastersSlotTitles', 2, 1),
 -- Finals
 ('Finals', 1, 1),
 ('GrandSlamFinals', 1, 2),

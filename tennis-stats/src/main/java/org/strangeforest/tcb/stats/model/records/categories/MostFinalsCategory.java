@@ -51,11 +51,14 @@ public class MostFinalsCategory extends TournamentResultsCategory {
 		register(mostTournamentFinals(MASTERS));
 		register(mostTournamentFinals(ATP_500));
 		register(mostTournamentFinals(ATP_250));
+		register(mostTournamentFinals(SMALL_TOURNAMENTS));
 		register(mostDifferentTournamentFinals(ALL_WO_TEAM));
 		register(mostDifferentTournamentFinals(GRAND_SLAM));
+		register(mostDifferentTournamentSlotFinals(MASTERS));
 		register(mostDifferentTournamentFinals(MASTERS));
 		register(mostDifferentTournamentFinals(ATP_500));
 		register(mostDifferentTournamentFinals(ATP_250));
+		register(mostDifferentTournamentFinals(SMALL_TOURNAMENTS));
 	}
 
 	private static Record mostFinals(RecordDomain domain) {
@@ -76,5 +79,9 @@ public class MostFinalsCategory extends TournamentResultsCategory {
 
 	private static Record mostDifferentTournamentFinals(RecordDomain domain) {
 		return mostDifferentTournamentResults(domain.id + "Finals", suffix(domain.name, " ") + "Finals", domain, FINALS, RESULT_FINAL);
+	}
+
+	private static Record mostDifferentTournamentSlotFinals(RecordDomain domain) {
+		return mostDifferentTournamentSlotResults(domain.id + "SlotFinals", suffix(domain.name, " ") + "Slot Finals", domain, FINALS, RESULT_FINAL);
 	}
 }

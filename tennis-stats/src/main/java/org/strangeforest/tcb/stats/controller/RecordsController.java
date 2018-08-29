@@ -1,16 +1,23 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.util.*;
+
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
+import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.service.*;
 
 import static com.google.common.base.Strings.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @Controller
 public class RecordsController extends PageController {
+
+	@Autowired private GOATLegendService goatLegendService;
 
 	@GetMapping("/records")
 	public ModelAndView records(
@@ -31,10 +38,13 @@ public class RecordsController extends PageController {
 		@RequestParam(name = "recordId") String recordId,
 		@RequestParam(name = "active", required = false, defaultValue = F) boolean active
 	) {
+		List<RankGOATPoints> goatPoints = goatLegendService.getRecordGOATPoints(recordId);
+
 		ModelMap modelMap = new ModelMap();
 		Record record = Records.getRecord(recordId);
 		modelMap.addAttribute("record", record);
 		modelMap.addAttribute("active", active);
+		modelMap.addAttribute("goatPoints", goatPoints);
 		return new ModelAndView("record", modelMap);
 	}
 }

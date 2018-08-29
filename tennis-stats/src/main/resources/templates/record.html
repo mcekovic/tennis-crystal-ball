@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="record" type="org.strangeforest.tcb.stats.model.records.Record"*/-->
 <!--/*@thymesVar id="active" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="goatPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 <head th:replace="fragments/head :: commonHead(${record.name}, true, ~{::template})">
 	<template>
 	<meta name="description" th:content="${record.name} + ' at Ultimate Tennis Statistics'"/>
@@ -84,6 +85,24 @@
 		</thead>
 	</table>
 	<p th:if="${record.notes}"><i th:text="'* ' + ${record.notes}">* Minimum 100 matches</i></p>
+	<div th:unless="${goatPoints.empty}">
+		<br/>
+		<strong>GOAT Points for this Record</strong>
+		<table class="table table-condensed table-hover table-striped" style="width: auto">
+			<thead>
+			<tr>
+				<th>Record Rank</th>
+				<th class="text-center">Points</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="point : ${goatPoints}">
+				<td class="text-center" th:text="${point.rank}">1</td>
+				<td class="text-center" th:text="${point.goatPoints}">8</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

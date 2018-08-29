@@ -52,11 +52,14 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostTournamentTitles(MASTERS));
 		register(mostTournamentTitles(ATP_500));
 		register(mostTournamentTitles(ATP_250));
+		register(mostTournamentTitles(SMALL_TOURNAMENTS));
 		register(mostDifferentTournamentTitles(ALL_WO_TEAM));
 		register(mostDifferentTournamentTitles(GRAND_SLAM));
+		register(mostDifferentTournamentSlotTitles(MASTERS));
 		register(mostDifferentTournamentTitles(MASTERS));
 		register(mostDifferentTournamentTitles(ATP_500));
 		register(mostDifferentTournamentTitles(ATP_250));
+		register(mostDifferentTournamentTitles(SMALL_TOURNAMENTS));
 	}
 
 	private static Record mostTitles(RecordDomain domain) {
@@ -81,5 +84,9 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 
 	private static Record mostDifferentTournamentTitles(RecordDomain domain) {
 		return mostDifferentTournamentResults(domain.id + "Titles", suffix(domain.name, " ") + "Titles", domain, TITLES, RESULT_TITLE);
+	}
+
+	private static Record mostDifferentTournamentSlotTitles(RecordDomain domain) {
+		return mostDifferentTournamentSlotResults(domain.id + "SlotTitles", suffix(domain.name, " ") + "Slot Titles", domain, TITLES, RESULT_TITLE);
 	}
 }

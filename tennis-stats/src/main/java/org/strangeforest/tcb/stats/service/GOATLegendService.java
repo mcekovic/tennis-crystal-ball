@@ -4,19 +4,20 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class GOATLegendService {
 
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String TOURNAMENT_GOAT_POINTS_QUERY =
 		"SELECT level, result, goat_points, additive FROM tournament_rank_points\n" +
@@ -44,6 +45,14 @@ public class GOATLegendService {
 	private static final String RECORDS_GOAT_POINTS = //language=SQL
 		"SELECT record_id, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
 		"FROM %1$srecords_goat_points GROUP BY record_id";
+
+	private static final String RECORD_GOAT_POINTS = //language=SQL
+		"SELECT rank, goat_points FROM records_goat_points\n" +
+		"WHERE record_id = :recordId\n" +
+		"UNION\n" +
+		"SELECT rank, goat_points FROM surface_records_goat_points\n" +
+		"WHERE record_id = :recordId\n" +
+		"ORDER BY rank";
 
 	private static final String PERF_STAT_GOAT_POINTS_QUERY = //language=SQL
 		"SELECT category_id, name AS category, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
@@ -81,7 +90,7 @@ public class GOATLegendService {
 
 	@Cacheable(value = "Global", key = "'WeeksAtNo1ForGOATPoint'")
 	public int getWeeksAtNo1ForGOATPoint() {
-		return jdbcTemplate.queryForObject(WEEKS_AT_NO1_FOR_GOAT_POINT, Integer.class);
+		return jdbcTemplate.getJdbcTemplate().queryForObject(WEEKS_AT_NO1_FOR_GOAT_POINT, Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'WeeksAtEloTopNForGOATPoint'")
@@ -114,32 +123,32 @@ public class GOATLegendService {
 
 	@Cacheable(value = "Global", key = "'CareerGrandSlamGOATPoints'")
 	public int getCareerGrandSlamGOATPoints() {
-		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "career_grand_slam"), Integer.class);
+		return jdbcTemplate.getJdbcTemplate().queryForObject(format(GRAND_SLAM_GOAT_POINTS, "career_grand_slam"), Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'SeasonGrandSlamGOATPoints'")
 	public int getSeasonGrandSlamGOATPoints() {
-		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "season_grand_slam"), Integer.class);
+		return jdbcTemplate.getJdbcTemplate().queryForObject(format(GRAND_SLAM_GOAT_POINTS, "season_grand_slam"), Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'Season3GrandSlamGOATPoints'")
 	public int getSeason3GrandSlamGOATPoints() {
-		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "season_3_grand_slam"), Integer.class);
+		return jdbcTemplate.getJdbcTemplate().queryForObject(format(GRAND_SLAM_GOAT_POINTS, "season_3_grand_slam"), Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'GrandSlamHolderGOATPoints'")
 	public int getGrandSlamHolderGOATPoints() {
-		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "grand_slam_holder"), Integer.class);
+		return jdbcTemplate.getJdbcTemplate().queryForObject(format(GRAND_SLAM_GOAT_POINTS, "grand_slam_holder"), Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'ConsecutiveGrandSlamOnSameEventGOATPoints'")
 	public int getConsecutiveGrandSlamOnSameEventGOATPoints() {
-		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "consecutive_grand_slam_on_same_event"), Integer.class);
+		return jdbcTemplate.getJdbcTemplate().queryForObject(format(GRAND_SLAM_GOAT_POINTS, "consecutive_grand_slam_on_same_event"), Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'GrandSlamOnSameEventGOATPoints'")
 	public double getGrandSlamOnSameEventGOATPoints() {
-		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "grand_slam_on_same_event"), Double.class);
+		return jdbcTemplate.getJdbcTemplate().queryForObject(format(GRAND_SLAM_GOAT_POINTS, "grand_slam_on_same_event"), Double.class);
 	}
 
 	@Cacheable(value = "Global", key = "'BigWinMatchFactors'")
@@ -182,6 +191,15 @@ public class GOATLegendService {
 			}
 		}
 		return recordGOATPoints;
+	}
+
+	@Cacheable("RecordGOATPoints")
+	public List<RankGOATPoints> getRecordGOATPoints(String recordId) {
+		return jdbcTemplate.query(RECORD_GOAT_POINTS, params("recordId", recordId), (rs, rowNum) -> {
+			int rank = rs.getInt("rank");
+			int goatPoints = rs.getInt("goat_points");
+			return new RankGOATPoints(rank, goatPoints);
+		});
 	}
 
 	@Cacheable(value = "Global", key = "'BestSeasonGOATPoints'")

@@ -103,4 +103,28 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}
+
+	protected static Record mostDifferentTournamentSlotResults(String id, String name, RecordDomain domain, String resultCondition, String result) {
+		return new Record<>(
+			"Different" + id, "Most Different " + name,
+			/* language=SQL */
+			"WITH tournament_slot AS (\n" +
+			"  SELECT tournament_event_id, row_number() OVER (PARTITION BY season ORDER BY date) slot_number\n" +
+			"  FROM tournament_event\n" +
+			"  WHERE " + domain.condition + "\n" +
+			"), results AS (\n" +
+			"  SELECT player_id, slot_number, min(date) AS first_date\n" +
+			"  FROM player_tournament_event_result INNER JOIN tournament_slot USING (tournament_event_id) INNER JOIN tournament_event USING (tournament_event_id)\n" +
+			"  WHERE " + resultCondition + " AND " + domain.condition + "\n" +
+			"  GROUP BY player_id, slot_number\n" +
+			")\n" +
+			"SELECT player_id, count(slot_number) AS value, max(first_date) AS first_date\n" +
+			"FROM results\n" +
+			"GROUP BY player_id",
+			"r.value", "r.value DESC", "r.value DESC, r.first_date",
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=timeline", playerId),
+			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name)),
+			"Tournament Slot is an order number by date of the same tournament level within the season"
+		);
+	}
 }
