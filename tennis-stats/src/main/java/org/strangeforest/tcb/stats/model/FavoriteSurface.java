@@ -62,7 +62,7 @@ public class FavoriteSurface {
 			setSurface(bestSurface.surface);
 			return;
 		}
-		if (surfaceCount > 2) {
+		if (surfaceCount >= 3) {
 			SurfaceWonPct thirdBestSurface = surfaces.get(surfaceCount - 3);
 			double secondBestSurfaceGap = pctDiff(secondBestSurface.wonPct, thirdBestSurface.wonPct);
 			if (bestSurfaceGap >= SECOND_BEST_SURFACE_GAP_PCT && bestSurfaceGap * SECOND_BEST_SURFACE_GAP_FACTOR >= secondBestSurfaceGap) {
@@ -94,6 +94,7 @@ public class FavoriteSurface {
 					}
 				}
 			}
+			setAllRounder();
 		}
 		setNone();
 	}
