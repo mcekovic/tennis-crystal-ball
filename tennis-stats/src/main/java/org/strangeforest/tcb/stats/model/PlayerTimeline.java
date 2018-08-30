@@ -32,7 +32,7 @@ public class PlayerTimeline {
 		return getTournaments(EnumSet.of(ATP_500, ATP_250));
 	}
 
-	private List<PlayerTournamentTimeline> getTournaments(EnumSet<TournamentLevel> levels) {
+	private List<PlayerTournamentTimeline> getTournaments(Set<TournamentLevel> levels) {
 		List<PlayerTournamentTimeline> selectedTournaments = tournaments.values().stream().filter(tournament -> levels.contains(tournament.maxLevel())).collect(toList());
 		Collections.sort(selectedTournaments);
 		TournamentLevel lastLevel = null;

@@ -22,17 +22,17 @@ public enum SurfaceGroup {
 	NON_GRASS(EnumSet.of(HARD, CLAY, CARPET), "Non-Grass"),
 	NON_CARPET(EnumSet.of(HARD, CLAY, GRASS), "Non-Carpet");
 
-	private final EnumSet<Surface> surfaces;
+	private final Set<Surface> surfaces;
 	private final String codes;
 	private final String text;
 
-	SurfaceGroup(EnumSet<Surface> surfaces, String text) {
+	SurfaceGroup(Set<Surface> surfaces, String text) {
 		this.surfaces = surfaces;
 		codes = surfaces.stream().map(Surface::getCode).collect(joining());
 		this.text = text;
 	}
 
-	public EnumSet<Surface> getSurfaces() {
+	public Set<Surface> getSurfaces() {
 		return surfaces;
 	}
 

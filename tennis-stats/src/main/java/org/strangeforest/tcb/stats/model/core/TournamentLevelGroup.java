@@ -20,17 +20,17 @@ public enum TournamentLevelGroup implements CodedEnum {
 	BEST_OF_5_IND(EnumSet.of(GRAND_SLAM, ALT_FINALS), "Best of 5"),
 	BEST_OF_3_IND(EnumSet.of(TOUR_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250), "Best of 3");
 
-	private final EnumSet<TournamentLevel> levels;
+	private final Set<TournamentLevel> levels;
 	private final String codes;
 	private final String text;
 
-	TournamentLevelGroup(EnumSet<TournamentLevel> levels, String text) {
+	TournamentLevelGroup(Set<TournamentLevel> levels, String text) {
 		this.levels = levels;
 		codes = levels.stream().map(TournamentLevel::getCode).collect(joining());
 		this.text = text;
 	}
 
-	public EnumSet<TournamentLevel> getLevels() {
+	public Set<TournamentLevel> getLevels() {
 		return levels;
 	}
 
@@ -50,6 +50,6 @@ public enum TournamentLevelGroup implements CodedEnum {
 		return CodedEnum.decode(TournamentLevelGroup.class, code);
 	}
 
-	public static EnumSet<TournamentLevelGroup> INDIVIDUAL_LEVEL_GROUPS = EnumSet.of(BIG, ALL_FINALS, MEDIUM, SMALL, BEST_OF_5_IND, BEST_OF_3_IND);
-	public static EnumSet<TournamentLevelGroup> ALL_LEVEL_GROUPS = EnumSet.of(BIG, ALL_FINALS, MEDIUM, SMALL, INDIVIDUAL, TEAM, BEST_OF_5, BEST_OF_3);
+	public static Set<TournamentLevelGroup> INDIVIDUAL_LEVEL_GROUPS = EnumSet.of(BIG, ALL_FINALS, MEDIUM, SMALL, BEST_OF_5_IND, BEST_OF_3_IND);
+	public static Set<TournamentLevelGroup> ALL_LEVEL_GROUPS = EnumSet.of(BIG, ALL_FINALS, MEDIUM, SMALL, INDIVIDUAL, TEAM, BEST_OF_5, BEST_OF_3);
 }

@@ -74,7 +74,7 @@ public class FavoriteSurface {
 			int favoriteSurfaceCount = favoriteSurfaces.size();
 			if (favoriteSurfaceCount >= 2) {
 				for (SurfaceGroup group : SurfaceGroup.values()) {
-					EnumSet<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
+					Set<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
 					if (groupSurfaces.size() == favoriteSurfaceCount) {
 						if (groupSurfaces.equals(favoriteSurfaces.stream().map(s -> s.surface).collect(toSet()))) {
 							setSurfaceGroup(group);
@@ -83,7 +83,7 @@ public class FavoriteSurface {
 					}
 				}
 				for (SurfaceGroup group : SurfaceGroup.values()) {
-					EnumSet<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
+					Set<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
 					int groupSurfaceCount = groupSurfaces.size();
 					if (groupSurfaceCount >= 2 && groupSurfaceCount < favoriteSurfaceCount) {
 						maxWonPctGapIndex = getMaxWonPctGapIndex(favoriteSurfaces);
