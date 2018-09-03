@@ -7,6 +7,7 @@ public class RecordRow {
 	private final String id;
 	private final String name;
 	protected final List<RecordHolderRow> recordHolders;
+	private String goatPoints;
 
 	public RecordRow(Record record) {
 		this.id = record.getId();
@@ -44,5 +45,13 @@ public class RecordRow {
 
 	public boolean hasHolders() {
 		return !recordHolders.isEmpty();
+	}
+
+	public String getGoatPoints() {
+		return goatPoints;
+	}
+
+	public void setGoatPoints(String goatPoints) {
+		this.goatPoints = goatPoints;
 	}
 }

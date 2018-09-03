@@ -27,13 +27,18 @@ public class RecordsService {
 	private static final int MAX_PLAYER_COUNT = 100;
 
 	private static final String RECORDS_TABLE_QUERY = //language=SQL
-		"SELECT r.record_id, player_id, p.name, p.country_id, p.active, r.detail\n" +
+		"SELECT r.record_id, r.player_id, p.name, p.country_id, p.active, r.detail,\n" +
+		"  (SELECT string_agg(g.goat_points::TEXT, ', ' ORDER BY g.rank) FROM records_goat_points g WHERE g.record_id = r.record_id) AS goat_points\n" +
 		"FROM player_record r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.rank = 1 AND r.record_id = ANY(?)%1$s";
+		"WHERE r.rank = 1 AND r.record_id = ANY(?)";
 
-	private static final String PLAYER_RECORDS_CONDITION = //language=SQL
-		"\n AND exists(SELECT TRUE FROM player_record r2 WHERE r2.record_id = r.record_id AND r2.player_id = ? AND r2.rank = 1)";
+	private static final String PLAYER_RECORDS_TABLE_QUERY = //language=SQL
+		"SELECT r.record_id, r.player_id, p.name, p.country_id, p.active, r.detail\n" +
+		"FROM player_record r\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE r.rank = 1 AND r.record_id = ANY(?)" +
+		"AND exists(SELECT TRUE FROM player_record r2 WHERE r2.record_id = r.record_id AND r2.player_id = ? AND r2.rank = 1)";
 
 	private static final String RECORD_TABLE_QUERY = //language=SQL
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.detail\n" +
@@ -100,12 +105,13 @@ public class RecordsService {
 			.map(RecordRow::new)
 			.collect(toList());
 		jdbcTemplate.getJdbcOperations().query(
-			format(RECORDS_TABLE_QUERY, ""),
+			RECORDS_TABLE_QUERY,
 			ps -> {
 				bindStringArray(ps, 1, recordRows.stream().map(RecordRow::getId).toArray(String[]::new));
 			},
 			rs -> {
-				addRecordHolders(recordRows, rs);
+				RecordRow recordRow = addRecordHolders(recordRows, rs);
+				recordRow.setGoatPoints(rs.getString("goat_points"));
 			}
 		);
 		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, records.size());
@@ -120,7 +126,7 @@ public class RecordsService {
 			.map(record -> new PlayerRecordRow(record, playerId))
 			.collect(toList());
 		jdbcTemplate.getJdbcOperations().query(
-			format(RECORDS_TABLE_QUERY, PLAYER_RECORDS_CONDITION),
+			PLAYER_RECORDS_TABLE_QUERY,
 			ps -> {
 				bindStringArray(ps, 1, recordRows.stream().map(PlayerRecordRow::getId).toArray(String[]::new));
 				ps.setInt(2, playerId);
@@ -142,7 +148,7 @@ public class RecordsService {
 			.collect(toList());
 	}
 
-	private static void addRecordHolders(List<? extends RecordRow> recordRows, ResultSet rs) throws SQLException {
+	private static RecordRow addRecordHolders(List<? extends RecordRow> recordRows, ResultSet rs) throws SQLException {
 		String recordId = rs.getString("record_id");
 		int playerId = rs.getInt("player_id");
 		String name = rs.getString("name");
@@ -151,10 +157,10 @@ public class RecordsService {
 		Record record = Records.getRecord(recordId);
 		RecordDetail detail = getDetail(record, rs.getString("detail"));
 		RecordHolderRow recordHolder = new RecordHolderRow<RecordDetail>(playerId, name, countryId, active, detail, record.getDetailURLFormatter());
-		Optional<RecordRow> recordRow = findRecordRow((List)recordRows, recordId);
-		recordRow.orElseThrow(
-			() -> new IllegalStateException("Cannot find record: " + recordId)
-		).addRecordHolder(recordHolder);
+		Optional<RecordRow> recordRowOptional = findRecordRow((List)recordRows, recordId);
+		RecordRow recordRow = recordRowOptional.orElseThrow(() -> new IllegalStateException("Cannot find record: " + recordId));
+		recordRow.addRecordHolder(recordHolder);
+		return recordRow;
 	}
 
 	private static <R extends RecordRow> Optional<R> findRecordRow(List<R> recordRows, String recordId) {

@@ -11,7 +11,10 @@
 	<meta name="description" content="Thousands of Open Era tennis records"/>
 	<script type="text/javascript">
 		$(function() {
-			$("#recordsTable").bootgrid({
+			var $recordsTable = $("#recordsTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($recordsTable, ["goatPoints"], deviceGreaterOrEqual(device, "xl"));
+			$recordsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -102,12 +105,14 @@
 			<th data-column-id="record" data-formatter="record" data-width="300">Record</th>
 			<th data-column-id="value" data-formatter="value" data-align="right" data-header-align="right" data-width="130">Result</th>
 			<th data-column-id="recordHolders" data-formatter="recordHolders" data-width="400">Record Holder(s)</th>
+			<th data-column-id="goatPoints" data-width="115">GOAT Points</th>
 		</tr>
 		</thead>
 	</table>
 	<p>
 		<em><strong>*</strong> Refreshed every Monday</em>
 	</p>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>
