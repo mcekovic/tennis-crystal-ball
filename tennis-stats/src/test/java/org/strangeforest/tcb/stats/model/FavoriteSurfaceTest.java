@@ -64,7 +64,7 @@ public class FavoriteSurfaceTest {
 
 		assertThat(favoriteSurface.getSurface()).isEqualTo(GRASS);
 		assertThat(favoriteSurface).hasToString("Grass");
-		assertThat(favoriteSurface.getSpecialization()).isCloseTo(50, OFFSET);
+		assertThat(favoriteSurface.getSpecialization()).isCloseTo(42, OFFSET);
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class FavoriteSurfaceTest {
 
 		assertThat(favoriteSurface.getSurface()).isEqualTo(HARD);
 		assertThat(favoriteSurface).hasToString("Hard");
-		assertThat(favoriteSurface.getSpecialization()).isCloseTo(50, OFFSET);
+		assertThat(favoriteSurface.getSpecialization()).isCloseTo(42, OFFSET);
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class FavoriteSurfaceTest {
 
 		assertThat(favoriteSurface.getSurface()).isEqualTo(GRASS);
 		assertThat(favoriteSurface).hasToString("Grass");
-		assertThat(favoriteSurface.getSpecialization()).isCloseTo(100, OFFSET);
+		assertThat(favoriteSurface.getSpecialization()).isCloseTo(69, OFFSET);
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class FavoriteSurfaceTest {
 
 		assertThat(favoriteSurface.getSurface()).isEqualTo(HARD);
 		assertThat(favoriteSurface).hasToString("Hard");
-		assertThat(favoriteSurface.getSpecialization()).isCloseTo(20, OFFSET);
+		assertThat(favoriteSurface.getSpecialization()).isCloseTo(18, OFFSET);
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class FavoriteSurfaceTest {
 
 		assertThat(favoriteSurface.getSurfaceGroup()).isEqualTo(SOFT);
 		assertThat(favoriteSurface).hasToString("Soft (Cl, G)");
-		assertThat(favoriteSurface.getSpecialization()).isCloseTo(60, OFFSET);
+		assertThat(favoriteSurface.getSpecialization()).isCloseTo(49, OFFSET);
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class FavoriteSurfaceTest {
 
 		assertThat(favoriteSurface.getSurface()).isEqualTo(GRASS);
 		assertThat(favoriteSurface).hasToString("Grass");
-		assertThat(favoriteSurface.getSpecialization()).isCloseTo(50, OFFSET);
+		assertThat(favoriteSurface.getSpecialization()).isCloseTo(34, OFFSET);
 	}
 
 	@Test
@@ -162,7 +162,7 @@ public class FavoriteSurfaceTest {
 
 		assertThat(favoriteSurface.getSurfaceGroup()).isEqualTo(NON_GRASS);
 		assertThat(favoriteSurface).hasToString("Non-Grass");
-		assertThat(favoriteSurface.getSpecialization()).isCloseTo(32, OFFSET);
+		assertThat(favoriteSurface.getSpecialization()).isCloseTo(20, OFFSET);
 	}
 
 	private static PlayerPerformance performance(WonLost hard, WonLost clay, WonLost grass, WonLost carpet) {

@@ -21,8 +21,8 @@ public class FavoriteSurface {
 	private static final double MIN_SURFACE_MATCHES = 5;
 	private static final double MIN_SURFACE_PCT = 3.0;
 	private static final double ALL_ROUNDER_SPREAD_PCT = 10.0;
-	private static final double BEST_SURFACE_GAP_PCT = 20.0;
-	private static final double SECOND_BEST_SURFACE_GAP_PCT = 10.0;
+	private static final double BEST_SURFACE_GAP_PCT = 15.0;
+	private static final double SECOND_BEST_SURFACE_GAP_PCT = 8.0;
 	private static final double SECOND_BEST_SURFACE_GAP_FACTOR = 2.0;
 	private static final String ALL_ROUNDER = "All-Rounder";
 	private static final String NONE = "None";
@@ -93,8 +93,8 @@ public class FavoriteSurface {
 						}
 					}
 				}
+				setAllRounder();
 			}
-			setAllRounder();
 		}
 		setNone();
 	}
