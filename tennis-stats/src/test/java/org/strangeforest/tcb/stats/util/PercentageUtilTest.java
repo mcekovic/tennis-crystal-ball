@@ -50,10 +50,14 @@ public class PercentageUtilTest {
 
 	@Test
 	public void adHocPctDiffTest() {
+		assertThat(pctDiff(60.0, 50.0)).isCloseTo(18.3, OFFSET);
+		assertThat(pctDiff(50.0, 40.0)).isCloseTo(18.3, OFFSET);
 		assertThat(pctDiff(40.0, 20.0)).isCloseTo(37.5, OFFSET);
-		assertThat(pctDiff(20.0, 40.0)).isCloseTo(-37.5, OFFSET);
+		assertThat(pctDiff(80.0, 60.0)).isCloseTo(37.5, OFFSET);
+		assertThat(pctDiff(20.0, 10.0)).isCloseTo(30.6, OFFSET);
 		assertThat(pctDiff(90.0, 80.0)).isCloseTo(30.6, OFFSET);
-		assertThat(pctDiff(80.0, 90.0)).isCloseTo(-30.6, OFFSET);
+		assertThat(pctDiff(90.0, 10.0)).isCloseTo(88.9, OFFSET);
+		assertThat(pctDiff(99.0, 1.0)).isCloseTo(98.9, OFFSET);
 	}
 
 	@Test
