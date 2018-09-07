@@ -61,6 +61,17 @@ public class PercentageUtilTest {
 	}
 
 	@Test
+	public void edgeCasesPctDiffTest() {
+		assertThat(pctDiff(10.0, 0.0)).isCloseTo(55.0, OFFSET);
+		assertThat(pctDiff(100.0, 90.0)).isCloseTo(55.0, OFFSET);
+		assertThat(pctDiff(90.0, 0.0)).isCloseTo(95.0, OFFSET);
+		assertThat(pctDiff(100.0, 10.0)).isCloseTo(95.0, OFFSET);
+		assertThat(pctDiff(99.0, 0.0)).isCloseTo(99.5, OFFSET);
+		assertThat(pctDiff(100.0, 1.0)).isCloseTo(99.5, OFFSET);
+		assertThat(pctDiff(100.0, 0.0)).isCloseTo(100.0, OFFSET);
+	}
+
+	@Test
 	public void zeroPctDiffTest() {
 		assertThat(pctDiff(0.0, 0.0)).isCloseTo(0.0, OFFSET);
 		assertThat(pctDiff(10.0, 10.0)).isCloseTo(0.0, OFFSET);
