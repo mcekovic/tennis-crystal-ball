@@ -11,7 +11,7 @@
 			$("#timelineTable").find("td>span").each(function() {
 				var $event = $(this);
 				var title = $event.data("winner") + formatSeedEntry($event.data("winner-seed"), $event.data("winner-entry")) + " " + ($event.data("outcome") != "ABD" ? "d." : "vs") + " "
-					+ $event.data("runner-up") + formatSeedEntry($event.data("runner-up-seed"), $event.data("runner-up-entry")) + "<br/>" + $event.data("score");
+					+ $event.data("runner-up") + formatSeedEntry($event.data("runner-up-seed"), $event.data("runner-up-entry")) + "<br/>" + formatScore($event.data("score"));
 				$event.tooltip({title: title, html: true, placement: "top"});
 			});
 		});
