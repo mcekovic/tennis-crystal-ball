@@ -365,7 +365,11 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="goatListTable-title" class="grid-title text-nowrap"><i class="fa fa-flag"></i> Open Era GOAT List&nbsp;<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#goatListPopover"><i class="fa fa-question-circle" style="font-size: 80%; vertical-align: text-top"></i></a></h3>
+	<h3 id="goatListTable-title" class="grid-title text-nowrap">
+		<i class="fa fa-flag"></i> Open Era GOAT List
+		<a href="javascript:goatListPermalink()" title="Permalink to this GOAT List"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
+		<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#goatListPopover"><i class="fa fa-question-circle" style="font-size: 80%; vertical-align: text-top"></i></a>
+	</h3>
 	<div id="surfaceDiv" class="btn-group margin-right">
 		<select id="surface" class="form-control" onchange="surfaceChanged(); reloadGOATListTableAndLegend()" data-toggle="tooltip" data-placement="top" title="Select overall or GOAT List by surface">
 			<option value="">Overall</option>

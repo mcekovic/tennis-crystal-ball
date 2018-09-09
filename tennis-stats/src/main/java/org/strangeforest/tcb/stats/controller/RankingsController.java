@@ -42,9 +42,12 @@ public class RankingsController extends PageController {
 	}
 
 	@GetMapping("/peakEloRatings")
-	public ModelAndView peakEloRatings() {
+	public ModelAndView peakEloRatings(
+		@RequestParam(name = "rankType", defaultValue = "ELO_RATING") RankType rankType
+	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("rankTypes", RankCategory.ELO.getRankTypes());
+		modelMap.addAttribute("rankType", rankType);
 		return new ModelAndView("peakEloRatings", modelMap);
 	}
 
