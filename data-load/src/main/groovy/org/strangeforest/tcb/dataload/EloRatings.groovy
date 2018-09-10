@@ -103,7 +103,7 @@ class EloRatings {
 	// Technical
 	static final int MATCHES_FETCH_SIZE = 200
 	static final int RANK_PRELOAD_FETCH_SIZE = 1000
-	static final double SAVE_RANK_THREAD_RATIO = 1.0d
+	static final Double SAVE_RANK_THREAD_RATIO = 1.0d
 
 	// Progress tracking
 	static final int MATCHES_PER_DOT = 1000
