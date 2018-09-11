@@ -5,8 +5,6 @@ mainClassName = 'org.strangeforest.tcb.dataload.Main'
 applicationDefaultJvmArgs = [
 	'-Xmx256m',
 	'-Dtcb.db.url=jdbc:postgresql://localhost:5432/tcb?prepareThreshold=0',
-	'-Dtcb.db.username=tcb',
-	'-Dtcb.db.password=tcb',
 	'-Dtcb.db.connections=1',
 	'-Dtcb.data.base-dir=/tcb/tennis_atp'
 ]
