@@ -27,7 +27,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		super(sql)
 	}
 
-	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null) {
+	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null, boolean forceStats = false) {
 		def url = tournamentUrl(current, season, urlId, extId)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
@@ -103,7 +103,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
 					params.score = matchScore?.toString()
 					setScoreParams(params, matchScore)
-					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
+					params.statsUrl = matchStatsUrl(scoreElem.attr('href'), forceStats, season, extId, String.format('%03d', matchNum))
 
 					if ((isUnknownOrQualifier(wName) || isUnknownOrQualifier(lName)))
 						return
@@ -212,8 +212,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		"http://www.atpworldtour.com/en/scores/$type/$urlId/$extId$seasonUrl/results"
 	}
 
-	static matchStatsUrl(String url) {
-		url ? "http://www.atpworldtour.com" + url : null
+	static matchStatsUrl(String url, boolean forceStats, int season, extId, String matchNum) {
+		url || forceStats ? 'http://www.atpworldtour.com' + (url ?: "/en/scores/$season/$extId/MS$matchNum/match-stats") : null
 	}
 
 	static isUnknownOrQualifier(String name) {
