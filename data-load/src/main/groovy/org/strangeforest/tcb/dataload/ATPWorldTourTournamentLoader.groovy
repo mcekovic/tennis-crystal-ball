@@ -27,7 +27,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		super(sql)
 	}
 
-	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null, boolean forceStats = false) {
+	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null, boolean forceReloadStats = false) {
 		def url = tournamentUrl(current, season, urlId, extId)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
@@ -103,11 +103,11 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
 					params.score = matchScore?.toString()
 					setScoreParams(params, matchScore)
-					params.statsUrl = matchStatsUrl(scoreElem.attr('href'), forceStats, season, extId, String.format('%03d', matchNum))
+					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
 
 					if ((isUnknownOrQualifier(wName) || isUnknownOrQualifier(lName)))
 						return
-					
+
 					matches << params
 				}
 			}
@@ -116,7 +116,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		AtomicInteger rows = new AtomicInteger()
 		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
 		try {
-			pool.submit{
+			pool.submit {
 				matches.parallelStream().forEach { params ->
 					def statsUrl = params.statsUrl
 					if (statsUrl) {
@@ -136,8 +136,12 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		finally {
 			pool.shutdown()
 		}
+		pool.awaitTermination(1L, TimeUnit.HOURS)
 		if (rows.get() > 0)
 			println()
+
+		if (forceReloadStats)
+			reloadStats(matches, season, extId)
 
 		withTx sql, { Sql s ->
 			s.withBatch(LOAD_SQL) { ps ->
@@ -212,12 +216,54 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		"http://www.atpworldtour.com/en/scores/$type/$urlId/$extId$seasonUrl/results"
 	}
 
-	static matchStatsUrl(String url, boolean forceStats, int season, extId, String matchNum) {
-		url || forceStats ? 'http://www.atpworldtour.com' + (url ?: "/en/scores/$season/$extId/MS$matchNum/match-stats") : null
+	static matchStatsUrl(String url) {
+		url ? "http://www.atpworldtour.com" + url : null
 	}
 
 	static isUnknownOrQualifier(String name) {
 		isUnknown(name) || isQualifier(name)
+	}
+
+	static reloadStats(matches, int season, extId) {
+		AtomicInteger rows = new AtomicInteger()
+		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
+		def matchNums = 1..matches.size()
+		try {
+			pool.submit {
+				matchNums.parallelStream().forEach { matchNum ->
+					def statsUrl = matchStatsUrl(season, extId, String.format('%03d', matchNum))
+					def statsDoc = retriedGetDoc(statsUrl)
+					def match = findMatch(matches, statsDoc.select('div.modal-scores-header h3.section-title').text())
+					if (match) {
+						match.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
+						def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
+						if (matchStats) {
+							setATPStatsParams(match, matchStats)
+							print '.'
+						}
+						if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
+							println()
+					}
+				}
+			}
+		}
+		finally {
+			pool.shutdown()
+		}
+		pool.awaitTermination(1L, TimeUnit.HOURS)
+		if (rows.get() > 0)
+			println()
+	}
+
+	static matchStatsUrl(int season, extId, String matchNum) {
+		"http://www.atpworldtour.com/en/scores/$season/$extId/MS$matchNum/match-stats"
+	}
+
+	static findMatch(matches, String title) {
+		title = title.toLowerCase()
+		matches.find { match ->
+			title.contains(match.winner_name.toLowerCase()) && title.contains(match.loser_name.toLowerCase())
+		}
 	}
 
 
