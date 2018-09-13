@@ -52,10 +52,8 @@ public class SeasonsService {
 		"    count(*) FILTER (WHERE surface = 'G') AS grass_count,\n" +
 		"    count(*) FILTER (WHERE surface = 'P') AS carpet_count,\n" +
 		"    count(*) FILTER (WHERE NOT indoor) AS outdoor_count,\n" +
-		"    count(*) FILTER (WHERE indoor) AS indoor_count,\n" +
-		"    round(avg(court_speed)) AS court_speed" +
+		"    count(*) FILTER (WHERE indoor) AS indoor_count\n" +
 		"  FROM tournament_event\n" +
-		"  LEFT JOIN event_stats USING (tournament_event_id)\n" +
 		"  WHERE level NOT IN ('D', 'T')\n" +
 		"  GROUP BY season\n" +
 		"), season_match_count AS (\n" +
@@ -63,9 +61,11 @@ public class SeasonsService {
 		"    count(*) FILTER (WHERE m.surface = 'H') AS hard_match_count,\n" +
 		"    count(*) FILTER (WHERE m.surface = 'C') AS clay_match_count,\n" +
 		"    count(*) FILTER (WHERE m.surface = 'G') AS grass_match_count,\n" +
-		"    count(*) FILTER (WHERE m.surface = 'P') AS carpet_match_count\n" +
+		"    count(*) FILTER (WHERE m.surface = 'P') AS carpet_match_count,\n" +
+		"    round(avg(court_speed)) AS court_speed" +
 		"  FROM match m\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  LEFT JOIN event_stats USING (tournament_event_id)\n" +
 		"  GROUP BY e.season\n" +
 		"), player_season_ranked AS (\n" +
 		"  SELECT g.season, player_id, row_number() OVER (PARTITION BY g.season ORDER BY g.goat_points DESC, p.goat_points DESC, p.dob, p.name DESC) rank\n" +
@@ -77,7 +77,7 @@ public class SeasonsService {
 		"  INNER JOIN player_v p USING (player_id)\n" +
 		"  GROUP BY g.season\n" +
 		")\n" +
-		"SELECT t.*, m.match_count, m.hard_match_count, m.clay_match_count, m.grass_match_count, m.carpet_match_count,\n" +
+		"SELECT t.*, m.match_count, m.hard_match_count, m.clay_match_count, m.grass_match_count, m.carpet_match_count, m.court_speed,\n" +
 		"  p.player_id, p.name player_name, p.country_id, p.active, e.dominant_age\n" +
 		"FROM season_tournament_count t\n" +
 		"LEFT JOIN season_match_count m USING (season)\n" +
