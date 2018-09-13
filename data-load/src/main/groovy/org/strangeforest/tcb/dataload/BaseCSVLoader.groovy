@@ -156,7 +156,7 @@ abstract class BaseCSVLoader {
 				case 4: d += '0701'; break
 				case 6: d += '15'; break
 			}
-			new Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time)
+			new Date(new SimpleDateFormat('yyyyMMdd').parse(d).time)
 		}
 		else
 			null
