@@ -52,8 +52,10 @@ public class SeasonsService {
 		"    count(*) FILTER (WHERE surface = 'G') AS grass_count,\n" +
 		"    count(*) FILTER (WHERE surface = 'P') AS carpet_count,\n" +
 		"    count(*) FILTER (WHERE NOT indoor) AS outdoor_count,\n" +
-		"    count(*) FILTER (WHERE indoor) AS indoor_count\n" +
+		"    count(*) FILTER (WHERE indoor) AS indoor_count,\n" +
+		"    round(avg(court_speed)) AS court_speed" +
 		"  FROM tournament_event\n" +
+		"  LEFT JOIN event_stats USING (tournament_event_id)\n" +
 		"  WHERE level NOT IN ('D', 'T')\n" +
 		"  GROUP BY season\n" +
 		"), season_match_count AS (\n" +
@@ -190,6 +192,7 @@ public class SeasonsService {
 						rs.getInt("clay_match_count"),
 						rs.getInt("grass_match_count"),
 						rs.getInt("carpet_match_count"),
+						rs.getInt("court_speed"),
 						new PlayerRow(
 							1,
 							rs.getInt("player_id"),

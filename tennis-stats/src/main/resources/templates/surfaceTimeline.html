@@ -9,6 +9,10 @@
 	<script type="text/javascript">
 		$(function() {
 			$("[data-toggle='tooltip']").tooltip();
+			$("#surfaceTimelineBody td.court-speed").each(function() {
+				var $speed = $(this);
+				$speed.html(formatCourtSpeed($speed.data("speed")));
+			});
 		});
 		function indoorChanged() {
 			window.location.href = "/surfaceTimeline?indoor=" + $("#indoor").prop("checked");
@@ -45,9 +49,10 @@
 						</label>
 					</div>
 				</th>
+				<th class="text-center" width="60px" th:title="#{event.courtSpeed.title}">Speed</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody id="surfaceTimelineBody">
 			<tr th:each="item : ${timeline}">
 				<th th:if="${item.season > 0}">
 					<a th:href="@{/tournamentEvents(season=${item.season})}" title="Show season tournaments" th:text="${item.season}">2005</a>
@@ -77,6 +82,7 @@
 						</div>
 					</div>
 				</td>
+				<td class="court-speed text-center" th:data-speed="${item.courtSpeed}"></td>
 			<tr>
 		</tbody>
 	</table>

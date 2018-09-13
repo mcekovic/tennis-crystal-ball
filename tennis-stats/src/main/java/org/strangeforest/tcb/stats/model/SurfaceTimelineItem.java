@@ -15,10 +15,11 @@ public class SurfaceTimelineItem {
 	private final BigDecimal carpetPct;
 	private BigDecimal hardOutdoorPct;
 	private BigDecimal hardIndoorPct;
+	private final int courtSpeed;
 
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
 
-	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount) {
+	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int courtSpeed) {
 		this.season = season;
 		hardPct = scaledPct(hardMatchCount, matchCount);
 		clayPct = scaledPct(clayMatchCount, matchCount);
@@ -26,10 +27,11 @@ public class SurfaceTimelineItem {
 		BigDecimal aCarpetPct = scaledPct(carpetMatchCount, matchCount);
 		BigDecimal hardClayGrassPct = hardPct.add(clayPct).add(grassPct);
 		carpetPct = hardClayGrassPct.add(aCarpetPct).compareTo(HUNDRED) <= 0 ? aCarpetPct : HUNDRED.subtract(hardClayGrassPct);
+		this.courtSpeed = courtSpeed;
 	}
 
-	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int hardIndoorMatchCount) {
-		this(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount);
+	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int hardIndoorMatchCount, int courtSpeed) {
+		this(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount, courtSpeed);
 		hardOutdoorPct = scaledPct(hardMatchCount - hardIndoorMatchCount, matchCount);
 		hardIndoorPct = hardPct.subtract(hardOutdoorPct);
 	}
@@ -68,5 +70,9 @@ public class SurfaceTimelineItem {
 
 	private static String formatPct(BigDecimal pct) {
 		return format("%1$.1f%%", pct);
+	}
+
+	public int getCourtSpeed() {
+		return courtSpeed;
 	}
 }
