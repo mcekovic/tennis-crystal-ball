@@ -693,8 +693,21 @@ CREATE UNIQUE INDEX ON player_stats (player_id);
 -- event_stats
 
 CREATE OR REPLACE VIEW event_stats_v AS
-SELECT tournament_event_id, least(round(50.0 * power(1000.0 * (sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0)) * (sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) - 0.5) * (sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) - 0.6), 1.0 / 3.0)), 100) AS court_speed
+WITH season_court_speed AS (
+	SELECT season, sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0) AS ace_pct, sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct, sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) AS p_sv_gms_won_pct
+	FROM player_match_stats_v
+	GROUP BY season
+	HAVING sum(p_sv_pt) IS NOT NULL
+), player_season_court_speed AS (
+	SELECT player_id, season, sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0) AS ace_pct, sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct, sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) AS p_sv_gms_won_pct
+	FROM player_match_stats_v
+	GROUP BY player_id, season
+	HAVING sum(p_sv_pt) IS NOT NULL
+)
+SELECT tournament_event_id, least(court_speed(sum(s.ace_pct / nullif(p.ace_pct, 0) * p_ace) / nullif(sum(p_sv_pt), 0), sum(s.sv_pts_won_pct / nullif(p.sv_pts_won_pct, 0) * (p_1st_won + p_2nd_won)) / nullif(sum(p_sv_pt), 0), sum(s.p_sv_gms_won_pct / nullif(p.p_sv_gms_won_pct, 0) * (p_sv_gms - (p_bp_fc - p_bp_sv))) / nullif(sum(p_sv_gms), 0)), 100) AS court_speed
 FROM player_match_stats_v
+INNER JOIN season_court_speed s USING (season)
+INNER JOIN player_season_court_speed p USING (player_id, season)
 WHERE level <> 'D'
 GROUP BY tournament_event_id
 HAVING sum(p_sv_pt) IS NOT NULL;

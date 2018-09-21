@@ -337,3 +337,16 @@ BEGIN
 	DELETE FROM saved_record WHERE record_id LIKE p_record_id;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- misc
+
+CREATE OR REPLACE FUNCTION court_speed(
+	p_ace_pct DOUBLE PRECISION,
+	p_sv_pts_won_pct DOUBLE PRECISION,
+	p_sv_gms_won_pct DOUBLE PRECISION
+) RETURNS REAL AS $$
+BEGIN
+	RETURN round(50.0 * power(1000.0 * p_ace_pct * (p_sv_pts_won_pct - 0.5) * (p_sv_gms_won_pct - 0.6), 1.0 / 3.0));
+END;
+$$ LANGUAGE plpgsql;
