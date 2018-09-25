@@ -19,6 +19,7 @@ DROP MATERIALIZED VIEW player_season_goat_points;
 DROP VIEW player_season_goat_points_v;
 
 DROP VIEW player_best_elo_rating_goat_points_v;
+DROP VIEW player_best_elo_rating_goat_points_date_v;
 DROP VIEW player_best_surface_elo_rating_goat_points_v;
 DROP VIEW player_weeks_at_elo_topn_goat_points_v;
 DROP VIEW player_season_weeks_at_elo_topn_goat_points_v;

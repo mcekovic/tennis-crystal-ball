@@ -66,10 +66,19 @@ public class RankingChartService {
 		"  FROM player_season_weeks_at_elo_topn_goat_points_v\n" +
 		"  UNION ALL\n" +
 		"  SELECT date, player_id, goat_points\n" +
+		"  FROM player_best_elo_rating_goat_points_date_v\n" +
+		"  UNION ALL\n" +
+		"  SELECT date, player_id, goat_points\n" +
 		"  FROM player_big_wins_v\n" +
+		"  UNION ALL\n" +
+		"  SELECT date, player_id, goat_points\n" +
+		"  FROM player_career_grand_slam_goat_points_v\n" +
 		"  UNION ALL\n" +
 		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_season_grand_slam_goat_points_v\n" +
+		"  UNION ALL\n" +
+		"  SELECT date, player_id, goat_points\n" +
+		"  FROM player_grand_slam_holder_goat_points_v\n" +
 		"  UNION ALL\n" +
 		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_best_season_goat_points_v\n" +
@@ -91,11 +100,16 @@ public class RankingChartService {
 		"  WHERE surface = :surface::surface\n" +
 		"  UNION ALL\n" +
 		"  SELECT date, player_id, goat_points\n" +
+		"  FROM player_best_surface_elo_rating_goat_points_v\n" +
+		"  WHERE surface = :surface::surface\n" +
+		"  UNION ALL\n" +
+		"  SELECT date, player_id, goat_points\n" +
 		"  FROM player_big_wins_v\n" +
 		"  WHERE surface = :surface::surface\n" +
 		"  UNION ALL\n" +
 		"  SELECT season_end(season), player_id, goat_points\n" +
-		"  FROM player_surface_best_season_goat_points_v WHERE surface = :surface::surface\n" +
+		"  FROM player_surface_best_season_goat_points_v\n" +
+		"  WHERE surface = :surface::surface\n" +
 		")";
 
 	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
@@ -117,6 +131,19 @@ public class RankingChartService {
 		"  SELECT season, player_id, goat_points\n" +
 		"  FROM player_season_goat_points\n" +
 		"  UNION ALL\n" +
+		"  SELECT extract(YEAR FROM r.best_rank_date)::INTEGER season, r.player_id, p.goat_points\n" +
+		"  FROM player_best_rank r\n" +
+		"  INNER JOIN best_rank_goat_points p USING (best_rank)\n" +
+		"  UNION ALL\n" +
+		"  SELECT extract(YEAR FROM date)::INTEGER season, player_id, goat_points\n" +
+		"  FROM player_best_elo_rating_goat_points_date_v\n" +
+		"  UNION ALL\n" +
+		"  SELECT extract(YEAR FROM date)::INTEGER season, player_id, goat_points\n" +
+		"  FROM player_career_grand_slam_goat_points_v\n" +
+		"  UNION ALL\n" +
+		"  SELECT extract(YEAR FROM date)::INTEGER season, player_id, goat_points\n" +
+		"  FROM player_grand_slam_holder_goat_points_v\n" +
+		"  UNION ALL\n" +
 		"  SELECT season, player_id, goat_points\n" +
 		"  FROM player_best_season_goat_points_v\n" +
 		")";
@@ -125,6 +152,18 @@ public class RankingChartService {
 		"WITH goat_points AS (\n" +
 		"  SELECT season, player_id, goat_points\n" +
 		"  FROM player_surface_season_goat_points\n" +
+		"  WHERE surface = :surface::surface\n" +
+		"  UNION ALL\n" +
+		"  SELECT extract(YEAR FROM best_rank_date)::INTEGER season, player_id, goat_points\n" +
+		"  FROM player_surface_best_rank_goat_points_v\n" +
+		"  WHERE surface = :surface::surface\n" +
+		"  UNION ALL\n" +
+		"  SELECT extract(YEAR FROM date)::INTEGER season, player_id, goat_points\n" +
+		"  FROM player_best_surface_elo_rating_goat_points_v\n" +
+		"  WHERE surface = :surface::surface\n" +
+		"  UNION ALL\n" +
+		"  SELECT season, player_id, goat_points\n" +
+		"  FROM player_surface_best_season_goat_points_v\n" +
 		"  WHERE surface = :surface::surface\n" +
 		")";
 
