@@ -7,7 +7,9 @@
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
 <!--/*@thymesVar id="eloTypes" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType[]"*/-->
 <!--/*@thymesVar id="eloType" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType"*/-->
+<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
+<!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::template})">
 	<template>
 	<meta name="description" th:content="${forecast.event.name} + ' forecast by Tennis Crystal Ball'"/>
@@ -15,17 +17,40 @@
 		$(function() {
 			decorateSurface("#eventSurface");
 			$("#inProgressEventPills").find("a").click(tabClick);
-			[# th:if="${tab}"] $("#[(${tab})]Pill").click(); [/]
+			[# th:if="${tab}" th:switch="${tab}"]
+				[# th:case="'probable'"]
+				var $pill = $("#probablePill");
+				var url = $pill.data("url") + [(${params.param('playerId', playerId)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="'playerPath'"]
+				var $pill = $("#playerPathPill");
+				var url = $pill.data("url") + [(${params.param('playerId', playerId)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="*"]
+				$("#[(${tab})]Pill").click();
+				[/]
+			[/]
 			bindPopovers();
 			loadRankingTopN("ELO_RANK", 20);
 		});
 		function eloTypeChanged() {
-			window.location.href = "/inProgressEventForecast?inProgressEventId=[(${inProgressEventId})]&eloType=" + $("#eloType").val() + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
+			var tab = $("#inProgressEventPills li.active a").attr("href").substr(1);
+			var url = "/inProgressEventForecast?inProgressEventId=[(${inProgressEventId})]&tab=" + tab + "&eloType=" + $("#eloType").val();
+			var playerId;
+			if (tab === "probable")
+				playerId = $("#pinnedPlayer").val();
+			else if (tab === "playerPath")
+				playerId = $("#pathPlayer").val();
+			if (playerId)
+				url += "&playerId=" + playerId;
+			window.location.href = url;
 		}
 		function showPlayerPath(playerId) {
 			var $pill = $("#playerPathPill");
 			tabLoading($pill);
-			loadTab($pill, $pill.data("url") + "&playerId=" + playerId + "&eloType=" + $("#eloType").val());
+			loadTab($pill, $pill.data("url") + "&eloType=" + $("#eloType").val() + "&playerId=" + playerId);
 		}
 	</script>
 	<style type="text/css">
@@ -186,7 +211,7 @@
 	<div class="row">
 		<div class="col-lg-10 col-md-9">
 			<ul id="inProgressEventPills" class="nav nav-pills tab-param" th:with="params=${eloType != null ? '&eloType=' + eloType : ''}">
-				<li><a id="resultsPill" data-toggle="pill" href="#results" th:data-url="'/inProgressEventResults?inProgressEventId=' + ${inProgressEvent.id}">Completed</a></li>
+				<li><a id="resultsPill" data-toggle="pill" href="#results" th:data-url="'/inProgressEventResults?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Completed</a></li>
 				<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
 					<a th:id="'baseResult' + ${baseResult} + 'Pill'" data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
 				</li>
