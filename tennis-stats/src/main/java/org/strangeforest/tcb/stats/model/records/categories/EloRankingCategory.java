@@ -10,8 +10,8 @@ public class EloRankingCategory extends RankingCategory {
 
 	static final String ELO_DIFF_CONDITION = "r1.rank_date >= DATE '1968-07-01'";
 
-	public EloRankingCategory(RecordDomain domain) {
-		super(RankClass.ELO, RankType.ELO_RANK, suffix(domain.name, " ") + "Elo Ranking", N_A, N_A);
+	public EloRankingCategory(RankType rankType, RecordDomain domain) {
+		super(RankClass.ELO, rankType, suffix(domain.name, " ") + "Elo Ranking", N_A, N_A);
 		registerRanking(domain, "elo_");
 		String ratingColumn = domain.columnPrefix + "elo_rating";
 		register(mostPoints(domain.id + "EloRating", "Highest " + suffix(domain.name, " ") + "Elo Rating", "player_best_elo_rating", "best_" + ratingColumn, "best_" + ratingColumn + "_date", "Elo Rating", getRankType(domain), N_A));

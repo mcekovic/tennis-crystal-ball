@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.model.records;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.categories.*;
 import org.strangeforest.tcb.stats.util.*;
 
@@ -93,13 +94,13 @@ public abstract class Records {
 		register(WINS, new WinningStreaksCategory(), false);
 		register(RANKING, new ATPRankingCategory(), false);
 		register(RANKING, new OpenEraRankingCategory(), false);
-		register(RANKING, new EloRankingCategory(RecordDomain.ALL), false);
-		register(RANKING, new EloRankingCategory(RecordDomain.HARD), false);
-		register(RANKING, new EloRankingCategory(RecordDomain.CLAY), false);
-		register(RANKING, new EloRankingCategory(RecordDomain.GRASS), false);
-		register(RANKING, new EloRankingCategory(RecordDomain.CARPET), false);
-		register(RANKING, new EloRankingCategory(RecordDomain.OUTDOOR), false);
-		register(RANKING, new EloRankingCategory(RecordDomain.INDOOR), false);
+		register(RANKING, new EloRankingCategory(RankType.ELO_RANK, RecordDomain.ALL), false);
+		register(RANKING, new EloRankingCategory(RankType.HARD_ELO_RANK, RecordDomain.HARD), false);
+		register(RANKING, new EloRankingCategory(RankType.CLAY_ELO_RANK, RecordDomain.CLAY), false);
+		register(RANKING, new EloRankingCategory(RankType.GRASS_ELO_RANK, RecordDomain.GRASS), false);
+		register(RANKING, new EloRankingCategory(RankType.CARPET_ELO_RANK, RecordDomain.CARPET), false);
+		register(RANKING, new EloRankingCategory(RankType.OUTDOOR_ELO_RANK, RecordDomain.OUTDOOR), false);
+		register(RANKING, new EloRankingCategory(RankType.INDOOR_ELO_RANK, RecordDomain.INDOOR), false);
 		register(H2H, new HeadToHeadCategory(HeadToHeadCategory.ItemType.MATCHES, false), false);
 		register(H2H, new HeadToHeadCategory(HeadToHeadCategory.ItemType.FINALS, false), false);
 		register(H2H, new HeadToHeadSeriesCategory(false), false);

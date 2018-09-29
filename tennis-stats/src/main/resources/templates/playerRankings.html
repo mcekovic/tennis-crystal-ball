@@ -4,6 +4,7 @@
 <!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
 <!--/*@thymesVar id="fromDate" type="java.lang.String"*/-->
 <!--/*@thymesVar id="toDate" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bySeason" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankCategories" type="org.strangeforest.tcb.stats.model.core.RankCategory[]"*/-->
@@ -142,7 +143,7 @@
 	<div class="col-md-2">
 		<div id="rankingBySeasonDiv" class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show chart by season (year-end)">
-				<input id="rankingBySeason" type="checkbox" onchange="onRankingTimeSpanChange()"/> By season
+				<input id="rankingBySeason" type="checkbox" onchange="onRankingTimeSpanChange()" th:checked="${bySeason}"/> By season
 			</label>
 		</div>
 	</div>

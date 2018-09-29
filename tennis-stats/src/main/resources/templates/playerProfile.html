@@ -21,6 +21,7 @@
 <!--/*@thymesVar id="h2h" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="matches" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bySeason" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="infamous" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="searchPhrase" type="java.lang.String"*/-->
 <!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
@@ -57,7 +58,7 @@
 				[/]
 				[# th:case="'ranking'"]
 				var $pill = $("#rankingPill");
-				var url = $pill.data("url") + [(${params.param('rankType', rankType)})] + [(${params.param('season', season)})];
+				var url = $pill.data("url") + [(${params.param('rankType', rankType)})] + [(${params.param('season', season)})] + [(${params.param('bySeason', bySeason)})];
 				loadTab($pill, url);
 				[/]
 				[# th:case="'performance'"]

@@ -62,6 +62,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "h2h", required = false) Integer h2h,
 		@RequestParam(name = "matches", required = false) Integer matches,
 		@RequestParam(name = "rankType", required = false) String rankType,
+		@RequestParam(name = "bySeason", defaultValue = "false") boolean bySeason,
 		@RequestParam(name = "infamous", required = false) Boolean infamous,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
 	) {
@@ -91,6 +92,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("h2h", h2h);
 		modelMap.addAttribute("matches", matches);
 		modelMap.addAttribute("rankType", rankType);
+		modelMap.addAttribute("bySeason", bySeason);
 		modelMap.addAttribute("infamous", infamous);
 		modelMap.addAttribute("searchPhrase", searchPhrase);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
@@ -307,7 +309,8 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerRankings(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "rankType", required = false) String rankType,
-		@RequestParam(name = "season", required = false) Integer season
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "bySeason", defaultValue = "false") boolean bySeason
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		RankingHighlights rankingHighlights = rankingsService.getRankingHighlights(playerId);
@@ -319,6 +322,7 @@ public class PlayerProfileController extends PageController {
 			modelMap.addAttribute("fromDate", "01-01-" + season);
 			modelMap.addAttribute("toDate", "31-12-" + season);
 		}
+		modelMap.addAttribute("bySeason", bySeason);
 		modelMap.addAttribute("highlights", rankingHighlights);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("rankCategories", RankCategory.values());
