@@ -122,6 +122,26 @@ public abstract class RankingCategory extends RecordCategory {
 		register(careerSpanRanking(domain, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
 		register(careerSpanRanking(domain, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
 		register(careerSpanRanking(domain, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
+		if (domain == ALL && rankClass != RankClass.ELO) {
+			register(youngestOldestEndOfSeasonRanking(domain, YOUNGEST, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, YOUNGEST, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, YOUNGEST, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, YOUNGEST, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, YOUNGEST, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, YOUNGEST, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, OLDEST, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, OLDEST, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, OLDEST, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, OLDEST, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, OLDEST, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK, rankType));
+			register(youngestOldestEndOfSeasonRanking(domain, OLDEST, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK, rankType));
+			register(careerSpanEndOfSeasonRanking(domain, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
+			register(careerSpanEndOfSeasonRanking(domain, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
+			register(careerSpanEndOfSeasonRanking(domain, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
+			register(careerSpanEndOfSeasonRanking(domain, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
+			register(careerSpanEndOfSeasonRanking(domain, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
+			register(careerSpanEndOfSeasonRanking(domain, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
+		}
 	}
 
 	protected Record mostWeeksAt(RecordDomain domain, String id, String name, String rankDBName, String condition, String bestCondition) {
@@ -217,7 +237,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
 			SeasonRangeIntegerRecordDetail.class, null,
 			asList(
-				new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Seasons at " + name),
+				new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons at " + name),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
 				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "End Season")
 			)
@@ -277,6 +297,42 @@ public abstract class RankingCategory extends RecordCategory {
 				new RecordColumn("value", null, null, SPAN_WIDTH, "left", "Career Span"),
 				new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
 				new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "End Date")
+			)
+		);
+	}
+
+	protected Record youngestOldestEndOfSeasonRanking(RecordDomain domain, AgeType type, String id, String name, String rankDBName, String condition, RankType rankType) {
+		return new Record<>(
+			type.name + domain.id + "EndOfSeason" + rankClass.id + id, type.name + prefix(domain.name, " ") + " End of Season " + rankClass.name + prefix(name, " "),
+			/* language=SQL */
+			"SELECT player_id, " + type.function + "(age(season_end(r.season), p.dob)) AS value, " + type.function + "(r.season) AS season\n" +
+			"FROM player_year_end_" + rankDBName + "rank r INNER JOIN player_v p USING (player_id)\n" +
+			"WHERE " + domain.columnPrefix + "year_end_rank " + condition + seasonCondition + " AND p.dob IS NOT NULL\n" +
+			"GROUP BY player_id",
+			"r.value, r.season", type.order, type.order + ", r.season",
+			SeasonAgeRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&season=%2$d", rankType, recordDetail.getSeason()),
+			asList(
+				new RecordColumn("value", null, "valueUrl", AGE_WIDTH, "left", "Age"),
+				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
+			)
+		);
+	}
+
+	protected Record careerSpanEndOfSeasonRanking(RecordDomain domain, String id, String name, String rankDBName, String condition) {
+		name = suffix(domain.name, " ") + suffix(rankClass.name, " ") + name;
+		return new Record<>(
+			"Longest" + domain.id + "EndOfSeason" + rankClass.id + id + "Span", "Longest Career First End of Season " + name + " to Last " + name,
+			/* language=SQL */
+			"SELECT player_id, max(season) - min(season) + 1 AS value, min(season) AS start_season, max(season) AS end_season\n" +
+			"FROM player_year_end_" + rankDBName + "rank\n" +
+			"WHERE " + domain.columnPrefix + "year_end_rank " + condition + seasonCondition + "\n" +
+			"GROUP BY player_id",
+			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
+			SeasonRangeIntegerRecordDetail.class, null,
+			asList(
+				new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Season Span"),
+				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "First Season"),
+				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "Last Season")
 			)
 		);
 	}
