@@ -45,6 +45,11 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		register(bestPlayerThatNeverReachedTopN(TOP_3, TOP_3_NAME, ELO, "best_elo_rank", 3));
 		register(bestPlayerThatNeverReachedTopN(TOP_5, TOP_5_NAME, ELO, "best_elo_rank", 5));
 		register(bestPlayerThatNeverReachedTopN(TOP_10, TOP_10_NAME, ELO, "best_elo_rank", 10));
+		register(bestPlayerWithoutGOATPoints(ALL));
+		register(bestPlayerWithoutGOATPoints(HARD));
+		register(bestPlayerWithoutGOATPoints(CLAY));
+		register(bestPlayerWithoutGOATPoints(GRASS));
+		register(bestPlayerWithoutGOATPoints(CARPET));
 	}
 
 	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn) {
@@ -89,6 +94,20 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
 			asList(GOAT_POINTS_COLUMN)
+		);
+	}
+
+	private static Record bestPlayerWithoutGOATPoints(RecordDomain domain) {
+		return new Record<>(
+			"BestPlayerWO" + domain.id + "GOATPoints", "Best Player Without" + prefix(domain.name, " ") + " GOAT Points",
+			/* language=SQL */
+			"SELECT p.player_id, p.best_rank AS value, p.best_rank_date AS date\n" +
+			"FROM player_v p\n" +
+			"LEFT JOIN player" + (domain == RecordDomain.ALL ? "" : "_surface") + "_goat_points g ON g.player_id = p.player_id" + (domain != ALL ? " AND " + domain.condition : "") + "\n" +
+			"WHERE g.goat_points IS NULL AND p.best_rank > 0",
+			"r.value", "r.value", "r.value, date",
+			IntegerRecordDetail.class, null,
+			asList(new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", "Best Rank"))
 		);
 	}
 }
