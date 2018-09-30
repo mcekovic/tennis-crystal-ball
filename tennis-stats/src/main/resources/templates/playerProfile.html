@@ -53,7 +53,7 @@
 				[/]
 				[# th:case="'rivalries'"]
 				var $pill = $("#rivalriesPill");
-				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('opponent', opponent)})] + [(${params.param('h2h', h2h)})] + [(${params.param('matches', matches)})];
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('opponent', opponent)})] + [(${params.param('h2h', h2h)})] + [(${params.param('matches', matches)})];
 				loadTab($pill, url)
 				[/]
 				[# th:case="'ranking'"]

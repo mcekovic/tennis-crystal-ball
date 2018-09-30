@@ -103,7 +103,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT p.player_id, p.best_rank AS value, p.best_rank_date AS date\n" +
 			"FROM player_v p\n" +
-			"LEFT JOIN player" + (domain == RecordDomain.ALL ? "" : "_surface") + "_goat_points g ON g.player_id = p.player_id" + (domain != ALL ? " AND " + domain.condition : "") + "\n" +
+			"LEFT JOIN player" + (domain == RecordDomain.ALL ? "" : "_surface") + "_goat_points g ON g.player_id = p.player_id" + prefix(domain.condition, " AND ") + "\n" +
 			"WHERE g.goat_points IS NULL AND p.best_rank > 0",
 			"r.value", "r.value", "r.value, date",
 			IntegerRecordDetail.class, null,

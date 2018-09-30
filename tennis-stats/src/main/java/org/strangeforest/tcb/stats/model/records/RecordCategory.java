@@ -96,6 +96,6 @@ public abstract class RecordCategory {
 	}
 
 	protected static String where(String condition, int indent) {
-		return !isNullOrEmpty(condition) ? "\n" + (indent > 0 ? repeat(" ", indent) : "") + "WHERE " + condition : "";
+		return !isNullOrEmpty(condition) ? "\n" + repeat(" ", indent) + "WHERE " + condition : "";
 	}
 }

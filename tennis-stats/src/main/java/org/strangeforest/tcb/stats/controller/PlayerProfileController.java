@@ -280,6 +280,8 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerRivalries(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "h2h", required = false) Integer h2h,
 		@RequestParam(name = "matches", required = false) Integer matches
@@ -299,6 +301,8 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("countries", countries);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("opponent", opponent);
 		modelMap.addAttribute("h2h", h2h);
 		modelMap.addAttribute("matches", matches);

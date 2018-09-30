@@ -15,17 +15,19 @@ import static org.strangeforest.tcb.stats.model.records.categories.MostMatchesCa
 public class MostMatchesCategory extends RecordCategory {
 
 	public enum RecordType {
-		PLAYED("Played", "player_id", "&outcome="),
-		WON("Won", "winner_id", "&outcome=won"),
-		LOST("Lost", "loser_id", "&outcome=lost");
+		PLAYED("Played", "player_id", N_A, "&outcome="),
+		WON("Won", "winner_id", "p_matches = 1", "&outcome=won"),
+		LOST("Lost", "loser_id", "o_matches = 1", "&outcome=lost");
 
 		private final String name;
 		private final String playerColumn;
+		private final String condition;
 		private final String urlParam;
 
-		RecordType(String name, String playerColumn, String urlParam) {
+		RecordType(String name, String playerColumn, String condition, String urlParam) {
 			this.name = name;
 			this.playerColumn = playerColumn;
+			this.condition = condition;
 			this.urlParam = urlParam;
 		}
 
@@ -40,6 +42,7 @@ public class MostMatchesCategory extends RecordCategory {
 	}
 
 	private static final String MATCHES_WIDTH =    "120";
+	private static final String PLAYERS_WIDTH =    "100";
 	private static final String SEASON_WIDTH =      "80";
 	private static final String TOURNAMENT_WIDTH = "100";
 
@@ -77,6 +80,14 @@ public class MostMatchesCategory extends RecordCategory {
 		register(mostTournamentMatches(type, MASTERS));
 		register(mostTournamentMatches(type, ATP_500));
 		register(mostTournamentMatches(type, ATP_250));
+		register(mostMatchesVsDifferentPlayers(type, ALL));
+		register(mostMatchesVsDifferentPlayers(type, GRAND_SLAM));
+		register(mostMatchesVsDifferentPlayers(type, TOUR_FINALS));
+		register(mostMatchesVsDifferentPlayers(type, MASTERS));
+		register(mostMatchesVsDifferentPlayers(type, HARD));
+		register(mostMatchesVsDifferentPlayers(type, CLAY));
+		register(mostMatchesVsDifferentPlayers(type, GRASS));
+		register(mostMatchesVsDifferentPlayers(type, CARPET));
 		register(mostMatchesBy(type, "Retirement", "Retirement", "RET", "RET"));
 		register(mostMatchesBy(type, "Walkover", "Walkover", "W/O", "W/O"));
 		register(mostMatchesBy(type, "Defaulting", "Defaulting", "DEF", "DEF"));
@@ -131,6 +142,19 @@ public class MostMatchesCategory extends RecordCategory {
 				new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			)
+		);
+	}
+
+	private static Record mostMatchesVsDifferentPlayers(RecordType type, RecordDomain domain) {
+		return new Record<>(
+			domain.id + "MatchesVsDifferentPlayers" + type.name, "Most " + suffix(domain.name, " ") + "Matches Vs Different Players " + type.name,
+			/* language=SQL */
+			"SELECT player_id, count(DISTINCT opponent_id) AS value, max(date) AS date\n" +
+			"FROM player_match_for_stats_v" + where(domain.condition + (domain != ALL ? prefix(type.condition, " AND ") : type.condition)) + "\n" +
+			"GROUP BY player_id",
+			"r.value", "r.value DESC", "r.value DESC, r.date",
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries%2$s", playerId, domain.urlParam),
+			asList(new RecordColumn("value", null, "valueUrl", PLAYERS_WIDTH, "right", "Players"))
 		);
 	}
 
