@@ -46,7 +46,7 @@ VALUES
    ('Jaime Fillol Sr', 'Jaime Fillol'),
    ('Jamie Presslie', 'James Pressly'),
    ('John Satchwell Smith', 'Sj Smith'),
-   ('Jose Antonio (Pepe) Conde', 'Jose Hernandez'),
+   ('Jose Antonio (Pepe) Conde', 'Jose Antonio Pepe Conde'),
    ('Jose Hernandez Fernandez', 'Jose Hernandez'),
    ('Jose Statham', 'Jose Rubin Statham'),
    ('Juan Gisbert Sr', 'Juan Gisbert'),
