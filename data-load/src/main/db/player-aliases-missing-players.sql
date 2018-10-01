@@ -37,6 +37,7 @@ VALUES
    ('Herbert Browne', 'Herbert H Browne Jr'),
    ('Joao Menezes', 'Joao Lucas Magalhaes Hueb De Menezes'),
    ('Johan Tatlot', 'Johan Sebastien Tatlot'),
+   ('Jordan Correia', 'Jordan Correia Passos Do Carmo'),
    ('Jose Edison Mandarino', 'Jose Mandarino'),
    ('Juan Luis Rascon Lope', 'Juan Luis Tati Rascon'),
    ('Juan Pablo Varillas', 'Juan Pablo Varillas Patino Samudio'),
