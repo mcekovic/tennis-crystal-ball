@@ -50,8 +50,8 @@ subprojects {
 			exclude group: 'org.checkerframework'
 		}
 		compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
-		testCompile ("junit:junit:$junitVersion")
-		testCompile ("org.assertj:assertj-core:$assertjCoreVersion")
+		testCompile ("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+		testCompile ("org.assertj:assertj-core:$assertjVersion")
 	}
 }
 

@@ -2,7 +2,7 @@ package org.strangeforest.tcb.dataload
 
 
 import org.assertj.core.data.*
-import org.junit.*
+import org.junit.jupiter.api.*
 import org.mockito.invocation.*
 import org.mockito.stubbing.*
 import org.strangeforest.tcb.stats.model.core.*

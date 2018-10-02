@@ -3,16 +3,16 @@ package org.strangeforest.tcb.stats.model;
 import java.time.*;
 import java.util.*;
 
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.PlayerTournamentTimeline.*;
 
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
-public class PlayerTimelineTest {
+class PlayerTimelineTest {
 
 	@Test
-	public void simplePlayerTimelineIsCreated() {
+	void simplePlayerTimelineIsCreated() {
 		PlayerTimeline timeline = new PlayerTimeline(emptySet());
 		timeline.addItem(new PlayerTimelineItem(1, 1, "Australian Open", 2001, 101, LocalDate.of(2001, 1, 15), "G", "H", false, "Australian Open", "SF"));
 		timeline.addItem(new PlayerTimelineItem(1, 1, "Australian Open", 2002, 201, LocalDate.of(2002, 1, 20), "G", "H", false, "Australian Open", "QF"));

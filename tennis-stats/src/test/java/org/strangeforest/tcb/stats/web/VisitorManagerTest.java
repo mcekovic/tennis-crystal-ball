@@ -2,35 +2,35 @@ package org.strangeforest.tcb.stats.web;
 
 import java.util.*;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
-import org.mockito.junit.*;
+import org.mockito.junit.jupiter.*;
 
 import static eu.bitwalker.useragentutils.BrowserType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class VisitorManagerTest extends BaseVisitorManagerTest {
+@ExtendWith(MockitoExtension.class)
+class VisitorManagerTest extends BaseVisitorManagerTest {
 
 	@Captor ArgumentCaptor<Collection<Visitor>> visitorsCaptor;
 
 	@Test
-	public void managerIsInitialized() {
+	void managerIsInitialized() {
 		verifyNoMoreInteractions(repository);
 	}
 
 	@Test
-	public void firstVisitCreatesVisitor() {
+	void firstVisitCreatesVisitor() {
 		String ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
 	}
 
 	@Test
-	public void secondVisitDoesNothing() {
+	void secondVisitDoesNothing() {
 		String ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
@@ -43,7 +43,7 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 	}
 
 	@Test
-	public void thirdVisitSavesVisitor() {
+	void thirdVisitSavesVisitor() {
 		setField(manager, "saveEveryHitCount", 3);
 		String ipAddress = "192.168.1.1";
 
@@ -60,7 +60,7 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 
 
 	@Test
-	public void onlyUnsavedVisitorsAreSavedOnDestroy() throws InterruptedException {
+	void onlyUnsavedVisitorsAreSavedOnDestroy() throws InterruptedException {
 		String ipAddress1 = "192.168.1.1";
 		String ipAddress2 = "192.168.1.2";
 

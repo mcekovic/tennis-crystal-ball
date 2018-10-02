@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.dataload
 
-import org.junit.*
+import org.junit.jupiter.api.*
 
 class MatchScoreTest {
 

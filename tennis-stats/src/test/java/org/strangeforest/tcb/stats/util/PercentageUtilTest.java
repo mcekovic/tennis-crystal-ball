@@ -1,17 +1,17 @@
 package org.strangeforest.tcb.stats.util;
 
 import org.assertj.core.data.*;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
-public class PercentageUtilTest {
+class PercentageUtilTest {
 
 	private static final Offset<Double> OFFSET = Offset.offset(0.1d);
 
 	@Test
-	public void positivePctDiffTest() {
+	void positivePctDiffTest() {
 		assertThat(pctDiff(1.0, 0.0)).isCloseTo(50.5, OFFSET);
 		assertThat(pctDiff(2.0, 1.0)).isCloseTo(25.5, OFFSET);
 		assertThat(pctDiff(5.0, 4.0)).isCloseTo(10.5, OFFSET);
@@ -30,7 +30,7 @@ public class PercentageUtilTest {
 	}
 
 	@Test
-	public void negativePctDiffTest() {
+	void negativePctDiffTest() {
 		assertThat(pctDiff(0.0, 1.0)).isCloseTo(-50.5, OFFSET);
 		assertThat(pctDiff(1.0, 2.0)).isCloseTo(-25.5, OFFSET);
 		assertThat(pctDiff(4.0, 5.0)).isCloseTo(-10.5, OFFSET);
@@ -49,7 +49,7 @@ public class PercentageUtilTest {
 	}
 
 	@Test
-	public void adHocPctDiffTest() {
+	void adHocPctDiffTest() {
 		assertThat(pctDiff(60.0, 50.0)).isCloseTo(18.3, OFFSET);
 		assertThat(pctDiff(50.0, 40.0)).isCloseTo(18.3, OFFSET);
 		assertThat(pctDiff(40.0, 20.0)).isCloseTo(37.5, OFFSET);
@@ -61,7 +61,7 @@ public class PercentageUtilTest {
 	}
 
 	@Test
-	public void edgeCasesPctDiffTest() {
+	void edgeCasesPctDiffTest() {
 		assertThat(pctDiff(10.0, 0.0)).isCloseTo(55.0, OFFSET);
 		assertThat(pctDiff(100.0, 90.0)).isCloseTo(55.0, OFFSET);
 		assertThat(pctDiff(90.0, 0.0)).isCloseTo(95.0, OFFSET);
@@ -72,7 +72,7 @@ public class PercentageUtilTest {
 	}
 
 	@Test
-	public void zeroPctDiffTest() {
+	void zeroPctDiffTest() {
 		assertThat(pctDiff(0.0, 0.0)).isCloseTo(0.0, OFFSET);
 		assertThat(pctDiff(10.0, 10.0)).isCloseTo(0.0, OFFSET);
 		assertThat(pctDiff(50.0, 50.0)).isCloseTo(0.0, OFFSET);
@@ -81,7 +81,7 @@ public class PercentageUtilTest {
 	}
 
 	@Test
-	public void commutativePctDiffTest() {
+	void commutativePctDiffTest() {
 		for (double p1 = 0.0; p1 <= 1.0; p1 += 0.1) {
 			for (double p2 = 0.0; p2 <= 1.0; p2 += 0.1)
 				assertThat(pctDiff(p1, p2)).isCloseTo(-pctDiff(p2, p1), OFFSET);

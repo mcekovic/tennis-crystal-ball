@@ -1,19 +1,19 @@
 package org.strangeforest.tcb.stats.model;
 
 import org.assertj.core.data.*;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.core.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.strangeforest.tcb.stats.model.core.Surface.*;
 import static org.strangeforest.tcb.stats.model.core.SurfaceGroup.*;
 
-public class FavoriteSurfaceTest {
+class FavoriteSurfaceTest {
 
 	private static final Offset<Double> OFFSET = Offset.offset(1.0);
 
 	@Test
-	public void notEnoughMatchesNoFavoriteSurface() {
+	void notEnoughMatchesNoFavoriteSurface() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 1),
 			new WonLost(1, 1),
@@ -26,7 +26,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void similarSurfacesPercentageIsAllRounder() {
+	void similarSurfacesPercentageIsAllRounder() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(50, 50), // 50%
 			new WonLost(51, 49), // 51%
@@ -40,7 +40,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void singleSurfaceIsAlwaysFavorite() {
+	void singleSurfaceIsAlwaysFavorite() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 0),
 			new WonLost(5, 5), // 50%
@@ -54,7 +54,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void fromTwoSurfacesBetterIsFavorite() {
+	void fromTwoSurfacesBetterIsFavorite() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 0),
 			new WonLost(5, 5),  // 50%
@@ -68,7 +68,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void fromTwoSurfacesNoOneIsFavorite() {
+	void fromTwoSurfacesNoOneIsFavorite() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 0),
 			new WonLost(5, 5),  // 50%
@@ -82,7 +82,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void oneBestSurfaceIsFavorite() {
+	void oneBestSurfaceIsFavorite() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(15, 5), // 75%
 			new WonLost(8, 5),  // 61.5%
@@ -96,7 +96,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void oneBestSurfaceIsFavoriteIfBestSurfaceGapIsOverThreshold() {
+	void oneBestSurfaceIsFavoriteIfBestSurfaceGapIsOverThreshold() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(40, 10), // 80%
 			new WonLost(20, 30), // 40%
@@ -110,7 +110,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void oneBestSurfaceIsFavoriteIfBestSurfaceGapIsOverThresholdAndGreaterThenSecondBestSurfaceGapMultipliedByFactor() {
+	void oneBestSurfaceIsFavoriteIfBestSurfaceGapIsOverThresholdAndGreaterThenSecondBestSurfaceGapMultipliedByFactor() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(60, 40), // 60%
 			new WonLost(54, 46), // 55%
@@ -124,7 +124,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void surfaceGroupIsFavorite() {
+	void surfaceGroupIsFavorite() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(5, 5),  // 50%
 			new WonLost(20, 5), // 80%
@@ -138,7 +138,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void surfaceGroupForAndyMurrayIsGrass() {
+	void surfaceGroupForAndyMurrayIsGrass() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(434, 116), // 78.9%
 			new WonLost(105, 46),  // 69.6%
@@ -152,7 +152,7 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
-	public void surfaceGroupForIvanLendlIsNonGrass() {
+	void surfaceGroupForIvanLendlIsNonGrass() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(394, 83), // 82.6%
 			new WonLost(329, 77), // 81.0%

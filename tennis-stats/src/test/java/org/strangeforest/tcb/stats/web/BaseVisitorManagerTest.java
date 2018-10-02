@@ -3,8 +3,7 @@ package org.strangeforest.tcb.stats.web;
 import java.time.*;
 import java.util.*;
 
-import org.junit.After;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.mockito.verification.*;
 
@@ -12,33 +11,32 @@ import static eu.bitwalker.useragentutils.BrowserType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public abstract class BaseVisitorManagerTest {
+abstract class BaseVisitorManagerTest {
 
 	@InjectMocks protected VisitorManager manager;
 	@Mock protected VisitorRepository repository;
 	@Mock protected GeoIPService geoIPService;
 	@Captor protected ArgumentCaptor<Visitor> visitorCaptor;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		manager.init();
 		verify(repository).findAll();
 		verifyNoMoreInteractions(repository);
 		reset(repository);
-		when(geoIPService.getCountry(any())).thenReturn(Optional.empty());
 	}
 
-	@After
-	public void tearDown() throws InterruptedException {
+	@AfterEach
+	void tearDown() throws InterruptedException {
 		manager.destroy();
 		verifyNoMoreInteractions(geoIPService);
 	}
 
-	protected Visitor visitAndVerifyFirstVisit(String ipAddress) {
+	Visitor visitAndVerifyFirstVisit(String ipAddress) {
 		return visitAndVerifyFirstVisit(ipAddress, times(1));
 	}
 
-	protected Visitor visitAndVerifyFirstVisit(String ipAddress, VerificationMode mode) {
+	Visitor visitAndVerifyFirstVisit(String ipAddress, VerificationMode mode) {
 		when(repository.find(ipAddress)).thenReturn(Optional.empty());
 		when(repository.create(any(), any(), any(), any())).thenAnswer(invocation -> {
 			Object[] args = invocation.getArguments();

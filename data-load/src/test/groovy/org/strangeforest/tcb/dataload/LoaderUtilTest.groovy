@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.dataload
 
-import org.junit.Test
+import org.junit.jupiter.api.*
 
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
 

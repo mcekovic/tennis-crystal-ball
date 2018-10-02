@@ -1,10 +1,10 @@
 package org.strangeforest.tcb.model
 
-import org.junit.*
+import org.junit.jupiter.api.*
 
 class OutcomeCurveIT {
 
-	@Test	@Ignore
+	@Test	@Disabled
 	fun testCurve() {
 		println("Point    Game     TieBreak Set      NoTB Set BestOf3  BestOf5  BestOf5TB")
 		var p = 0.25

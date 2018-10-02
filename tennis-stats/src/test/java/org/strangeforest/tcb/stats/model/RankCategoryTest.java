@@ -1,14 +1,14 @@
 package org.strangeforest.tcb.stats.model;
 
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.core.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class RankCategoryTest {
+class RankCategoryTest {
 
 	@Test
-	public void rankCategoryIsLoaded() {
+	void rankCategoryIsLoaded() {
 		assertThat(RankCategory.values()).isNotEmpty();
 		for (RankCategory category : RankCategory.values())
 			assertThat(category.getRankTypes()).isNotEmpty();

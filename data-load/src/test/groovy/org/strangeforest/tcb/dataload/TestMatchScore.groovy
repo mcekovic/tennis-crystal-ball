@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.sql.Sql
+import groovy.sql.*
 
 def sqlPool = new SqlPool()
 

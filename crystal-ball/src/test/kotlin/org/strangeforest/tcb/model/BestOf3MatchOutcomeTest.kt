@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.model
 
-import org.junit.*
+import org.junit.jupiter.api.*
 
 import org.assertj.core.api.Assertions.*
 

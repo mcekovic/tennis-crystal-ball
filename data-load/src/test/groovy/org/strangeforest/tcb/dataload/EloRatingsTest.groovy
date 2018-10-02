@@ -1,7 +1,7 @@
 package org.strangeforest.tcb.dataload
 
 import org.assertj.core.data.*
-import org.junit.*
+import org.junit.jupiter.api.*
 
 import static org.assertj.core.api.Assertions.*
 import static org.strangeforest.tcb.dataload.EloRatings.*
