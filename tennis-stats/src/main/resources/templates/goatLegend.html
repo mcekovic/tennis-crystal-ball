@@ -70,7 +70,7 @@
 			</tr>
 			</tbody>
 		</table>
-		<p th:if="${config.getLevelTotalFactor('F') > 0 || config.getLevelTotalFactor('D') > 0 || config.getLevelTotalFactor('T') > 0}"><em>+ is for tournaments where points are assigned for wins in each round rather then for tournament result</em></p>
+		<p th:if="${config.getLevelTotalFactor('F') > 0 || config.getLevelTotalFactor('D') > 0 || config.getLevelTotalFactor('T') > 0}"><em>+ is for tournaments where points are assigned for wins in each round rather than for tournament result</em></p>
 		<p th:if="${config.getLevelTotalFactor('F') > 0}"><em>* Tour Finals draw is normally round-robin, but was knock-out from 1982 to 1985</em></p>
 		<p th:if="${config.getLevelTotalFactor('L') > 0}"><em>** Alternative Tour Finals (Dallas WCT and Grand Slam Cup)</em></p>
 		<p th:if="${config.getLevelTotalFactor('D') > 0 || config.getLevelTotalFactor('T') > 0}"><em>*** Davis Cup and World Team Cup points for each singles match win in the final tie</em></p>

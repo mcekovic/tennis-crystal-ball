@@ -110,7 +110,7 @@ class FavoriteSurfaceTest {
 	}
 
 	@Test
-	void oneBestSurfaceIsFavoriteIfBestSurfaceGapIsOverThresholdAndGreaterThenSecondBestSurfaceGapMultipliedByFactor() {
+	void oneBestSurfaceIsFavoriteIfBestSurfaceGapIsOverThresholdAndGreaterThanSecondBestSurfaceGapMultipliedByFactor() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(60, 40), // 60%
 			new WonLost(54, 46), // 55%

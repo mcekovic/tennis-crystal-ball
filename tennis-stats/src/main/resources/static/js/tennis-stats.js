@@ -657,7 +657,7 @@ function validateStatsFilter($matchesStatsFrom, $matchesStatsTo, $range) {
 	var from = $matchesStatsFrom.val();
 	var to = $matchesStatsTo.val();
 	if ($.isNumeric(from) && $.isNumeric(to) && parseFloat(from) > parseFloat(to)) {
-		$range.tooltip({title: "From is greater then to"}).tooltip("show");
+		$range.tooltip({title: "From is greater than to"}).tooltip("show");
 		$matchesStatsTo.focus();
 		return false;
 	}
