@@ -2,32 +2,32 @@ package org.strangeforest.tcb.stats.web;
 
 import java.util.*;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
-import org.springframework.test.context.junit4.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.springframework.transaction.annotation.*;
 
 import static eu.bitwalker.useragentutils.BrowserType.*;
 import static org.assertj.core.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = VisitorITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 @Transactional
-public class VisitorManagerIT {
+class VisitorManagerIT {
 
 	@Autowired private VisitorManager manager;
 	@Autowired private VisitorRepository repository;
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterEach
+	void tearDown() {
 		manager.clearCache();
 	}
 
 	@Test
-	public void firstVisitCreatesVisitor() {
+	void firstVisitCreatesVisitor() {
 		String ipAddress = "178.148.80.189";
 
 		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
@@ -39,7 +39,7 @@ public class VisitorManagerIT {
 	}
 
 	@Test
-	public void secondVisitIncrementHitsButDoesNotSaveVisitor() {
+	void secondVisitIncrementHitsButDoesNotSaveVisitor() {
 		String ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, WEB_BROWSER.name());
 
@@ -54,7 +54,7 @@ public class VisitorManagerIT {
 	}
 
 	@Test
-	public void thirdVisitIncrementHitsButAndSaveVisitor() {
+	void thirdVisitIncrementHitsButAndSaveVisitor() {
 		String ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, WEB_BROWSER.name());
 		manager.visit(ipAddress, WEB_BROWSER.name());
@@ -69,7 +69,7 @@ public class VisitorManagerIT {
 	}
 
 	@Test
-	public void visitorsAreSavedOnExit() throws InterruptedException {
+	void visitorsAreSavedOnExit() throws InterruptedException {
 		String ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, MOBILE_BROWSER.name());
 

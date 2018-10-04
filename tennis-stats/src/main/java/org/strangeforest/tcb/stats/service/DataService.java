@@ -24,7 +24,7 @@ public class DataService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 	@Autowired private CacheManager cacheManager;
-	@Autowired private CacheMetricsRegistrar cacheMetricsRegistrar;
+	@Autowired(required = false)  private CacheMetricsRegistrar cacheMetricsRegistrar;
 	@Autowired private MatchPredictionService matchPredictionService;
 
 	private static final String DB_SERVER_VERSION_QUERY = "SELECT version()";
@@ -43,9 +43,11 @@ public class DataService {
 
 	@PostConstruct
 	public void init() {
-		cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.Players", matchPredictionService.getPlayersCache()));
-		cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersRankings", matchPredictionService.getPlayersRankingsCache()));
-		cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersMatches", matchPredictionService.getPlayersMatchesCache()));
+		if (cacheMetricsRegistrar != null) {
+			cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.Players", matchPredictionService.getPlayersCache()));
+			cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersRankings", matchPredictionService.getPlayersRankingsCache()));
+			cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersMatches", matchPredictionService.getPlayersMatchesCache()));
+		}
 	}
 
 	private String dbServerVersionString() {

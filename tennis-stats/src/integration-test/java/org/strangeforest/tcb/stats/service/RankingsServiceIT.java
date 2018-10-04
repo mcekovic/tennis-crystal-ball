@@ -3,10 +3,10 @@ package org.strangeforest.tcb.stats.service;
 import java.time.*;
 import java.util.*;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.test.context.junit4.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.boot.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.core.*;
@@ -15,15 +15,15 @@ import org.strangeforest.tcb.stats.model.table.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.strangeforest.tcb.stats.model.core.RankType.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ServiceTest
-public class RankingsServiceIT {
+class RankingsServiceIT {
 
 	@Autowired private RankingsService rankingsService;
 	@Autowired private Fixtures fixtures;
 
 	@Test
-	public void rankingsTopN() {
+	void rankingsTopN() {
 		LocalDate currentRankingDate = rankingsService.getCurrentRankingDate(RANK);
 
 		List<PlayerRanking> playerRankings = rankingsService.getRankingsTopN(RANK, currentRankingDate, 10);
@@ -32,37 +32,37 @@ public class RankingsServiceIT {
 	}
 
 	@Test
-	public void rankingsTable() {
+	void rankingsTable() {
 		rankingsTableTest(RANK);
 	}
 
 	@Test
-	public void eloRankingsTable() {
+	void eloRankingsTable() {
 		rankingsTableTest(ELO_RANK);
 	}
 
 	@Test
-	public void hardEloRankingsTable() {
+	void hardEloRankingsTable() {
 		rankingsTableTest(HARD_ELO_RANK);
 	}
 
 	@Test
-	public void clayEloRankingsTable() {
+	void clayEloRankingsTable() {
 		rankingsTableTest(CLAY_ELO_RANK);
 	}
 
 	@Test
-	public void grassEloRankingsTable() {
+	void grassEloRankingsTable() {
 		rankingsTableTest(GRASS_ELO_RANK);
 	}
 
 	@Test
-	public void outdoorRankingsTable() {
+	void outdoorRankingsTable() {
 		rankingsTableTest(OUTDOOR_ELO_RANK);
 	}
 
 	@Test
-	public void indoorRankingsTable() {
+	void indoorRankingsTable() {
 		rankingsTableTest(INDOOR_ELO_RANK);
 	}
 
@@ -77,27 +77,27 @@ public class RankingsServiceIT {
 
 
 	@Test
-	public void peakEloRatings() {
+	void peakEloRatings() {
 		peakEloRatingsTest(ELO_RATING);
 	}
 
 	@Test
-	public void peakHardEloRatings() {
+	void peakHardEloRatings() {
 		peakEloRatingsTest(HARD_ELO_RATING);
 	}
 
 	@Test
-	public void peakClayEloRatings() {
+	void peakClayEloRatings() {
 		peakEloRatingsTest(CLAY_ELO_RATING);
 	}
 
 	@Test
-	public void peakGrassEloRatings() {
+	void peakGrassEloRatings() {
 		peakEloRatingsTest(GRASS_ELO_RATING);
 	}
 
 	@Test
-	public void peakCarpetEloRatings() {
+	void peakCarpetEloRatings() {
 		peakEloRatingsTest(CARPET_ELO_RATING);
 	}
 
@@ -107,7 +107,7 @@ public class RankingsServiceIT {
 	}
 
 	@Test
-	public void peakIndoorEloRatings() {
+	void peakIndoorEloRatings() {
 		peakEloRatingsTest(INDOOR_ELO_RATING);
 	}
 
@@ -121,67 +121,67 @@ public class RankingsServiceIT {
 
 
 	@Test
-	public void rankingsTimeline() {
+	void rankingsTimeline() {
 		rankingsTimelineTest(RANK);
 	}
 
 	@Test
-	public void eloRankingsTimeline() {
+	void eloRankingsTimeline() {
 		rankingsTimelineTest(ELO_RANK);
 	}
 
 	@Test
-	public void hardEloRankingsTimeline() {
+	void hardEloRankingsTimeline() {
 		rankingsTimelineTest(HARD_ELO_RANK);
 	}
 
 	@Test
-	public void clayEloRankingsTimeline() {
+	void clayEloRankingsTimeline() {
 		rankingsTimelineTest(CLAY_ELO_RANK);
 	}
 
 	@Test
-	public void grassEloRankingsTimeline() {
+	void grassEloRankingsTimeline() {
 		rankingsTimelineTest(GRASS_ELO_RANK);
 	}
 
 	@Test
-	public void carpetEloRankingsTimeline() {
+	void carpetEloRankingsTimeline() {
 		rankingsTimelineTest(CARPET_ELO_RANK);
 	}
 
 	@Test
-	public void outdoorEloRankingsTimeline() {
+	void outdoorEloRankingsTimeline() {
 		rankingsTimelineTest(OUTDOOR_ELO_RANK);
 	}
 
 	@Test
-	public void indoorEloRankingsTimeline() {
+	void indoorEloRankingsTimeline() {
 		rankingsTimelineTest(INDOOR_ELO_RANK);
 	}
 
 	@Test
-	public void goatPointsRankingsTimeline() {
+	void goatPointsRankingsTimeline() {
 		rankingsTimelineTest(GOAT_POINTS);
 	}
 
 	@Test
-	public void hardGOATPointsRankingsTimeline() {
+	void hardGOATPointsRankingsTimeline() {
 		rankingsTimelineTest(HARD_GOAT_POINTS);
 	}
 
 	@Test
-	public void clayGOATPointsRankingsTimeline() {
+	void clayGOATPointsRankingsTimeline() {
 		rankingsTimelineTest(CLAY_GOAT_POINTS);
 	}
 
 	@Test
-	public void grassGOATPointsRankingsTimeline() {
+	void grassGOATPointsRankingsTimeline() {
 		rankingsTimelineTest(GRASS_GOAT_POINTS);
 	}
 
 	@Test
-	public void carpetGOATPointsRankingsTimeline() {
+	void carpetGOATPointsRankingsTimeline() {
 		rankingsTimelineTest(CARPET_GOAT_POINTS);
 	}
 
@@ -194,7 +194,7 @@ public class RankingsServiceIT {
 
 
 	@Test
-	public void rankingHighlights() {
+	void rankingHighlights() {
 		int playerId = fixtures.getPlayerId("Roger Federer");
 
 		RankingHighlights rankingHighlights = rankingsService.getRankingHighlights(playerId);

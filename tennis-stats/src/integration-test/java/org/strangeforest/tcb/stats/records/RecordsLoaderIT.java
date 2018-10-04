@@ -2,26 +2,28 @@ package org.strangeforest.tcb.stats.records;
 
 import java.util.*;
 
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
-import org.springframework.test.context.testng.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.testng.annotations.*;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = RecordsITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
-public class RecordsLoaderIT extends AbstractTestNGSpringContextTests {
+class RecordsLoaderIT {
 
 	@Autowired private RecordsService recordsService;
 
 	@Test
-	public void loadAllFamousRecords() {
+	void loadAllFamousRecords() {
 		loadRecords(Records.getRecordCategories());
 	}
 
 	@Test
-	public void loadAllInfamousRecords() {
+	void loadAllInfamousRecords() {
 		loadRecords(Records.getInfamousRecordCategories());
 	}
 

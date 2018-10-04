@@ -2,19 +2,19 @@ package org.strangeforest.tcb.stats.web;
 
 import java.time.*;
 
-import org.junit.*;
-import org.junit.runner.*;
-import org.mockito.junit.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
+import org.mockito.junit.jupiter.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class VisitorManagerTimedIT extends BaseVisitorManagerTest {
+@ExtendWith(MockitoExtension.class)
+class VisitorManagerTimedIT extends BaseVisitorManagerTest {
 
-	@Before
+	@BeforeEach
 	@Override public void setUp() {
 		setField(manager, "expiryPeriod", Duration.ofSeconds(1L));
 		setField(manager, "expiryCheckPeriod", Duration.ofSeconds(1L));
@@ -22,7 +22,7 @@ public class VisitorManagerTimedIT extends BaseVisitorManagerTest {
 	}
 
 	@Test
-	public void whenVisitorIsExpiredVisitBySameIPAddressCreatesNewVisitor() throws InterruptedException {
+	void whenVisitorIsExpiredVisitBySameIPAddressCreatesNewVisitor() throws InterruptedException {
 		String ipAddress = "192.168.1.1";
 
 		Visitor visitor = visitAndVerifyFirstVisit(ipAddress);

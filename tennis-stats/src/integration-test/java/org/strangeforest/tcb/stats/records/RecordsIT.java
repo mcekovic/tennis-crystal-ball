@@ -2,45 +2,49 @@ package org.strangeforest.tcb.stats.records;
 
 import java.util.*;
 
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
-import org.springframework.test.context.testng.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.testng.annotations.*;
 
 import static java.util.Comparator.*;
 
+@ExtendWith(SpringExtension.class)
+@TestInstance(Lifecycle.PER_CLASS)
 @ContextConfiguration(classes = RecordsITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
-public class RecordsIT extends AbstractTestNGSpringContextTests {
+class RecordsIT {
 
 	@Autowired private RecordsService recordsService;
 	@Autowired private PlayerService playerService;
 
-	@BeforeClass
-	public void setUp() {
+	@BeforeAll
+	void setUp() {
 		recordsService.clearRecords();
 	}
 
 	@Test
-	public void testAllFamousRecords() {
+	void testAllFamousRecords() {
 		testRecords(Records.getRecordCategories(), false);
 	}
 
 	@Test
-	public void testAllInfamousRecords() {
+	void testAllInfamousRecords() {
 		testRecords(Records.getInfamousRecordCategories(), false);
 	}
 
 	@Test
-	public void testAllFamousRecordsForActivePlayers() {
+	void testAllFamousRecordsForActivePlayers() {
 		testRecords(Records.getRecordCategories(), true);
 	}
 
 	@Test
-	public void testAllInfamousRecordsForActivePlayers() {
+	void testAllInfamousRecordsForActivePlayers() {
 		testRecords(Records.getInfamousRecordCategories(), true);
 	}
 

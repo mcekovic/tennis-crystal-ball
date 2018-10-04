@@ -2,20 +2,15 @@ package org.strangeforest.tcb.stats.prediction;
 
 import java.util.*;
 
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
-public class PredictionScoringIT {
+class PredictionScoringIT {
 
-	private Random rnd;
-
-	@Before
-	public void setUp() {
-		rnd = new Random();
-	}
+	private Random rnd = new Random();
 
 	@Test
-	public void idealPredictionScore() {
+	void idealPredictionScore() {
 		for (double p = 0.0; p <= 1.001; p += 0.05) {
 			PredictionResult result = new PredictionResult(PredictionConfig.defaultConfig());
 			for (int i = 0; i < 1000000; i++) {
@@ -29,7 +24,7 @@ public class PredictionScoringIT {
 	}
 
 	@Test
-	public void predictionScore() {
+	void predictionScore() {
 		for (double p = 0.0; p <= 1.0; p += 0.1) {
 			for (double pp = 0.0; pp <= 1.0; pp += 0.1) {
 				PredictionResult result = new PredictionResult(PredictionConfig.defaultConfig());

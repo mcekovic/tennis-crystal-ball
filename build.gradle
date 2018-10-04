@@ -50,8 +50,13 @@ subprojects {
 			exclude group: 'org.checkerframework'
 		}
 		compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
-		testCompile ("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+		testImplementation ("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+		testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 		testCompile ("org.assertj:assertj-core:$assertjVersion")
+	}
+	
+	test {
+		useJUnitPlatform()
 	}
 }
 

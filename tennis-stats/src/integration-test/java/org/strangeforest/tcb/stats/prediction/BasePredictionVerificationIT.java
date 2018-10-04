@@ -6,13 +6,13 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
-import org.springframework.test.context.testng.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.testng.annotations.*;
 
 import com.google.common.base.*;
 
@@ -21,7 +21,8 @@ import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
-public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringContextTests {
+@TestInstance(Lifecycle.PER_CLASS)
+abstract class BasePredictionVerificationIT {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private MatchPredictionService predictionService;
@@ -41,29 +42,29 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		"ORDER BY m.date";
 
 
-	@BeforeClass
-	public void setUp() {
+	@BeforeAll
+	void setUp() {
 		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	}
 
-	@AfterClass
-	public void tearDown() {
+	@AfterAll
+	void tearDown() {
 		executor.shutdown();
 	}
 
-	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
+	PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
 		return verifyPrediction(fromDate, toDate, null, TuningSet.OVERALL);
 	}
 
-	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, TuningSet tuningSet) throws InterruptedException {
+	PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, TuningSet tuningSet) throws InterruptedException {
 		return verifyPrediction(fromDate, toDate, null, tuningSet);
 	}
 
-	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config) throws InterruptedException {
+	PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config) throws InterruptedException {
 		return verifyPrediction(fromDate, toDate, config, TuningSet.OVERALL);
 	}
 
-	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
+	PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
 		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights: ", fromDate, toDate);
 		printWeights(config, tuningSet, true);
 		Stopwatch stopwatch = Stopwatch.createStarted();
@@ -152,7 +153,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		);
 	}
 
-	protected static void printWeights(PredictionConfig config, TuningSet tuningSet, boolean compact) {
+	static void printWeights(PredictionConfig config, TuningSet tuningSet, boolean compact) {
 		if (config == null && tuningSet.getLevel() != TuningSetLevel.TOP)
 			config = PredictionConfig.defaultConfig(tuningSet);
 		if (config != null)
@@ -161,7 +162,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 			System.out.println("Using variable tuning set weights");
 	}
 
-	protected static void printWeights(PredictionConfig config, boolean compact) {
+	static void printWeights(PredictionConfig config, boolean compact) {
 		for (PredictionArea area : PredictionArea.values()) {
 			double areaWeight = config.getAreaWeight(area);
 			if (areaWeight > 0.0) {
@@ -175,7 +176,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 			System.out.println();
 	}
 
-	protected static void printResultDistribution(PredictionVerificationResult result) {
+	static void printResultDistribution(PredictionVerificationResult result) {
 		System.out.println(result.getProbabilityRangeResults());
 		System.out.println(result.getSurfaceResults());
 		System.out.println(result.getLevelResults());

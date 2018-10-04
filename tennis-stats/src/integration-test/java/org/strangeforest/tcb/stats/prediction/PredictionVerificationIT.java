@@ -2,105 +2,107 @@ package org.strangeforest.tcb.stats.prediction;
 
 import java.time.*;
 
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
-import org.testng.annotations.*;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
-@Test(sequential = true)
-public class PredictionVerificationIT extends BasePredictionVerificationIT {
+class PredictionVerificationIT extends BasePredictionVerificationIT {
 
 	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
 
 	@Test
-	public void verifyDefaultPrediction() throws InterruptedException {
+	void verifyDefaultPrediction() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE);
 	}
 
 	@Test
-	public void verifyDefaultRankingPrediction() throws InterruptedException {
+	void verifyDefaultRankingPrediction() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.OVERALL_RANKING), TuningSet.OVERALL_RANKING);
 	}
 
 	@Test
-	public void verifyDefaultRecentFormPrediction() throws InterruptedException {
+	void verifyDefaultRecentFormPrediction() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.OVERALL_RECENT_FORM), TuningSet.OVERALL_RECENT_FORM);
 	}
 
 	@Test
-	public void verifyDefaultH2HPrediction() throws InterruptedException {
+	void verifyDefaultH2HPrediction() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.OVERALL_H2H), TuningSet.OVERALL_H2H);
 	}
 
 	@Test
-	public void verifyDefaultWinningPctPrediction() throws InterruptedException {
+	void verifyDefaultWinningPctPrediction() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.OVERALL_WINNING_PCT), TuningSet.OVERALL_WINNING_PCT);
 	}
 
 	@Test
-	public void verifyOverallDefaultPrediction() throws InterruptedException {
+	void verifyOverallDefaultPrediction() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(), TuningSet.OVERALL);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForHardOutdoor() throws InterruptedException {
+	void verifyDefaultPredictionForHardOutdoor() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForClay() throws InterruptedException {
+	void verifyDefaultPredictionForClay() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.CLAY);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForGrass() throws InterruptedException {
+	void verifyDefaultPredictionForGrass() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.GRASS);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForHardIndoorCarpet() throws InterruptedException {
+	void verifyDefaultPredictionForHardIndoorCarpet() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.HARD_INDOOR_CARPET);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForBestOf3() throws InterruptedException {
+	void verifyDefaultPredictionForBestOf3() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.BEST_OF_3);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForBestOf5() throws InterruptedException {
+	void verifyDefaultPredictionForBestOf5() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.BEST_OF_5);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForHardOutdoorBestOf3() throws InterruptedException {
+	void verifyDefaultPredictionForHardOutdoorBestOf3() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR_BEST_OF_3);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForHardOutdoorBestOf5() throws InterruptedException {
+	void verifyDefaultPredictionForHardOutdoorBestOf5() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR_BEST_OF_5);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForClayBestOf3() throws InterruptedException {
+	void verifyDefaultPredictionForClayBestOf3() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.CLAY_BEST_OF_3);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForClayBestOf5() throws InterruptedException {
+	void verifyDefaultPredictionForClayBestOf5() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.CLAY_BEST_OF_5);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForGrassBestOf3() throws InterruptedException {
+	void verifyDefaultPredictionForGrassBestOf3() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.GRASS_BEST_OF_3);
 	}
 
 	@Test
-	public void verifyDefaultPredictionForGrassBestOf5() throws InterruptedException {
+	void verifyDefaultPredictionForGrassBestOf5() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.GRASS_BEST_OF_5);
 	}
 
@@ -110,13 +112,13 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 	}
 
 	@Test
-	public void singleAreaAllItemsPredictions() throws InterruptedException {
+	void singleAreaAllItemsPredictions() throws InterruptedException {
 		for (PredictionArea area : PredictionArea.values())
 			verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.areaEqualWeights(area));
 	}
 
 	@Test
-	public void singleItemPredictions() throws InterruptedException {
+	void singleItemPredictions() throws InterruptedException {
 		for (PredictionArea area : PredictionArea.values()) {
 			for (PredictionItem item : area.getItems())
 				verifyPredictionPrintInfo(FROM_DATE, TO_DATE, new PredictionConfig(area, 1.0, item, 1.0));
@@ -124,7 +126,7 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 	}
 
 	@Test
-	public void adHocSingleItemPrediction() throws InterruptedException {
+	void adHocSingleItemPrediction() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, new PredictionConfig(PredictionArea.RANKING, 1.0, RankingPredictionItem.ELO, 1.0));
 	}
 

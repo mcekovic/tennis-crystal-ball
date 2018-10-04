@@ -1,23 +1,23 @@
 package org.strangeforest.tcb.stats.service;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.test.context.junit4.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.*;
 import org.strangeforest.tcb.stats.boot.*;
 import org.strangeforest.tcb.stats.model.core.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ServiceTest
-public class PlayerServiceIT {
+class PlayerServiceIT {
 
 	@Autowired private PlayerService playerService;
 
 	@Test
-	public void playerExists() {
+	void playerExists() {
 		for (String player : PlayersFixture.PLAYERS)
 			playerExists(player);
 	}

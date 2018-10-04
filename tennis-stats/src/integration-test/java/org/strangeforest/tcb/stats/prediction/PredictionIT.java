@@ -2,13 +2,14 @@ package org.strangeforest.tcb.stats.prediction;
 
 import java.time.*;
 
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
-import org.springframework.test.context.testng.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.testng.annotations.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.data.Percentage.*;
@@ -16,14 +17,15 @@ import static org.strangeforest.tcb.stats.model.core.Round.*;
 import static org.strangeforest.tcb.stats.model.core.Surface.*;
 import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
-public class PredictionIT extends AbstractTestNGSpringContextTests {
+class PredictionIT {
 
 	@Autowired private PlayerService playerService;
 	@Autowired private MatchPredictionService predictionService;
 
 	@Test
-	public void novakDjokovicVsRafaelNadalPotentialRolandGarrosFinalPrediction() {
+	void novakDjokovicVsRafaelNadalPotentialRolandGarrosFinalPrediction() {
 		int playerId1 = playerService.findPlayerId("Novak Djokovic").get();
 		int playerId2 = playerService.findPlayerId("Rafael Nadal").get();
 

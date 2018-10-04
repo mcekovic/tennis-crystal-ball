@@ -2,10 +2,10 @@ package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.test.context.junit4.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.boot.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.core.*;
@@ -13,15 +13,15 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ServiceTest
-public class RivalriesServiceIT {
+class RivalriesServiceIT {
 
 	@Autowired private RivalriesService rivalriesService;
 	@Autowired private Fixtures fixtures;
 
 	@Test
-	public void greatestRivalries() {
+	void greatestRivalries() {
 		BootgridTable<GreatestRivalry> greatestRivalries = rivalriesService.getGreatestRivalriesTable(new RivalryFilter((Integer)null, "M", 3, "C", false, null), null, null, "rivalry_rank", 20, 1);
 
 		assertThat(greatestRivalries.getRowCount()).isEqualTo(20);
@@ -29,7 +29,7 @@ public class RivalriesServiceIT {
 	}
 
 	@Test
-	public void headsToHeads() {
+	void headsToHeads() {
 		List<Integer> playerIds = Arrays.asList(
 			fixtures.getPlayerId("Roger Federer"),
 			fixtures.getPlayerId("Rafael Nadal"),
@@ -43,7 +43,7 @@ public class RivalriesServiceIT {
 	}
 
 	@Test
-	public void playerH2H() {
+	void playerH2H() {
 		int playerId = fixtures.getPlayerId("Novak Djokovic");
 		
 		Optional<WonDrawLost> playerH2H = rivalriesService.getPlayerH2H(playerId);
@@ -52,7 +52,7 @@ public class RivalriesServiceIT {
 	}
 
 	@Test
-	public void playerRivalries() {
+	void playerRivalries() {
 		BootgridTable<PlayerRivalryRow> playerRivalries = rivalriesService.getPlayerRivalriesTable(1, RivalryPlayerListFilter.ALL, RivalrySeriesFilter.ALL, "matches", 10, 1);
 
 		assertThat(playerRivalries.getRowCount()).isPositive();

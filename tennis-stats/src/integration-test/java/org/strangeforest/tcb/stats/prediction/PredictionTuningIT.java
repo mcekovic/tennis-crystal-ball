@@ -5,10 +5,10 @@ import java.time.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
-import org.testng.annotations.*;
 
 import static java.util.Arrays.*;
 import static java.util.Comparator.*;
@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.PredictionArea.*;
 
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
-public class PredictionTuningIT extends BasePredictionVerificationIT {
+class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
@@ -28,42 +28,42 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 	// Starting from default weights
 
 	@Test
-	public void tuneDefaultPrediction() throws InterruptedException {
+	void tuneDefaultPrediction() throws InterruptedException {
 		doTunePrediction(PredictionConfig.defaultConfig(TUNING_SET), null);
 	}
 
 	@Test
-	public void tuneDefaultPredictionByArea() throws InterruptedException {
+	void tuneDefaultPredictionByArea() throws InterruptedException {
 		doTunePredictionByArea(PredictionConfig.defaultConfig(TUNING_SET), null);
 	}
 
 	@Test
-	public void tuneDefaultPredictionByItem() throws InterruptedException {
+	void tuneDefaultPredictionByItem() throws InterruptedException {
 		doTunePredictionByItem(PredictionConfig.defaultConfig(TUNING_SET), null);
 	}
 
 	@Test
-	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
+	void tuneDefaultPredictionInRankingArea() throws InterruptedException {
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING, null);
 	}
 
 	@Test
-	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
+	void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM, null);
 	}
 
 	@Test
-	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
+	void tuneDefaultPredictionInH2HArea() throws InterruptedException {
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), H2H, null);
 	}
 
 	@Test
-	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
+	void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), WINNING_PCT, null);
 	}
 
 	@Test
-	public void scriptedTuneDefaultPrediction() throws InterruptedException {
+	void scriptedTuneDefaultPrediction() throws InterruptedException {
 		int factor = 100;
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING, 5 * factor);
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM, 5 * factor);
@@ -75,38 +75,38 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	// Starting from equal weights
 
-	@Test @Ignore
-	public void tunePrediction() throws InterruptedException {
+	@Test @Disabled
+	void tunePrediction() throws InterruptedException {
 		doTunePrediction(PredictionConfig.equalWeights(), null);
 	}
 
-	@Test @Ignore
-	public void tunePredictionByArea() throws InterruptedException {
+	@Test @Disabled
+	void tunePredictionByArea() throws InterruptedException {
 		doTunePredictionByArea(PredictionConfig.equalWeights(), null);
 	}
 
-	@Test @Ignore
-	public void tunePredictionByItem() throws InterruptedException {
+	@Test @Disabled
+	void tunePredictionByItem() throws InterruptedException {
 		doTunePredictionByItem(PredictionConfig.equalWeights(), null);
 	}
 
-	@Test @Ignore
-	public void tunePredictionInRankingArea() throws InterruptedException {
+	@Test @Disabled
+	void tunePredictionInRankingArea() throws InterruptedException {
 		doTunePredictionInAreaFromPointZero(RANKING, null);
 	}
 
-	@Test @Ignore
-	public void tunePredictionInRecentFormArea() throws InterruptedException {
+	@Test @Disabled
+	void tunePredictionInRecentFormArea() throws InterruptedException {
 		doTunePredictionInAreaFromPointZero(RECENT_FORM, null);
 	}
 
-	@Test @Ignore
-	public void tunePredictionInH2HArea() throws InterruptedException {
+	@Test @Disabled
+	void tunePredictionInH2HArea() throws InterruptedException {
 		doTunePredictionInAreaFromPointZero(H2H, null);
 	}
 
-	@Test @Ignore
-	public void tunePredictionInWinningPctArea() throws InterruptedException {
+	@Test @Disabled
+	void tunePredictionInWinningPctArea() throws InterruptedException {
 		doTunePredictionInAreaFromPointZero(WINNING_PCT, null);
 	}
 

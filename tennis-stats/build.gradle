@@ -96,7 +96,6 @@ dependencies {
 		exclude group: 'org.apache.logging.log4j'
 	}
 	testCompile ("org.mockito:mockito-junit-jupiter:$mockitoVersion")
-	testCompile ("org.testng:testng:$testngVersion")
 
 	integrationTestCompile sourceSets.main.output
 	integrationTestCompile sourceSets.test.output

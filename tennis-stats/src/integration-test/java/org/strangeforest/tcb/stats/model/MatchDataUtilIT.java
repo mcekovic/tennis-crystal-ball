@@ -1,15 +1,15 @@
 package org.strangeforest.tcb.stats.model;
 
 import org.assertj.core.data.*;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 
-public class MatchDataUtilIT {
+class MatchDataUtilIT {
 
 	@Test
-	public void testProbabilityTransformer() {
+	void testProbabilityTransformer() {
 		System.out.println("Set        Best of 3  Best of 5");
 		for (double p = 0.0; p <= 1.0; p += 0.01) {
 			double pBestOf3 = bestOf3MatchProbability(p);

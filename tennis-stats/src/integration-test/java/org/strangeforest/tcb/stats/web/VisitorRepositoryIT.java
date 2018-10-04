@@ -2,27 +2,27 @@ package org.strangeforest.tcb.stats.web;
 
 import java.util.*;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
-import org.springframework.test.context.junit4.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.springframework.transaction.annotation.*;
 
 import static eu.bitwalker.useragentutils.BrowserType.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = VisitorITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 @Transactional
-public class VisitorRepositoryIT {
+class VisitorRepositoryIT {
 
 	@Autowired private VisitorRepository repository;
 
 	@Test
-	public void visitorIsCreatedAndFound() {
+	void visitorIsCreatedAndFound() {
 		String ipAddress = "192.168.1.1";
 		String countryId = "SRB";
 		String country = "Serbia";
@@ -42,7 +42,7 @@ public class VisitorRepositoryIT {
 	}
 
 	@Test
-	public void visitorIsNotFound() {
+	void visitorIsNotFound() {
 		String ipAddress = "192.168.1.1";
 		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
 
@@ -50,7 +50,7 @@ public class VisitorRepositoryIT {
 	}
 
 	@Test
-	public void visitorsAreAllFound() {
+	void visitorsAreAllFound() {
 		int existingVisitors = getExistingVisitors();
 		String ipAddress1 = "192.168.1.1";
 		repository.create(ipAddress1, "SRB", "Serbia", WEB_BROWSER.name());
@@ -64,7 +64,7 @@ public class VisitorRepositoryIT {
 	}
 
 	@Test
-	public void visitorIsSaved() {
+	void visitorIsSaved() {
 		String ipAddress = "192.168.1.1";
 		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia", WEB_BROWSER.name());
 
@@ -77,7 +77,7 @@ public class VisitorRepositoryIT {
 	}
 
 	@Test
-	public void allVisitorAreSaved() {
+	void allVisitorAreSaved() {
 		int existingVisitors = getExistingVisitors();
 		String ipAddress1 = "192.168.1.1";
 		Visitor visitor1 = repository.create(ipAddress1, "SRB", "Serbia", WEB_BROWSER.name());
@@ -95,7 +95,7 @@ public class VisitorRepositoryIT {
 	}
 
 	@Test
-	public void visitorIsExpired() {
+	void visitorIsExpired() {
 		String ipAddress = "192.168.1.1";
 		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia", WEB_BROWSER.name());
 		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
