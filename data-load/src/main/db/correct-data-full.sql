@@ -32,6 +32,18 @@ UPDATE player
 SET country_id = 'SRB'
 WHERE first_name = 'Slobodan' AND last_name = 'Zivojinovic';
 
+UPDATE player
+SET country_id = 'GEO'
+WHERE first_name = 'Nikoloz' AND last_name = 'Basilashvili';
+
+WITH basilashvili_id AS (
+	SELECT player_id FROM player_v WHERE name = 'Nikoloz Basilashvili'
+)
+UPDATE match
+SET winner_country_id = CASE WHEN winner_id = (SELECT player_id FROM basilashvili_id) THEN 'GEO' ELSE winner_country_id END,
+	loser_country_id = CASE WHEN loser_id = (SELECT player_id FROM basilashvili_id) THEN 'GEO' ELSE loser_country_id END
+WHERE (winner_id = (SELECT player_id FROM basilashvili_id) OR loser_id = (SELECT player_id FROM basilashvili_id));
+
 COMMIT;
 
 
