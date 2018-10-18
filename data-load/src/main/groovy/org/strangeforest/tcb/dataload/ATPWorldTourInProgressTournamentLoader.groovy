@@ -148,9 +148,12 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 		def drawTable = doc.select('#scoresDrawTable')
 		def rounds = drawTable.select('thead > tr > th').findAll().collect { round -> round.text() }
+		rounds = rounds.collect { r -> mapRound(r, rounds)}
 		def entryRound = rounds[0]
-		if (verbose)
+		if (verbose) {
+			println "Rounds $rounds"
 			println '\n' + entryRound
+		}
 
 		// Processing entry round
 		Elements entryMatches = drawTable.select('table.scores-draw-entry-box-table')
@@ -344,6 +347,20 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def type = !season ? 'current' : 'archive'
 		def seasonStr = !season ? '' : "/$season"
 		"http://www.atpworldtour.com/en/scores/$type/$urlId/$extId$seasonStr/draws"
+	}
+
+	static mapRound(String round, List<String> rounds) {
+		switch (round) {
+			case '1st Rd':
+			case '2nd Rd':
+				int pos = rounds.indexOf(round)
+				for (int i = pos + 1; i < rounds.size(); i++) {
+					int j = KOResult.values().findIndexOf { v -> v.name() == rounds[i]}
+					if (j >= 0)
+						return KOResult.values()[j].offset(pos - i).name()
+				}
+		}
+		return round
 	}
 
 	

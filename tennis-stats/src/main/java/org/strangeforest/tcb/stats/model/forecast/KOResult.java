@@ -18,4 +18,8 @@ public enum KOResult {
 	public KOResult prev() {
 		return KOResult.values()[ordinal() - 1];
 	}
+
+	public KOResult offset(int offset) {
+		return KOResult.values()[ordinal() + offset];
+	}
 }
