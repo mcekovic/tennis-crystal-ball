@@ -102,8 +102,11 @@ abstract class BaseATPWorldTourTournamentLoader {
 
 	static mapRound(String round) {
 		switch (round) {
+			case 'Final':
 			case 'Finals': return 'F'
+			case 'Semifinals':
 			case 'Semi-Finals': return 'SF'
+			case 'Quarterfinals':
 			case 'Quarter-Finals': return 'QF'
 			case 'Round of 16': return 'R16'
 			case 'Round of 32': return 'R32'
@@ -122,6 +125,8 @@ abstract class BaseATPWorldTourTournamentLoader {
 	static mapEntry(String entry) {
 		if (entry) {
 			switch (entry) {
+				case 'W': return 'WC'
+				case 'L': return 'LL'
 				case 'S': return 'SE'
 				case 'Alt': return 'AL'
 			}
