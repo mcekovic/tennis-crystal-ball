@@ -5,6 +5,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
 <!--/*@thymesVar id="fromSeason" type="java.lang.String"*/-->
@@ -13,6 +14,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
@@ -43,6 +45,8 @@
 			if (surface) url += "&surface=" + surface;
 			var indoor = $("#indoor").val();
 			if (indoor) url += "&indoor=" + indoor;
+			var speed = $("#speed").val();
+			if (speed) url += "&speed=" + speed;
 			var round = $("#round").val();
 			if (round) url += "&round=" + encodeURIComponent(round);
 			var tournamentId = $("#tournament").val();
@@ -56,6 +60,7 @@
 			$("#bestOf").val("");
 			$("#surface").val("");
 			$("#indoor").val("");
+			$("#speed").val("");
 			$("#round").val("");
 			$("#tournament").val("");
 			reloadStatsTimeline();
@@ -133,7 +138,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="statsTimelineAdvancedFilter" class="collapse" th:attrappend="class=${bestOf != null || indoor != null || fromSeason != null || toSeason != null? ' in' : _}">
+	<div id="statsTimelineAdvancedFilter" class="collapse" th:attrappend="class=${bestOf != null || indoor != null || speed != null || fromSeason != null || toSeason != null? ' in' : _}">
 		<div class="row margin-top">
 			<div class="col-md-2">
 				<select id="bestOf" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
@@ -147,6 +152,12 @@
 					<option value="">Outdoor / Indoor</option>
 					<option value="false" th:selected="${indoor == false}">Outdoor</option>
 					<option value="true" th:selected="${indoor}">Indoor</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="speed" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+					<option value="">All speeds</option>
+					<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
 				</select>
 			</div>
 			<div class="col-md-4">
@@ -170,7 +181,7 @@
 		<tr>
 			<th style="border-right: 3px solid lightgray">Season</th>
 			<th th:each="season : ${stats.keySet()}" th:if="${season}" class="season">
-				<a th:href="@{/season(season=${season}, tab=statistics, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, tournamentId=${tournamentId})}" th:text="${season}" title="Show season">2018</a>
+				<a th:href="@{/season(season=${season}, tab=statistics, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round}, tournamentId=${tournamentId})}" th:text="${season}" title="Show season">2018</a>
 			</th>
 			<th class="season">Total</th>
 		</tr>
@@ -197,7 +208,7 @@
 		<tr style="border-top: 3px solid lightgray">
 			<th style="border-right: 3px solid lightgray">Season</th>
 			<th th:each="season : ${stats.keySet()}" th:if="${season}" class="season">
-				<a th:href="@{/season(season=${season}, tab=statistics, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, tournamentId=${tournamentId})}" th:text="${season}" title="Show season">2018</a>
+				<a th:href="@{/season(season=${season}, tab=statistics, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round}, tournamentId=${tournamentId})}" th:text="${season}" title="Show season">2018</a>
 			</th>
 			<th class="season">Total</th>
 		</tr>

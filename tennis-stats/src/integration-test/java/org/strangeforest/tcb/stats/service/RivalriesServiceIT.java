@@ -22,7 +22,7 @@ class RivalriesServiceIT {
 
 	@Test
 	void greatestRivalries() {
-		BootgridTable<GreatestRivalry> greatestRivalries = rivalriesService.getGreatestRivalriesTable(new RivalryFilter((Integer)null, "M", 3, "C", false, null), null, null, "rivalry_rank", 20, 1);
+		BootgridTable<GreatestRivalry> greatestRivalries = rivalriesService.getGreatestRivalriesTable(new RivalryFilter(null, "M", 3, "C", false, null, null, null), null, null, "rivalry_rank", 20, 1);
 
 		assertThat(greatestRivalries.getRowCount()).isEqualTo(20);
 		assertThat(greatestRivalries.getTotal()).isGreaterThanOrEqualTo(50);

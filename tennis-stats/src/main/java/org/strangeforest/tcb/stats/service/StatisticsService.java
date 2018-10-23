@@ -76,12 +76,15 @@ public class StatisticsService {
 
 	private static final String PLAYERS_FILTERED_STATS_QUERY = //language=SQL
 		"SELECT m.player_id, " + PLAYER_STATS_SUMMED_COLUMNS +
-		"FROM player_match_stats_v m\n" +
-		"WHERE m.player_id IN (:playerIds)%1$s%2$s\n" +
+		"FROM player_match_stats_v m%1$s\n" +
+		"WHERE m.player_id IN (:playerIds)%2$s%3$s\n" +
 		"GROUP BY m.player_id";
 
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
 	 	"\nINNER JOIN tournament_event e USING (tournament_event_id)";
+
+	private static final String EVENT_STATS_JOIN = //language=SQL
+	 	"\nLEFT JOIN event_stats es USING (tournament_event_id)";
 
 	private static final String TOURNAMENT_EVENT_RESULT_JOIN = //language=SQL
 	 	"\nINNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
@@ -103,7 +106,7 @@ public class StatisticsService {
 
 	private static final String SEASONS_STATS_QUERY = //language=SQL
 		"SELECT season, " + PLAYER_BASIC_STATS_SUMMED_COLUMNS + "0 opponent_rank, 0 opponent_elo_rating\n" +
-		"FROM player_match_stats_v%1$s\n" +
+		"FROM player_match_stats_v%1$s%2$s\n" +
 		"GROUP BY ROLLUP(season)\n" +
 		"HAVING sum(p_sv_pt) IS NOT NULL\n" +
 		"ORDER BY season DESC NULLS LAST";
@@ -191,7 +194,7 @@ public class StatisticsService {
 		Map<Integer, PlayerStats> playersStats = new HashMap<>();
 		if (!playerIds.isEmpty()) {
 			jdbcTemplate.query(
-				format(PLAYERS_FILTERED_STATS_QUERY, filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
+				format(PLAYERS_FILTERED_STATS_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "", filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
 				filter.getParams().addValue("playerIds", playerIds),
 				rs -> {
 					int playerId = rs.getInt("player_id");
@@ -206,6 +209,8 @@ public class StatisticsService {
 		StringBuilder sb = new StringBuilder(100);
 		if (!filter.isTournamentEventFilterEmpty())
 			sb.append(TOURNAMENT_EVENT_JOIN);
+		if (filter.hasSpeedRange())
+			sb.append(EVENT_STATS_JOIN);
 		if (filter.hasResult())
 			sb.append(TOURNAMENT_EVENT_RESULT_JOIN);
 		OpponentFilter opponentFilter = filter.getOpponentFilter();
@@ -289,7 +294,7 @@ public class StatisticsService {
 	public Map<Integer, PlayerStats> getStatisticsTimeline(PerfStatsFilter filter) {
 		Map<Integer, PlayerStats> seasonsStats = new LinkedHashMap<>();
 		jdbcTemplate.query(
-			format(SEASONS_STATS_QUERY, where(filter.getCriteria())),
+			format(SEASONS_STATS_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "", where(filter.getCriteria())),
 			filter.getParams(),
 			rs -> {
 				int season = rs.getInt("season");

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
@@ -41,6 +42,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -54,8 +56,9 @@ public class TopPerformersResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, null, opponentFilter);
+		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, null, opponentFilter);
 		TopPerformersView view = new TopPerformersView(category, filter).optimize();
 		int playerCount = topPerformersService.getPlayerCount(view.getCategory(), view.getFilter(), minEntries);
 
@@ -74,6 +77,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -82,8 +86,9 @@ public class TopPerformersResource {
 		@RequestParam(name = "minEntries", required = false) Integer minEntries
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PerfStatsFilter filter = new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter);
+		PerfStatsFilter filter = new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter);
 		TopPerformersView view = new TopPerformersView(category, filter).optimize();
 		return topPerformersService.getTopPerformersMinEntries(view.getCategory(), view.getFilter(), minEntries);
 	}

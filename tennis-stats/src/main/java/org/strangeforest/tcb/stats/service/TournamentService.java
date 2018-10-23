@@ -45,10 +45,10 @@ public class TournamentService {
 
 	private static final String TOURNAMENTS_QUERY = //language=SQL
 		"WITH player_tournament_titles AS (\n" +
-		"  SELECT e.tournament_id, r.player_id, count(tournament_event_id) titles, max(e.date) last_date\n" +
+		"  SELECT e.tournament_id, r.player_id, count(e.tournament_event_id) titles, max(e.date) last_date\n" +
 		"  FROM player_tournament_event_result r\n" +
-		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"  WHERE r.result = 'W'%1$s\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)%1$s\n" +
+		"  WHERE r.result = 'W'%2$s\n" +
 		"  GROUP BY e.tournament_id, r.player_id\n" +
 		"), player_tournament_titles_ranked AS (\n" +
 		"  SELECT tournament_id, player_id, titles, rank() OVER (PARTITION BY tournament_id ORDER BY titles DESC, last_date) AS rank,\n" +
@@ -57,11 +57,11 @@ public class TournamentService {
 		")\n" +
 		"SELECT tournament_id, mp.ext_tournament_id, name, level,\n" +
 		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
-		"    SELECT e.level, e.surface, e.season, p.player_count, p.participation, p.strength, p.average_elo_rating, s.court_speed\n" +
+		"    SELECT e.level, e.surface, e.season, p.player_count, p.participation, p.strength, p.average_elo_rating, es.court_speed\n" +
 		"    FROM tournament_event e\n" +
 		"    INNER JOIN event_participation p USING (tournament_event_id)\n" +
-		"    LEFT JOIN event_stats s USING (tournament_event_id)\n" +
-		"    WHERE e.tournament_id = t.tournament_id%1$s\n" +
+		"    LEFT JOIN event_stats es USING (tournament_event_id)\n" +
+		"    WHERE e.tournament_id = t.tournament_id%2$s\n" +
 		"    ORDER BY season\n" +
 		"  ) AS event)) AS events,\n" +
 		"  array_to_json(array(SELECT row_to_json(top_player) FROM (\n" +
@@ -88,10 +88,10 @@ public class TournamentService {
 		")\n" +
 		"SELECT tournament_id, mp.ext_tournament_id, name, level,\n" +
 		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
-		"    SELECT e.level, e.surface, e.season, p.player_count, p.participation, p.strength, p.average_elo_rating, s.court_speed\n" +
+		"    SELECT e.level, e.surface, e.season, p.player_count, p.participation, p.strength, p.average_elo_rating, es.court_speed\n" +
 		"    FROM tournament_event e\n" +
 		"    INNER JOIN event_participation p USING (tournament_event_id)\n" +
-		"    LEFT JOIN event_stats s USING (tournament_event_id)\n" +
+		"    LEFT JOIN event_stats es USING (tournament_event_id)\n" +
 		"    WHERE e.tournament_id = :tournamentId\n" +
 		"    ORDER BY season\n" +
 		"  ) AS event)) AS events,\n" +
@@ -116,14 +116,14 @@ public class TournamentService {
 
 	private static final String TOURNAMENT_EVENT_SELECT = //language=SQL
 		"SELECT e.tournament_event_id, e.tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
-		"  p.player_count, p.participation, p.strength, p.average_elo_rating, s.court_speed,\n" +
+		"  p.player_count, p.participation, p.strength, p.average_elo_rating, es.court_speed,\n" +
 		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry, m.winner_country_id,\n" +
 		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.loser_country_id runner_up_country_id,\n" +
 		"  m.score, m.outcome, e.map_properties%1$s\n" +
 		"FROM tournament_event e\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
-		"LEFT JOIN event_stats s USING (tournament_event_id)\n" +
+		"LEFT JOIN event_stats es USING (tournament_event_id)\n" +
 		"LEFT JOIN match m ON m.tournament_event_id = e.tournament_event_id AND m.round = 'F'\n" +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
 		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id%2$s\n";
@@ -186,11 +186,11 @@ public class TournamentService {
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENTS_QUERY = //language=SQL
-		"SELECT r.tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation, p.strength, p.average_elo_rating, s.court_speed, r.result\n" +
+		"SELECT r.tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation, p.strength, p.average_elo_rating, es.court_speed, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
-		"LEFT JOIN event_stats s USING (tournament_event_id)%1$s\n" +
+		"LEFT JOIN event_stats es USING (tournament_event_id)%1$s\n" +
 		"WHERE r.player_id = :playerId\n" +
 		"AND e.level NOT IN ('D', 'T')%2$s\n" +
 		"ORDER BY %3$s OFFSET :offset";
@@ -201,17 +201,17 @@ public class TournamentService {
 		"  FROM player_tournament_event_result r\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  INNER JOIN tournament t USING (tournament_id)\n" +
-		"  INNER JOIN player_match_for_stats_v m ON m.player_id = :playerId AND m.tournament_event_id = r.tournament_event_id\n" +
-		"  WHERE e.level NOT IN ('D', 'T') AND r.player_id = :playerId%1$s\n" +
+		"  INNER JOIN player_match_for_stats_v m ON m.player_id = :playerId AND m.tournament_event_id = r.tournament_event_id%1$s\n" +
+		"  WHERE e.level NOT IN ('D', 'T') AND r.player_id = :playerId%2$s\n" +
 		"  GROUP BY e.tournament_id, t.name\n" +
 		")\n" +
 		"SELECT tournament_id, name, p_matches, o_matches,\n" +
 		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
-		"    SELECT r.tournament_event_id, e.level, e.surface, e.season, e.date, s.court_speed, r.result\n" +
+		"    SELECT r.tournament_event_id, e.level, e.surface, e.season, e.date, es.court_speed, r.result\n" +
 		"    FROM player_tournament_event_result r\n" +
 		"    INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"    LEFT JOIN event_stats s USING (tournament_event_id)\n" +
-		"    WHERE r.player_id = :playerId AND e.tournament_id = t.tournament_id%1$s\n" +
+		"    LEFT JOIN event_stats es USING (tournament_event_id)\n" +
+		"    WHERE r.player_id = :playerId AND e.tournament_id = t.tournament_id%2$s\n" +
 		"    ORDER BY season\n" +
 		"  ) AS event)) AS events\n" +
 		"FROM player_tournaments t";
@@ -223,6 +223,9 @@ public class TournamentService {
 		"  WHERE ms.player_id = :playerId\n" +
 		"  GROUP BY ms.tournament_event_id\n" +
 		") AS ts ON ts.tournament_event_id = e.tournament_event_id";
+
+	private static final String EVENT_STATS_JOIN = //language=SQL
+		"\nLEFT JOIN event_stats es ON es.tournament_event_id = r.tournament_event_id";
 
 
 	private static final ObjectReader READER = new ObjectMapper().reader();
@@ -240,7 +243,7 @@ public class TournamentService {
 	@Cacheable("Tournaments")
 	public List<Tournament> getTournaments(TournamentEventFilter filter) {
 		List<Tournament> tournaments = jdbcTemplate.query(
-			format(TOURNAMENTS_QUERY, filter.getCriteria()),
+			format(TOURNAMENTS_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "", filter.getCriteria()),
 			filter.getParams(),
 			(rs, rowNum) -> mapTournament(rs)
 		);
@@ -267,7 +270,7 @@ public class TournamentService {
 		String name = rs.getString("name");
 		Map<String, Integer> levels = new HashMap<>();
 		Map<String, Integer> surfaces = new HashMap<>();
-		Map<String, List<Integer>> courtSpeeds = new HashMap<>();
+		Map<String, List<Integer>> speeds = new HashMap<>();
 		List<Integer> seasons = new ArrayList<>();
 		int playerCount = 0;
 		double participation = 0.0;
@@ -279,9 +282,9 @@ public class TournamentService {
 				levels.compute(event.get("level").asText(), TournamentService::increment);
 				String surface = event.get("surface").asText();
 				surfaces.compute(surface, TournamentService::increment);
-				JsonNode courtSpeedNode = event.get("court_speed");
-				if (!courtSpeedNode.isNull())
-					courtSpeeds.computeIfAbsent(surface, aSurface -> new ArrayList<>()).add(courtSpeedNode.asInt());
+				JsonNode speedNode = event.get("court_speed");
+				if (!speedNode.isNull())
+					speeds.computeIfAbsent(surface, aSurface -> new ArrayList<>()).add(speedNode.asInt());
 				seasons.add(event.get("season").asInt());
 				playerCount += event.get("player_count").asInt();
 				participation += event.get("participation").asDouble();
@@ -294,7 +297,7 @@ public class TournamentService {
 		}
 		List<String> levelList = sortKeysByValuesDesc(levels, comparing(TournamentLevel::decode));
 		List<String> surfaceList = sortKeysByValuesDesc(surfaces, comparing(Surface::decode));
-		Map<String, Integer> avgCourtSpeeds = courtSpeeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
+		Map<String, Integer> avgSpeeds = speeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
 			(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().getAsDouble())
 		));
 		int eventCount = seasons.size();
@@ -321,7 +324,7 @@ public class TournamentService {
 			throw new SQLException(ex);
 		}
 
-		return new Tournament(tournamentId, extTournamentId, name, levelList, surfaceList, avgCourtSpeeds, eventCount, formattedSeasons, avgPlayerCount, avgParticipation, avgStrength, avgAverageEloRating, topPlayers);
+		return new Tournament(tournamentId, extTournamentId, name, levelList, surfaceList, avgSpeeds, eventCount, formattedSeasons, avgPlayerCount, avgParticipation, avgStrength, avgAverageEloRating, topPlayers);
 	}
 
 	private static Integer increment(String s, Integer i) {
@@ -454,7 +457,7 @@ public class TournamentService {
 			rs.getInt("strength"),
 			rs.getInt("average_elo_rating")
 		);
-		tournamentEvent.setCourtSpeed(getInteger(rs, "court_speed"));
+		tournamentEvent.setSpeed(getInteger(rs, "court_speed"));
 		tournamentEvent.setFinal(
 			MatchesService.mapMatchPlayer(rs, "winner_"),
 			MatchesService.mapMatchPlayer(rs, "runner_up_"),
@@ -515,13 +518,13 @@ public class TournamentService {
 
 	public List<PlayerTournament> getPlayerTournaments(int playerId, TournamentEventResultFilter filter) {
 		return jdbcTemplate.query(
-			format(PLAYER_TOURNAMENTS_QUERY, filter.getCriteria()),
+			format(PLAYER_TOURNAMENTS_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "", filter.getCriteria()),
 			filter.getParams()
 				.addValue("playerId", playerId),
 			(rs, rowNum) -> {
 				Map<String, Integer> levels = new HashMap<>();
 				Map<String, Integer> surfaces = new HashMap<>();
-				Map<String, List<Integer>> courtSpeeds = new HashMap<>();
+				Map<String, List<Integer>> speeds = new HashMap<>();
 				List<Integer> seasons = new ArrayList<>();
 				EventResult bestResult = null;
 				LocalDate lastDate = null;
@@ -534,9 +537,9 @@ public class TournamentService {
 						levels.compute(event.get("level").asText(), TournamentService::increment);
 						String surface = event.get("surface").asText();
 						surfaces.compute(surface, TournamentService::increment);
-						JsonNode courtSpeedNode = event.get("court_speed");
-						if (!courtSpeedNode.isNull())
-							courtSpeeds.computeIfAbsent(surface, aSurface -> new ArrayList<>()).add(courtSpeedNode.asInt());
+						JsonNode speedNode = event.get("court_speed");
+						if (!speedNode.isNull())
+							speeds.computeIfAbsent(surface, aSurface -> new ArrayList<>()).add(speedNode.asInt());
 						seasons.add(event.get("season").asInt());
 						EventResult result = EventResult.decode(event.get("result").asText());
 						if (nullsLastCompare(result, bestResult) < 0)
@@ -554,7 +557,7 @@ public class TournamentService {
 				catch (IOException ex) {
 					throw new SQLException(ex);
 				}
-				Map<String, Integer> avgCourtSpeeds = courtSpeeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
+				Map<String, Integer> avgSpeeds = speeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
 					(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().getAsDouble())
 				));
 				return new PlayerTournament(
@@ -562,7 +565,7 @@ public class TournamentService {
 					rs.getString("name"),
 					sortKeysByValuesDesc(levels, comparing(TournamentLevel::decode)),
 					sortKeysByValuesDesc(surfaces, comparing(Surface::decode)),
-					avgCourtSpeeds,
+					avgSpeeds,
 					seasons.size(),
 					formatSeasons(seasons),
 					bestResult != null ? bestResult.getCode() : null,

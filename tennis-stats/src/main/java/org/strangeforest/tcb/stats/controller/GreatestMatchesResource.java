@@ -6,6 +6,7 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
@@ -24,6 +25,7 @@ public class GreatestMatchesResource {
 		.put("date", "date")
 		.put("tournament", "tournament")
 		.put("surface", "surface")
+		.put("speed", "court_speed NULLS LAST")
 		.put("round", "round")
 		.put("bestOf", "best_of")
 		.put("matchScore", "match_score")
@@ -38,6 +40,7 @@ public class GreatestMatchesResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "bestRank", required = false) Integer bestRank,
@@ -47,7 +50,8 @@ public class GreatestMatchesResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		Range<LocalDate> dateRange = DateUtil.toDateRange(fromSeason, toSeason);
-		MatchFilter filter = MatchFilter.forMatches(dateRange, level, bestOf, surface, indoor, tournamentId, round, searchPhrase);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
+		MatchFilter filter = MatchFilter.forMatches(dateRange, level, bestOf, surface, indoor, speedRange, tournamentId, round, searchPhrase);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;

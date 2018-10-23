@@ -7,7 +7,9 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
@@ -39,7 +41,9 @@
 				request.bestOf = $("#rivalryBestOf").val();
 				request.surface = $("#rivalrySurface").val();
 				request.indoor = $("#rivalryIndoor").val();
+				request.speed = $("#rivalrySpeed").val();
 				request.round = $("#rivalryRound").val();
+				request.tournamentId = $("#rivalryTournament").val();
 				request.opponent = $("#rivalryOpponent").val();
 				request.countryId = $("#rivalryCountry").val();
 				request.h2h = $("#rivalryH2H").val();
@@ -114,7 +118,9 @@
 		$("#rivalryBestOf").val("");
 		$("#rivalrySurface").val("");
 		$("#rivalryIndoor").val("");
+		$("#rivalrySpeed").val("");
 		$("#rivalryRound").val("");
+		$("#rivalryTournament").val("");
 		$("#rivalryOpponent").val("");
 		$("#rivalryCountry").val("");
 		$("#rivalryH2H").val("");
@@ -150,8 +156,12 @@
 		if (surface) params += "&surface=" + surface;
 		var indoor = $("#rivalryIndoor").val();
 		if (indoor) params += "&indoor=" + indoor;
+		var speed = $("#rivalrySpeed").val();
+		if (speed) params += "&speed=" + speed;
 		var round = $("#rivalryRound").val();
 		if (round) params += "&round=" + encodeURIComponent(round);
+		var tournamentId = $("#rivalryTournament").val();
+		if (tournamentId) params += "&tournamentId=" + tournamentId;
 		return params;
 	}
 	function playerMatchesUrl(opponentId, outcome) {
@@ -262,6 +272,20 @@
 			<select id="rivalryCountry" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
 				<option value="">Vs all countries</option>
 				<option th:each="aCountry : ${countries}" th:value="${aCountry.alpha3}" value="SUI" th:text="${aCountry.name}">Switzerland</option>
+			</select>
+		</div>
+	</div>
+	<div class="row margin-top">
+		<div class="col-md-4">
+			<select id="rivalryTournament" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="rivalrySpeed" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
 			</select>
 		</div>
 	</div>

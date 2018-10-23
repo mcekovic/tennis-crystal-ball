@@ -6,6 +6,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
@@ -33,6 +34,7 @@
 				request.bestOf = $("#statsBestOf").val();
 				request.surface = $("#statsSurface").val();
 				request.indoor = $("#statsIndoor").val();
+				request.speed = $("#statsSpeed").val();
 				request.round = $("#statsRound").val();
 				request.result = $("#statsResult").val();
 				request.opponent = $("#statsOpponent").val();
@@ -87,6 +89,7 @@
 		url += "&bestOf=" + $("#statsBestOf").val();
 		url += "&surface=" + $("#statsSurface").val();
 		url += "&indoor=" + $("#statsIndoor").val();
+		url += "&speed=" + $("#statsSpeed").val();
 		url += "&round=" + encodeURIComponent($("#statsRound").val());
 		url += "&result=" + encodeURIComponent($("#statsResult").val());
 		url += "&opponent=" + $("#statsOpponent").val();
@@ -125,6 +128,7 @@
 		$("#statsBestOf").val("");
 		$("#statsSurface").val("");
 		$("#statsIndoor").val("");
+		$("#statsSpeed").val("");
 		$("#statsRound").val("");
 		$("#statsResult").val("");
 		$("#statsOpponent").val("");
@@ -164,6 +168,12 @@
 				<option value="">All surfaces</option>
 				<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="statsSpeed" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
 			</select>
 		</div>
 		<div class="col-md-3">

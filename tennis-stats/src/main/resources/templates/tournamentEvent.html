@@ -10,7 +10,7 @@
 	<script type="text/javascript">
 		$(function() {
 			decorateSurface("#eventSurface");
-			decorateCourtSpeed("#eventCourtSpeed");
+			decorateSpeed("#eventSpeed");
 			$("#tournamentEventPills").find("a").click(tabClick);
 		});
 	</script>
@@ -46,7 +46,7 @@
 					<th>Surface</th>
 					<td>
 						<span id="eventSurface" th:if="${tournamentEvent.surface}" class="label" th:data-surface="${tournamentEvent.surface}">[(${surfaces[tournamentEvent.surface]})]<span th:if="${tournamentEvent.indoor && tournamentEvent.surface != 'P'}" title="Indoor"> (i)</span></span>
-						<span id="eventCourtSpeed" th:if="${tournamentEvent.courtSpeed}" class="label" th:data-surface="${tournamentEvent.surface}" th:data-court-speed="${tournamentEvent.courtSpeed}" th:text="${tournamentEvent.courtSpeed}">50</span>
+						<span id="eventSpeed" th:if="${tournamentEvent.speed}" class="label" th:data-surface="${tournamentEvent.surface}" th:data-court-speed="${tournamentEvent.speed}" th:text="${tournamentEvent.speed}">50</span>
 					</td>
 				</tr>
 				<tr th:unless="${isTeam}">

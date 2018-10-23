@@ -54,6 +54,9 @@ public class TopPerformersService {
 		"  GROUP BY m.player_id\n" +
 		") AS player_performance_summed";
 
+	private static final String EVENT_STATS_JOIN = //language=SQL
+		"\nLEFT JOIN event_stats es USING (tournament_event_id)";
+
 	private static final String EVENT_RESULT_JOIN = //language=SQL
 		"\n  INNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
 
@@ -119,6 +122,8 @@ public class TopPerformersService {
 
 	private static String getTopPerformersJoin(PerfStatsFilter filter) {
 		StringBuilder sb = new StringBuilder();
+		if (filter.hasSpeedRange())
+			sb.append(EVENT_STATS_JOIN);
 		if (filter.hasResult())
 			sb.append(EVENT_RESULT_JOIN);
 		if (filter.getOpponentFilter().isOpponentRequired())

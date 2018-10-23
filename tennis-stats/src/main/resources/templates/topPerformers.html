@@ -7,6 +7,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
@@ -39,6 +40,7 @@
 					request.bestOf = $("#bestOf").val();
 					request.surface = $("#surface").val();
 					request.indoor = $("#indoor").val();
+					request.speed = $("#speed").val();
 					request.round = $("#round").val();
 					request.result = $("#result").val();
 					request.tournamentId = $("#tournament").val();
@@ -98,6 +100,7 @@
 			url += "&bestOf=" + $("#bestOf").val();
 			url += "&surface=" + $("#surface").val();
 			url += "&indoor=" + $("#indoor").val();
+			url += "&speed=" + $("#speed").val();
 			url += "&round=" + encodeURIComponent($("#round").val());
 			url += "&result=" + encodeURIComponent($("#result").val());
 			url += "&tournamentId=" + $("#tournament").val();
@@ -161,6 +164,7 @@
 			$("#bestOf").val("");
 			$("#surface").val(""); surfaceChanged();
 			$("#indoor").val("");
+			$("#speed").val("");
 			$("#round").val(""); roundChanged();
 			$("#result").val("");
 			$("#opponent").val(""); opponentChanged();
@@ -273,13 +277,19 @@
 					<option value="5">Best of 5</option>
 				</select>
 			</div>
+			<div class="col-md-2">
+				<select id="speed" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+					<option value="">All speeds</option>
+					<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+				</select>
+			</div>
 			<div class="col-md-3">
 				<select id="tournament" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
 					<option value="">All tournaments</option>
 					<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
 				</select>
 			</div>
-			<div class="col-md-2">
+			<div class="col-md-3">
 				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
 					<label for="minEntriesOverride" class="input-group-addon">Min. entries:</label>
 					<input id="minEntriesOverride" type="text" size="6" class="form-control" oninput="reloadTopPerformers()" onchange="reloadTopPerformers()"/>

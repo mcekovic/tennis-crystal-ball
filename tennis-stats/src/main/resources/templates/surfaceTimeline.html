@@ -11,7 +11,7 @@
 			$("[data-toggle='tooltip']").tooltip();
 			$("#surfaceTimelineBody td.court-speed").each(function() {
 				var $speed = $(this);
-				$speed.html(formatCourtSpeed($speed.data("speed")));
+				$speed.html(formatSpeed($speed.data("speed")));
 			});
 		});
 		function indoorChanged() {
@@ -82,7 +82,7 @@
 						</div>
 					</div>
 				</td>
-				<td class="court-speed text-center" th:data-speed="${item.courtSpeed}"></td>
+				<td class="court-speed text-center" th:data-speed="${item.speed}"></td>
 			<tr>
 		</tbody>
 	</table>

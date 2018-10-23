@@ -30,6 +30,7 @@ public class PlayerMatchesResource {
 		.put("date", "date")
 		.put("tournament", "tournament")
 		.put("surface", "surface")
+		.put("speed", "court_speed NULLS LAST")
 		.put("round", "round")
 		.put("wonLost", "CASE WHEN outcome = 'ABD' THEN 0 WHEN pw.player_id = :playerId THEN 1 ELSE -1 END")
 		.put("bestOf", "best_of")
@@ -50,6 +51,7 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "round", required = false) String round,
@@ -69,11 +71,12 @@ public class PlayerMatchesResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
 		ScoreFilter scoreFilter = ScoreFilter.forMatches(score);
 		StatsFilter statsFilter = StatsFilter.forMatches(statsCategory, statsFrom, statsTo);
-		MatchFilter filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
+		MatchFilter filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, bigWin ? ORDER_MAP_BIG_WINS : ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getPlayerMatchesTable(playerId, filter, h2h, orderBy, pageSize, current);
@@ -89,6 +92,7 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "round", required = false) String round,
@@ -102,10 +106,11 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
 		ScoreFilter scoreFilter = ScoreFilter.forStats(score);
-		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, StatsFilter.ALL, bigWin, searchPhrase);
+		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, StatsFilter.ALL, bigWin, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		return StatsCategory.get(statsCategory).getStat(stats);
 	}

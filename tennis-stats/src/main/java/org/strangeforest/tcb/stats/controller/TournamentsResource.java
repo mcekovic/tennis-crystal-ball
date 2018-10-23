@@ -29,10 +29,10 @@ public class TournamentsResource {
 		.put("name", BY_NAME)
 		.put("levels", BY_LEVEL)
 		.put("surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
-		.put("courtSpeeds", (t1, t2) -> {
-			List<Integer> speeds1 = new ArrayList<>(t1.getCourtSpeeds().values());
+		.put("speeds", (t1, t2) -> {
+			List<Integer> speeds1 = new ArrayList<>(t1.getSpeeds().values());
 			speeds1.sort(reverseOrder());
-			List<Integer> speeds2 = new ArrayList<>(t2.getCourtSpeeds().values());
+			List<Integer> speeds2 = new ArrayList<>(t2.getSpeeds().values());
 			speeds2.sort(reverseOrder());
 			return compareLists(speeds1, speeds2);
 		})
@@ -47,12 +47,15 @@ public class TournamentsResource {
 	public BootgridTable<Tournament> tournamentsTable(
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		TournamentEventFilter filter = new TournamentEventFilter(null, null, level, surface, null, null, null, searchPhrase);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
+		TournamentEventFilter filter = new TournamentEventFilter(null, null, level, surface, indoor, speedRange, null, null, searchPhrase);
 		Comparator<Tournament> comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return sortAndPage(tournamentService.getTournaments(filter), comparator, pageSize, current);

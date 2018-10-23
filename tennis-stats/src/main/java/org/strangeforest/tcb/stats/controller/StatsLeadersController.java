@@ -27,6 +27,7 @@ public class StatsLeadersController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("tournaments", tournamentService.getTournaments());

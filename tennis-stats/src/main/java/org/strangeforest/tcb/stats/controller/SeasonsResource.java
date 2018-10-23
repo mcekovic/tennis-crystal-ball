@@ -34,7 +34,7 @@ public class SeasonsResource {
 		.put("outdoorCount", "outdoor_count")
 		.put("indoorCount", "indoor_count")
 		.put("matchCount", "match_count")
-		.put("courtSpeed", "court_speed NULLS LAST")
+		.put("speed", "court_speed NULLS LAST")
 	.build();
 	private static final OrderBy SEASONS_DEFAULT_ORDER = OrderBy.desc("season");
 

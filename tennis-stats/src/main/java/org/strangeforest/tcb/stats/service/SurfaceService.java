@@ -20,10 +20,10 @@ public class SurfaceService {
 		"  count(match_id) FILTER (WHERE m.surface = 'G') AS grass_match_count,\n" +
 		"  count(match_id) FILTER (WHERE m.surface = 'P') AS carpet_match_count,\n" +
 		"  count(match_id) FILTER (WHERE m.surface = 'H' AND m.indoor) AS hard_indoor_match_count,\n" +
-		"  round(avg(court_speed)) AS court_speed\n" +
+		"  round(avg(es.court_speed)) AS court_speed\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING(tournament_event_id)\n" +
-		"LEFT JOIN event_stats s USING (tournament_event_id)\n" +
+		"LEFT JOIN event_stats es USING (tournament_event_id)\n" +
 		"GROUP BY ROLLUP (e.season)\n" +
 		"ORDER BY season DESC NULLS LAST";
 

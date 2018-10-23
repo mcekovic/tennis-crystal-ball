@@ -50,6 +50,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "opponent", required = false) String opponent,
@@ -80,6 +81,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("speed", speed);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("opponent", opponent);
@@ -166,6 +168,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
@@ -181,6 +184,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
@@ -189,6 +193,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("speed", speed);
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
@@ -205,6 +210,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "opponent", required = false) String opponent,
@@ -230,6 +236,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
@@ -243,6 +250,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("speed", speed);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("result", result);
 		if (!isNullOrEmpty(opponent)) {
@@ -288,6 +296,7 @@ public class PlayerProfileController extends PageController {
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
 		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 
 		ModelMap modelMap = new ModelMap();
@@ -298,7 +307,9 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("countries", countries);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
@@ -343,6 +354,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -352,11 +364,12 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
 		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter));
+		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -365,6 +378,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("tournaments", tournaments);
@@ -377,6 +391,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("speed", speed);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("tournamentId", tournamentId);
@@ -411,6 +426,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -428,8 +444,9 @@ public class PlayerProfileController extends PageController {
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
 		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter));
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -438,6 +455,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("tournaments", tournaments);
@@ -450,6 +468,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("speed", speed);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("tournamentId", tournamentId);
@@ -507,6 +526,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);

@@ -12,7 +12,9 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
 <!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
 <head th:replace="fragments/head :: commonHead(${anyPlayerSelected} ? ${player1 != null ? player1.name : '?'} + ' vs ' +  ${player2 != null ? player2.name : '?'} : ~{::title/text()}, true, ~{::template})">
@@ -53,7 +55,7 @@
 				[# th:case="'matches'"]
 				var $pill = $("#matchesPill");
 				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('fromDate', fromDate)})] + [(${params.param('toDate', toDate)})];
-				url += [(${params.param('level', level)})] + [(${params.param('bestOf', bestOf)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('round', round)})];
+				url += [(${params.param('level', level)})] + [(${params.param('bestOf', bestOf)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('speed', speed)})] + [(${params.param('round', round)})] + [(${params.param('tournamentId', tournamentId)})];
 				loadTab($pill, url);
 				[/]
 				[# th:case="'ranking'"]

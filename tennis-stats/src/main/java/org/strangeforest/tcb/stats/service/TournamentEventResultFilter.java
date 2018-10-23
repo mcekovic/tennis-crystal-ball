@@ -14,7 +14,7 @@ import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class TournamentEventResultFilter extends TournamentEventFilter {
 
-	public static final TournamentEventResultFilter EMPTY = new TournamentEventResultFilter(null, null, null, null, null, null, null, null, null, null);
+	public static final TournamentEventResultFilter EMPTY = new TournamentEventResultFilter(null, null, null, null, null, null, null, null, null, null, null);
 
 	private final String result;
 	private final StatsFilter statsFilter;
@@ -22,15 +22,15 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 	private static final String RESULT_CRITERION = " AND r.result %1$s :result::tournament_event_result";
 
 	public TournamentEventResultFilter(Integer season) {
-		this(season, null, null, null, null, null, null, null, null, null);
+		this(season, null, null, null, null, null, null, null, null, null, null);
 	}
 
-	public TournamentEventResultFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, String result, Integer tournamentId, StatsFilter statsFilter, String searchPhrase) {
-		this(season, dateRange, level, surface, indoor, result, tournamentId, null, statsFilter, searchPhrase);
+	public TournamentEventResultFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, Range<Integer> speedRange, String result, Integer tournamentId, StatsFilter statsFilter, String searchPhrase) {
+		this(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, null, statsFilter, searchPhrase);
 	}
 
-	protected TournamentEventResultFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, String result, Integer tournamentId, Integer tournamentEventId, StatsFilter statsFilter, String searchPhrase) {
-		super(season, dateRange, level, surface, indoor, tournamentId, tournamentEventId, searchPhrase);
+	protected TournamentEventResultFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, Range<Integer> speedRange, String result, Integer tournamentId, Integer tournamentEventId, StatsFilter statsFilter, String searchPhrase) {
+		super(season, dateRange, level, surface, indoor, speedRange, tournamentId, tournamentEventId, searchPhrase);
 		this.result = result;
 		this.statsFilter = statsFilter != null ? statsFilter : StatsFilter.ALL;
 	}

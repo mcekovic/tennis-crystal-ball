@@ -347,6 +347,6 @@ CREATE OR REPLACE FUNCTION court_speed(
 	p_sv_gms_won_pct DOUBLE PRECISION
 ) RETURNS REAL AS $$
 BEGIN
-	RETURN round(50.0 * power(1000.0 * p_ace_pct * (p_sv_pts_won_pct - 0.5) * (p_sv_gms_won_pct - 0.6), 1.0 / 3.0));
+	RETURN greatest(0, least(100, round(50.0 * power(1000.0 * p_ace_pct * (p_sv_pts_won_pct - 0.5) * (p_sv_gms_won_pct - 0.6), 1.0 / 3.0) - 3.0)));
 END;
 $$ LANGUAGE plpgsql;

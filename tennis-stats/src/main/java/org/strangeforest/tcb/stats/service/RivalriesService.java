@@ -19,7 +19,7 @@ import static java.lang.String.*;
 import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 import static org.strangeforest.tcb.util.RangeUtil.*;
 
 @Service
@@ -27,6 +27,7 @@ public class RivalriesService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private DataService dataService;
+	@Autowired private TournamentService tournamentService;
 
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
@@ -73,6 +74,15 @@ public class RivalriesService {
 		.put(Boolean.FALSE, 1.4)
 		.put(Boolean.TRUE,  2.5)
 	.build();
+	private static final Map<CourtSpeed, Double> MIN_MATCHES_SPEED_FACTOR = ImmutableMap.<CourtSpeed, Double>builder()
+		.put(CourtSpeed.VERY_FAST, 20.0)
+		.put(CourtSpeed.FAST, 8.0)
+		.put(CourtSpeed.MEDIUM_FAST, 4.0)
+		.put(CourtSpeed.MEDIUM, 3.0)
+		.put(CourtSpeed.MEDIUM_SLOW, 4.0)
+		.put(CourtSpeed.SLOW, 8.0)
+		.put(CourtSpeed.VERY_SLOW, 20.0)
+	.build();
 	private static final Map<String, Double> MIN_MATCHES_ROUND_FACTOR = ImmutableMap.<String, Double>builder()
 		.put("F",     5.0)
 		.put("SF",    4.0)
@@ -91,6 +101,12 @@ public class RivalriesService {
 		.put("BR",   20.0)
 		.put("BR+",   5.0)
 	.build();
+	private static final Map<Range<Integer>, Double> MIN_MATCHES_TOURNAMENT_FACTOR_MAP = ImmutableMap.<Range<Integer>, Double>builder()
+		.put(Range.atMost(2), 100.0)
+		.put(Range.closed(3, 5), 50.0)
+		.put(Range.closed(6, 9), 25.0)
+		.put(Range.atLeast(10), 20.0)
+	.build();
 	private static final Map<Integer, Double> MIN_MATCHES_BEST_RANK_FACTOR = ImmutableMap.<Integer, Double>builder()
 		.put(1,  3.5)
 		.put(2,  2.0)
@@ -107,23 +123,23 @@ public class RivalriesService {
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id player_id, loser_id opponent_id, count(match_id) matches, 0 won, 0 lost\n" +
-		"  FROM match_for_rivalry_v m INNER JOIN player_v p ON p.player_id = m.loser_id\n" +
-		"  WHERE winner_id = :playerId%1$s\n" +
+		"  FROM match_for_rivalry_v m INNER JOIN player_v p ON p.player_id = m.loser_id%1$s\n" +
+		"  WHERE winner_id = :playerId%2$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT loser_id, winner_id, count(match_id), 0, 0\n" +
-		"  FROM match_for_rivalry_v m INNER JOIN player_v p ON p.player_id = m.winner_id\n" +
-		"  WHERE loser_id = :playerId%1$s\n" +
+		"  FROM match_for_rivalry_v m INNER JOIN player_v p ON p.player_id = m.winner_id%1$s\n" +
+		"  WHERE loser_id = :playerId%2$s\n" +
 		"  GROUP BY loser_id, winner_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id), 0\n" +
-		"  FROM match_for_stats_v m INNER JOIN player_v p ON p.player_id = m.loser_id\n" +
-		"  WHERE winner_id = :playerId%1$s\n" +
+		"  FROM match_for_stats_v m INNER JOIN player_v p ON p.player_id = m.loser_id%1$s\n" +
+		"  WHERE winner_id = :playerId%2$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT loser_id, winner_id, 0, 0, count(match_id)\n" +
-		"  FROM match_for_stats_v m INNER JOIN player_v p ON p.player_id = m.winner_id\n" +
-		"  WHERE loser_id = :playerId%1$s\n" +
+		"  FROM match_for_stats_v m INNER JOIN player_v p ON p.player_id = m.winner_id%1$s\n" +
+		"  WHERE loser_id = :playerId%2$s\n" +
 		"  GROUP BY loser_id, winner_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT player_id, opponent_id, sum(matches) matches, sum(won) won, sum(lost) lost\n" +
@@ -132,21 +148,21 @@ public class RivalriesService {
 		"  ORDER BY matches DESC, won DESC\n" +
 		")\n" +
 		"SELECT r.player_id, r.opponent_id, o.name, o.country_id, o.active, o.best_rank, r.matches, r.won, r.lost,\n" +
-		"%2$s\n" +
+		"%3$s\n" +
 		"FROM rivalries_2 r\n" +
-		"INNER JOIN player_v o ON o.player_id = r.opponent_id%3$s%4$s\n" +
-		"ORDER BY %5$s OFFSET :offset";
+		"INNER JOIN player_v o ON o.player_id = r.opponent_id%4$s%5$s\n" +
+		"ORDER BY %6$s OFFSET :offset";
 
 	private static final String HEADS_TO_HEADS_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
-		"  FROM match_for_rivalry_v m\n" +
-		"  WHERE winner_id IN (:playerIds) AND loser_id IN (:playerIds)%1$s\n" +
+		"  FROM match_for_rivalry_v m%1$s\n" +
+		"  WHERE winner_id IN (:playerIds) AND loser_id IN (:playerIds)%2$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
-		"  FROM match_for_stats_v m\n" +
-		"  WHERE winner_id IN (:playerIds) AND loser_id IN (:playerIds)%1$s\n" +
+		"  FROM match_for_stats_v m%1$s\n" +
+		"  WHERE winner_id IN (:playerIds) AND loser_id IN (:playerIds)%2$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
@@ -166,10 +182,10 @@ public class RivalriesService {
 		")\n" +
 		"SELECT r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.active active_1, p1.goat_points goat_points_1,\n" +
 		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.active active_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
-		"%2$s\n" +
+		"%3$s\n" +
 		"FROM rivalries_3 r\n" +
 		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
-		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
+		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%4$s\n" +
 		"WHERE r.rank = 1";
 
 	private static final String GREATEST_RIVALRIES_QUERY = //language=SQL
@@ -210,6 +226,9 @@ public class RivalriesService {
 		"WHERE r.rank = 1 AND NOT lower(p1.last_name) LIKE '%%unknown%%' AND NOT lower(p2.last_name) LIKE '%%unknown%%'\n" +
 		"ORDER BY %5$s OFFSET :offset";
 
+	private static final String EVENT_STATS_JOIN = //language=SQL
+		"\nLEFT JOIN event_stats es USING (tournament_event_id)";
+
 	private static final String BEST_RANK_JOIN = //language=SQL
 		"\n" +
 		"  INNER JOIN player_best_rank rw ON rw.player_id = winner_id\n" +
@@ -226,8 +245,8 @@ public class RivalriesService {
 		"LATERAL (\n" +
 		"  SELECT m.match_id, e.season, m.date, e.level, m.surface, m.indoor, e.tournament_event_id, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"  FROM match m\n" +
-		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"  WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)%1$s\n" +
+		"  WHERE ((m.winner_id = r.%2$s AND m.loser_id = r.%3$s) OR (m.winner_id = r.%3$s AND m.loser_id = r.%2$s))%4$s\n" +
 		"  ORDER BY e.date DESC, m.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		") lm";
 
@@ -251,11 +270,13 @@ public class RivalriesService {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
+		String join = rivalriesJoin(filter.getRivalryFilter());
 		jdbcTemplate.query(
 			format(PLAYER_RIVALRIES_QUERY,
+				join,
 			   filter.getCriteria(),
 				LAST_MATCH_LATERAL,
-				format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", filter.getRivalryCriteria()),
+				format(LAST_MATCH_JOIN_LATERAL, join, "player_id", "opponent_id", filter.getRivalryFilter().getCriteria()),
 				where(seriesFilter.getCriteria()),
 				orderBy
 			),
@@ -283,11 +304,13 @@ public class RivalriesService {
 
 	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
 		String criteria = filter.getCriteria();
+		String join = rivalriesJoin(filter);
 		List<HeadsToHeadsRivalry> rivalries = !playerIds.isEmpty() ? jdbcTemplate.query(
 			format(HEADS_TO_HEADS_QUERY,
+				join,
 				criteria,
 				LAST_MATCH_LATERAL,
-				format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria)
+				format(LAST_MATCH_JOIN_LATERAL, join, "player_id_1", "player_id_2", criteria)
 			),
 			filter.getParams().addValue("playerIds", playerIds),
 			(rs, rowNum) -> {
@@ -315,12 +338,13 @@ public class RivalriesService {
 			criteria += BEST_RANK_CRITERIA;
 			params.addValue("bestRank", bestRank);
 		}
+		String join = rivalriesJoin(filter);
 		jdbcTemplate.query(
 			format(GREATEST_RIVALRIES_QUERY,
-				bestRank != null ? BEST_RANK_JOIN : "",
+				join + (bestRank != null ? BEST_RANK_JOIN : ""),
 				where(criteria, 2),
 				LAST_MATCH_LATERAL,
-				format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", lastMatchCriteria),
+				format(LAST_MATCH_JOIN_LATERAL, join, "player_id_1", "player_id_2", lastMatchCriteria),
 				orderBy
 			),
 			params,
@@ -356,32 +380,37 @@ public class RivalriesService {
 		}
 		if (filter.isLast52Weeks())
 			dateRange = intersection(dateRange, Range.closed(today.minusYears(1), today), MinEntries.EMPTY_DATE_RANGE);
-		minMatches /= getMinEntriesFactor(Period.between(dateRange.lowerEndpoint(), dateRange.upperEndpoint()));
+		minMatches /= getMinMatchesFactor(Period.between(dateRange.lowerEndpoint(), dateRange.upperEndpoint()));
 
 		if (filter.hasLevel())
-			minMatches /= getMinEntriesFactor(filter.getLevel(), MIN_MATCHES_LEVEL_FACTOR);
+			minMatches /= getMinMatchesFactor(filter.getLevel(), MIN_MATCHES_LEVEL_FACTOR);
 		else if (filter.hasBestOf())
-			minMatches /= getMinEntriesFactor(filter.getBestOf(), MIN_MATCHES_BEST_OF_FACTOR);
+			minMatches /= getMinMatchesFactor(filter.getBestOf(), MIN_MATCHES_BEST_OF_FACTOR);
 
 		if (filter.hasSurface())
-			minMatches /= getMinEntriesFactor(filter.getSurface(), MIN_MATCHES_SURFACE_FACTOR);
+			minMatches /= getMinMatchesFactor(filter.getSurface(), MIN_MATCHES_SURFACE_FACTOR);
 		if (filter.hasIndoor())
-			minMatches /= getMinEntriesFactor(filter.getIndoor(), MIN_MATCHES_INDOOR_FACTOR);
+			minMatches /= getMinMatchesFactor(filter.getIndoor(), MIN_MATCHES_INDOOR_FACTOR);
+		if (filter.hasSpeedRange())
+			minMatches /= getMinMatchesFactor(CourtSpeed.forSpeedRange(filter.getSpeedRange()), MIN_MATCHES_SPEED_FACTOR);
 
 		if (filter.hasRound())
-			minMatches /= getMinEntriesFactor(filter.getRound(), MIN_MATCHES_ROUND_FACTOR);
+			minMatches /= getMinMatchesFactor(filter.getRound(), MIN_MATCHES_ROUND_FACTOR);
+
+		else if (filter.hasTournament())
+			minMatches /= getMinMatchesTournamentFactor(filter.getTournamentId());
 
 		if (bestRank != null)
-			minMatches /= getMinEntriesFactor(bestRank, MIN_MATCHES_BEST_RANK_FACTOR);
+			minMatches /= getMinMatchesFactor(bestRank, MIN_MATCHES_BEST_RANK_FACTOR);
 
 		return Math.max((int)Math.round(minMatches), MIN_GREATEST_RIVALRIES_MATCHES_MIN);
 	}
 
-	private <I> double getMinEntriesFactor(I item, Map<I, Double> factorMap) {
+	private <I> double getMinMatchesFactor(I item, Map<I, Double> factorMap) {
 		return factorMap.getOrDefault(item, 1.0);
 	}
 
-	private static double getMinEntriesFactor(Period period) {
+	private static double getMinMatchesFactor(Period period) {
 		int years = period.getYears();
 		if (years == 0) {
 			int months = period.getMonths();
@@ -396,6 +425,18 @@ public class RivalriesService {
 			return Math.round(20.0 * MIN_MATCHES_SEASON_FACTOR / years) / 20.0;
 		else
 			return 1.0;
+	}
+
+	private double getMinMatchesTournamentFactor(int tournamentId) {
+		int eventCount = tournamentService.getTournamentEventCount(tournamentId);
+		return MIN_MATCHES_TOURNAMENT_FACTOR_MAP.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().get().getValue();
+	}
+
+	private String rivalriesJoin(RivalryFilter filter) {
+		StringBuilder sb = new StringBuilder(100);
+		if (filter.hasSpeedRange())
+			sb.append(EVENT_STATS_JOIN);
+		return sb.toString();
 	}
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {

@@ -6,6 +6,7 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
@@ -17,6 +18,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
@@ -41,6 +43,7 @@
 		url += "&bestOf=" + $("#statsBestOf").val();
 		url += "&surface=" + $("#statsSurface").val();
 		url += "&indoor=" + $("#statsIndoor").val();
+		url += "&speed=" + $("#statsSpeed").val();
 		url += "&round=" + encodeURIComponent($("#statsRound").val());
 		url += "&result=" + encodeURIComponent($("#statsResult").val());
 		url += "&tournamentId=" + $("#statsTournament").val();
@@ -75,6 +78,7 @@
 		$("#statsBestOf").val("");
 		$("#statsSurface").val("");
 		$("#statsIndoor").val("");
+		$("#statsSpeed").val("");
 		$("#statsRound").val("");
 		$("#statsResult").val("");
 		$("#statsTournament").val("");
@@ -133,7 +137,7 @@
 		</div>
 	</div>
 </div>
-<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${advFilter || fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (result != null && result != '') || tournamentId != null ? ' in' : _}">
+<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${advFilter || fromDate != null || toDate != null || bestOf != null || indoor != null || speed != null || (countryId != null && countryId != '') || (result != null && result != '') || tournamentId != null ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-4">
 			<div id="statsDateRange" class="input-group">
@@ -169,6 +173,12 @@
 				<option value="">Best of any</option>
 				<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
 				<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="statsSpeed" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
 			</select>
 		</div>
 		<div class="col-md-3">

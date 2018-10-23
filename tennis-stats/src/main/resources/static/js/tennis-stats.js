@@ -372,37 +372,35 @@ function decorateSurface(selector) {
 	});
 }
 
-function courtSpeedFormatter(column, row) {
-	return formatCourtSpeed(row.courtSpeed, row.surface);
+function speedFormatter(column, row) {
+	return formatSpeed(row.speed, row.surface);
 }
 
-function formatCourtSpeed(speed, surface) {
+function formatSpeed(speed, surface) {
 	if (!speed) return "";
-	return "<span class='label points-" + courtSpeedClassSuffix(speed) + " points-" + surface + "' title='" + courtSpeedTitle(speed) + "'>" + speed + "</span>";
+	return "<span class='label points-" + speedClassSuffix(speed) + " points-" + surface + "' title='" + speedTitle(speed) + "'>" + speed + "</span>";
 }
 
-function courtSpeedsFormatter(column, row) {
+function speedsFormatter(column, row) {
 	var surfaces = row.surfaces;
-	var courtSpeeds = row.courtSpeeds;
+	var speeds = row.speeds;
 	var s = "";
 	for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
 		if (s !== "") s += " ";
 		var surface = surfaces[i];
-		var speed = courtSpeeds[surface];
+		var speed = speeds[surface];
 		if (speed)
-			s += "<span class='label points-" + courtSpeedClassSuffix(speed) + " points-" + surface + "' title='" + courtSpeedTitle(speed) + " " + surfaceName(surface) + "'>" + speed + "</span>";
+			s += "<span class='label points-" + speedClassSuffix(speed) + " points-" + surface + "' title='" + speedTitle(speed) + " " + surfaceName(surface) + "'>" + speed + "</span>";
 	}
 	return s;
 }
 
-function courtSpeedClassSuffix(speed) {
+function speedClassSuffix(speed) {
 	return Math.floor(speed / 10) * 10;
 }
 
-function courtSpeedTitle(speed) {
-	if (speed < 20)
-		return "Extra slow";
-	else if (speed < 30)
+function speedTitle(speed) {
+	if (speed < 30)
 		return "Very slow";
 	else if (speed < 40)
 		return "Slow";
@@ -414,16 +412,14 @@ function courtSpeedTitle(speed) {
 		return "Medium fast";
 	else if (speed < 80)
 		return "Fast";
-	else if (speed < 90)
-		return "Very fast";
-	return "Extra fast";
+	return "Very fast";
 }
 
-function decorateCourtSpeed(selector) {
+function decorateSpeed(selector) {
 	$(selector).each(function() {
 		var $this = $(this);
 		var speed = $this.data("court-speed");
-		$this.addClass("points-" + courtSpeedClassSuffix(speed) + " points-" + $this.data("surface")).attr("title", courtSpeedTitle(speed));;
+		$this.addClass("points-" + speedClassSuffix(speed) + " points-" + $this.data("surface")).attr("title", speedTitle(speed));;
 	});
 }
 
@@ -712,6 +708,8 @@ function performancePlayerMatchesUrl(playerId, outcome, prefix) {
 	}
 	var indoor = paramValue("indoor", prefix);
 	if (indoor) url += "&indoor=" + indoor;
+	var speed = paramValue("speed", prefix);
+	if (speed) url += "&speed=" + speed;
 	if (category == "finals") {
 		url += "&round=F";
 		if (!level) url += "&level=GFLMOAB";
@@ -769,6 +767,8 @@ function statisticsPlayerMatchesUrl(playerId, prefix) {
 	if (surface) url += "&surface=" + surface;
 	var indoor = paramValue("indoor", prefix);
 	if (indoor) url += "&indoor=" + indoor;
+	var speed = paramValue("speed", prefix);
+	if (speed) url += "&speed=" + speed;
 	var round = paramValue("round", prefix);
 	if (round) {
 		url += "&round=" + encodeURIComponent(round);

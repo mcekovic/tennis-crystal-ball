@@ -19,7 +19,7 @@ public class TournamentEvent {
 	private double participation;
 	private int strength;
 	private int averageEloRating;
-	private Integer courtSpeed;
+	private Integer speed;
 	private MatchPlayer winner;
 	private MatchPlayer runnerUp;
 	private String score;
@@ -48,8 +48,8 @@ public class TournamentEvent {
 		this.averageEloRating = averageEloRating;
 	}
 
-	public void setCourtSpeed(Integer courtSpeed) {
-		this.courtSpeed = courtSpeed;
+	public void setSpeed(Integer speed) {
+		this.speed = speed;
 	}
 
 	public void setFinal(MatchPlayer winner, MatchPlayer loser, String score, String outcome) {
@@ -138,8 +138,8 @@ public class TournamentEvent {
 		return averageEloRating;
 	}
 
-	public Integer getCourtSpeed() {
-		return courtSpeed;
+	public Integer getSpeed() {
+		return speed;
 	}
 
 	public MatchPlayer getWinner() {

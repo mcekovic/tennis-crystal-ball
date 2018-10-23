@@ -8,7 +8,7 @@
 		$(function() {
 			var $seasonsTable = $("#seasonsTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($seasonsTable, ["outdoorCount", "indoorCount", "courtSpeed"], deviceGreaterOrEqual(device, "xl"));
+			setBootgridColumnsVisible($seasonsTable, ["outdoorCount", "indoorCount", "speed"], deviceGreaterOrEqual(device, "xl"));
 			setBootgridColumnsVisible($seasonsTable, ["surfaces", "dominantAge"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($seasonsTable, ["bestPlayer"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($seasonsTable, ["hardCount", "clayCount", "grassCount", "carpetCount"], deviceGreaterOrEqual(device, "sm"));
@@ -49,7 +49,7 @@
 							+ "<div class='progress-bar progress-bar-success' role='progressbar' style='width: " + row.grassPct + "' data-toggle='tooltip' data-placement='top' title='Grass " + row.grassPct + "'>" + row.grassPct + "</div>"
 							+ "</div>";
 					},
-					"courtSpeed": courtSpeedFormatter,
+					"speed": speedFormatter,
 					"player": function(column, row) {
 						return playerCountryFormatter(column, row.bestPlayer);
 					},
@@ -83,7 +83,7 @@
 				{id: "carpetCount", title: "Carpet tournaments"},
 				{id: "outdoorCount", title: "Outdoor tournaments"},
 				{id: "indoorCount", title: "Indoor tournaments"},
-				{id: "courtSpeed", title: "[[#{event.courtSpeed.title}]]"},
+				{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
 				{id: "bestPlayer", title: "Player with most GOAT points in the season"},
 				{id: "dominantAge", title: "Dominant age - weighted average age of dominant players in the season"}
 			]);
@@ -124,7 +124,7 @@
 			<th data-column-id="indoorCount" data-formatter="indoorCount" data-width="55" data-align="right" data-header-align="right" data-visible="false">In</th>
 			<th data-column-id="matchCount" data-type="numeric" data-width="90" data-align="right" data-header-align="right">Matches</th>
 			<th data-column-id="surfaces" data-formatter="surfaces" data-sortable="false" data-width="200" data-align="center" data-header-align="center">Surfaces</th>
-			<th data-column-id="courtSpeed" data-formatter="courtSpeed" data-width="70" data-align="center" data-header-align="center">Speed</th>
+			<th data-column-id="speed" data-formatter="speed" data-width="70" data-align="center" data-header-align="center">Speed</th>
 			<th data-column-id="bestPlayer" data-formatter="player" data-sortable="false" data-width="150">Best Player</th>
 			<th data-column-id="dominantAge" data-formatter="dominantAge" data-sortable="false" data-width="55" data-align="right" data-header-align="right">Age</th>
 		</tr>

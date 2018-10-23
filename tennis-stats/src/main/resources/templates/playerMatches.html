@@ -7,6 +7,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
@@ -19,6 +20,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
@@ -61,6 +63,7 @@
 				request.bestOf = $("#matchesBestOf").val();
 				request.surface = $("#matchesSurface").val();
 				request.indoor = $("#matchesIndoor").val();
+				request.speed = $("#matchesSpeed").val();
 				request.round = $("#matchesRound").val();
 				request.result = $("#matchesResult").val();
 				request.opponent = $("#matchesOpponent").val();
@@ -83,6 +86,7 @@
 				"date": dateFormatter,
 				"tournament": tournamentEventFormatter,
 				"surface": surfaceFormatter,
+				"speed": speedFormatter,
 				"wonLost": wonLostFormatter([(${playerId})]),
 				"match": matchFormatter([(${playerId})]),
 				"matchEx": matchExFormatter([(${playerId})]),
@@ -117,6 +121,7 @@
 		$search.before($("#matchesStats").remove());
 		dateRangePicker("matchesFromDate", "matchesToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		setBootgridTitles($matchesTable, [
+			{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
 			{id: "bestOf", title: "Best of"},
 			{id: "bigWinPoints", title: "Big Win GOAT Points"}
 		]);
@@ -171,6 +176,7 @@
 		$("#matchesBestOf").val("");
 		$("#matchesSurface").val("");
 		$("#matchesIndoor").val("");
+		$("#matchesSpeed").val("");
 		$("#matchesRound").val("");
 		$("#matchesResult").val("");
 		$("#matchesOpponent").val("");
@@ -195,6 +201,7 @@
 		params += "&bestOf=" + $("#matchesBestOf").val();
 		params += "&surface=" + $("#matchesSurface").val();
 		params += "&indoor=" + $("#matchesIndoor").val();
+		params += "&speed=" + $("#matchesSpeed").val();
 		params += "&round=" + encodeURIComponent($("#matchesRound").val());
 		params += "&result=" + encodeURIComponent($("#matchesResult").val());
 		params += "&opponent=" + $("#matchesOpponent").val();
@@ -289,7 +296,7 @@
 		</span>
 	</div>
 </div>
-<div id="matchesAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (result != null && result != '') || (score != null && score != '') || bigWin ? ' in' : _}">
+<div id="matchesAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null || speed != null || (countryId != null && countryId != '') || (result != null && result != '') || (score != null && score != '') || bigWin ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-4">
 			<div id="matchesDateRange" class="input-group">
@@ -372,6 +379,21 @@
 				</optgroup>
 			</select>
 		</div>
+		<div class="col-md-2">
+			<select id="matchesSpeed" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
+			</select>
+		</div>
+		<div class="col-md-1">
+			<div class="checkbox text-nowrap">
+				<label data-toggle="tooltip" data-placement="top" title="Filter Big Wins for Big Win GOAT Points">
+					<input id="matchesBigWin" type="checkbox" th:checked="${bigWin}" onchange="reloadMatches()"/> Big win
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row margin-top">
 		<div class="col-md-7">
 			<div class="input-group">
 				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="matchesStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
@@ -385,13 +407,6 @@
 				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
 				<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>
 				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
-			</div>
-		</div>
-		<div class="col-md-1">
-			<div class="checkbox text-nowrap">
-				<label data-toggle="tooltip" data-placement="top" title="Filter Big Wins for Big Win GOAT Points">
-					<input id="matchesBigWin" type="checkbox" th:checked="${bigWin}" onchange="reloadMatches()"/> Big win
-				</label>
 			</div>
 		</div>
 	</div>
@@ -444,6 +459,7 @@
 		<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
 		<th data-column-id="tournament" data-formatter="tournament" data-width="175">Tournament</th>
 		<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+		<th data-column-id="speed" data-formatter="speed" data-visible="false" data-width="70" data-align="center" data-header-align="center">Speed</th>
 		<th data-column-id="round" data-width="75">Round</th>
 		<th data-column-id="wonLost" data-formatter="wonLost" data-width="55">W/L</th>
 		<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>

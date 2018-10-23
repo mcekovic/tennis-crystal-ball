@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
@@ -46,7 +47,9 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "h2h", required = false) Integer h2h,
@@ -56,7 +59,9 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		RivalryFilter rivalryFilter = new RivalryFilter(season, RangeUtil.toRange(fromSeason, toSeason), level, bestOf, surface, indoor, round);
+		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
+		RivalryFilter rivalryFilter = new RivalryFilter(season, seasonRange, level, bestOf, surface, indoor, speedRange, round, tournamentId);
 		RivalrySeriesFilter rivalrySeriesFilter = new RivalrySeriesFilter(opponent, matchesService.getSameCountryIds(countryId), h2h, matches);
 		RivalryPlayerListFilter filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
@@ -75,13 +80,15 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "outcome", required = false) String outcome
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, round, tournamentId, outcome, score));
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, score));
 		return asList(stats1.getMatchesWon(), stats1.getMatchesLost());
 	}
 }

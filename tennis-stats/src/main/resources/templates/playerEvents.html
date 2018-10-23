@@ -7,6 +7,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
@@ -15,6 +16,7 @@
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.core.StatsCategory>>"*/-->
@@ -23,7 +25,7 @@
 	$(function() {
 		var $eventsTable = $("#eventsTable");
 		var device = detectDevice();
-		setBootgridColumnsVisible($eventsTable, ["courtSpeed"], deviceGreaterOrEqual(device, "xl"));
+		setBootgridColumnsVisible($eventsTable, ["speed"], deviceGreaterOrEqual(device, "xl"));
 		setBootgridColumnsVisible($eventsTable, ["averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($eventsTable, ["participation", "strength"], deviceGreaterOrEqual(device, "md"));
 		setBootgridColumnsVisible($eventsTable, ["season", "draw"], deviceGreaterOrEqual(device, "sm"));
@@ -42,6 +44,7 @@
 				request.level = $("#eventsLevel").val();
 				request.surface = $("#eventsSurface").val();
 				request.indoor = $("#eventsIndoor").val();
+				request.speed = $("#eventsSpeed").val();
 				request.result = $("#eventsResult").val();
 				request.tournamentId = $("#eventsTournament").val();
 				lastEventsStatsFilter = eventsStatsFilter();
@@ -57,7 +60,7 @@
 				"date": dateFormatter,
 				"tournament": tournamentEventFormatter,
 				"surface": surfaceFormatter,
-				"courtSpeed": courtSpeedFormatter,
+				"speed": speedFormatter,
 				"participation": participationFormatter,
 				"result": function(column, row) {
 					return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[(${playerId})]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
@@ -86,7 +89,7 @@
 		$search.after($("#eventsClear").remove());
 		dateRangePicker("eventsFromDate", "eventsToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		setBootgridTitles($eventsTable, [
-			{id: "courtSpeed", title: "[[#{event.courtSpeed.title}]]"},
+			{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
 			{id: "participation", title: "[[#{event.participation.title}]]"},
 			{id: "strength", title: "[[#{event.strength.title}]]"},
 			{id: "averageEloRating", title: "[[#{event.averageEloRating.title}]]"}
@@ -141,6 +144,7 @@
 		$("#eventsLevel").val("");
 		$("#eventsSurface").val("");
 		$("#eventsIndoor").val("");
+		$("#eventsSpeed").val("");
 		$("#eventsResult").val("");
 		$("#eventsTournament").val("");
 		$("#eventsStatsCategory").val("");
@@ -157,6 +161,7 @@
 		params += "&level=" + $("#eventsLevel").val();
 		params += "&surface=" + $("#eventsSurface").val();
 		params += "&indoor=" + $("#eventsIndoor").val();
+		params += "&speed=" + $("#eventsSpeed").val();
 		params += "&result=" + encodeURIComponent($("#eventsResult").val());
 		params += "&tournamentId=" + $("#eventsTournament").val();
 		params += "&searchPhrase=" + $("#eventsTable-header").find("input.search-field").val();
@@ -241,28 +246,38 @@
 		</div>
 	</div>
 </div>
-<div id="eventsAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${fromDate != null || toDate != null ? ' in' : _}">
-	<div class="col-md-4">
-		<div id="eventsDateRange" class="input-group">
-			<label for="eventsFromDate" class="input-group-addon">From:</label>
-			<input id="eventsFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadEvents()"/>
-			<label for="eventsToDate" class="input-group-addon">To:</label>
-			<input id="eventsToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadEvents()"/>
+<div id="eventsAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || speed != null ? ' in' : _}">
+	<div class="row margin-top">
+		<div class="col-md-4">
+			<div id="eventsDateRange" class="input-group">
+				<label for="eventsFromDate" class="input-group-addon">From:</label>
+				<input id="eventsFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadEvents()"/>
+				<label for="eventsToDate" class="input-group-addon">To:</label>
+				<input id="eventsToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadEvents()"/>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<select id="eventsSpeed" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
+			</select>
 		</div>
 	</div>
-	<div class="col-md-7">
-		<div class="input-group">
-			<select id="eventsStatsCategory" style="width: 220px" class="form-control" onchange="eventsStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
-				<option value="">Select statistics category</option>
-				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-					<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
-				</optgroup>
-			</select>
-			<label id="eventsStatsCategoryLabel" for="eventsStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
-			<label for="eventsStatsFrom" class="input-group-addon">From:</label>
-			<input id="eventsStatsFrom" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
-			<label id="eventsStatsRange" for="eventsStatsTo" class="input-group-addon">To:</label>
-			<input id="eventsStatsTo" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
+	<div class="row margin-top">
+		<div class="col-md-7">
+			<div class="input-group">
+				<select id="eventsStatsCategory" style="width: 220px" class="form-control" onchange="eventsStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+					<option value="">Select statistics category</option>
+					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+					</optgroup>
+				</select>
+				<label id="eventsStatsCategoryLabel" for="eventsStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
+				<label for="eventsStatsFrom" class="input-group-addon">From:</label>
+				<input id="eventsStatsFrom" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
+				<label id="eventsStatsRange" for="eventsStatsTo" class="input-group-addon">To:</label>
+				<input id="eventsStatsTo" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
+			</div>
 		</div>
 	</div>
 </div>
@@ -288,7 +303,7 @@
 		<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
 		<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
 		<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-		<th data-column-id="courtSpeed" data-formatter="courtSpeed" data-width="70" data-align="center" data-header-align="center">Speed</th>
+		<th data-column-id="speed" data-formatter="speed" data-width="70" data-align="center" data-header-align="center">Speed</th>
 		<th data-column-id="draw" data-width="65">Draw</th>
 		<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
 		<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>

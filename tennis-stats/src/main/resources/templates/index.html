@@ -70,7 +70,7 @@
 					"event": tournamentEventFormatterExtId,
 					"level": levelFormatter,
 					"surface": function(column, row) {
-						return formatSurface(row.surface, row.indoor) + (xl ? " " + formatCourtSpeed(row.courtSpeed, row.surface) : "");
+						return formatSurface(row.surface, row.indoor) + (xl ? " " + formatSpeed(row.speed, row.surface) : "");
 					},
 					"participation": participationFormatter,
 					"final": finalFormatter,
@@ -160,6 +160,7 @@
 			</div>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature"></sup></h4>
 			<ul>
+				<li>Court Speed Index in filters across the site as well as player performance breakdown by court speed (i.e. <a href="/playerProfile?name=Roger%20Federer&tab=performance" title="Federer performance breakdown">Federer</a>, <a href="/playerProfile?name=Novak%20Djokovic&tab=performance" title="Djokovic performance breakdown">Djokovic</a>, <a href="/playerProfile?name=Rafael%20Nadal&tab=performance" title="Nadal performance breakdown">Nadal</a>)</li>
 				<li>New Records for Different Masters Slot <a href="/record?recordId=DifferentMastersSlotTitles">Titles</a> (+2 'GOAT' Points) / <a href="/record?recordId=DifferentMastersSlotFinals">Finals</a> (Masters Slot is an order number (1-9) by date of the Masters event within the season) and <a href="/record?recordId=YoungestEndOfSeasonATPNo1">Youngest</a> / <a href="/record?recordId=OldestEndOfSeasonATPNo1">Oldest</a> year-end No. 1</li>
 				<li>Court Speed Index (0 - 100) for tournaments and tournament events (more info about the formula used at <a href="/glossary">Glossary</a> page, visible by default on 1440+ pixels screens)</li>
 				<li>New Records for the <a href="/records?category=LeastMostBreaksWinningTitle">Least Breaks Against / Most Breaks scored while Winning Title</a></li>
@@ -168,7 +169,6 @@
 				<li>New Tournament Event Title Difficulty factor, representing how difficult was to win the title based on the strength of the opponents a winner has faced on the path to the title (more details about Title Difficulty algorithm at <a href="/glossary">Glossary</a> page), as well as new records: <a href="/records?category=MostTitlesAdjustedbyDifficulty">Most Titles Adjusted by Difficulty</a>, <a href="/records?category=HardestTitles">Hardest Titles</a> and <a href="/records?category=EasiestTitles">Easiest Titles</a></li>
 				<li><a href="/rankingsTable?rankType=RECENT_ELO_RANK">Recent Elo Rating</a> - New Recent Elo rating with double the normal Elo K-Factor values more recent form than standard Elo Rating</li>
 				<li><a href="/statsTimeline">Statistics Timeline</a> - How tennis game evolved through time, more info at new <a href="/blog?post=gameEvolution">Game Evolution</a> blog post</li>
-				<li><a href="/blog">Blog Section</a> - New Blog section</li>
 			</ul>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-bullhorn"></i> Tips<sup class="cool-feature"></sup></h4>
 			<ul>
@@ -185,7 +185,7 @@
 					in the upper-right corner of the data table and check the hidden columns. Examples:
 					<ul>
 						<li>Individual GOAT Points areas like Tournament Grans Slam Points (GS P), Weeks at No. 1 Points (W@1 P), etc... in GOAT List</li>
-						<li>Player and opponent flag, rank and Elo rating (Match Details) and Best-of (BO) in Player profile Matches tab</li>
+						<li>Player and opponent flag, rank and Elo rating (Match Details), Speed and Best-of (BO) in Player profile Matches tab</li>
 					</ul>
 				</li>
 				<li>Choosing the odds format: On In-Progress Tournament pages, along with probabilities, it is possible to show odds, in one of the odds formats. This is configured in the user settings, in the upper-right corner:

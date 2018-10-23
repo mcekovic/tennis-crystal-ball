@@ -6,6 +6,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
@@ -15,7 +16,7 @@
 	$(function() {
 		var $tournamentsTable = $("#tournamentsTable");
 		var device = detectDevice();
-		setBootgridColumnsVisible($tournamentsTable, ["courtSpeeds"], deviceGreaterOrEqual(device, "xl"));
+		setBootgridColumnsVisible($tournamentsTable, ["speeds"], deviceGreaterOrEqual(device, "xl"));
 		setBootgridColumnsVisible($tournamentsTable, ["seasons"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($tournamentsTable, ["lastResult", "titles"], deviceGreaterOrEqual(device, "md"));
 		setBootgridColumnsVisible($tournamentsTable, ["wonPct", "bestResult", "stats"], deviceGreaterOrEqual(device, "sm"));
@@ -31,6 +32,7 @@
 				request.level = $("#tournamentsLevel").val();
 				request.surface = $("#tournamentsSurface").val();
 				request.indoor = $("#tournamentsIndoor").val();
+				request.speed = $("#tournamentsSpeed").val();
 				request.result = $("#tournamentsResult").val();
 				return request;
 			},
@@ -59,7 +61,7 @@
 					}
 					return s;
 				},
-				"courtSpeeds": courtSpeedsFormatter,
+				"speeds": speedsFormatter,
 				"eventCount": function(column, row) {
 					return "<a href='/playerProfile" + tournamentsParams() + "&tab=events&tournamentId=" + row.id + "' title='Show tournament events'>" + row.eventCount + "</a>";
 				},
@@ -97,7 +99,7 @@
 		$search.before($("#tournamentsStats").remove());
 		$search.after($("#tournamentsClear").remove());
 		setBootgridTitles($tournamentsTable, [
-			{id: "courtSpeeds", title: "[[#{event.courtSpeed.title}]]"},
+			{id: "speeds", title: "[[#{event.courtSpeed.title}]]"},
 			{id: "bestResult", title: "Best result"},
 			{id: "lastResult", title: "Last result"},
 			{id: "titles", title: "Titles"}
@@ -112,6 +114,7 @@
 		$("#tournamentsLevel").val("");
 		$("#tournamentsSurface").val("");
 		$("#tournamentsIndoor").val("");
+		$("#tournamentsSpeed").val("");
 		$("#tournamentsResult").val("");
 		$("#tournamentsTable").bootgrid("search", "");
 		reloadTournaments();
@@ -124,6 +127,8 @@
 		if (surface && param !== "surface") params += "&surface=" + surface;
 		var indoor = $("#tournamentsIndoor").val();
 		if (indoor && param !== "indoor") params += "&indoor=" + indoor;
+		var speed = $("#tournamentsSpeed").val();
+		if (speed) params += "&speed=" + speed;
 		var result = $("#tournamentsResult").val();
 		if (result && param !== "result") params += "&result=" + encodeURIComponent(result);
 		if (param)
@@ -181,6 +186,12 @@
 		</select>
 	</div>
 	<div class="col-md-2">
+		<select id="tournamentsSpeed" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+			<option value="">All speeds</option>
+			<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+		</select>
+	</div>
+	<div class="col-md-2">
 		<select id="tournamentsResult" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by result">
 			<option value="">All results</option>
 			<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}" th:selected="${aResult.code == result}">Win</option>
@@ -202,7 +213,7 @@
 		<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
 		<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
 		<th data-column-id="surfaces" data-formatter="surfaces" data-width="110">Surface</th>
-		<th data-column-id="courtSpeeds" data-formatter="courtSpeeds" data-width="70">Speed</th>
+		<th data-column-id="speeds" data-formatter="speeds" data-width="70">Speed</th>
 		<th data-column-id="eventCount" data-formatter="eventCount" data-width="75">Events</th>
 		<th data-column-id="seasons" data-formatter="seasons" data-width="180" data-sortable="false">Seasons</th>
 		<th data-column-id="bestResult" data-formatter="bestResult" data-width="60" data-align="center" data-header-align="center">Best</th>

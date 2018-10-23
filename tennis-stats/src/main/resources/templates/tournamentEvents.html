@@ -4,12 +4,14 @@
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Tournament Events</title>
@@ -19,7 +21,7 @@
 		$(function() {
 			var $tournamentEventsTable = $("#tournamentEventsTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($tournamentEventsTable, ["courtSpeed", "finalEx"], deviceGreaterOrEqual(device, "xl"));
+			setBootgridColumnsVisible($tournamentEventsTable, ["speed", "finalEx"], deviceGreaterOrEqual(device, "xl"));
 			setBootgridColumnsVisible($tournamentEventsTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentEventsTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
 			if (device === "md")
@@ -36,6 +38,7 @@
 					request.level = $("#level").val();
 					request.surface = $("#surface").val();
 					request.indoor = $("#indoor").val();
+					request.speed = $("#speed").val();
 					request.tournamentId = $("#tournament").val();
 					return request;
 				},
@@ -49,7 +52,7 @@
 					"event": tournamentEventFormatterExtId,
 					"level": levelFormatter,
 					"surface": surfaceFormatter,
-					"courtSpeed": courtSpeedFormatter,
+					"speed": speedFormatter,
 					"participation": participationFormatter,
 					"final": finalFormatter,
 					"finalEx": finalExFormatter
@@ -64,9 +67,10 @@
 			});
 			var $search = $("#tournamentEventsTable-header").find("div.search");
 			$search.before($("#tournamentDiv").remove());
+			$search.before($("#speedDiv").remove());
 			$search.after($("#clearDiv").remove());
 			setBootgridTitles($tournamentEventsTable, [
-				{id: "courtSpeed", title: "[[#{event.courtSpeed.title}]]"},
+				{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
 				{id: "playerCount", title: "Players"},
 				{id: "participation", title: "[[#{event.participation.title}]]"},
 				{id: "strength", title: "[[#{event.strength.title}]]"},
@@ -82,6 +86,7 @@
 			$("#level").val("");
 			$("#surface").val("");
 			$("#indoor").val("");
+			$("#speed").val("");
 			$("#tournament").val("");
 			$("#tournamentEventsTable").bootgrid("search", "");
 			reloadTournamentEvents();
@@ -130,6 +135,12 @@
 			<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 		</select>
 	</div>
+	<div id="speedDiv" class="btn-group margin-right">
+		<select id="speed" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+			<option value="">All speeds</option>
+			<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
+		</select>
+	</div>
 	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearTournamentEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 			<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
@@ -141,7 +152,7 @@
 			<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
 			<th data-column-id="name" data-formatter="event" data-width="200">Name</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-			<th data-column-id="courtSpeed" data-formatter="courtSpeed" data-width="70" data-align="center" data-header-align="center">Speed</th>
+			<th data-column-id="speed" data-formatter="speed" data-width="70" data-align="center" data-header-align="center">Speed</th>
 			<th data-column-id="draw" data-width="65">Draw</th>
 			<th data-column-id="playerCount" data-type="numeric" data-width="55" data-align="right" data-header-align="right">Pls.</th>
 			<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>

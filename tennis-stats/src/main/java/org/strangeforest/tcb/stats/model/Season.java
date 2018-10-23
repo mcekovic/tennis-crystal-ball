@@ -20,9 +20,9 @@ public class Season extends SurfaceTimelineItem {
 	private final int dominantAge;
 
 	public Season(int season, int tournamentCount, int grandSlamCount, int tourFinalsCount, int mastersCount, int olympicsCount, int atp500Count, int atp250Count,
-			        int hardCount, int clayCount, int grassCount, int carpetCount, int outdoorCount, int indoorCount, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int courtSpeed,
+			        int hardCount, int clayCount, int grassCount, int carpetCount, int outdoorCount, int indoorCount, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int speed,
 	              PlayerRow bestPlayer, int dominantAge) {
-		super(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount, courtSpeed);
+		super(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount, speed);
 		this.tournamentCount = tournamentCount;
 		this.grandSlamCount = grandSlamCount;
 		this.tourFinalsCount = tourFinalsCount;

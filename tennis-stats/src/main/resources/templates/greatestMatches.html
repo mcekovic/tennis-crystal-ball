@@ -5,6 +5,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
 <!--/*@thymesVar id="minMatchScore" type="java.lang.Integer"*/-->
@@ -38,6 +39,7 @@
 					request.bestOf = $("#bestOf").val();
 					request.surface = $("#surface").val();
 					request.indoor = $("#indoor").val();
+					request.speed = $("#speed").val();
 					request.round = $("#round").val();
 					request.tournamentId = $("#tournament").val();
 					request.bestRank = $("#bestRank").val();
@@ -48,6 +50,7 @@
 					"date": dateFormatter,
 					"tournament": tournamentEventFormatter,
 					"surface": surfaceFormatter,
+					"speed": speedFormatter,
 					"match": matchFormatter([(${playerId})]),
 					"matchEx": matchExFormatter([(${playerId})]),
 					"score": scoreFormatter,
@@ -75,6 +78,7 @@
 			$("[data-toggle='tooltip']").tooltip();
 			setBootgridTitles($matchesTable, [
 				{id: "rank", title: "Match greatness rank"},
+				{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
 				{id: "bestOf", title: "Best of"},
 				{id: "matchScore", title: "Match greatness score"}
 			]);
@@ -89,6 +93,7 @@
 			$("#bestOf").val("");
 			$("#surface").val("");
 			$("#indoor").val("");
+			$("#speed").val("");
 			$("#round").val("");
 			$("#tournament").val("");
 			$("#bestRank").val("");
@@ -132,6 +137,12 @@
 				<option value="">Outdoor / Indoor</option>
 				<option value="false">Outdoor</option>
 				<option value="true">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="speed" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
 			</select>
 		</div>
 		<div class="col-md-2">
@@ -191,6 +202,7 @@
 			<th data-column-id="date" data-formatter="date" data-width="85">Date</th>
 			<th data-column-id="tournament" data-formatter="tournament" data-width="175">Tournament</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+			<th data-column-id="speed" data-formatter="speed" data-visible="false" data-width="70" data-align="center" data-header-align="center">Speed</th>
 			<th data-column-id="round" data-width="75">Round</th>
 			<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
 			<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-visible="false" data-width="500">Match Details</th>

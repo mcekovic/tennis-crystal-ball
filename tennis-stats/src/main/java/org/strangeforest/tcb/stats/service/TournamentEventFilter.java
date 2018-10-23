@@ -24,6 +24,7 @@ public class TournamentEventFilter {
 	private final String level;
 	private final String surface;
 	private final Boolean indoor;
+	private final Range<Integer> speedRange;
 	private final Integer tournamentId;
 	private final Integer tournamentEventId;
 	private final String searchPhrase;
@@ -41,13 +42,14 @@ public class TournamentEventFilter {
 
 	private static final int LAST_52_WEEKS_SEASON = -1;
 
-	public TournamentEventFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, Integer tournamentId, Integer tournamentEventId, String searchPhrase) {
+	public TournamentEventFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, Range<Integer> speedRange, Integer tournamentId, Integer tournamentEventId, String searchPhrase) {
 		this.season = season != null && season != LAST_52_WEEKS_SEASON ? season : null;
 		last52Weeks = season != null && season == LAST_52_WEEKS_SEASON;
 		this.dateRange = dateRange != null ? dateRange : Range.all();
 		this.level = level;
 		this.surface = surface;
 		this.indoor = indoor;
+		this.speedRange = speedRange != null ? speedRange : Range.all();
 		this.tournamentId = tournamentId;
 		this.tournamentEventId = tournamentEventId;
 		this.searchPhrase = searchPhrase;
@@ -71,6 +73,7 @@ public class TournamentEventFilter {
 			criteria.append(format(surface.length() == 1 ? SURFACE_CRITERION : SURFACES_CRITERION, getPrefix()));
 		if (indoor != null)
 			criteria.append(format(INDOOR_CRITERION, getPrefix()));
+		appendRangeFilter(criteria, speedRange, "es.court_speed", "speed");
 		if (tournamentId != null)
 			criteria.append(TOURNAMENT_CRITERION);
 		if (tournamentEventId != null)
@@ -101,10 +104,11 @@ public class TournamentEventFilter {
 			else
 				params.addValue("surfaces", asList(surface.split("")));
 		}
-		if (tournamentId != null)
-			params.addValue("tournamentId", tournamentId);
 		if (indoor != null)
 			params.addValue("indoor", indoor);
+		addRangeParams(params, speedRange, "speed");
+		if (tournamentId != null)
+			params.addValue("tournamentId", tournamentId);
 		if (tournamentEventId != null)
 			params.addValue("tournamentEventId", tournamentEventId);
 		if (!isNullOrEmpty(searchPhrase))
@@ -127,13 +131,17 @@ public class TournamentEventFilter {
 		return surface;
 	}
 
+	public boolean hasSpeedRange() {
+		return !speedRange.equals(Range.all());
+	}
+
 	public boolean hasSearchPhrase() {
 		return !isNullOrEmpty(searchPhrase);
 	}
 
 	public boolean isEmpty() {
 		return season == null && !last52Weeks && dateRange.equals(Range.all()) &&
-			isNullOrEmpty(level) && isNullOrEmpty(surface) && indoor == null &&
+			isNullOrEmpty(level) && isNullOrEmpty(surface) && indoor == null && speedRange.equals(Range.all()) &&
 			tournamentId == null && tournamentEventId == null && isNullOrEmpty(searchPhrase);
 	}
 
@@ -145,13 +153,13 @@ public class TournamentEventFilter {
 		if (!(o instanceof TournamentEventFilter)) return false;
 		TournamentEventFilter filter = (TournamentEventFilter)o;
 		return Objects.equals(season, filter.season) &&	last52Weeks == filter.last52Weeks && dateRange.equals(filter.dateRange) &&
-			stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) &&
+			stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) && speedRange.equals(filter.speedRange) &&
 			Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) &&
 			stringsEqual(searchPhrase, filter.searchPhrase);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(season, last52Weeks, dateRange, emptyToNull(level), emptyToNull(surface), indoor, tournamentId, tournamentEventId, emptyToNull(searchPhrase));
+		return Objects.hash(season, last52Weeks, dateRange, emptyToNull(level), emptyToNull(surface), indoor, speedRange, tournamentId, tournamentEventId, emptyToNull(searchPhrase));
 	}
 
 	@Override public final String toString() {
@@ -166,6 +174,7 @@ public class TournamentEventFilter {
 			.add("level", emptyToNull(level))
 			.add("surface", emptyToNull(surface))
 			.add("indoor", indoor)
+			.add("speedRange", nullIf(speedRange, Range.all()))
 			.add("tournamentId", tournamentId)
 			.add("tournamentEventId", tournamentEventId)
 			.add("searchPhrase", emptyToNull(searchPhrase));

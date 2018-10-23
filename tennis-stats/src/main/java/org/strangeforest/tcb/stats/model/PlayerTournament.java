@@ -10,7 +10,7 @@ public class PlayerTournament {
 	private final String name;
 	private final List<String> levels;
 	private final List<String> surfaces;
-	private final Map<String, Integer> courtSpeeds;
+	private final Map<String, Integer> speeds;
 	private final int eventCount;
 	private final String seasons;
 	private final String bestResult;
@@ -19,12 +19,12 @@ public class PlayerTournament {
 	private final WonLost wonLost;
 	private final int titles;
 
-	public PlayerTournament(int id, String name, List<String> levels, List<String> surfaces, Map<String, Integer> courtSpeeds, int eventCount, String seasons, String bestResult, String lastResult, int lastTournamentEventId, WonLost wonLost, int titles) {
+	public PlayerTournament(int id, String name, List<String> levels, List<String> surfaces, Map<String, Integer> speeds, int eventCount, String seasons, String bestResult, String lastResult, int lastTournamentEventId, WonLost wonLost, int titles) {
 		this.id = id;
 		this.name = name;
 		this.levels = levels;
 		this.surfaces = surfaces;
-		this.courtSpeeds = courtSpeeds;
+		this.speeds = speeds;
 		this.eventCount = eventCount;
 		this.seasons = seasons;
 		this.bestResult = bestResult;
@@ -50,8 +50,8 @@ public class PlayerTournament {
 		return surfaces;
 	}
 
-	public Map<String, Integer> getCourtSpeeds() {
-		return courtSpeeds;
+	public Map<String, Integer> getSpeeds() {
+		return speeds;
 	}
 
 	public int getEventCount() {

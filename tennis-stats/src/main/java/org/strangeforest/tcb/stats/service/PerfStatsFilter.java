@@ -20,78 +20,78 @@ public class PerfStatsFilter extends PlayerListFilter {
 
 	// Factory
 
-	public static final PerfStatsFilter ALL = new PerfStatsFilter(null, null, null, null, null, null, null, null, null, null);
+	public static final PerfStatsFilter ALL = new PerfStatsFilter(null, null, null, null, null, null, null, null, null, null, null);
 
  	public static PerfStatsFilter forSeason(Integer season) {
-		return new PerfStatsFilter(season, null, null, null, null, null, null, null, null, null);
+		return new PerfStatsFilter(season, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndLevel(Integer season, String level) {
-		return new PerfStatsFilter(season, null, level, null, null, null, null, null, null, null);
+		return new PerfStatsFilter(season, null, level, null, null, null, null, null, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndBestOf(Integer season, Integer bestOf) {
-		return new PerfStatsFilter(season, null, null, bestOf, null, null, null, null, null, null);
+		return new PerfStatsFilter(season, null, null, bestOf, null, null, null, null, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndSurface(Integer season, String surface) {
-		return new PerfStatsFilter(season, null, null, null, surface, null, null, null, null, null);
+		return new PerfStatsFilter(season, null, null, null, surface, null, null, null, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndIndoor(Integer season, Boolean indoor) {
-		return new PerfStatsFilter(season, null, null, null, null, indoor, null, null, null, null);
+		return new PerfStatsFilter(season, null, null, null, null, indoor, null, null, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndRound(Integer season, String round) {
-		return new PerfStatsFilter(season, null, null, null, null, null, round, null, null, null);
+		return new PerfStatsFilter(season, null, null, null, null, null, null, round, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndOpponent(Integer season, String opponent) {
-		return new PerfStatsFilter(season, null, null, null, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
+		return new PerfStatsFilter(season, null, null, null, null, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
 	}
 
  	public static PerfStatsFilter forLevel(String level) {
-		return new PerfStatsFilter(null, null, level, null, null, null, null, null, null, null);
+		return new PerfStatsFilter(null, null, level, null, null, null, null, null, null, null, null);
 	}
 
  	public static PerfStatsFilter forLevelAndTournament(String level, Integer tournamentId) {
-		return new PerfStatsFilter(null, null, level, null, null, null, null, null, tournamentId, null);
+		return new PerfStatsFilter(null, null, level, null, null, null, null, null, null, tournamentId, null);
 	}
 
 	public static PerfStatsFilter forBestOf(Integer bestOf) {
-		return new PerfStatsFilter(null, null, null, bestOf, null, null, null, null, null, null);
+		return new PerfStatsFilter(null, null, null, bestOf, null, null, null, null, null, null, null);
 	}
 
  	public static PerfStatsFilter forSurface(String surface) {
-		return new PerfStatsFilter(null, null, null, null, surface, null, null, null, null, null);
+		return new PerfStatsFilter(null, null, null, null, surface, null, null, null, null, null, null);
 	}
 
  	public static PerfStatsFilter forSurfaceAndTournament(String surface, Integer tournamentId) {
-		return new PerfStatsFilter(null, null, null, null, surface, null, null, null, tournamentId, null);
+		return new PerfStatsFilter(null, null, null, null, surface, null, null, null, null, tournamentId, null);
 	}
 
 	public static PerfStatsFilter forIndoor(Boolean indoor) {
-		return new PerfStatsFilter(null, null, null, null, null, indoor, null, null, null, null);
+		return new PerfStatsFilter(null, null, null, null, null, indoor, null, null, null, null, null);
 	}
 
  	public static PerfStatsFilter forRound(String round) {
-		return new PerfStatsFilter(null, null, null, null, null, null, round, null, null, null);
+		return new PerfStatsFilter(null, null, null, null, null, null, null, round, null, null, null);
 	}
 
  	public static PerfStatsFilter forRoundAndTournament(String round, Integer tournamentId) {
-		return new PerfStatsFilter(null, null, null, null, null, null, round, null, tournamentId, null);
+		return new PerfStatsFilter(null, null, null, null, null, null, null, round, null, tournamentId, null);
 	}
 
  	public static PerfStatsFilter forTournament(Integer tournamentId) {
-		return new PerfStatsFilter(null, null, null, null, null, null, null, null, tournamentId, null);
+		return new PerfStatsFilter(null, null, null, null, null, null, null, null, null, tournamentId, null);
 	}
 
 	public static PerfStatsFilter forOpponent(String opponent) {
-		return new PerfStatsFilter(null, null, null, null, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
+		return new PerfStatsFilter(null, null, null, null, null, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
 	}
 
 	public static PerfStatsFilter forOpponentAndTournament(String opponent, Integer tournamentId) {
-		return new PerfStatsFilter(null, null, null, null, null, null, null, null, tournamentId, OpponentFilter.forStats(opponent, null));
+		return new PerfStatsFilter(null, null, null, null, null, null, null, null, null, tournamentId, OpponentFilter.forStats(opponent, null));
 	}
 
 
@@ -104,6 +104,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 	private final Integer bestOf;
 	private final String surface;
 	private final Boolean indoor;
+	private final Range<Integer> speedRange;
 	private final String round;
 	private final String result;
 	private final Integer tournamentId;
@@ -126,15 +127,15 @@ public class PerfStatsFilter extends PlayerListFilter {
 
 	private static final int LAST_52_WEEKS_SEASON = -1;
 
-	public PerfStatsFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, OpponentFilter opponentFilter) {
-		this(null, null, season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, null, opponentFilter);
+	public PerfStatsFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, Range<Integer> speedRange, String round, String result, Integer tournamentId, OpponentFilter opponentFilter) {
+		this(null, null, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, null, opponentFilter);
 	}
 
-	public PerfStatsFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
-		this(null, null, season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter);
+	public PerfStatsFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, Range<Integer> speedRange, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
+		this(null, null, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter);
 	}
 
-	public PerfStatsFilter(Boolean active, String searchPhrase, Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
+	public PerfStatsFilter(Boolean active, String searchPhrase, Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, Range<Integer> speedRange, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
 		super(active, searchPhrase);
 		this.season = season != null && season != LAST_52_WEEKS_SEASON ? season : null;
 		last52Weeks = season != null && season == LAST_52_WEEKS_SEASON;
@@ -143,6 +144,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 		this.bestOf = bestOf;
 		this.surface = surface;
 		this.indoor = indoor;
+		this.speedRange = speedRange != null ? speedRange : Range.all();
 		this.round = round;
 		this.result = result;
 		this.tournamentId = tournamentId;
@@ -181,6 +183,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 			criteria.append(surface.length() == 1 ? SURFACE_CRITERION : SURFACES_CRITERION);
 		if (indoor != null)
 			criteria.append(INDOOR_CRITERION);
+		appendRangeFilter(criteria, speedRange, "es.court_speed", "speed");
 		if (!isNullOrEmpty(round))
 			criteria.append(round.equals(Round.ENTRY.getCode()) ? ENTRY_ROUND_CRITERION : format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 		if (!isNullOrEmpty(result))
@@ -213,6 +216,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 		}
 		if (indoor != null)
 			params.addValue("indoor", indoor);
+		addRangeParams(params, speedRange, "speed");
 		if (!isNullOrEmpty(round) && !round.equals(Round.ENTRY.getCode()))
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		if (!isNullOrEmpty(result))
@@ -250,6 +254,10 @@ public class PerfStatsFilter extends PlayerListFilter {
 
 	public Boolean getIndoor() {
 		return indoor;
+	}
+
+	public Range<Integer> getSpeedRange() {
+		return speedRange;
 	}
 
 	public String getRound() {
@@ -298,6 +306,10 @@ public class PerfStatsFilter extends PlayerListFilter {
 
 	public boolean hasIndoor() {
 		return indoor != null;
+	}
+
+	public boolean hasSpeedRange() {
+		return !speedRange.equals(Range.all());
 	}
 
 	public boolean hasRound() {
@@ -388,19 +400,19 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return opponentFilter.getOpponent() != null && tournamentId != null && equals(forOpponentAndTournament(opponentFilter.getOpponent().name(), tournamentId));
 	}
 
-	public boolean isTournamentGranularity() {
+	public boolean isTournamentEventGranularity() {
 		return bestOf == null && isNullOrEmpty(round) && opponentFilter.isEmpty();
 	}
 
 	public boolean isEmpty() {
 		return season == null && !last52Weeks && dateRange.equals(Range.all()) &&
-			isNullOrEmpty(level) && bestOf == null && isNullOrEmpty(surface) && indoor == null && isNullOrEmpty(round) && isNullOrEmpty(result) &&
-			tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
+			isNullOrEmpty(level) && bestOf == null && isNullOrEmpty(surface) && indoor == null && isNullOrEmpty(round) && speedRange.equals(Range.all()) &&
+			isNullOrEmpty(result) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
 	}
 
 	public boolean isEmptyOrForSeasonOrSurface() {
 		return !last52Weeks && dateRange.equals(Range.all()) &&
-		   isNullOrEmpty(level) && bestOf == null && indoor == null && isNullOrEmpty(round) && isNullOrEmpty(result) &&
+		   isNullOrEmpty(level) && bestOf == null && indoor == null && speedRange.equals(Range.all()) && isNullOrEmpty(round) && isNullOrEmpty(result) &&
 			tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
 	}
 
@@ -413,12 +425,12 @@ public class PerfStatsFilter extends PlayerListFilter {
 		if (!super.equals(o)) return false;
 		PerfStatsFilter filter = (PerfStatsFilter)o;
 		return Objects.equals(season, filter.season) &&	last52Weeks == filter.last52Weeks && dateRange.equals(filter.dateRange) &&
-			stringsEqual(level, filter.level) && Objects.equals(bestOf, filter.bestOf) && stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) && stringsEqual(round, filter.round) && stringsEqual(result, filter.result) &&
-		   Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && opponentFilter.equals(filter.opponentFilter);
+			stringsEqual(level, filter.level) && Objects.equals(bestOf, filter.bestOf) && stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) && speedRange.equals(filter.speedRange) &&
+			stringsEqual(round, filter.round) && stringsEqual(result, filter.result) && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && opponentFilter.equals(filter.opponentFilter);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), season, last52Weeks, dateRange, emptyToNull(level), bestOf, emptyToNull(surface), indoor, emptyToNull(round), emptyToNull(result), tournamentId, tournamentEventId, opponentFilter);
+		return Objects.hash(super.hashCode(), season, last52Weeks, dateRange, emptyToNull(level), bestOf, emptyToNull(surface), indoor, speedRange, emptyToNull(round), emptyToNull(result), tournamentId, tournamentEventId, opponentFilter);
 	}
 
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {
@@ -430,6 +442,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 			.add("bestOf", bestOf)
 			.add("surface", emptyToNull(surface))
 			.add("indoor", indoor)
+			.add("speedRange", nullIf(speedRange, Range.all()))
 			.add("round", emptyToNull(round))
 			.add("result", emptyToNull(result))
 			.add("tournamentId", tournamentId)

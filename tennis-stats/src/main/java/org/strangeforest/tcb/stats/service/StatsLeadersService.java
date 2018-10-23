@@ -70,6 +70,9 @@ public class StatsLeadersService {
 		"INNER JOIN player_v p USING (player_id)%6$s\n" +
 		"ORDER BY %7$s NULLS LAST OFFSET :offset LIMIT :limit";
 
+	private static final String EVENT_STATS_JOIN = //language=SQL
+		"\nLEFT JOIN event_stats es USING (tournament_event_id)";
+
 	private static final String EVENT_RESULT_JOIN = //language=SQL
 		"\n  INNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
 
@@ -137,6 +140,8 @@ public class StatsLeadersService {
 
 	private static String getStatsLeadersJoin(PerfStatsFilter filter) {
 		StringBuilder sb = new StringBuilder();
+		if (filter.hasSpeedRange())
+			sb.append(EVENT_STATS_JOIN);
 		if (filter.hasResult())
 			sb.append(EVENT_RESULT_JOIN);
 		if (filter.getOpponentFilter().isOpponentRequired())

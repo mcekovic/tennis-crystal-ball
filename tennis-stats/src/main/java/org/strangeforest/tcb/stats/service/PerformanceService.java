@@ -68,6 +68,14 @@ public class PerformanceService {
 		"WHERE player_id = :playerId\n" +
 		"ORDER BY season";
 
+	private static final String PLAYER_COURT_SPEED_BREAKDOWN_QUERY = //language=SQL
+		"SELECT 10 * floor(es.court_speed / 10) speed, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
+		"FROM player_match_for_stats_v m%1$s\n" +
+		"INNER JOIN event_stats es USING (tournament_event_id)\n" +
+		"WHERE m.player_id = :playerId AND level <> 'D'%2$s\n" +
+		"GROUP BY speed\n" +
+		"ORDER BY speed DESC";
+
 	private static final String PLAYER_OPPOSITION_BREAKDOWN_QUERY = //language=SQL
 		"WITH season_opposition AS (\n" +
 		"  SELECT CASE\n" +
@@ -87,6 +95,13 @@ public class PerformanceService {
 		"WHERE opposition IS NOT NULL\n" +
 		"ORDER BY opposition";
 
+	private static final String PLAYER_SCORE_BREAKDOWN_QUERY = //language=SQL
+		"SELECT best_of, p_sets, o_sets, count(match_id) count\n" +
+		"FROM player_match_for_stats_v m%1$s\n" +
+		"WHERE m.player_id = :playerId AND m.outcome IS NULL %2$s\n" +
+		"GROUP BY best_of, p_sets, o_sets\n" +
+		"ORDER BY best_of, p_sets DESC, o_sets";
+
 	private static final String PLAYER_ROUND_BREAKDOWN_QUERY = //language=SQL
 		"SELECT round, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
 		"FROM player_match_for_stats_v m%1$s\n" +
@@ -94,12 +109,8 @@ public class PerformanceService {
 		"GROUP BY round\n" +
 		"ORDER BY round DESC";
 
-	private static final String PLAYER_SCORE_BREAKDOWN_QUERY = //language=SQL
-		"SELECT best_of, p_sets, o_sets, count(match_id) count\n" +
-		"FROM player_match_for_stats_v m%1$s\n" +
-		"WHERE m.player_id = :playerId AND m.outcome IS NULL %2$s\n" +
-		"GROUP BY best_of, p_sets, o_sets\n" +
-		"ORDER BY best_of, p_sets DESC, o_sets";
+	private static final String EVENT_STATS_JOIN = //language=SQL
+		"\nLEFT JOIN event_stats es USING (tournament_event_id)";
 
 	private static final String EVENT_RESULT_JOIN = //language=SQL
 		"\nINNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
@@ -110,8 +121,8 @@ public class PerformanceService {
 	private static final String PLAYER_RESULT_BREAKDOWN_QUERY = //language=SQL
 		"SELECT r.result, count(r.result) count\n" +
 		"FROM player_tournament_event_result r\n" +
-		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"WHERE r.player_id = :playerId AND e.level NOT IN ('D', 'T')%1$s\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)%1$s\n" +
+		"WHERE r.player_id = :playerId AND e.level NOT IN ('D', 'T')%2$s\n" +
 		"GROUP BY r.result\n" +
 		"ORDER BY r.result DESC";
 
@@ -127,7 +138,7 @@ public class PerformanceService {
 		String tableName = getPerformanceTableName(filter);
 		String perfColumns = isMaterializedSum(filter) ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;
 		return jdbcTemplate.query(
-			format(PLAYER_PERFORMANCE_QUERY, perfColumns, tableName, playerPerformanceJoin(filter), filter.getCriteria()),
+			format(PLAYER_PERFORMANCE_QUERY, perfColumns, tableName, playerPerformanceJoin(filter, false), filter.getCriteria()),
 			params,
 			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY
 		);
@@ -146,8 +157,10 @@ public class PerformanceService {
 			return "player_match_performance_v";
 	}
 
-	private static String playerPerformanceJoin(PerfStatsFilter filter) {
+	private static String playerPerformanceJoin(PerfStatsFilter filter, boolean skipEventStatsJoin) {
 		StringBuilder sb = new StringBuilder();
+		if (!skipEventStatsJoin && filter.hasSpeedRange())
+			sb.append(EVENT_STATS_JOIN);
 		if (filter.hasResult())
 			sb.append(EVENT_RESULT_JOIN);
 		if (filter.getOpponentFilter().isOpponentRequired())
@@ -213,9 +226,18 @@ public class PerformanceService {
 		PlayerPerformance performance = getPlayerPerformance(playerId, filter);
 		PlayerPerformanceEx performanceEx = new PlayerPerformanceEx(performance);
 
-		String join = playerPerformanceJoin(filter);
+		String join = playerPerformanceJoin(filter, false);
 		String criteria = filter.getCriteria();
 		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
+
+		jdbcTemplate.query(
+			format(PLAYER_COURT_SPEED_BREAKDOWN_QUERY, playerPerformanceJoin(filter, true), criteria), params,
+			rs -> {
+				CourtSpeed speed = CourtSpeed.forSpeed(rs.getInt("speed"));
+				WonLost wonLost = mapWonLost(rs);
+				performanceEx.addSpeedMatches(speed, wonLost);
+			}
+		);
 
 		Map<Opponent, WonLost> oppositionMatches = new TreeMap<>();
 		jdbcTemplate.query(
@@ -228,14 +250,6 @@ public class PerformanceService {
 		);
 		performanceEx.addOppositionMatches(oppositionMatches);
 
-		jdbcTemplate.query(
-			format(PLAYER_ROUND_BREAKDOWN_QUERY, join, criteria), params,
-			rs -> {
-				Round round = Round.decode(rs.getString("round"));
-				WonLost wonLost = mapWonLost(rs);
-				performanceEx.addRoundMatches(round, wonLost);
-			}
-		);
 
 		Map<PerfMatchScore, Integer> scoreCounts = new TreeMap<>();
 		jdbcTemplate.query(
@@ -250,10 +264,19 @@ public class PerformanceService {
 		);
 		performanceEx.addScoreCounts(scoreCounts);
 
-		if (filter.isTournamentGranularity()) {
+		jdbcTemplate.query(
+			format(PLAYER_ROUND_BREAKDOWN_QUERY, join, criteria), params,
+			rs -> {
+				Round round = Round.decode(rs.getString("round"));
+				WonLost wonLost = mapWonLost(rs);
+				performanceEx.addRoundMatches(round, wonLost);
+			}
+		);
+
+		if (filter.isTournamentEventGranularity()) {
 			Map<EventResult, Integer> resultCounts = new TreeMap<>();
 			jdbcTemplate.query(
-				format(PLAYER_RESULT_BREAKDOWN_QUERY, criteria), params,
+				format(PLAYER_RESULT_BREAKDOWN_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "",criteria), params,
 				rs -> {
 					EventResult result = EventResult.decode(rs.getString("result"));
 					int count = rs.getInt("count");

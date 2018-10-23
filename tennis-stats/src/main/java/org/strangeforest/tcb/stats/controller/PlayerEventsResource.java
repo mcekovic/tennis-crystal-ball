@@ -30,7 +30,7 @@ public class PlayerEventsResource {
 		.put("date", "date")
 		.put("name", "name")
 		.put("surface", "surface")
-		.put("courtSpeed", "court_speed NULLS LAST")
+		.put("speed", "court_speed NULLS LAST")
 		.put("draw", "draw_type, draw_size")
 		.put("participation", "participation")
 		.put("strength", "strength")
@@ -48,6 +48,7 @@ public class PlayerEventsResource {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
@@ -59,8 +60,9 @@ public class PlayerEventsResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		StatsFilter statsFilter = StatsFilter.forTournaments(statsCategory, statsFrom, statsTo);
-		TournamentEventResultFilter filter = new TournamentEventResultFilter(season, dateRange, level, surface, indoor, result, tournamentId, statsFilter, searchPhrase);
+		TournamentEventResultFilter filter = new TournamentEventResultFilter(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, statsFilter, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return tournamentService.getPlayerTournamentEventsTable(playerId, filter, orderBy, pageSize, current);
@@ -75,13 +77,15 @@ public class PlayerEventsResource {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, result, tournamentId, StatsFilter.ALL, searchPhrase);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
+		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, StatsFilter.ALL, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		return StatsCategory.get(statsCategory).getStat(stats);
 	}

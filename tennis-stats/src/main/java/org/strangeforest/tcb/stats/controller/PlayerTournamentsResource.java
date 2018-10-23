@@ -28,6 +28,13 @@ public class PlayerTournamentsResource {
 		.put("name", BY_NAME)
 		.put("levels", BY_LEVEL)
 		.put("surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
+		.put("speeds", (t1, t2) -> {
+			List<Integer> speeds1 = new ArrayList<>(t1.getSpeeds().values());
+			speeds1.sort(reverseOrder());
+			List<Integer> speeds2 = new ArrayList<>(t2.getSpeeds().values());
+			speeds2.sort(reverseOrder());
+			return compareLists(speeds1, speeds2);
+		})
 		.put("eventCount", comparing(PlayerTournament::getEventCount))
 		.put("bestResult", comparing(PlayerTournament::bestResult))
 		.put("lastResult", comparing(PlayerTournament::lastResult))
@@ -41,13 +48,15 @@ public class PlayerTournamentsResource {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		TournamentEventResultFilter filter = new TournamentEventResultFilter(null, null, level, surface, indoor, result, null, null, searchPhrase);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
+		TournamentEventResultFilter filter = new TournamentEventResultFilter(null, null, level, surface, indoor, speedRange, result, null, null, searchPhrase);
 		Comparator<PlayerTournament> comparator = getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return sortAndPage(tournamentService.getPlayerTournaments(playerId, filter), comparator, pageSize, current);

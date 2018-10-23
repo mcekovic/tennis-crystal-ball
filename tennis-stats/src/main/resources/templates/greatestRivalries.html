@@ -5,7 +5,9 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Greatest Rivalries</title>
 	<template>
@@ -33,7 +35,9 @@
 					request.bestOf = $("#bestOf").val();
 					request.surface = $("#surface").val();
 					request.indoor = $("#indoor").val();
+					request.speed = $("#speed").val();
 					request.round = $("#round").val();
+					request.tournamentId = $("#tournament").val();
 					request.bestRank = $("#bestRank").val();
 					request.minMatches = $("#minMatchesOverride").val();
 					return request;
@@ -107,7 +111,7 @@
 			return name;
 		}
 		function filterChanged() {
-			var url = "/greatestRivalriesMinMatches?fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val() + "&level=" + $("#level").val() + "&bestOf=" + $("#bestOf").val() + "&surface=" + $("#surface").val() + "&indoor=" + $("#indoor").val() + "&round=" + encodeURIComponent($("#round").val()) + "&bestRank=" + $("#bestRank").val();
+			var url = "/greatestRivalriesMinMatches?fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val() + "&level=" + $("#level").val() + "&bestOf=" + $("#bestOf").val() + "&surface=" + $("#surface").val() + "&indoor=" + $("#indoor").val() + "&speed=" + $("#speed").val() + "&round=" + encodeURIComponent($("#round").val()) + "&tournamentId=" + $("#tournament").val() + "&bestRank=" + $("#bestRank").val();
 			var $minMatches = $("#minMatchesOverride");
 			if (!validateNumber($minMatches))
 				return false;
@@ -141,8 +145,12 @@
 			if (surface) params += "&surface=" + surface;
 			var indoor = $("#indoor").val();
 			if (indoor) params += "&indoor=" + indoor;
+			var speed = $("#speed").val();
+			if (speed) params += "&speed=" + speed;
 			var round = $("#round").val();
 			if (round) params += "&round=" + encodeURIComponent(round);
+			var tournamentId = $("#tournament").val();
+			if (tournamentId) params += "&tournamentId=" + tournamentId;
 			return params;
 		}
 		function clearGreatestRivalriesFilter() {
@@ -152,7 +160,9 @@
 			$("#bestOf").val("");
 			$("#surface").val("");
 			$("#indoor").val("");
+			$("#speed").val("");
 			$("#round").val("");
+			$("#tournament").val("");
 			$("#bestRank").val("");
 			$("#minMatchesOverride").val("");
 			reloadGreatestRivalries();
@@ -199,6 +209,18 @@
 				<option value="">Outdoor / Indoor</option>
 				<option value="false">Outdoor</option>
 				<option value="true">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="speed" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="tournament" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
 			</select>
 		</div>
 		<div class="col-md-2">

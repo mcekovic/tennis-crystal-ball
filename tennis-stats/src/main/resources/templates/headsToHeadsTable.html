@@ -5,6 +5,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="headsToHeads" type="org.strangeforest.tcb.stats.model.HeadsToHeads"*/-->
@@ -69,7 +70,7 @@
 			<span class="pct-data" th:text="${hRivalry.wonLost.pctWL}">55.5% (11-9)</span>
 		</th>
 		<td th:each="vRivalry : ${headsToHeads.rivalries}" th:with="playerId1=${hRivalry.player1.playerId}, playerId2=${vRivalry.player1.playerId}, rivalry=${headsToHeads.getRivalry(playerId1, playerId2)}">
-			<span th:if="${rivalry}" th:with="match=${rivalry.lastMatch}, url=@{/headToHead(playerId1=${playerId1}, playerId2=${playerId2}, tab=matches, fromDate=${fromSeason != null ? '01-01-' + fromSeason : _}, toDate=${toSeason != null ? '31-12-' + toSeason : _}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round})}, title=${'Show ' + hRivalry.player1.name + ' - ' + vRivalry.player1.name + ' H2H matches'}" class="rivalry" th:attr="data-won=${match.winnerId == hRivalry.player1.playerId}, data-score=${match.score}, data-season=${match.season}, data-tournamenteventid=${match.tournamentEventId}, data-tournament=${match.tournament}, data-level=${match.level}, data-surface=${match.surface}, data-indoor=${match.indoor}, data-round=${match.round}">
+			<span th:if="${rivalry}" th:with="match=${rivalry.lastMatch}, url=@{/headToHead(playerId1=${playerId1}, playerId2=${playerId2}, tab=matches, fromDate=${fromSeason != null ? '01-01-' + fromSeason : _}, toDate=${toSeason != null ? '31-12-' + toSeason : _}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round})}, title=${'Show ' + hRivalry.player1.name + ' - ' + vRivalry.player1.name + ' H2H matches'}" class="rivalry" th:attr="data-won=${match.winnerId == hRivalry.player1.playerId}, data-score=${match.score}, data-season=${match.season}, data-tournamenteventid=${match.tournamentEventId}, data-tournament=${match.tournament}, data-level=${match.level}, data-surface=${match.surface}, data-indoor=${match.indoor}, data-round=${match.round}">
 				<a class="raw-data" th:href="${url}" th:text="${playerCount <= 10 ? rivalry.wonLost.WLT : rivalry.wonLost.WL}" th:title="${title}">4 - 2 / 6</a>
 				<a class="pct-data" th:href="${url}" th:text="${playerCount <= 10 ? rivalry.wonLost.pctWL : rivalry.wonLost.wonPctStr}" th:title="${title}">66.7% (4-2)</a>
 			</span>

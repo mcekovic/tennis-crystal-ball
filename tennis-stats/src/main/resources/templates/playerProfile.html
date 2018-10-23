@@ -9,6 +9,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String"*/-->
@@ -41,13 +42,13 @@
 				[# th:case="'events'"]
 				var $pill = $("#eventsPill");
 				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('fromDate', fromDate)})] + [(${params.param('toDate', toDate)})];
-				url += [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('result', result)})] + [(${params.param('tournamentId', tournamentId)})];
+				url += [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('speed', speed)})] + [(${params.param('result', result)})] + [(${params.param('tournamentId', tournamentId)})];
 				loadTab($pill, url);
 				[/]
 				[# th:case="'matches'"]
 				var $pill = $("#matchesPill");
 				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('fromDate', fromDate)})] + [(${params.param('toDate', toDate)})];
-				url += [(${params.param('level', level)})] + [(${params.param('bestOf', bestOf)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('result', result)})] + [(${params.param('round', round)})] + [(${params.param('opponent', opponent)})];
+				url += [(${params.param('level', level)})] + [(${params.param('bestOf', bestOf)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('speed', speed)})] + [(${params.param('result', result)})] + [(${params.param('round', round)})] + [(${params.param('opponent', opponent)})];
 				url += [(${params.param('tournamentId', tournamentId)})] + [(${params.param('tournamentEventId', tournamentEventId)})] + [(${params.param('outcome', outcome)})] + [(${params.param('score', score)})] + [(${params.param('countryId', countryId)})] + [(${params.param('bigWin', bigWin)})] + [(${params.param('searchPhrase', searchPhrase)})];
 				loadTab($pill, url)
 				[/]
@@ -63,12 +64,12 @@
 				[/]
 				[# th:case="'performance'"]
 				var $pill = $("#performancePill");
-				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('result', result)})] + [(${params.param('tournamentId', tournamentId)})];
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('speed', speed)})] + [(${params.param('result', result)})] + [(${params.param('tournamentId', tournamentId)})];
 				loadTab($pill, url);
 				[/]
 				[# th:case="'statistics'"]
 				var $pill = $("#statisticsPill");
-				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})];
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('speed', speed)})];
 				loadTab($pill, url);
 				[/]
 				[# th:case="'tournaments'"]

@@ -5,6 +5,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Heads-to-Heads</title>
@@ -25,10 +26,11 @@
 				var bestOf = $("#bestOf").val();
 				var surface = $("#surface").val();
 				var indoor = $("#indoor").val();
+				var speed = $("#speed").val();
 				var round = encodeURIComponent($("#round").val());
 				var statsVsAll = $("#statsVsAll").prop("checked");
 				var rawData = window.h2hRawData !== undefined && window.h2hRawData;
-				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&bestOf=" + bestOf + "&surface=" + surface + "&indoor=" + indoor + "&round=" + round + "&statsVsAll=" + statsVsAll + "&rawData=" + rawData;
+				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&bestOf=" + bestOf + "&surface=" + surface + "&indoor=" + indoor + "&speed=" + speed + "&round=" + round + "&statsVsAll=" + statsVsAll + "&rawData=" + rawData;
 				$.ajax(url).done(function(data) {
 					$("#headsToHeadsDiv").html(data);
 				});
@@ -45,6 +47,7 @@
 			$("#bestOf").val("");
 			$("#surface").val("");
 			$("#indoor").val("");
+			$("#speed").val("");
 			$("#round").val("");
 			$("#statsVsAll").prop("checked", false);
 		}
@@ -100,6 +103,12 @@
 				<option value="">All surfaces</option>
 				<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="speed" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
 			</select>
 		</div>
 	</div>
