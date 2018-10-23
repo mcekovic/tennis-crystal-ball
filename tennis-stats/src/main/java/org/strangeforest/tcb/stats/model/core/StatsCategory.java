@@ -152,7 +152,7 @@ public final class StatsCategory {
 		addCategory(TOTAL, "totalPoints", TOTAL_POINTS, PlayerStats::getTotalPoints, POINT, COUNT, false, "Total Points Played");
 		addCategory(TOTAL, "totalPointsWon", TOTAL_POINTS_WON, PlayerStats::getTotalPointsWon, POINT, COUNT, false, "Total Points Won");
 		addCategory(TOTAL, "totalPointsWonPct", TOTAL_POINTS_WON_PCT, PlayerStats::getTotalPointsWonPct, PlayerStats::getTotalPointsWon, PlayerStats::getTotalPoints, POINT, PERCENTAGE, false, "Total Points Won %");
-		addCategory(TOTAL, "rtnToSvcPointsRatio", "o_sv_pt::REAL / nullif(p_sv_pt, 0)", PlayerStats::getReturnToServicePointsRatio, PlayerStats::getReturnPoints, PlayerStats::getServicePoints, POINT, RATIO3, false, "Rtn. to Svc. Points Ratio");
+		addCategory(TOTAL, "rtnToSvcPointsRatio", "o_sv_pt::REAL / nullif(p_sv_pt, 0)", PlayerStats::getReturnToServicePointsRatio, PlayerStats::getReturnPoints, PlayerStats::getServicePoints, POINT, RATIO3, false, "Rtn. to Svc. Points Ratio", "stats.rtnToSvcPointsRatio.title");
 		addCategory(TOTAL, "totalGames", TOTAL_GAMES, PlayerStats::getTotalGames, GAME, COUNT, false, "Total Games Played");
 		addCategory(TOTAL, "totalGamesWon", "p_games", PlayerStats::getTotalGamesWon, GAME, COUNT, false, "Total Games Won");
 		addCategory(TOTAL, "totalGamesWonPct", GAMES_WON_PCT, PlayerStats::getTotalGamesWonPct, PlayerStats::getTotalGamesWon, PlayerStats::getTotalGames, GAME, PERCENTAGE, false, "Games Won %");
@@ -185,14 +185,14 @@ public final class StatsCategory {
 		addCategory(PERFORMANCE, "bpsConvOverPerfRatio", "(" + BREAK_POINTS_PCT + ") / nullif(" + RETURN_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsConvertedOverPerformingRatio, POINT, RATIO3, false, "BPs Conv. Over-Perf.", "stats.breakPointsConvertedOverPerformingRatio.title");
 		// Opponent
 		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(coalesce(opponent_rank, 1500) / nullif(" + TOTAL_MATCHES + ", 0))", "exp(avg(ln(coalesce(opponent_rank, 1500))))", "coalesce(opponent_rank, 1500)", PlayerStats::getOpponentRank, MATCH, RATIO1, true, "Opponent Rank", "stats.opponentRank.title");
-		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "coalesce(opponent_elo_rating, 1500)::REAL / nullif(" + TOTAL_MATCHES + ", 0)", "avg(coalesce(opponent_elo_rating, 1500))", "coalesce(opponent_elo_rating, 1500)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, false, "Opponent Elo Rating", null);
+		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "coalesce(opponent_elo_rating, 1500)::REAL / nullif(" + TOTAL_MATCHES + ", 0)", "avg(coalesce(opponent_elo_rating, 1500))", "coalesce(opponent_elo_rating, 1500)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, false, "Opponent Elo Rating", "stats.opponentEloRating.title");
 		// Upsets
-		addCategory(UPSETS_CATEGORY, "upsetsScored", "p_upsets", PlayerStats::getUpsetsScored, MATCH, COUNT, false, "Upsets scored");
-		addCategory(UPSETS_CATEGORY, "upsetsScoredPct", "p_upsets::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsScoredPct, PlayerStats::getUpsetsScored, PlayerStats::getMatches, MATCH, PERCENTAGE, false, "Upsets scored %");
-		addCategory(UPSETS_CATEGORY, "upsetsAgainst", "o_upsets", PlayerStats::getUpsetsAgainst, MATCH, COUNT, true, "Upsets against");
-		addCategory(UPSETS_CATEGORY, "upsetsAgainstPct", "o_upsets::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsAgainstPct, PlayerStats::getUpsetsAgainst, PlayerStats::getMatches, MATCH, PERCENTAGE, true, "Upsets against %");
-		addCategory(UPSETS_CATEGORY, "upsets", "p_upsets + o_upsets", PlayerStats::getUpsets, MATCH, COUNT, true, "Upsets");
-		addCategory(UPSETS_CATEGORY, "upsetsPct", "(p_upsets + o_upsets)::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsPct, PlayerStats::getUpsets, PlayerStats::getMatches, MATCH, PERCENTAGE, true, "Upsets %");
+		addCategory(UPSETS_CATEGORY, "upsetsScored", "p_upsets", PlayerStats::getUpsetsScored, MATCH, COUNT, false, "Upsets scored", "stats.upsetsScored.title");
+		addCategory(UPSETS_CATEGORY, "upsetsScoredPct", "p_upsets::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsScoredPct, PlayerStats::getUpsetsScored, PlayerStats::getMatches, MATCH, PERCENTAGE, false, "Upsets scored %", "stats.upsetsScoredPct.title");
+		addCategory(UPSETS_CATEGORY, "upsetsAgainst", "o_upsets", PlayerStats::getUpsetsAgainst, MATCH, COUNT, true, "Upsets against", "stats.upsetsAgainst.title");
+		addCategory(UPSETS_CATEGORY, "upsetsAgainstPct", "o_upsets::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsAgainstPct, PlayerStats::getUpsetsAgainst, PlayerStats::getMatches, MATCH, PERCENTAGE, true, "Upsets against %", "stats.upsetsAgainstPct.title");
+		addCategory(UPSETS_CATEGORY, "upsets", "p_upsets + o_upsets", PlayerStats::getUpsets, MATCH, COUNT, true, "Upsets", "stats.upsets.title");
+		addCategory(UPSETS_CATEGORY, "upsetsPct", "(p_upsets + o_upsets)::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsPct, PlayerStats::getUpsets, PlayerStats::getMatches, MATCH, PERCENTAGE, true, "Upsets %", "stats.upsetsPct.title");
 		// Time
 		addCategory(TIME_CATEGORY, "pointTime", "60 * minutes::REAL / nullif(" + TOTAL_POINTS + ", 0)", PlayerStats::getPointTime, POINT, RATIO2, true, "Point Time (seconds)");
 		addCategory(TIME_CATEGORY, "gameTime", "minutes::REAL / nullif(games_w_stats, 0)", PlayerStats::getGameTime, GAME_W_STATS, RATIO3, true, "Game Time (minutes)");
