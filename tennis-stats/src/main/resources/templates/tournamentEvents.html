@@ -12,7 +12,7 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
-<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.Map<org.strangeforest.tcb.stats.model.core.TournamentLevel, List<org.strangeforest.tcb.stats.model.core.TournamentItem>>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Tournament Events</title>
 	<template>
@@ -132,7 +132,9 @@
 	<div id="tournamentDiv" class="btn-group margin-right no-margin-left">
 		<select id="tournament" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
 			<option value="">All tournaments</option>
-			<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+			<optgroup th:each="lts : ${tournaments}" th:if="${lts.key.code != 'D' && lts.key.code != 'T'}" th:label="${lts.key.text}" label="Grand Slam" th:class="'bg-level-' + ${lts.key.code}">
+				<option th:each="tournament : ${lts.value}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+			</optgroup>
 		</select>
 	</div>
 	<div id="speedDiv" class="btn-group margin-right">

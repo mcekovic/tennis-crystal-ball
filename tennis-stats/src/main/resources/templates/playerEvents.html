@@ -9,7 +9,7 @@
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
-<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.Map<org.strangeforest.tcb.stats.model.core.TournamentLevel, List<org.strangeforest.tcb.stats.model.core.TournamentItem>>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
@@ -284,7 +284,9 @@
 <div id="eventsTournamentDiv" class="btn-group pull-left margin-right no-margin-left" style="width: 210px">
 	<select id="eventsTournament" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
 		<option value="">All tournaments</option>
-		<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+		<optgroup th:each="lts : ${tournaments}" th:if="${lts.key.code != 'D' && lts.key.code != 'T'}" th:label="${lts.key.text}" label="Grand Slam" th:class="'bg-level-' + ${lts.key.code}">
+			<option th:each="tournament : ${lts.value}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+		</optgroup>
 	</select>
 </div>
 <button id="eventsMatches" type="button" class="btn btn-info grid-control margin-right" onclick="showEventsMatches()" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Matches (for the selected tournament events)|">

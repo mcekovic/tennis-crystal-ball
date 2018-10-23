@@ -231,13 +231,13 @@ public class TournamentService {
 	private static final ObjectReader READER = new ObjectMapper().reader();
 
 	@Cacheable(value = "Global", key = "'Tournaments'")
-	public List<TournamentItem> getTournaments() {
-		return jdbcTemplate.query(TOURNAMENT_ITEMS_QUERY, this::tournamentItemMapper);
+	public Map<TournamentLevel, List<TournamentItem>> getTournaments() {
+		return groupTournamentsByLevel(jdbcTemplate.query(TOURNAMENT_ITEMS_QUERY, this::tournamentItemMapper));
 	}
 
 	@Cacheable("SeasonTournaments")
-	public List<TournamentItem> getSeasonTournaments(int season) {
-		return jdbcTemplate.query(SEASON_TOURNAMENT_ITEMS_QUERY, params("season", season), this::tournamentItemMapper);
+	public Map<TournamentLevel, List<TournamentItem>> getSeasonTournaments(int season) {
+		return groupTournamentsByLevel(jdbcTemplate.query(SEASON_TOURNAMENT_ITEMS_QUERY, params("season", season), this::tournamentItemMapper));
 	}
 
 	@Cacheable("Tournaments")
@@ -507,7 +507,26 @@ public class TournamentService {
 	// Player Tournaments
 
 	@Cacheable("PlayerTournamentItems")
-	public List<TournamentItem> getPlayerTournamentItems(int playerId) {
+	public Map<TournamentLevel, List<TournamentItem>> getPlayerTournamentItems(int playerId) {
+		return groupTournamentsByLevel(fetchPlayerTournamentItems(playerId));
+	}
+
+	@Cacheable("PlayersTournamentsIntersection")
+	public Map<TournamentLevel, List<TournamentItem>> getPlayersTournamentsIntersection(int playerId1, int playerId2) {
+		List<TournamentItem> tournaments = new ArrayList<>(fetchPlayerTournamentItems(playerId1));
+		tournaments.retainAll(fetchPlayerTournamentItems(playerId2));
+		return groupTournamentsByLevel(tournaments);
+	}
+
+	@Cacheable("PlayersTournamentsUnion")
+	public Map<TournamentLevel, List<TournamentItem>> getPlayersTournamentsUnion(int playerId1, int playerId2) {
+		NavigableSet<TournamentItem> tournaments = new TreeSet<>();
+		tournaments.addAll(fetchPlayerTournamentItems(playerId1));
+		tournaments.addAll(fetchPlayerTournamentItems(playerId2));
+		return groupTournamentsByLevel(tournaments);
+	}
+
+	private List<TournamentItem> fetchPlayerTournamentItems(int playerId) {
 		return jdbcTemplate.query(PLAYER_TOURNAMENT_ITEMS_QUERY, params("playerId", playerId), this::tournamentItemMapper);
 	}
 
@@ -632,5 +651,9 @@ public class TournamentService {
 		return results.getRows().stream()
 			.collect(groupingBy(r -> EventResult.valueOf(r.result()), LinkedHashMap::new, toList()))
 			.entrySet().stream().limit(maxResults).collect(toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+	}
+
+	private static Map<TournamentLevel, List<TournamentItem>> groupTournamentsByLevel(Collection<TournamentItem> tournaments) {
+		return tournaments.stream().collect(groupingBy(t -> TournamentLevel.decode(t.getLevel()), TreeMap::new, toList()));
 	}
 }

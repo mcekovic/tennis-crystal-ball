@@ -155,4 +155,11 @@ WHERE tournament_event_id IN (
 	OR (season < 1970 AND participation_rank <= 25)
 );
 
+
+-- Update tournament levels
+
+UPDATE tournament
+SET level = 'A'
+WHERE name = 'Stuttgart Masters';
+
 COMMIT;

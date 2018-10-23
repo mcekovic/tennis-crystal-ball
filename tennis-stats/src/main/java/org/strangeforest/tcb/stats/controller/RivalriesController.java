@@ -206,21 +206,19 @@ public class RivalriesController extends PageController {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, null, null));
-		List<Integer> seasons = getSeasonsIntersection(playerId1, playerId2);
-		List<TournamentItem> tournaments = getTournamentsIntersection(playerId1, playerId2);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("stats1", stats1);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasons", getSeasonsIntersection(playerId1, playerId2));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
-		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("tournaments", tournamentService.getPlayersTournamentsIntersection(playerId1, playerId2));
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
@@ -270,9 +268,6 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
-		NavigableSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
-		Set<TournamentItem> tournaments = getTournamentsUnion(playerId1, playerId2);
-		Set<CountryCode> countries = getOpponentCountriesUnion(playerId1, playerId2);
 		List<String> countryIds = matchesService.getSameCountryIds(countryId);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
@@ -293,7 +288,7 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
 		modelMap.addAttribute("playerId2", playerId2);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasons", getSeasonsUnion(playerId1, playerId2));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -301,9 +296,9 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
-		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("tournaments", tournamentService.getPlayersTournamentsUnion(playerId1, playerId2));
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
-		modelMap.addAttribute("countries", countries);
+		modelMap.addAttribute("countries", getOpponentCountriesUnion(playerId1, playerId2));
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
@@ -373,9 +368,6 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		NavigableSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
-		Set<TournamentItem> tournaments = getTournamentsUnion(playerId1, playerId2);
-		Set<CountryCode> countries = getOpponentCountriesUnion(playerId1, playerId2);
 		List<String> countryIds = matchesService.getSameCountryIds(countryId);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
@@ -387,7 +379,7 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
 		modelMap.addAttribute("playerId2", playerId2);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasons", getSeasonsUnion(playerId1, playerId2));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -395,9 +387,9 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
-		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("tournaments", tournamentService.getPlayersTournamentsUnion(playerId1, playerId2));
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
-		modelMap.addAttribute("countries", countries);
+		modelMap.addAttribute("countries", getOpponentCountriesUnion(playerId1, playerId2));
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
@@ -660,19 +652,6 @@ public class RivalriesController extends PageController {
 		seasons.addAll(playerService.getPlayerSeasons(playerId1));
 		seasons.addAll(playerService.getPlayerSeasons(playerId2));
 		return seasons;
-	}
-
-	private List<TournamentItem> getTournamentsIntersection(int playerId1, int playerId2) {
-		List<TournamentItem> tournaments = new ArrayList<>(tournamentService.getPlayerTournamentItems(playerId1));
-		tournaments.retainAll(tournamentService.getPlayerTournamentItems(playerId2));
-		return tournaments;
-	}
-
-	private Set<TournamentItem> getTournamentsUnion(int playerId1, int playerId2) {
-		NavigableSet<TournamentItem> tournaments = new TreeSet<>();
-		tournaments.addAll(tournamentService.getPlayerTournamentItems(playerId1));
-		tournaments.addAll(tournamentService.getPlayerTournamentItems(playerId2));
-		return tournaments;
 	}
 
 	private Set<CountryCode> getOpponentCountriesUnion(int playerId1, int playerId2) {

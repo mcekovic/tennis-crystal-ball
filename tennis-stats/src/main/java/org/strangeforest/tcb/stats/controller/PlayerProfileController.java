@@ -18,7 +18,6 @@ import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
-import com.neovisionaries.i18n.*;
 
 import static com.google.common.base.Strings.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
@@ -172,21 +171,17 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
-		String name = playerService.getPlayerName(playerId);
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
-
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("playerName", name);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("playerName", playerService.getPlayerName(playerId));
+		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("results", EventResult.values());
-		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("tournaments", tournamentService.getPlayerTournamentItems(playerId));
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
@@ -222,16 +217,10 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
 	) {
-		String name = playerService.getPlayerName(playerId);
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
-		List<TournamentEventItem> tournamentEvents = tournamentService.getPlayerTournamentEventItems(playerId);
-		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
-
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("playerName", name);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("playerName", playerService.getPlayerName(playerId));
+		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -240,9 +229,9 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
-		modelMap.addAttribute("tournaments", tournaments);
-		modelMap.addAttribute("tournamentEvents", tournamentEvents);
-		modelMap.addAttribute("countries", countries);
+		modelMap.addAttribute("tournaments", tournamentService.getPlayerTournamentItems(playerId));
+		modelMap.addAttribute("tournamentEvents", tournamentService.getPlayerTournamentEventItems(playerId));
+		modelMap.addAttribute("countries", matchesService.getOpponentCountries(playerId));
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
@@ -294,23 +283,18 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "h2h", required = false) Integer h2h,
 		@RequestParam(name = "matches", required = false) Integer matches
 	) {
-		String name = playerService.getPlayerName(playerId);
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
-		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
-
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("playerName", name);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("playerName", playerService.getPlayerName(playerId));
+		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
-		modelMap.addAttribute("tournaments", tournaments);
-		modelMap.addAttribute("countries", countries);
+		modelMap.addAttribute("tournaments", tournamentService.getPlayerTournamentItems(playerId));
+		modelMap.addAttribute("countries", matchesService.getOpponentCountries(playerId));
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
@@ -363,17 +347,14 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
-		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -381,9 +362,9 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
-		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("tournaments", tournamentService.getPlayerTournamentItems(playerId));
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
-		modelMap.addAttribute("countries", countries);
+		modelMap.addAttribute("countries", matchesService.getOpponentCountries(playerId));
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
@@ -440,9 +421,6 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
-		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
@@ -450,7 +428,7 @@ public class PlayerProfileController extends PageController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -458,9 +436,9 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("speeds", CourtSpeed.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("results", EventResult.values());
-		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("tournaments", tournamentService.getPlayerTournamentItems(playerId));
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
-		modelMap.addAttribute("countries", countries);
+		modelMap.addAttribute("countries", matchesService.getOpponentCountries(playerId));
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
