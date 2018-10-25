@@ -114,7 +114,7 @@ public class Country {
 		.put("NCA", "NIC")
 		.put("NED", "NLD")
 		.put("NEP", "NPL")
-		.put("NGR", "NER")
+		.put("NGR", "NGA")
 		.put("NIG", "NER")
 		.put("OMA", "OMN")
 		.put("PAR", "PRY")
