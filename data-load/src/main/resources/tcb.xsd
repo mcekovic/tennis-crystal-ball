@@ -27,6 +27,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="G"/>
 			<xs:enumeration value="F"/>
+			<xs:enumeration value="L"/>
 			<xs:enumeration value="M"/>
 			<xs:enumeration value="O"/>
 			<xs:enumeration value="A"/>

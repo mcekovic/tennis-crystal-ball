@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1970" name="Tennis Champions Classic" date="1970-07-13" ext-id="TCC">
-		<level>B</level>
+		<level>L</level>
 		<surface>H</surface>
 		<indoor>true</indoor>
 		<draw-type>RR</draw-type>
