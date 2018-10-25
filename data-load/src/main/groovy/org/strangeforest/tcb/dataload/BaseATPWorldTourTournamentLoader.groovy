@@ -104,6 +104,8 @@ abstract class BaseATPWorldTourTournamentLoader {
 		switch (round) {
 			case 'Final':
 			case 'Finals': return 'F'
+			case 'Olympic Bronze':
+			case '3rd/4th Place Match': return 'BR'
 			case 'Semifinals':
 			case 'Semi-Finals': return 'SF'
 			case 'Quarterfinals':
@@ -113,7 +115,6 @@ abstract class BaseATPWorldTourTournamentLoader {
 			case 'Round of 64': return 'R64'
 			case 'Round of 128': return 'R128'
 			case 'Round Robin': return 'RR'
-			case 'Olympic Bronze': return 'BR'
 			default: return null
 		}
 	}

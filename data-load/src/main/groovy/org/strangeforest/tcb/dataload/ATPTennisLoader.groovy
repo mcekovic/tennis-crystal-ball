@@ -171,6 +171,7 @@ class ATPTennisLoader {
 			atpWorldTourMatchLoader.loadTournament(1981, 'wimbledon', 540)
 //			atpWorldTourMatchLoader.loadTournament(2007, 'vina-del-mar', 505)
 			atpWorldTourMatchLoader.loadTournament(2008, 'moscow', 438)
+			atpWorldTourMatchLoader.loadTournament(2017, 'next-gen-atp-finals', 7696)
 
 			def xmlMatchLoader = new XMLMatchLoader(sql)
 			xmlMatchLoader.loadFile('classpath:/tournaments/1969-fort-worth.xml')
