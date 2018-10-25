@@ -330,7 +330,7 @@ class ATPTennisLoader {
 		sql.connection.autoCommit = true
 		try {
 			tables.each { name ->
-				sql.execute('VACUUM FULL ANALYSE VERBOSE ' + name)
+				sql.execute('VACUUM FULL VERBOSE ANALYSE ' + name)
 			}
 		}
 		finally {

@@ -20,6 +20,10 @@ class MatchLoader extends BaseCSVLoader {
 		def params = [:]
 
 		def tourneyId = string record.tourney_id
+		if (!tourneyId) {
+			System.err.println "WARN: Invalid record: $record"
+			return null
+		}
 		if (tourneyId[4] != '-')
 			throw new IllegalArgumentException("Invalid tourney_id: $tourneyId")
 		def extTourneyId = string tourneyId.substring(5)
