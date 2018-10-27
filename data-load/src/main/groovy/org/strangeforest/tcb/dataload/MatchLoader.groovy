@@ -177,6 +177,8 @@ class MatchLoader extends BaseCSVLoader {
 			default:
 				if (name.equals('Santiago') && season in 2012..2013)
 					return 'Vina del Mar'
+				else if (name.equals('Cabo San Lucas') && season == 2018)
+					return 'Los Cabos'
 				else
 					return name
 		}
@@ -316,7 +318,8 @@ class MatchLoader extends BaseCSVLoader {
 				name.startsWith('Basel') ||
 				name.startsWith('Vienna') ||
 				name.startsWith('Paris Masters') ||
-				name.startsWith('Tour Finals')
+				name.startsWith('Tour Finals') ||
+				name.startsWith('Milan')
 			)
 			default: return false
 		}
