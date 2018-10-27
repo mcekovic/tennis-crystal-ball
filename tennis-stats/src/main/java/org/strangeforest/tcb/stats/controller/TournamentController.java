@@ -30,6 +30,7 @@ public class TournamentController extends PageController {
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -59,8 +60,6 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "speed", required = false) Integer speed,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
-		List<Integer> seasons = dataService.getSeasons();
-
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
@@ -68,7 +67,7 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("speed", speed);
 		modelMap.addAttribute("tournamentId", tournamentId);
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());

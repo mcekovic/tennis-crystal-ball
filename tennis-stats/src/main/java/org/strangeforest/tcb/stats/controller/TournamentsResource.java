@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -9,6 +10,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
@@ -45,6 +47,8 @@ public class TournamentsResource {
 
 	@GetMapping("/tournamentsTable")
 	public BootgridTable<Tournament> tournamentsTable(
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
@@ -54,8 +58,9 @@ public class TournamentsResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
+		Range<LocalDate> dateRange = DateUtil.toDateRange(fromSeason, toSeason);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		TournamentEventFilter filter = new TournamentEventFilter(null, null, level, surface, indoor, speedRange, null, null, searchPhrase);
+		TournamentEventFilter filter = new TournamentEventFilter(null, dateRange, level, surface, indoor, speedRange, null, null, searchPhrase);
 		Comparator<Tournament> comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return sortAndPage(tournamentService.getTournaments(filter), comparator, pageSize, current);

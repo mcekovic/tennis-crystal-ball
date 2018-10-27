@@ -200,7 +200,7 @@ public class RivalryFilter {
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("seasonRange", nullIf(seasonRange, Range.all()))
-			.add("last52Weeks", nullIf(last52Weeks, true))
+			.add("last52Weeks", nullIf(last52Weeks, false))
 			.add("level", emptyToNull(level))
 			.add("bestOf", bestOf)
 			.add("surface", emptyToNull(surface))

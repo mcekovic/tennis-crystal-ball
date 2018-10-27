@@ -436,7 +436,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {
 		return super.toStringHelper()
 			.add("season", season)
-			.add("last52Weeks", nullIf(last52Weeks, true))
+			.add("last52Weeks", nullIf(last52Weeks, false))
 			.add("dateRange", nullIf(dateRange, Range.all()))
 			.add("level", emptyToNull(level))
 			.add("bestOf", bestOf)

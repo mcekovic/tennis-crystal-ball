@@ -6,7 +6,7 @@ import com.google.common.collect.*;
 
 public enum CourtSpeed {
 
-	VERY_FAST("Very Fast", 80, 75, 1000),
+	VERY_FAST("Very Fast", 80, 75, 100),
 	FAST("Fast", 70, 65, 74),
 	MEDIUM_FAST("Medium Fast", 60, 55, 64),
 	MEDIUM("Medium", 50, 45, 54),
