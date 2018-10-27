@@ -693,24 +693,31 @@ CREATE UNIQUE INDEX ON player_stats (player_id);
 -- event_stats
 
 CREATE OR REPLACE VIEW event_stats_v AS
-WITH season_court_speed AS (
-	SELECT season, sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0) AS ace_pct, sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct, sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) AS p_sv_gms_won_pct
+WITH season_stats AS (
+	SELECT season, sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0) AS ace_pct, sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct, sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) AS sv_gms_won_pct
 	FROM player_match_stats_v
 	GROUP BY season
 	HAVING sum(p_sv_pt) IS NOT NULL
-), player_season_court_speed AS (
-	SELECT player_id, season, sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0) AS ace_pct, sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct, sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) AS p_sv_gms_won_pct
+), player_season_stats AS (
+	SELECT player_id, season, sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0) AS ace_pct, sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct, sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) AS sv_gms_won_pct,
+		sum(o_ace)::REAL / nullif(sum(o_sv_pt), 0) AS ace_against_pct, sum(o_sv_pt - o_1st_won - o_2nd_won)::REAL / nullif(sum(o_sv_pt), 0) AS rt_pts_won_pct, sum(o_bp_fc - o_bp_sv)::REAL / nullif(sum(o_sv_gms), 0) AS rt_gms_won_pct
 	FROM player_match_stats_v
 	GROUP BY player_id, season
 	HAVING sum(p_sv_pt) IS NOT NULL
+), tournament_event_stats AS (
+	SELECT tournament_event_id, sum(s.ace_pct / nullif(sqrt(p.ace_pct * o.ace_against_pct), 0) * p_ace) / nullif(sum(p_sv_pt), 0) AS ace_pct,
+	   sum(sqrt(s.sv_pts_won_pct * o.rt_pts_won_pct / nullif(p.sv_pts_won_pct * (1.0 - s.sv_pts_won_pct), 0)) * (p_1st_won + p_2nd_won)) / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct,
+	   sum(sqrt(s.sv_gms_won_pct * o.rt_gms_won_pct / nullif(p.sv_gms_won_pct * (1.0 - s.sv_gms_won_pct), 0)) * (p_sv_gms - (p_bp_fc - p_bp_sv))) / nullif(sum(p_sv_gms), 0) AS sv_gms_won_pct
+	FROM player_match_stats_v m
+	INNER JOIN season_stats s USING (season)
+	INNER JOIN player_season_stats p ON p.player_id = m.player_id AND p.season = m.season
+	INNER JOIN player_season_stats o ON o.player_id = m.opponent_id AND o.season = m.season
+	WHERE level <> 'D'
+	GROUP BY tournament_event_id
+	HAVING sum(p_sv_pt) IS NOT NULL
 )
-SELECT tournament_event_id, court_speed(sum(s.ace_pct / nullif(p.ace_pct, 0) * p_ace) / nullif(sum(p_sv_pt), 0), sum(s.sv_pts_won_pct / nullif(p.sv_pts_won_pct, 0) * (p_1st_won + p_2nd_won)) / nullif(sum(p_sv_pt), 0), sum(s.p_sv_gms_won_pct / nullif(p.p_sv_gms_won_pct, 0) * (p_sv_gms - (p_bp_fc - p_bp_sv))) / nullif(sum(p_sv_gms), 0)) AS court_speed
-FROM player_match_stats_v
-INNER JOIN season_court_speed s USING (season)
-INNER JOIN player_season_court_speed p USING (player_id, season)
-WHERE level <> 'D'
-GROUP BY tournament_event_id
-HAVING sum(p_sv_pt) IS NOT NULL;
+SELECT tournament_event_id, ace_pct, sv_pts_won_pct, sv_gms_won_pct, court_speed(ace_pct, sv_pts_won_pct, sv_gms_won_pct) AS court_speed
+FROM tournament_event_stats;
 
 CREATE MATERIALIZED VIEW event_stats AS SELECT * FROM event_stats_v;
 

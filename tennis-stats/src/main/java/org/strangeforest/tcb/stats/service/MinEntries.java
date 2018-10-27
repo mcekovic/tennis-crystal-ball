@@ -56,13 +56,13 @@ public class MinEntries {
 		.put(Boolean.TRUE,  0.25)
 	.build();
 	private static final Map<CourtSpeed, Double> MIN_ENTRIES_SPEED_WEIGHT_MAP = ImmutableMap.<CourtSpeed, Double>builder()
-		.put(CourtSpeed.VERY_FAST, 0.015)
+		.put(CourtSpeed.VERY_FAST, 0.05)
 		.put(CourtSpeed.FAST, 0.075)
-		.put(CourtSpeed.MEDIUM_FAST, 0.15)
-		.put(CourtSpeed.MEDIUM, 0.25)
-		.put(CourtSpeed.MEDIUM_SLOW, 0.15)
+		.put(CourtSpeed.MEDIUM_FAST, 0.125)
+		.put(CourtSpeed.MEDIUM, 0.15)
+		.put(CourtSpeed.MEDIUM_SLOW, 0.125)
 		.put(CourtSpeed.SLOW, 0.075)
-		.put(CourtSpeed.VERY_SLOW, 0.015)
+		.put(CourtSpeed.VERY_SLOW, 0.05)
 	.build();
 	private static final Map<String, Double> MIN_ENTRIES_ROUND_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
 		.put("F",    0.1)

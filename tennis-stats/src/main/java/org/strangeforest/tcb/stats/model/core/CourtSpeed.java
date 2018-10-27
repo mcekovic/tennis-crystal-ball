@@ -6,13 +6,13 @@ import com.google.common.collect.*;
 
 public enum CourtSpeed {
 
-	VERY_FAST("Very Fast", 80, 80, 100),
-	FAST("Fast", 70, 70, 79),
-	MEDIUM_FAST("Medium Fast", 60, 60, 69),
-	MEDIUM("Medium", 50, 50, 59),
-	MEDIUM_SLOW("Medium Slow", 40, 40, 49),
-	SLOW("Slow", 30, 30, 39),
-	VERY_SLOW("Very Slow", 20, 0, 29);
+	VERY_FAST("Very Fast", 80, 75, 1000),
+	FAST("Fast", 70, 65, 74),
+	MEDIUM_FAST("Medium Fast", 60, 55, 64),
+	MEDIUM("Medium", 50, 45, 54),
+	MEDIUM_SLOW("Medium Slow", 40, 35, 44),
+	SLOW("Slow", 30, 25, 34),
+	VERY_SLOW("Very Slow", 20, 0, 24);
 
 	private final String text;
 	private final int speed;

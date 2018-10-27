@@ -74,7 +74,7 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 
 	public void addSpeedMatches(CourtSpeed speed, WonLost wonLost) {
 		if (!wonLost.isEmpty())
-			speedMatches.put(speed, wonLost);
+			speedMatches.compute(speed, (k, v) -> v == null ? wonLost : v.add(wonLost));
 	}
 
 	public Map<TournamentLevel, WonLost> getLevelMatches() {

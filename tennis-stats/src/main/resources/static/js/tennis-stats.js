@@ -376,9 +376,9 @@ function speedFormatter(column, row) {
 	return formatSpeed(row.speed, row.surface);
 }
 
-function formatSpeed(speed, surface) {
+function formatSpeed(speed, surface, surfaceInTitle) {
 	if (!speed) return "";
-	return "<span class='label points-" + speedClassSuffix(speed) + " points-" + surface + "' title='" + speedTitle(speed) + "'>" + speed + "</span>";
+	return "<span class='label points-" + speedClassSuffix(speed) + " points-" + surface + "'" + (speed < 15 ? " style='color: darkgray'" : "") + " title='" + speedTitle(speed) + (surfaceInTitle ? " " + surfaceName(surface) : "") + "'>" + speed + "</span>";
 }
 
 function speedsFormatter(column, row) {
@@ -388,29 +388,27 @@ function speedsFormatter(column, row) {
 	for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
 		if (s !== "") s += " ";
 		var surface = surfaces[i];
-		var speed = speeds[surface];
-		if (speed)
-			s += "<span class='label points-" + speedClassSuffix(speed) + " points-" + surface + "' title='" + speedTitle(speed) + " " + surfaceName(surface) + "'>" + speed + "</span>";
+		s += formatSpeed(speeds[surface], surface, true);
 	}
 	return s;
 }
 
 function speedClassSuffix(speed) {
-	return Math.floor(speed / 10) * 10;
+	return Math.max(10, Math.floor((speed + 5) / 10) * 10);
 }
 
 function speedTitle(speed) {
-	if (speed < 30)
+	if (speed < 25)
 		return "Very slow";
-	else if (speed < 40)
+	else if (speed < 35)
 		return "Slow";
-	else if (speed < 50)
+	else if (speed < 45)
 		return "Medium slow";
-	else if (speed < 60)
+	else if (speed < 55)
 		return "Medium";
-	else if (speed < 70)
+	else if (speed < 65)
 		return "Medium fast";
-	else if (speed < 80)
+	else if (speed < 75)
 		return "Fast";
 	return "Very fast";
 }

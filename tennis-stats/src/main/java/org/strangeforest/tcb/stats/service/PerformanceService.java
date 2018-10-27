@@ -69,7 +69,7 @@ public class PerformanceService {
 		"ORDER BY season";
 
 	private static final String PLAYER_COURT_SPEED_BREAKDOWN_QUERY = //language=SQL
-		"SELECT 10 * floor(es.court_speed / 10) speed, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
+		"SELECT 10 * floor((es.court_speed + 5) / 10) speed, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
 		"FROM player_match_for_stats_v m%1$s\n" +
 		"INNER JOIN event_stats es USING (tournament_event_id)\n" +
 		"WHERE m.player_id = :playerId AND level <> 'D'%2$s\n" +

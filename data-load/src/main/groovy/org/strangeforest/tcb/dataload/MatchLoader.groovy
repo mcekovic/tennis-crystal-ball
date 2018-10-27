@@ -170,7 +170,7 @@ class MatchLoader extends BaseCSVLoader {
 				case 'Us Open': return 'US Open'
 				default: return name
 			}
-			case 'F': return season == 2016 ? 'Tour Finals' : name
+			case 'F': return season >= 2016 ? 'Tour Finals' : name
 			case 'M': return season >= 1990 && !name.endsWith(' Masters') ? name + ' Masters' : name
 			case 'O': return season == 2016 ? 'Rio Olympics' : name
 			case 'D': return dcInfo.name
