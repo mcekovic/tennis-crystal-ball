@@ -20,7 +20,7 @@ Ultimate Tennis Statistics and Big Data Analysis with nice web GUI.
 - Peak Elo Ratings - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie break)
 - Top Performers - Find top performers in both performance and pressure situations categories
 - Performance Charts - Performance charts for various performance categories, filtered by seasons
-- Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios
+- Statistics Leaders - Find statistics leaders in different statistics categories (90+), including dominance and break points ratios
 - Statistics Charts - Statistics charts for various statistics categories, including dominance and break points ratios
 - Seasons - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players
 - Best Seasons - Find which are the players' best seasons of the Open Era based on 'GOAT' points (overall and by surface)

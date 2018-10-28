@@ -487,14 +487,6 @@ public class PlayerStats {
 		return pct(tieBreaksWon, getTieBreaks());
 	}
 
-	public double getTieBreaksPerSetPct() {
-		return pct(getTieBreaks(), getSets());
-	}
-
-	public double getTieBreaksPerMatch() {
-		return ratio(getTieBreaks(), getMatches());
-	}
-
 	public int getTotalPoints() {
 		int points = servicePoints + getReturnPoints();
 		if (total)
@@ -512,6 +504,38 @@ public class PlayerStats {
 
 	public double getReturnToServicePointsRatio() {
 		return ratio(getReturnPoints(), servicePoints);
+	}
+
+	public double getPointsPerGame() {
+		return ratio(getTotalPoints(), getGamesWithStats());
+	}
+
+	public double getPointsPerSet() {
+		return ratio(getTotalPoints(), getSetsWithStats());
+	}
+
+	public double getPointsPerMatch() {
+		return ratio(getTotalPoints(), getMatchesWithStats());
+	}
+
+	public double getGamesPerSet() {
+		return ratio(getTotalGames(), getSets());
+	}
+
+	public double getGamesPerMatch() {
+		return ratio(getTotalGames(), getMatches());
+	}
+
+	public double getTieBreaksPerSetPct() {
+		return pct(getTieBreaks(), getSets());
+	}
+
+	public double getTieBreaksPerMatch() {
+		return ratio(getTieBreaks(), getMatches());
+	}
+
+	public double getSetsPerMatch() {
+		return ratio(getSets(), getMatches());
 	}
 
 
