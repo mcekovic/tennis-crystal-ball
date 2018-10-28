@@ -131,10 +131,12 @@
 			<a href="/tournamentEvents?surface=P" class="label label-warning" title="Show carpet tournament events">Carpet</a>
 			</p>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-rocket"></i> Court Speeds</h4>
-			<p>Court Speed Index tries to estimate tournament event's court speed based on overall Ace %, Service Points Won % and Service Games Won %, averaged in a way to eliminate dependency on participating players dominant playing style (for more details see <a href="/glossary">Glossary</a> page).<br/>
-			<th:block th:each="speed : ${speeds}">
-				<a th:href="@{/tournamentEvents(speed=${speed.speed})}" th:class="|label label-default points-${speed.speed}|" style="color: white" th:text="${speed.text}" th:title="|Show ${speed.text} ${speed.speedRange} tournament events|">Very Fast</a>
-			</th:block>
+			<p>
+				<th:block th:each="speed : ${speeds}">
+				<a th:href="@{/tournamentEvents(speed=${speed.speed})}" th:class="|label points-${speed.speed}|" style="color: white" th:text="${speed.text}" th:title="|Show ${speed.text} ${speed.speedRange} tournament events|">Very Fast</a>
+				</th:block>
+				<br/>
+				<p>Court Speed Index tries to estimate tournament event's court speed based on overall Ace %, Service Points Won % and Service Games Won %, averaged in a way to eliminate dependency on participating players dominant playing style (for more details see <a href="/glossary">Glossary</a> page).</p>
 			</p>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-flag"></i> 'GOAT' Points Formula</h4>
 			<p>
