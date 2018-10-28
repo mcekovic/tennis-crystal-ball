@@ -105,11 +105,18 @@ public class MatchesService {
 		" AND rw.best_rank <= :bestRank AND rl.best_rank <= :bestRank";
 
 	private static final String MATCH_QUERY = //language=SQL
-		"SELECT m.match_id, e.season, e.level, m.surface, m.indoor, tournament_event_id, e.name AS tournament,\n" +
-		"  m.round, m.winner_id, m.loser_id, m.score\n" +
+		"SELECT m.match_id, e.season, e.level, m.surface, m.indoor, tournament_event_id event_id, e.name tournament,\n" +
+		"  m.round, m.winner_id player1_id, m.loser_id player2_id, m.score\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE m.match_id = :matchId";
+
+	private static final String IN_PROGRESS_MATCH_QUERY = //language=SQL
+		"SELECT m.in_progress_match_id match_id, extract(YEAR FROM e.date) season, e.level, m.surface, m.indoor, in_progress_event_id event_id, e.name AS tournament,\n" +
+		"  m.round, m.player1_id, m.player2_id, m.score\n" +
+		"FROM in_progress_match m\n" +
+		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
+		"WHERE m.in_progress_match_id = :matchId";
 
 	private static final String COUNTRIES_QUERY = //language=SQL
 		"SELECT DISTINCT loser_country_id FROM match\n" +
@@ -300,9 +307,9 @@ public class MatchesService {
 	}
 
 	
-	public MatchInfo getMatch(long matchId) {
+	public MatchInfo getMatch(long matchId, boolean inProgress) {
 		return jdbcTemplate.queryForObject(
-			MATCH_QUERY,
+			inProgress ? IN_PROGRESS_MATCH_QUERY : MATCH_QUERY,
 			params("matchId", matchId),
 			(rs, rowNum) -> new MatchInfo(
 				rs.getLong("match_id"),
@@ -310,11 +317,11 @@ public class MatchesService {
 				getInternedString(rs, "level"),
 				getInternedString(rs, "surface"),
 				rs.getBoolean("indoor"),
-				rs.getInt("tournament_event_id"),
+				rs.getInt("event_id"),
 				rs.getString("tournament"),
 				getInternedString(rs, "round"),
-				rs.getInt("winner_id"),
-				rs.getInt("loser_id"),
+				rs.getInt("player1_id"),
+				rs.getInt("player2_id"),
 				rs.getString("score")
 			)
 		);

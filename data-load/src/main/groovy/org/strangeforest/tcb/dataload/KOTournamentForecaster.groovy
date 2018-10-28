@@ -136,8 +136,8 @@ class KOTournamentForecaster {
 					case 's':
 						def wDelta = deltaRating
 						def lDelta = EloRatings.deltaRating(loserRating, winnerRating, match.level, match.round, (short) match.best_of, match.outcome)
-						def wSets = (winner1 ? match.player1_sets : match.player2_sets) ?: 0d
-						def lSets = (winner1 ? match.player2_sets : match.player1_sets) ?: 0d
+						def wSets = (winner1 ? match.p1_sets : match.p2_sets) ?: 0d
+						def lSets = (winner1 ? match.p2_sets : match.p1_sets) ?: 0d
 						deltaRating = EloRatings.SET_K_FACTOR * (wDelta * wSets - lDelta * lSets)
 						break
 				}

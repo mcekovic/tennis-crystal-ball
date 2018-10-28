@@ -2,36 +2,36 @@ package org.strangeforest.tcb.stats.model;
 
 public class MatchStats {
 
-	private final String winner;
-	private final String loser;
-	private final PlayerStats winnerStats;
-	private final PlayerStats loserStats;
+	private final String player1;
+	private final String player2;
+	private final PlayerStats stats1;
+	private final PlayerStats stats2;
 
-	public MatchStats(String winner, String loser, PlayerStats winnerStats, PlayerStats loserStats) {
-		this.winner = winner;
-		this.loser = loser;
-		this.winnerStats = winnerStats;
-		this.loserStats = loserStats;
-		winnerStats.crossLinkOpponentStats(loserStats);
+	public MatchStats(String player1, String player2, PlayerStats stats1, PlayerStats stats2) {
+		this.player1 = player1;
+		this.player2 = player2;
+		this.stats1 = stats1;
+		this.stats2 = stats2;
+		stats1.crossLinkOpponentStats(stats2);
 	}
 
-	public String getWinner() {
-		return winner;
+	public String getPlayer1() {
+		return player1;
 	}
 
-	public String getLoser() {
-		return loser;
+	public String getPlayer2() {
+		return player2;
 	}
 
-	public PlayerStats getWinnerStats() {
-		return winnerStats;
+	public PlayerStats getStats1() {
+		return stats1;
 	}
 
-	public PlayerStats getLoserStats() {
-		return loserStats;
+	public PlayerStats getStats2() {
+		return stats2;
 	}
 
 	public boolean hasPointStats() {
-		return winnerStats.hasPointStats() || loserStats.hasPointStats();
+		return stats1.hasPointStats() || stats2.hasPointStats();
 	}
 }

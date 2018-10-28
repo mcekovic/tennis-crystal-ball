@@ -1,4 +1,4 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id, columnCountOffset, forecast)">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id, columnCountOffset, inProgress, forecast)">
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
 <!--/*@thymesVar id="eloType" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
@@ -119,7 +119,7 @@
 					<td th:if="${forecast}" th:with="matchResult=${'M_' + round}, probability=${loser.getProbability(matchResult)}" class="score text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}"
 					    th:title="${priceFormat != null ? 'Odds ' + loser.getPrice(matchResult, priceFormat) : (loser.rank != null ? 'ATP: ' + loser.rank + ', ' : '') + eloType.description + ': ' + loser.getNextEloRating(eloType)}">58.2%</td>
 					<td th:if="${outcomeOrStats}" class="stats">
-						<a th:if="${match.hasStats}" th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event)|" title='Match Statistics'> </a>
+						<a th:if="${match.hasStats}" th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event, ${inProgress})|" title='Match Statistics'> </a>
 					</td>
 				</tr>
 			</table>

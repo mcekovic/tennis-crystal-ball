@@ -104,7 +104,7 @@ public class TournamentForecastService {
 		"SELECT m.in_progress_match_id, m.match_num, m.round,\n" +
 		"  m.player1_id, p1.short_name AS player1_name, m.player1_seed, m.player1_entry, m.player1_country_id,\n" +
 		"  m.player2_id, p2.short_name AS player2_name, m.player2_seed, m.player2_entry, m.player2_country_id,\n" +
-		"  m.winner, m.player1_games, m.player1_tb_pt, m.player2_games, m.player2_tb_pt, m.outcome\n" +
+		"  m.winner, m.outcome, m.p1_set_games, m.p2_set_games, m.p1_set_tb_pt, m.p2_set_tb_pt, m.has_stats\n" +
 		"FROM in_progress_match m\n" +
 		"LEFT JOIN player_v p1 ON p1.player_id = player1_id\n" +
 		"LEFT JOIN player_v p2 ON p2.player_id = player2_id\n" +
@@ -271,7 +271,7 @@ public class TournamentForecastService {
 					loser,
 					mapSetScores(rs, winnerIndex),
 					outcome,
-					false
+					rs.getBoolean("has_stats")
 				));
 			}
 		);
@@ -279,10 +279,10 @@ public class TournamentForecastService {
 	}
 
 	private static List<SetScore> mapSetScores(ResultSet rs, short winner) throws SQLException {
-		List<Integer> games1 = getIntegers(rs, "player1_games");
-		List<Integer> tbPoints1 = getIntegers(rs, "player1_tb_pt");
-		List<Integer> games2 = getIntegers(rs, "player2_games");
-		List<Integer> tbPoints2 = getIntegers(rs, "player2_tb_pt");
+		List<Integer> games1 = getIntegers(rs, "p1_set_games");
+		List<Integer> games2 = getIntegers(rs, "p2_set_games");
+		List<Integer> tbPoints1 = getIntegers(rs, "p1_set_tb_pt");
+		List<Integer> tbPoints2 = getIntegers(rs, "p2_set_tb_pt");
 		List<Integer> wGames = winner == 1 ? games1 : games2;
 		List<Integer> lGames = winner == 2 ? games1 : games2;
 		List<Integer> wTBPoints = winner == 1 ? tbPoints1 : tbPoints2;

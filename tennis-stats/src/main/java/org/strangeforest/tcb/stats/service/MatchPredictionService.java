@@ -79,14 +79,14 @@ public class MatchPredictionService {
 	private static final String PLAYER_IN_PROGRESS_MATCHES_UNION = //language=SQL
 		"UNION\n" +
 		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round,\n" +
-		"  m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets\n" +
+		"  m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.p1_sets, m.p2_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player2_id\n" +
 		"WHERE winner IS NOT NULL AND m.player1_id = :playerId AND m.player2_id > 0\n" +
 		"UNION\n" +
 		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round,\n" +
-		"  m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets\n" +
+		"  m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.p2_sets, m.p1_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player1_id\n" +

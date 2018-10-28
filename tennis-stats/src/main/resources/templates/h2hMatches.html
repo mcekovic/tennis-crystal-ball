@@ -107,7 +107,7 @@
 				},
 				"score": scoreFormatter,
 				"stats": function(column, row) {
-					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event, \"#matchesFilter\")' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span></a>" : "";
+					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event, false, \"#matchesFilter\")' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span></a>" : "";
 				}
 			},
 			labels: {

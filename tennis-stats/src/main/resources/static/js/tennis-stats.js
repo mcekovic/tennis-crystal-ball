@@ -581,11 +581,12 @@ function compareStats(containerId, statsId, close) {
 	});
 }
 
-function showMatchStats(matchId, event, container) {
+function showMatchStats(matchId, event, inProgress, container) {
 	var $matchStats = $("#matchStats-" + matchId);
 	if (!$matchStats.hasClass("loaded")) {
 		event.preventDefault();
 		var url = "matchStats?matchId=" + matchId;
+		if (inProgress) url += "&inProgress=true";
 		$.get(url, function(data) {
 			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right", container: container});
 			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "600px"); }).click();

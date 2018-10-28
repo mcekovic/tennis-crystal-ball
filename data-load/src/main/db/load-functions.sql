@@ -629,12 +629,35 @@ CREATE OR REPLACE FUNCTION load_in_progress_match(
 	p_winner SMALLINT,
 	p_score TEXT,
 	p_outcome TEXT,
-	p_player1_sets SMALLINT,
-	p_player1_games SMALLINT[],
-	p_player1_tb_pt SMALLINT[],
-	p_player2_sets SMALLINT,
-	p_player2_games SMALLINT[],
-	p_player2_tb_pt SMALLINT[]
+	p_p1_sets SMALLINT,
+	p_p2_sets SMALLINT,
+	p_p1_games SMALLINT,
+	p_p2_games SMALLINT,
+	p_p1_tbs SMALLINT,
+	p_p2_tbs SMALLINT,
+	p_p1_set_games SMALLINT[],
+	p_p2_set_games SMALLINT[],
+	p_p1_set_tb_pt SMALLINT[],
+	p_p2_set_tb_pt SMALLINT[],
+	p_minutes SMALLINT,
+	p_p1_ace SMALLINT,
+	p_p1_df SMALLINT,
+	p_p1_sv_pt SMALLINT,
+	p_p1_1st_in SMALLINT,
+	p_p1_1st_won SMALLINT,
+	p_p1_2nd_won SMALLINT,
+	p_p1_sv_gms SMALLINT,
+	p_p1_bp_sv SMALLINT,
+	p_p1_bp_fc SMALLINT,
+	p_p2_ace SMALLINT,
+	p_p2_df SMALLINT,
+	p_p2_sv_pt SMALLINT,
+	p_p2_1st_in SMALLINT,
+	p_p2_1st_won SMALLINT,
+	p_p2_2nd_won SMALLINT,
+	p_p2_sv_gms SMALLINT,
+	p_p2_bp_sv SMALLINT,
+	p_p2_bp_fc SMALLINT
 ) RETURNS VOID AS $$
 DECLARE
 	l_in_progress_event_id INTEGER;
@@ -645,6 +668,8 @@ DECLARE
 	l_player1_elo_ratings elo_ratings;
 	l_player2_elo_ratings elo_ratings;
 	l_in_progress_match_id BIGINT;
+	l_has_stats BOOLEAN;
+	l_new BOOLEAN;
 BEGIN
 	l_in_progress_event_id := find_in_progress_event(p_ext_tournament_id);
 
@@ -680,6 +705,9 @@ BEGIN
 		l_player2_elo_ratings := player_elo_ratings(l_player2_id, current_date, p_surface, p_indoor);
 	END IF;
 
+	l_has_stats := (p_minutes IS NOT NULL AND p_minutes > 0) OR (coalesce(p_p1_sv_pt, 0) + coalesce(p_p2_sv_pt, 0) > 0);
+	l_new := FALSE;
+
 	-- merge in_progress_match
 	UPDATE in_progress_match
 	SET prev_match_num1 = p_prev_match_num1, prev_match_num2 = p_prev_match_num2, date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
@@ -688,7 +716,7 @@ BEGIN
 		player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry, player2_rank = l_player2_rank,
 		player2_elo_rating = l_player2_elo_ratings.overall, player2_recent_elo_rating = l_player2_elo_ratings.recent, player2_surface_elo_rating = l_player2_elo_ratings.surface, player2_in_out_elo_rating = l_player2_elo_ratings.in_out, player2_set_elo_rating = l_player2_elo_ratings.set,
 		winner = p_winner, score = p_score, outcome = p_outcome::match_outcome,
-		player1_sets = p_player1_sets, player1_games = p_player1_games, player1_tb_pt = p_player1_tb_pt, player2_sets = p_player2_sets, player2_games = p_player2_games, player2_tb_pt = p_player2_tb_pt
+		p1_sets = p_p1_sets, p2_sets = p_p2_sets, p1_games = p_p1_games, p2_games = p_p2_games, p1_tbs = p_p1_tbs, p2_tbs = p_p2_tbs, p1_set_games = p_p1_set_games, p2_set_games = p_p2_set_games, p1_set_tb_pt = p_p1_set_tb_pt, p2_set_tb_pt = p_p2_set_tb_pt, has_stats = l_has_stats
 	WHERE in_progress_event_id = l_in_progress_event_id AND match_num = p_match_num
 	RETURNING in_progress_match_id INTO l_in_progress_match_id;
 	IF l_in_progress_match_id IS NULL THEN
@@ -696,13 +724,37 @@ BEGIN
 		(in_progress_event_id, match_num, prev_match_num1, prev_match_num2, date, surface, indoor, round, best_of,
 		 player1_id, player1_country_id, player1_seed, player1_entry, player1_rank, player1_elo_rating, player1_recent_elo_rating, player1_surface_elo_rating, player1_in_out_elo_rating, player1_set_elo_rating,
 		 player2_id, player2_country_id, player2_seed, player2_entry, player2_rank, player2_elo_rating, player2_recent_elo_rating, player2_surface_elo_rating, player2_in_out_elo_rating, player2_set_elo_rating,
-		 winner, score, outcome, player1_sets, player1_games, player1_tb_pt, player2_sets, player2_games, player2_tb_pt)
+		 winner, score, outcome, p1_sets, p2_sets, p1_games, p2_games, p1_tbs, p2_tbs, p1_set_games, p2_set_games, p1_set_tb_pt, p2_set_tb_pt, has_stats)
 		VALUES
 		(l_in_progress_event_id, p_match_num, p_prev_match_num1, p_prev_match_num2, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
 		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry, l_player1_rank, l_player1_elo_ratings.overall, l_player1_elo_ratings.recent, l_player1_elo_ratings.surface, l_player1_elo_ratings.in_out, l_player1_elo_ratings.set,
 		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry, l_player2_rank, l_player2_elo_ratings.overall, l_player2_elo_ratings.recent, l_player2_elo_ratings.surface, l_player2_elo_ratings.in_out, l_player2_elo_ratings.set,
-		 p_winner, p_score, p_outcome::match_outcome, p_player1_sets, p_player1_games, p_player1_tb_pt, p_player2_sets, p_player2_games, p_player2_tb_pt);
+		 p_winner, p_score, p_outcome::match_outcome, p_p1_sets, p_p2_sets, p_p1_games, p_p2_games, p_p1_tbs, p_p2_tbs, p_p1_set_games, p_p2_set_games, p_p1_set_tb_pt, p_p2_set_tb_pt, l_has_stats);
+		l_new := TRUE;
    END IF;
+
+	-- merge match_stats
+	IF l_has_stats THEN
+		BEGIN
+			INSERT INTO in_progress_match_stats
+			(in_progress_match_id, set, minutes,
+			 p1_ace, p1_df, p1_sv_pt, p1_1st_in, p1_1st_won, p1_2nd_won, p1_sv_gms, p1_bp_sv, p1_bp_fc,
+			 p2_ace, p2_df, p2_sv_pt, p2_1st_in, p2_1st_won, p2_2nd_won, p2_sv_gms, p2_bp_sv, p2_bp_fc)
+			VALUES
+			(l_in_progress_match_id, 0, p_minutes,
+			 p_p1_ace, p_p1_df, p_p1_sv_pt, p_p1_1st_in, p_p1_1st_won, p_p1_2nd_won, p_p1_sv_gms, p_p1_bp_sv, p_p1_bp_fc,
+			 p_p2_ace, p_p2_df, p_p2_sv_pt, p_p2_1st_in, p_p2_1st_won, p_p2_2nd_won, p_p2_sv_gms, p_p2_bp_sv, p_p2_bp_fc);
+		EXCEPTION WHEN unique_violation THEN
+			UPDATE in_progress_match_stats
+			SET minutes = p_minutes,
+				p1_ace = p_p1_ace, p1_df = p_p1_df, p1_sv_pt = p_p1_sv_pt, p1_1st_in = p_p1_1st_in, p1_1st_won = p_p1_1st_won, p1_2nd_won = p_p1_2nd_won, p1_sv_gms = p_p1_sv_gms, p1_bp_sv = p_p1_bp_sv, p1_bp_fc = p_p1_bp_fc,
+				p2_ace = p_p2_ace, p2_df = p_p2_df, p2_sv_pt = p_p2_sv_pt, p2_1st_in = p_p2_1st_in, p2_1st_won = p_p2_1st_won, p2_2nd_won = p_p2_2nd_won, p2_sv_gms = p_p2_sv_gms, p2_bp_sv = p_p2_bp_sv, p2_bp_fc = p_p2_bp_fc
+			WHERE in_progress_match_id = l_in_progress_match_id AND set = 0;
+		END;
+	ELSEIF NOT l_new THEN
+		DELETE FROM in_progress_match_stats
+		WHERE in_progress_match_id = l_in_progress_match_id AND set = 0;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 

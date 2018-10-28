@@ -24,7 +24,7 @@ public class StatisticsService {
 		"ORDER BY season DESC";
 
 	private static final String MATCH_STATS_QUERY =
-		"SELECT pw.name AS winner, pl.name AS loser, 1 w_matches, 0 l_matches, w_sets, l_sets, w_games, l_games, w_tbs, l_tbs,\n" +
+		"SELECT pw.name AS player1, pl.name AS player2, 1 w_matches, 0 l_matches, w_sets, l_sets, w_games, l_games, w_tbs, l_tbs,\n" +
 		"  w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,\n" +
 		"  l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,\n" +
 		"  minutes, w_sets + l_sets sets_w_stats, w_games + l_games games_w_stats\n" +
@@ -33,6 +33,17 @@ public class StatisticsService {
 		"INNER JOIN player_v pw ON m.winner_id = pw.player_id\n" +
 		"INNER JOIN player_v pl ON m.loser_id = pl.player_id\n" +
 		"WHERE match_id = :matchId AND set = 0";
+
+	private static final String IN_PROGRESS_MATCH_STATS_QUERY =
+		"SELECT pw.name AS player1, pl.name AS player2, 2 - winner AS p1_matches, winner - 1 AS p2_matches, p1_sets, p2_sets, p1_games, p2_games, p1_tbs, p2_tbs,\n" +
+		"  p1_ace, p1_df, p1_sv_pt, p1_1st_in, p1_1st_won, p1_2nd_won, p1_sv_gms, p1_bp_sv, p1_bp_fc,\n" +
+		"  p2_ace, p2_df, p2_sv_pt, p2_1st_in, p2_1st_won, p2_2nd_won, p2_sv_gms, p2_bp_sv, p2_bp_fc,\n" +
+		"  minutes, p1_sets + p2_sets sets_w_stats, p1_games + p2_games games_w_stats\n" +
+		"FROM in_progress_match_stats\n" +
+		"INNER JOIN in_progress_match m USING (in_progress_match_id)\n" +
+		"INNER JOIN player_v pw ON m.player1_id = pw.player_id\n" +
+		"INNER JOIN player_v pl ON m.player2_id = pl.player_id\n" +
+		"WHERE in_progress_match_id = :matchId AND set = 0";
 
 	private static final String PLAYER_STATS_COLUMNS =
 		"p_matches, o_matches, p_sets, o_sets, p_games, o_games, p_tbs, o_tbs,\n" +
@@ -122,19 +133,19 @@ public class StatisticsService {
 
 	// Match statistics
 
-	public MatchStats getMatchStats(long matchId) {
+	public MatchStats getMatchStats(long matchId, boolean inProgress) {
 		return jdbcTemplate.query(
-			MATCH_STATS_QUERY, params("matchId", matchId),
-			rs -> rs.next() ? mapMatchStats(rs) : null
+			inProgress ? IN_PROGRESS_MATCH_STATS_QUERY : MATCH_STATS_QUERY, params("matchId", matchId),
+			rs -> rs.next() ? mapMatchStats(rs, inProgress) : null
 		);
 	}
 
-	private MatchStats mapMatchStats(ResultSet rs) throws SQLException {
-		String winner = rs.getString("winner");
-		String loser = rs.getString("loser");
-		PlayerStats winnerStats = mapPlayerMatchStats(rs, "w_");
-		PlayerStats loserStats = mapPlayerMatchStats(rs, "l_");
-		return new MatchStats(winner, loser, winnerStats, loserStats);
+	private MatchStats mapMatchStats(ResultSet rs, boolean inProgress) throws SQLException {
+		String player1 = rs.getString("player1");
+		String player2 = rs.getString("player2");
+		PlayerStats stats1 = mapPlayerMatchStats(rs, inProgress ? "p1_" : "w_");
+		PlayerStats stats2 = mapPlayerMatchStats(rs, inProgress ? "p2_" : "l_");
+		return new MatchStats(player1, player2, stats1, stats2);
 	}
 
 

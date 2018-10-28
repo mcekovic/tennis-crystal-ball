@@ -352,17 +352,50 @@ CREATE TABLE in_progress_match (
 	winner SMALLINT,
 	score TEXT,
 	outcome match_outcome,
-	player1_sets SMALLINT,
-	player1_games SMALLINT[],
-	player1_tb_pt SMALLINT[],
-	player2_sets SMALLINT,
-	player2_games SMALLINT[],
-	player2_tb_pt SMALLINT[],
+	p1_sets SMALLINT,
+	p2_sets SMALLINT,
+	p1_games SMALLINT,
+	p2_games SMALLINT,
+	p1_tbs SMALLINT,
+	p2_tbs SMALLINT,
+	p1_set_games SMALLINT[],
+	p2_set_games SMALLINT[],
+	p1_set_tb_pt SMALLINT[],
+	p2_set_tb_pt SMALLINT[],
+	has_stats BOOLEAN,
 	UNIQUE (in_progress_event_id, match_num)
 );
 
 CREATE INDEX ON in_progress_match (player1_id);
 CREATE INDEX ON in_progress_match (player2_id);
+
+
+-- in_progress_match_stats
+
+CREATE TABLE in_progress_match_stats (
+	in_progress_match_id BIGINT NOT NULL REFERENCES in_progress_match (in_progress_match_id) ON DELETE CASCADE,
+	set SMALLINT NOT NULL,
+	minutes SMALLINT,
+	p1_ace SMALLINT,
+	p1_df SMALLINT,
+	p1_sv_pt SMALLINT,
+	p1_1st_in SMALLINT,
+	p1_1st_won SMALLINT,
+	p1_2nd_won SMALLINT,
+	p1_sv_gms SMALLINT,
+	p1_bp_sv SMALLINT,
+	p1_bp_fc SMALLINT,
+	p2_ace SMALLINT,
+	p2_df SMALLINT,
+	p2_sv_pt SMALLINT,
+	p2_1st_in SMALLINT,
+	p2_1st_won SMALLINT,
+	p2_2nd_won SMALLINT,
+	p2_sv_gms SMALLINT,
+	p2_bp_sv SMALLINT,
+	p2_bp_fc SMALLINT,
+	PRIMARY KEY (in_progress_match_id, set)
+);
 
 
 -- player_in_progress_result

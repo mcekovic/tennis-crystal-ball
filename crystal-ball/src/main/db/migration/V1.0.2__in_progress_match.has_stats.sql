@@ -1,0 +1,11 @@
+ALTER TABLE in_progress_match ADD COLUMN p1_games SMALLINT;
+ALTER TABLE in_progress_match ADD COLUMN p2_games SMALLINT;
+ALTER TABLE in_progress_match ADD COLUMN p1_tbs SMALLINT;
+ALTER TABLE in_progress_match ADD COLUMN p2_tbs SMALLINT;
+ALTER TABLE in_progress_match ADD COLUMN has_stats BOOLEAN;
+ALTER TABLE in_progress_match RENAME COLUMN player1_sets TO p1_sets;
+ALTER TABLE in_progress_match RENAME COLUMN player2_sets TO p2_sets;
+ALTER TABLE in_progress_match RENAME COLUMN player1_games TO p1_set_games;
+ALTER TABLE in_progress_match RENAME COLUMN player2_games TO p2_set_games;
+ALTER TABLE in_progress_match RENAME COLUMN player1_tb_pt TO p1_set_tb_pt;
+ALTER TABLE in_progress_match RENAME COLUMN player2_tb_pt TO p2_set_tb_pt;

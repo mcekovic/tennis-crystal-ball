@@ -1,20 +1,17 @@
 package org.strangeforest.tcb.dataload
 
-import java.util.concurrent.*
-import java.util.concurrent.atomic.*
 
 import org.jsoup.select.*
 
 import com.google.common.base.*
 import groovy.sql.*
 
+import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
 import static org.strangeforest.tcb.dataload.SqlPool.*
 import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 
 class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
-
-	static final int FETCH_THREAD_COUNT = 5
 
 	static final String SELECT_SEASON_EVENT_EXT_IDS_SQL = //language=SQL
 		'SELECT ext_tournament_id FROM tournament_event\n' +
@@ -113,35 +110,9 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 			}
 		}
 
-		AtomicInteger rows = new AtomicInteger()
-		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
-		try {
-			pool.submit {
-				matches.parallelStream().forEach { params ->
-					def statsUrl = params.statsUrl
-					if (statsUrl) {
-						def statsDoc = retriedGetDoc(statsUrl)
-						params.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
-						def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
-						if (matchStats) {
-							setATPStatsParams(params, matchStats)
-							print '.'
-						}
-					}
-					if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-						println()
-				}
-			}.get()
-		}
-		finally {
-			pool.shutdown()
-		}
-		pool.awaitTermination(1L, TimeUnit.HOURS)
-		if (rows.get() > 0)
-			println()
-
+		loadStats(matches, 'w_', 'l_')
 		if (forceReloadStats)
-			reloadStats(matches, season, extId)
+			reloadStats(matches, season, extId, 'w_', 'l_')
 
 		withTx sql, { Sql s ->
 			s.withBatch(LOAD_SQL) { ps ->
@@ -172,98 +143,14 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		}
 	}
 
-	static setATPStatsParams(Map params, stats) {
-		setATPStatParams(params, stats, 'ace', 'Aces')
-		setATPStatParams(params, stats, 'df', 'Double Faults')
-		setATPStatParamsUpDown(params, stats, '1st_in', 'sv_pt', '1st Serve')
-		setATPStatParamsUpDown(params, stats, '1st_won', null, '1st Serve Points Won')
-		setATPStatParamsUpDown(params, stats, '2nd_won', null, '2nd Serve Points Won')
-		setATPStatParams(params, stats, 'sv_gms', 'Service Games Played')
-		setATPStatParamsUpDown(params, stats, 'bp_sv', 'bp_fc', 'Break Points Saved')
-	}
-
-	static setATPStatParams(Map params, stats, String name, String title) {
-		def stat = stats.select("tr.match-stats-row:has(td.match-stats-label:containsOwn(${title}))")
-		params['w_' + name] = smallint stat.select('td.match-stats-number-left').text()
-		params['l_' + name] = smallint stat.select('td.match-stats-number-right').text()
-	}
-
-	static setATPStatParamsUpDown(Map params, stats, String nameUp, String nameDown, String title) {
-		def stat = stats.select("tr.match-stats-row:has(td.match-stats-label:containsOwn(${title}))")
-		String wText = stat.select('td.match-stats-number-left').text()
-		String lText = stat.select('td.match-stats-number-right').text()
-		if (nameUp) {
-			params['w_' + nameUp] = smallint statUp(wText)
-			params['l_' + nameUp] = smallint statUp(lText)
-		}
-		if (nameDown) {
-			params['w_' + nameDown] = smallint statDown(wText)
-			params['l_' + nameDown] = smallint statDown(lText)
-		}
-	}
-
-	static String statUp(String s) {
-		extract(s, '(', '/')
-	}
-
-	static String statDown(String s) {
-		extract(s, '/', ')')
-	}
-
 	static tournamentUrl(boolean current, int season, String urlId, extId) {
 		def type = current ? 'current' : 'archive'
 		def seasonUrl = current ? '' : '/' + season
 		"http://www.atpworldtour.com/en/scores/$type/$urlId/$extId$seasonUrl/results"
 	}
 
-	static matchStatsUrl(String url) {
-		url ? "http://www.atpworldtour.com" + url : null
-	}
-
 	static isUnknownOrQualifier(String name) {
 		isUnknown(name) || isQualifier(name)
-	}
-
-	static reloadStats(matches, int season, extId) {
-		AtomicInteger rows = new AtomicInteger()
-		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
-		def matchNums = 1..matches.size()
-		try {
-			pool.submit {
-				matchNums.parallelStream().forEach { matchNum ->
-					def statsUrl = matchStatsUrl(season, extId, String.format('%03d', matchNum))
-					def statsDoc = retriedGetDoc(statsUrl)
-					def match = findMatch(matches, statsDoc.select('div.modal-scores-header h3.section-title').text())
-					if (match) {
-						match.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
-						def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
-						if (matchStats) {
-							setATPStatsParams(match, matchStats)
-							print '.'
-						}
-						if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-							println()
-					}
-				}
-			}
-		}
-		finally {
-			pool.shutdown()
-		}
-		pool.awaitTermination(1L, TimeUnit.HOURS)
-		if (rows.get() > 0)
-			println()
-	}
-
-	static matchStatsUrl(int season, extId, String matchNum) {
-		"http://www.atpworldtour.com/en/scores/$season/$extId/MS$matchNum/match-stats"
-	}
-
-	static findMatch(matches, String title) {
-		title = title.toLowerCase()
-		matches.find { match ->
-			title.contains(match.winner_name.toLowerCase()) && title.contains(match.loser_name.toLowerCase())
-		}
 	}
 
 

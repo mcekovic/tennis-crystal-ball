@@ -4,8 +4,8 @@
 	<!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="matchStats" type="org.strangeforest.tcb.stats.model.MatchStats"*/-->
 	<!--/*@thymesVar id="compare" type="java.lang.Boolean"*/-->
-	<!--/*@thymesVar id="winnerCompareStats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
-	<!--/*@thymesVar id="loserCompareStats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+	<!--/*@thymesVar id="compareStats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+	<!--/*@thymesVar id="compareStats2" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 	<!--/*@thymesVar id="match" type="org.strangeforest.tcb.stats.model.MatchInfo"*/-->
 	<!--/*@thymesVar id="matchLevel" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="matchSurface" type="java.lang.String"*/-->
@@ -15,8 +15,8 @@
 	<!--/*@thymesVar id="compareSurface" type="java.lang.Boolean"*/-->
 	<!--/*@thymesVar id="compareRound" type="java.lang.Boolean"*/-->
 	<!--/*@thymesVar id="compareOpponent" type="java.lang.Boolean"*/-->
-	<!--/*@thymesVar id="winnerRelativeTo" type="java.lang.String"*/-->
-	<!--/*@thymesVar id="loserRelativeTo" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="relativeTo1" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="relativeTo2" type="java.lang.String"*/-->
 	<script type="text/javascript">
 		$(function() {
 			var $matchStatsPopover = $("#matchStatsPopover-[(${matchId})]");
@@ -27,46 +27,46 @@
 			$("[data-toggle='tooltip']").tooltip();
 		});
 	</script>
-	<th:block th:if="${matchStats}" th:with="hasPointStats=${matchStats.hasPointStats()}, winnerHasPointCompareStats=${winnerCompareStats != null && winnerCompareStats.hasPointStats()}, loserHasPointCompareStats=${loserCompareStats != null && loserCompareStats.hasPointStats()}">
+	<th:block th:if="${matchStats}" th:with="hasPointStats=${matchStats.hasPointStats()}, hasPointCompareStats1=${compareStats1 != null && compareStats1.hasPointStats()}, hasPointCompareStats2=${compareStats2 != null && compareStats2.hasPointStats()}">
 	<div class="row">
-		<div class="col-xs-5 text-left"><b th:text="${matchStats.winner}">Roger Federer</b></div>
+		<div class="col-xs-5 text-left"><b th:text="${matchStats.player1}">Roger Federer</b></div>
 		<div class="col-xs-2 text-center"><b>vs</b></div>
-		<div class="col-xs-5 text-right"><b th:text="${matchStats.loser}">Rafael Nadal</b></div>
+		<div class="col-xs-5 text-right"><b th:text="${matchStats.player2}">Rafael Nadal</b></div>
 	</div>
 	<ul th:id="|matchStats-${matchId}Tabs|" class="nav nav-tabs" style="text-align: center; margin-top: 10px">
 		<li th:each="group : ${categoryGroups}" th:if="${hasPointStats || !group.needsStats}" th:class="${('matchStats-' + matchId + group.id == tab) || (tab == null && group.default) ? 'active' : _}" style="float:none; display:inline-block"><a data-toggle="tab" th:href="'#' + ${'matchStats-' + matchId + group.id}" th:text="${group.name}">Overview</a></li>
 	</ul>
 	<div class="tab-content">
 		<div th:each="group : ${categoryGroups}" th:if="${hasPointStats || !group.needsStats}" th:id="${'matchStats-' + matchId + group.id}" class="tab-pane fade" th:attrappend="class=${('matchStats-' + matchId + group.id == tab) || (tab == null && group.default) ? ' in active' : _}">
-			<table class="table table-condensed table-hover table-striped text-nowrap" th:with="winnerStats=${matchStats.winnerStats}, loserStats=${matchStats.loserStats}">
+			<table class="table table-condensed table-hover table-striped text-nowrap" th:with="stats1=${matchStats.stats1}, stats2=${matchStats.stats2}">
 				<th:block th:each="subGroup : ${group.subGroups}" th:if="${hasPointStats || !subGroup.needsStats}" th:with="time=${subGroup.name == 'Time'}">
 				<tr>
-					<th:block th:if="${compare}">
-						<th class="pct-data text-right" th:title="|${winnerRelativeTo} statistics|"><i th:unless="${time}" class="fa fa-thumb-tack"></i></th>
+					<th:block th:if="${compare && hasPointCompareStats1}">
+						<th class="pct-data text-right" th:title="|${relativeTo1} statistics|"><i th:unless="${time}" class="fa fa-thumb-tack"></i></th>
 						<th class="pct-data text-right" title="Statistics difference"><i th:unless="${time}" class="fa fa-exchange"></i></th>
 						<th class="pct-data text-right" title="Match statistics"><i th:unless="${time}" class="fa fa-percent"></i></th>
 					</th:block>
-					<th th:unless="${compare}" class="pct-data text-right"><i th:unless="${time}" class="fa fa-percent"></i></th>
+					<th th:unless="${compare && hasPointCompareStats1}" class="pct-data text-right"><i th:unless="${time}" class="fa fa-percent"></i></th>
 					<th class="raw-data text-right"><i class="fa fa-hashtag"></i></th>
 					<th th:text="${subGroup.name}" class="text-center">Serve</th>
-					<th:block th:if="${compare}">
+					<th:block th:if="${compare && hasPointCompareStats2}">
 						<th class="pct-data text-left" title="Match statistics"><i class="fa fa-percent"></i></th>
 						<th class="pct-data text-left" title="Statistics difference"><i class="fa fa-exchange"></i></th>
-						<th class="pct-data text-left" th:title="|${loserRelativeTo} statistics|"><i class="fa fa-thumb-tack"></i></th>
+						<th class="pct-data text-left" th:title="|${relativeTo2} statistics|"><i class="fa fa-thumb-tack"></i></th>
 					</th:block>
-					<th th:unless="${compare}" class="pct-data text-left"><i class="fa fa-percent"></i></th>
+					<th th:unless="${compare && hasPointCompareStats2}" class="pct-data text-left"><i class="fa fa-percent"></i></th>
 					<th class="raw-data text-left"><i class="fa fa-hashtag"></i></th>
 				</tr>
 				<tr th:each="category : ${subGroup.categories}" th:if="${hasPointStats || !category.needsStats}">
-					<th th:if="${winnerCompareStats}" th:text="${!category.time && (winnerHasPointCompareStats || !category.needsStats) ? category.getStatFormatted(winnerCompareStats) : _}" class="pct-data text-right">10%</th>
-					<th th:if="${winnerCompareStats}" th:text="${!category.time && (winnerHasPointCompareStats || !category.needsStats) ? category.getStatDiffFormatted(winnerCompareStats, winnerStats) : _}" class="pct-data text-right " th:attrappend="class=${category.getStatDiffClass(winnerCompareStats, winnerStats)}">0%</th>
-					<th th:text="${!category.time ? category.getStatFormatted(winnerStats) : _}" class="text-right" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">10%</th>
-					<th th:if="${category.hasRawData()}" th:text="${category.getStatUp(winnerStats) + ' / ' + category.getStatDown(winnerStats)}" class="raw-data text-right">10 / 100</th>
+					<th th:if="${compareStats1}" th:text="${!category.time && (hasPointCompareStats1 || !category.needsStats) ? category.getStatFormatted(compareStats1) : _}" class="pct-data text-right">10%</th>
+					<th th:if="${compareStats1}" th:text="${!category.time && (hasPointCompareStats1 || !category.needsStats) ? category.getStatDiffFormatted(compareStats1, stats1) : _}" class="pct-data text-right " th:attrappend="class=${category.getStatDiffClass(compareStats1, stats1)}">0%</th>
+					<th th:text="${!category.time ? category.getStatFormatted(stats1) : _}" class="text-right" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">10%</th>
+					<th th:if="${category.hasRawData()}" th:text="${category.getStatUp(stats1) + ' / ' + category.getStatDown(stats1)}" class="raw-data text-right">10 / 100</th>
 					<td th:title="#{${category.descriptionId}}" th:text="${category.title}" class="text-center">Ace %</td>
-					<th th:if="${category.hasRawData()}" th:text="${category.getStatUp(loserStats) + ' / ' + category.getStatDown(loserStats)}" class="raw-data text-left">10 / 100</th>
-					<th th:text="${category.getStatFormatted(loserStats)}" class="text-left" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">10%</th>
-					<th th:if="${loserCompareStats}" th:text="${loserHasPointCompareStats || !category.needsStats ? category.getStatDiffFormatted(loserCompareStats, loserStats) : _}" class="pct-data text-left " th:attrappend="class=${category.getStatDiffClass(loserCompareStats, loserStats)}">0%</th>
-					<th th:if="${loserCompareStats}" th:text="${loserHasPointCompareStats || !category.needsStats ? category.getStatFormatted(loserCompareStats) : _}" class="pct-data text-left">10%</th>
+					<th th:if="${category.hasRawData()}" th:text="${category.getStatUp(stats2) + ' / ' + category.getStatDown(stats2)}" class="raw-data text-left">10 / 100</th>
+					<th th:text="${category.getStatFormatted(stats2)}" class="text-left" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">10%</th>
+					<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 || !category.needsStats ? category.getStatDiffFormatted(compareStats2, stats2) : _}" class="pct-data text-left " th:attrappend="class=${category.getStatDiffClass(compareStats2, stats2)}">0%</th>
+					<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 || !category.needsStats ? category.getStatFormatted(compareStats2) : _}" class="pct-data text-left">10%</th>
 				</tr>
 				</th:block>
 			</table>

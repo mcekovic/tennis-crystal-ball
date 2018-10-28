@@ -38,7 +38,9 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			':ext_tournament_id, :match_num, :prev_match_num1, :prev_match_num2, :date, :surface, :indoor, :round, :best_of, ' +
 			':player1_name, :player1_country_id, :player1_seed, :player1_entry, ' +
 			':player2_name, :player2_country_id, :player2_seed, :player2_entry, ' +
-			':winner, :score, :outcome, :player1_sets, :player1_games, :player1_tb_pt, :player2_sets, :player2_games, :player2_tb_pt' +
+			':winner, :score, :outcome, :p1_sets, :p2_sets, :p1_games, :p2_games, :p1_tbs, :p2_tbs, :p1_set_games, :p2_set_games, :p1_set_tb_pt, :p2_set_tb_pt, :minutes, ' +
+			':p1_ace, :p1_df, :p1_sv_pt, :p1_1st_in, :p1_1st_won, :p1_2nd_won, :p1_sv_gms, :p1_bp_sv, :p1_bp_fc, ' +
+			':p2_ace, :p2_df, :p2_sv_pt, :p2_1st_in, :p2_1st_won, :p2_2nd_won, :p2_sv_gms, :p2_bp_sv, :p2_bp_fc' +
 		')}'
 
 	static final String UPDATE_EVENT_HASH_SQL = //language=SQL
@@ -280,6 +282,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			prevMatchNumOffset = matchNumOffset
 		}
 
+		loadStats(matches.values(), 'p1_', 'p2_')
+
 		def matchCount = 0
 		if (matches) {
 			matchCount = saveMatches(extId, matches)
@@ -318,28 +322,37 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				params.winner = (short) 1
 				if (matchScore) {
 					def conn = sql.connection
-					params.player1_sets = matchScore.w_sets
-					params.player1_games = shortArray(conn, matchScore.w_set_games)
-					params.player1_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
-					params.player2_sets = matchScore.l_sets
-					params.player2_games = shortArray(conn, matchScore.l_set_games)
-					params.player2_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
+					params.p1_sets = matchScore.w_sets
+					params.p2_sets = matchScore.l_sets
+					params.p1_games = matchScore.w_games
+					params.p2_games = matchScore.l_games
+					params.p1_tbs = matchScore.w_tbs
+					params.p2_tbs = matchScore.l_tbs
+					params.p1_set_games = shortArray(conn, matchScore.w_set_games)
+					params.p2_set_games = shortArray(conn, matchScore.l_set_games)
+					params.p1_set_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
+					params.p2_set_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
 				}
 			}
 			else if (winnerName == params.player2_name) {
 				params.winner = (short) 2
 				if (matchScore) {
 					def conn = sql.connection
-					params.player1_sets = matchScore.l_sets
-					params.player1_games = shortArray(conn, matchScore.l_set_games)
-					params.player1_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
-					params.player2_sets = matchScore.w_sets
-					params.player2_games = shortArray(conn, matchScore.w_set_games)
-					params.player2_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
+					params.p1_sets = matchScore.l_sets
+					params.p2_sets = matchScore.w_sets
+					params.p1_games = matchScore.l_games
+					params.p2_games = matchScore.w_games
+					params.p1_tbs = matchScore.l_tbs
+					params.p2_tbs = matchScore.w_tbs
+					params.p1_set_games = shortArray(conn, matchScore.l_set_games)
+					params.p2_set_games = shortArray(conn, matchScore.w_set_games)
+					params.p1_set_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
+					params.p2_set_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
 				}
 			}
 			params.score = matchScore?.toString()
 			params.outcome = matchScore?.outcome
+			params.statsUrl = matchStatsUrl(scoreElem.first().attr('href'))
 		}
 	}
 

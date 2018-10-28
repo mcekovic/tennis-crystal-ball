@@ -15,6 +15,7 @@ VACUUM FULL VERBOSE ANALYSE match_price;
 VACUUM FULL VERBOSE ANALYSE team_tournament_event_winner;
 VACUUM FULL VERBOSE ANALYSE in_progress_event;
 VACUUM FULL VERBOSE ANALYSE in_progress_match;
+VACUUM FULL VERBOSE ANALYSE in_progress_match_stats;
 VACUUM FULL VERBOSE ANALYSE player_in_progress_result;
 
 VACUUM FULL VERBOSE ANALYSE tournament_rank_points;

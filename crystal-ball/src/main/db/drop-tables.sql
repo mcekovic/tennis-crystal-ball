@@ -30,6 +30,7 @@ DROP TABLE statistics_goat_points CASCADE;
 DROP TABLE statistics_category CASCADE;
 
 DROP TABLE player_in_progress_result CASCADE;
+DROP TABLE in_progress_match_stats CASCADE;
 DROP TABLE in_progress_match CASCADE;
 DROP TABLE in_progress_event CASCADE;
 DROP TABLE team_tournament_event_winner CASCADE;
