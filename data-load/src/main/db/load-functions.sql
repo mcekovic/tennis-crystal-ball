@@ -729,7 +729,8 @@ BEGIN
 		(l_in_progress_event_id, p_match_num, p_prev_match_num1, p_prev_match_num2, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
 		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry, l_player1_rank, l_player1_elo_ratings.overall, l_player1_elo_ratings.recent, l_player1_elo_ratings.surface, l_player1_elo_ratings.in_out, l_player1_elo_ratings.set,
 		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry, l_player2_rank, l_player2_elo_ratings.overall, l_player2_elo_ratings.recent, l_player2_elo_ratings.surface, l_player2_elo_ratings.in_out, l_player2_elo_ratings.set,
-		 p_winner, p_score, p_outcome::match_outcome, p_p1_sets, p_p2_sets, p_p1_games, p_p2_games, p_p1_tbs, p_p2_tbs, p_p1_set_games, p_p2_set_games, p_p1_set_tb_pt, p_p2_set_tb_pt, l_has_stats);
+		 p_winner, p_score, p_outcome::match_outcome, p_p1_sets, p_p2_sets, p_p1_games, p_p2_games, p_p1_tbs, p_p2_tbs, p_p1_set_games, p_p2_set_games, p_p1_set_tb_pt, p_p2_set_tb_pt, l_has_stats)
+		RETURNING in_progress_match_id INTO l_in_progress_match_id;
 		l_new := TRUE;
    END IF;
 
