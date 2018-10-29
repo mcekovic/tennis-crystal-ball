@@ -164,7 +164,7 @@ public final class StatsCategory {
 		addCategory(GAMES, "totalGames", TOTAL_GAMES, PlayerStats::getTotalGames, GAME, COUNT, false, "Total Games Played");
 		addCategory(GAMES, "totalGamesWon", "p_games", PlayerStats::getTotalGamesWon, GAME, COUNT, false, "Total Games Won");
 		addCategory(GAMES, "totalGamesWonPct", GAMES_WON_PCT, PlayerStats::getTotalGamesWonPct, PlayerStats::getTotalGamesWon, PlayerStats::getTotalGames, GAME, PERCENTAGE, false, "Games Won %");
-		addCategory(GAMES, "gamesPerSet", "(" + TOTAL_GAMES + ")::REAL / nullif(" + TOTAL_SETS + ", 0)", PlayerStats::getGamesPerSet, PlayerStats::getTotalGames, PlayerStats::getSets, SET, RATIO2, false, "Games per Set");
+		addCategory(GAMES, "gamesPerSet", "(" + TOTAL_GAMES + ")::REAL / nullif(" + TOTAL_SETS + ", 0)", PlayerStats::getGamesPerSet, PlayerStats::getTotalGames, PlayerStats::getSets, SET, RATIO3, false, "Games per Set");
 		addCategory(GAMES, "gamesPerMatch", "(" + TOTAL_GAMES + ")::REAL / nullif(" + TOTAL_MATCHES + ", 0)", PlayerStats::getGamesPerMatch, PlayerStats::getTotalGames, PlayerStats::getMatches, MATCH, RATIO2, false, "Games per Match");
 		// Tie Breaks
 		addCategory(TIE_BREAKS, "tieBreaks", TOTAL_TIE_BREAKS, PlayerStats::getTieBreaks, TIE_BREAK, COUNT, false, "Tie Breaks Played");
