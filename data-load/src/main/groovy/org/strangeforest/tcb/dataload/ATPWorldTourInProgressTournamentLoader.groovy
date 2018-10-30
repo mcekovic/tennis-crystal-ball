@@ -366,6 +366,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		switch (round) {
 			case '1st Rd':
 			case '2nd Rd':
+			case '3rd Rd':
+			case '4th Rd':
 				int pos = rounds.indexOf(round)
 				for (int i = pos + 1; i < rounds.size(); i++) {
 					int j = KOResult.values().findIndexOf { v -> v.name() == rounds[i]}
