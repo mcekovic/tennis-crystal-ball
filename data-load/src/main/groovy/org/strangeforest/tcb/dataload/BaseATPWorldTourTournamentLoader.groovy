@@ -323,6 +323,9 @@ abstract class BaseATPWorldTourTournamentLoader {
 	}
 
 	static setATPStatsParams(Map params, stats, String prefix1, String prefix2) {
+		if (params.winner == 2) {
+			def prefix = prefix1; prefix1 = prefix2; prefix2 = prefix
+		}
 		setATPStatParams(params, stats, 'ace', 'Aces', prefix1, prefix2)
 		setATPStatParams(params, stats, 'df', 'Double Faults', prefix1, prefix2)
 		setATPStatParamsUpDown(params, stats, '1st_in', 'sv_pt', '1st Serve', prefix1, prefix2)
