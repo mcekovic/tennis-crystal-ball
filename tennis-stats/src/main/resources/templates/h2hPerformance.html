@@ -311,7 +311,7 @@
 					</div>
 				</div>
 			</th>
-			<th class="text-center" th:text="${indoor ? 'Indoor' : 'Outdoor'}">Outdoor</th>
+			<td class="text-center" th:text="${indoor ? 'Indoor' : 'Outdoor'}">Outdoor</td>
 			<th class="text-left">
 				<div th:if="${wl2}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -342,7 +342,7 @@
 					</div>
 				</div>
 			</th>
-			<th class="text-center" th:text="${speed.text}" th:title="${speed.speedRange}">Outdoor</th>
+			<td class="text-center"><span th:class="'label points-' + ${speed.speed}" style="color: white" th:text="${speed.text}" th:title="${speed.speedRange}">Medium</span></td>
 			<th class="text-left">
 				<div th:if="${wl2}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -404,7 +404,7 @@
 						</div>
 					</div>
 				</th>
-				<th class="text-center" th:text="|Best of ${bestOf}|">Best of 3</th>
+				<td class="text-center" th:text="|Best of ${bestOf}|">Best of 3</td>
 				<th class="text-left">
 					<div th:if="${wl2}" class="progress progress-perf pull-left">
 						<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">

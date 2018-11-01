@@ -429,7 +429,7 @@
 						<td width="40%" th:text="${speed.text}" th:title="${speed.speedRange}">Medium</td>
 						<th>
 							<div class="progress progress-perf">
-								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+								<div class="progress-bar progress-bar-perf" th:attrappend="class=' points-' + ${speed.speed}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed.speed}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${speed.text} matches|">
 										<span class="pct-data" th:text="${wl.pctWT()}">50%</span>
 										<span class="raw-data" th:text="${wl.WT}">10 / 20</span>
