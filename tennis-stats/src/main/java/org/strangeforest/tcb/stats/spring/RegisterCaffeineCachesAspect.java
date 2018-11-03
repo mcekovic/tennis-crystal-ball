@@ -11,6 +11,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.*;
 
 @Aspect
 @Component @Role(ROLE_INFRASTRUCTURE)
+@Profile("!dev")
 public class RegisterCaffeineCachesAspect {
 
 	@Autowired private CacheMetricsRegistrar metricsRegistrar;

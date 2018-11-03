@@ -5,6 +5,12 @@
 <!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="rankingTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<script type="text/javascript">
+	function reloadRankingTopN(event, $this) {
+		event.preventDefault();
+		loadRankingTopN($this.data("rank-type"), [(${count})]);
+	}
+</script>
 <style type="text/css">
 	button.rank-type {
 		padding: 0 4px;
@@ -36,7 +42,7 @@
 					<span class="caret"></span>
 				</button>
 				<ul id="rankingTopNSelect" class="dropdown-menu" role="menu">
-					<li th:each="aRankType : ${rankTypes}" th:unless="${aRankType.points || (aRankType.surface != null && aRankType.surface.name() == 'CARPET')}"><a href="#" th:class="${aRankType.surface != null ? 'bg-surface-' + aRankType.surface.code : _}" th:onclick="'event.preventDefault(); loadRankingTopN(\'' + ${aRankType} + '\', ' + ${count} + ')'" th:text="${aRankType.shortText}" th:title="${aRankType.text}">ATP</a></li>
+					<li th:each="aRankType : ${rankTypes}" th:unless="${aRankType.points || (aRankType.surface != null && aRankType.surface.name() == 'CARPET')}"><a href="#" th:class="${aRankType.surface != null ? 'bg-surface-' + aRankType.surface.code : _}" th:data-rank-type="${aRankType}" onclick="reloadRankingTopN(event, $(this))" th:text="${aRankType.shortText}" th:title="${aRankType.text}">ATP</a></li>
 				</ul>
 			</div>
 			<a th:href="@{/rankingsTable(rankType=${rankType})}" style="vertical-align: text-top" title="Full Rankings Table"><i class="fa fa-search-plus"></i></a>

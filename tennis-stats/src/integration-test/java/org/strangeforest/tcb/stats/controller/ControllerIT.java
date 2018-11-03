@@ -2,12 +2,10 @@ package org.strangeforest.tcb.stats.controller;
 
 import org.hamcrest.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.http.*;
-import org.springframework.test.context.junit.jupiter.*;
 import org.springframework.test.web.servlet.*;
 import org.strangeforest.tcb.stats.*;
 
@@ -15,7 +13,6 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 class ControllerIT {

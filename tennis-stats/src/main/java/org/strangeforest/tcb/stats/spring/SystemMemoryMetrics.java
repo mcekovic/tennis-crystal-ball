@@ -5,6 +5,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import org.slf4j.*;
+import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
 import io.micrometer.core.instrument.*;
@@ -12,6 +13,7 @@ import io.micrometer.core.instrument.*;
 import static java.util.Arrays.*;
 
 @Component
+@Profile("!dev")
 public class SystemMemoryMetrics {
 
 	private static final List<SystemMemoryGauge> SYSTEM_MEMORY_GAUGES = asList(

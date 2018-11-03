@@ -199,7 +199,7 @@ class EloRatings {
 			}
 		}
 		if (fullSave && dates) {
-			println "Deleting remaining dates: ${dates.size()}"
+			println "\nDeleting remaining dates: ${dates.size()}"
 			for (LocalDate date : new ArrayList<>(dates)) {
 				deleteForDate(toDate(date))
 				println date

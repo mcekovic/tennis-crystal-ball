@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.spring;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.info.*;
+import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
 
@@ -10,6 +11,7 @@ import com.google.common.collect.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Component
+@Profile("!dev")
 public class DBInfoContributor implements InfoContributor {
 
 	@Autowired private DataService dataService;

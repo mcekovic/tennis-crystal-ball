@@ -107,8 +107,8 @@
 			<th>
 				<div th:each="match : ${matches}" class="opponent">
 					<th:block th:if="${matchStat.first}" th:text="${round}">R128</th:block>
-					<button th:if="${matchStat.index == 4 && matches.size() > 5}" class="btn btn-xs more" style="display: none" th:onclick="|playerPathProbableMoreClick('${round}')|">More <i class="fa fa-angle-double-down"></i></button>
-					<button th:if="${matchStat.last && matches.size() > 5}" class="btn btn-xs" th:onclick="|playerPathProbableMoreClick('${round}')|">Less <i class="fa fa-angle-double-up"></i></button>
+					<button th:if="${matchStat.index == 4 && matches.size() > 5}" class="btn btn-xs more" style="display: none" th:data-round="${round}" onclick="playerPathProbableMoreClick($(this).data('round'))">More <i class="fa fa-angle-double-down"></i></button>
+					<button th:if="${matchStat.last && matches.size() > 5}" class="btn btn-xs" th:data-round="${round}" onclick="playerPathProbableMoreClick($(this).data('round'))">Less <i class="fa fa-angle-double-up"></i></button>
 				</div>
 			</th>
 			<td class="text-right">

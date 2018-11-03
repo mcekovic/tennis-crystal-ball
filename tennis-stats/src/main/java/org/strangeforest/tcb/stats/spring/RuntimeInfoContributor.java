@@ -7,11 +7,13 @@ import org.apache.catalina.startup.*;
 import org.springframework.boot.*;
 import org.springframework.boot.actuate.info.*;
 import org.springframework.context.*;
+import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
 import com.google.common.collect.*;
 
 @Component
+@Profile("!dev")
 public class RuntimeInfoContributor implements InfoContributor {
 
 	@Override public void contribute(Info.Builder builder) {

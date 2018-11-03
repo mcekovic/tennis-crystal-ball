@@ -95,7 +95,7 @@
 	<thead>
 	<tr class="bg-info">
 		<th th:colspan="${headsToHeads.rivalries.size() + 1}" style="padding: 2px 2px">
-			<button class="btn btn-default btn-xs" th:onclick="'showStatsGroup(\'' + ${group.id} + '\')'" th:title="|Show ${group.name} statistics group|">[[${group.name}]]&nbsp;<i class="fa fa-angle-double-right"></i></button>
+			<button class="btn btn-default btn-xs" th:data-group-id="${group.id}" onclick="showStatsGroup($(this).data('group-id'))" th:title="|Show ${group.name} statistics group|">[[${group.name}]]&nbsp;<i class="fa fa-angle-double-right"></i></button>
 		</th>
 	</tr>
 	</thead>

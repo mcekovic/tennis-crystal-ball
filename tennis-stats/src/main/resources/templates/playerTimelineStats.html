@@ -6,7 +6,7 @@
 <th:block th:each="group : ${categoryGroups}" th:if="${hasPointStats || !group.needsStats}">
 	<tr class="bg-info">
 		<td th:colspan="${2 + seasons.size()}" style="padding: 2px 5px">
-			<button class="btn btn-default btn-xs" th:onclick="'timelineShowStatsGroup(\'' + ${group.id} + '\')'" th:title="|Show ${group.name} statistics group|">[[${group.name}]]&nbsp;<i class="fa fa-angle-double-right"></i></button>
+			<button class="btn btn-default btn-xs"  th:data-group-id="${group.id}" onclick="timelineShowStatsGroup($(this).data('group-id'))" th:title="|Show ${group.name} statistics group|">[[${group.name}]]&nbsp;<i class="fa fa-angle-double-right"></i></button>
 		</td>
 	</tr>
 	<th:block th:each="subGroup : ${group.subGroups}" th:if="${hasPointStats || !subGroup.needsStats}">

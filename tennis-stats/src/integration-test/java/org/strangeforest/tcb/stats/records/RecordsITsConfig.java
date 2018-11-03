@@ -5,11 +5,10 @@ import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.strangeforest.tcb.stats.spring.*;
 
 @TestConfiguration
 @EnableTransactionManagement
-@Import({TennisStatsConfig.class, DataSourceITConfig.class})
+@Import(DataSourceITConfig.class)
 public class RecordsITsConfig {
 
 	@Bean

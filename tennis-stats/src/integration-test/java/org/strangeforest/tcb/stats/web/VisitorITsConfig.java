@@ -4,12 +4,11 @@ import org.springframework.boot.test.context.*;
 import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.*;
-import org.strangeforest.tcb.stats.spring.*;
 
 @TestConfiguration
 @PropertySource("/visitors-test.properties")
 @EnableTransactionManagement
-@Import({TennisStatsConfig.class, DataSourceITConfig.class})
+@Import(DataSourceITConfig.class)
 public class VisitorITsConfig {
 
 	@Bean

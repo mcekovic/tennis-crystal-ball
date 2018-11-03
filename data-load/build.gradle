@@ -24,7 +24,11 @@ dependencies {
 		exclude group: 'com.maxmind.geoip2'
 		exclude group: 'eu.bitwalker'
 	}
-	compile ("org.codehaus.groovy:groovy-all:$groovyVersion")
+	compile ("org.codehaus.groovy:groovy:$groovyVersion")
+	compile ("org.codehaus.groovy:groovy-sql:$groovyVersion")
+	compile ("org.codehaus.groovy:groovy-xml:$groovyVersion")
+	compile ("org.codehaus.groovy:groovy-json:$groovyVersion")
+	compile ("org.codehaus.groovy:groovy-cli-commons:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
 	compile ("org.jsoup:jsoup:$jsoupVersion")
 	compile ("org.springframework:spring-jdbc:$springVersion")
