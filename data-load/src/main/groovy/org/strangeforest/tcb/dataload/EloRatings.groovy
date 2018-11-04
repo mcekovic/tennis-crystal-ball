@@ -45,7 +45,7 @@ class EloRatings {
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"LEFT JOIN match_stats s ON s.match_id = m.match_id AND s.set = 0\n" +
 		"WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
-		"ORDER BY end_date, m.round, m.winner_id, m.loser_id, m.match_num"
+		"ORDER BY end_date, m.round, m.match_num, m.winner_id, m.loser_id"
 
 	static final String QUERY_LAST_DATE = //language=SQL
 		"SELECT max(rank_date) AS last_date FROM player_elo_ranking"

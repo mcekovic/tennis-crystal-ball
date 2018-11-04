@@ -25,12 +25,15 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 sourceSets {
-	"integration-test" { sourceSet ->
-		['java', 'groovy', 'resources'].each {
-			if (!sourceSet.hasProperty(it)) return
-			sourceSet."$it".srcDir file("src/integration-test/${it}")
-		}
+	itest {
+		compileClasspath += main.output + test.output
+		runtimeClasspath += main.output + test.output
 	}
+}
+
+configurations {
+	itestCompile.extendsFrom testCompile
+	itestRuntime.extendsFrom testRuntime
 }
 
 processResources {
@@ -59,9 +62,6 @@ dependencies {
 	}
 	compile ('org.springframework.boot:spring-boot-starter-thymeleaf') {
 		exclude group: 'org.apache.logging.log4j'
-		exclude group: 'org.codehaus.groovy'
-		exclude group: 'org.hibernate.validator'
-		exclude group: 'ognl'
 	}
 	compile ('org.springframework.boot:spring-boot-starter-actuator') {
 		exclude group: 'org.apache.logging.log4j'
@@ -92,16 +92,6 @@ dependencies {
 		exclude group: 'org.apache.logging.log4j'
 	}
 	testCompile ("org.mockito:mockito-junit-jupiter:$mockitoVersion")
-
-	integrationTestCompile sourceSets.main.output
-	integrationTestCompile sourceSets.test.output
-	integrationTestCompile configurations.testCompile
-	integrationTestRuntime configurations.testRuntime
-}
-
-task integrationTest(type: Test) {
-	testClassesDirs = sourceSets."integration-test".output.classesDirs
-	classpath = sourceSets."integration-test".runtimeClasspath
 }
 
 jar {

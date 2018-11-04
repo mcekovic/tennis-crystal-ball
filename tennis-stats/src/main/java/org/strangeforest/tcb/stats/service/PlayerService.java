@@ -196,7 +196,7 @@ public class PlayerService {
 	@Cacheable("PlayerQuickPicks")
 	public Map<String, String> getPlayerQuickPicks() {
 		Map<String, String> quickPicks = new LinkedHashMap<>();
-		quickPicks.put("Big Four", "Roger Federer, Rafael Nadal, Novak Djokovic, Andy Murray");
+		quickPicks.put("Big Four", "Roger Federer, Novak Djokovic, Rafael Nadal, Andy Murray");
 		quickPicks.put("Second Tier", "David Ferrer, Stanislas Wawrinka, Juan Martin Del Potro, Tomas Berdych, Jo Wilfried Tsonga");
 		quickPicks.put("Lost Generation", "Kei Nishikori, Milos Raonic, Marin Cilic, Grigor Dimitrov");
 		quickPicks.put("Young Guns", "Dominic Thiem, Nick Kyrgios, Lucas Pouille, Jack Sock, Alexander Zverev, Borna Coric");
