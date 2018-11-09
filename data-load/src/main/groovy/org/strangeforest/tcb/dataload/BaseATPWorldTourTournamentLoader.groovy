@@ -92,7 +92,8 @@ abstract class BaseATPWorldTourTournamentLoader {
 				name.startsWith('Basel') ||
 				name.startsWith('Vienna') ||
 				name.startsWith('Paris Masters') ||
-				name.startsWith('Tour Finals')
+				name.startsWith('Tour Finals') ||
+				name.startsWith('Milan')
 			)
 			default: return false
 		}

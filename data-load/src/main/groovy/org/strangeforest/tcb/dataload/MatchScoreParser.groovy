@@ -84,14 +84,6 @@ class MatchScoreParser {
 				}
 			}
 		}
-		def count = setScores.size() - 1
-		for (int i = 0; i < count; i++) {
-			def s = setScores[i]
-			if (isOldWin(s.w_games, s.l_games))
-				w_sets++
-			else if (isOldWin(s.l_games, s.w_games))
-				l_sets++
-		}
 		if (!outcome && setScores.size() > w_sets + l_sets)
 			outcome = 'RET'
 		if (outcome == 'DEF' && w_games + l_games == 0)
@@ -107,10 +99,6 @@ class MatchScoreParser {
 	}
 
 	private static boolean isWin(int w_games, int l_games) {
-		(w_games >= 6 && w_games >= l_games + 2) || (w_games == 7 && l_games == 6) || (w_games == 9 && l_games == 8)
-	}
-
-	private static boolean isOldWin(int w_games, int l_games) {
-		w_games == 6 && l_games == 5
+		(w_games >= 6 && w_games >= l_games + 2) || (w_games == 7 && l_games == 6) || (w_games == 9 && l_games == 8) || (w_games == 6 && l_games == 5)
 	}
 }
