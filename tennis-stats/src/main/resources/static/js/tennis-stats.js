@@ -512,7 +512,15 @@ function formatScore(score) {
 
 function wonLostFormatter(playerId) {
 	return function(column, row) {
-		return row.outcome !== "ABD" ? (row.winner.id === playerId ? "<label class='label label-won'>W</label>" : "<label class='label label-lost'>L</label>") : "<label class='label label-abd'>A</label>";
+		var outcome = row.outcome;
+		if (outcome !== "ABD") {
+			var o = outcome ? outcome.substr(0, 1) : "";
+			var ol = o ? "<sub>" + o + "</sub>" : "";
+			var oc = o ? "-" + o : "";
+			return row.winner.id === playerId ? "<label class='label label-won" + oc + "'>W" + ol + "</label>" : "<label class='label label-lost" + oc + "'>L" + ol + "</label>";
+		}
+		else
+			return "<label class='label label-abd'>A</label>";
 	}
 }
 

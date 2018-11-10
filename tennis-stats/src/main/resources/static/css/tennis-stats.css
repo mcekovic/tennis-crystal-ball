@@ -105,11 +105,35 @@ a.label-btn {
 }
 .label-won {
 	color: black;
-	background-color: lime;
+	background-color: lightgreen;
+}
+.label-won-R {
+	color: #333;
+	background-color: #b7f7b7;
+}
+.label-won-D {
+	color: #333;
+	background-color: #b7f7b7;
+}
+.label-won-W {
+	color: #666;
+	background-color: #d6ffd6;
 }
 .label-lost {
 	color: black;
 	background-color: lightsalmon;
+}
+.label-lost-R {
+	color: #333;
+	background-color: #ffbfa6;
+}
+.label-lost-D {
+	color: #333;
+	background-color: #ffbfa6;
+}
+.label-lost-W {
+	color: #666;
+	background-color: #ffddd1;
 }
 .label-abd {
 	color: black;
