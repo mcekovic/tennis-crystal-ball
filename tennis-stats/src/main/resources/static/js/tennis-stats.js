@@ -510,12 +510,12 @@ function formatScore(score) {
 	return score ? score.replace(/\(/g, "<sup>(").replace(/\)/g, ")</sup>") : score;
 }
 
-function wonLostFormatter(playerId) {
+function wonLostFormatter(playerId, extended) {
 	return function(column, row) {
 		var outcome = row.outcome;
 		if (outcome !== "ABD") {
 			var o = outcome ? outcome.substr(0, 1) : "";
-			var ol = o ? "<sub>" + o + "</sub>" : "";
+			var ol = extended && o ? "<sub>" + o + "</sub>" : "";
 			var oc = o ? "-" + o : "";
 			return row.winner.id === playerId ? "<label class='label label-won" + oc + "'>W" + ol + "</label>" : "<label class='label label-lost" + oc + "'>L" + ol + "</label>";
 		}
