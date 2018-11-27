@@ -1,4 +1,4 @@
-DELETE FROM team_tournament_event_winner;
+DELETE FROM team_tournament_event_winner WHERE TRUE;
 INSERT INTO team_tournament_event_winner
 (season, level, winner_id, runner_up_id, score)
 VALUES
@@ -53,6 +53,7 @@ VALUES
 (2015, 'D', 'GBR', 'BEL', '3-1'),
 (2016, 'D', 'ARG', 'CRO', '3-2'),
 (2017, 'D', 'FRA', 'BEL', '3-2'),
+(2018, 'D', 'CRO', 'FRA', '3-1'),
 -- World Team Cup
 (1975, 'T', 'USA', 'GBR', '2-1'),
 (1978, 'T', 'ESP', 'AUS', '2-1'),
