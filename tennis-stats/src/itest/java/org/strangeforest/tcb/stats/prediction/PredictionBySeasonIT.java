@@ -3,9 +3,12 @@ package org.strangeforest.tcb.stats.prediction;
 import java.time.*;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
+import org.springframework.test.context.junit.jupiter.*;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 class PredictionBySeasonIT extends BasePredictionVerificationIT {
 

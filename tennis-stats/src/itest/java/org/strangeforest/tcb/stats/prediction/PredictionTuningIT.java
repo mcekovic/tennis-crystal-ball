@@ -6,8 +6,10 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
+import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
 import static java.util.Arrays.*;
@@ -15,6 +17,7 @@ import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.PredictionArea.*;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 class PredictionTuningIT extends BasePredictionVerificationIT {
 
