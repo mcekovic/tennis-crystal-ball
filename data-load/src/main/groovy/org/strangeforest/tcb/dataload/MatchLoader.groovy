@@ -304,7 +304,7 @@ class MatchLoader extends BaseCSVLoader {
 			return true
 		switch (surface) {
 			case 'Carpet': return true
-			case 'Hard': return season >= 2017 && (
+			case 'Hard': return (season >= 2017 && (
 				name.startsWith('Montpellier') ||
 				name.startsWith('Sofia') ||
 				name.startsWith('Memphis') ||
@@ -319,7 +319,9 @@ class MatchLoader extends BaseCSVLoader {
 				name.startsWith('Vienna') ||
 				name.startsWith('Paris Masters') ||
 				name.startsWith('Tour Finals') ||
-				name.startsWith('Milan')
+				name.startsWith('Milan'))
+				||
+				(season >= 2018 && name.startsWith('Tokyo'))
 			)
 			default: return false
 		}
