@@ -90,6 +90,10 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return new PerfStatsFilter(null, null, null, null, null, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
 	}
 
+	public static PerfStatsFilter forOpponent(int opponentId) {
+		return new PerfStatsFilter(null, null, null, null, null, null, null, null, null, null, OpponentFilter.forStats(opponentId));
+	}
+
 	public static PerfStatsFilter forOpponentAndTournament(String opponent, Integer tournamentId) {
 		return new PerfStatsFilter(null, null, null, null, null, null, null, null, null, tournamentId, OpponentFilter.forStats(opponent, null));
 	}

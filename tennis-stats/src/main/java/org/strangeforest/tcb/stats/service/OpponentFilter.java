@@ -14,6 +14,10 @@ public class OpponentFilter {
 	public static final OpponentFilter ALL = new OpponentFilter(null, null, null, false);
 	public static final String OPPONENT_PREFIX = "OPP_";
 
+	public static OpponentFilter forMatches(Integer opponentId) {
+		return new OpponentFilter(null, opponentId, null, false);
+	}
+
 	public static OpponentFilter forMatches(String opponent, Collection<String> countryIds) {
 		if (isSinglePlayer(opponent))
 			return forMatches(null, extractOpponentId(opponent), countryIds);

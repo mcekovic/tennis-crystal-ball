@@ -31,13 +31,13 @@ public class OutcomeFilter {
 	private final String outcome;
 	private final boolean forStats;
 
-	private static final String WON = "won";
-	private static final String LOST = "lost";
-	private static final String PLAYED = "played";
-	private static final String FINISHED = "finished";
-	private static final String NOT_FINISHED = "notFinished";
-	private static final String NOT_PLAYED = "notPlayed";
-	private static final String NOT_ABANDONED = "notAbandoned";
+	public static final String WON = "won";
+	public static final String LOST = "lost";
+	public static final String PLAYED = "played";
+	public static final String FINISHED = "finished";
+	public static final String NOT_FINISHED = "notFinished";
+	public static final String NOT_PLAYED = "notPlayed";
+	public static final String NOT_ABANDONED = "notAbandoned";
 
 	private static final String MATCHES_WON_CRITERION = " AND m.%1$s = :playerId";
 	private static final String STATS_WON_CRITERION   = " AND m.%1$s = 1";

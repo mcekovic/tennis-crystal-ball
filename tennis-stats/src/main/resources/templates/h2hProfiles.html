@@ -18,6 +18,9 @@
 <!--/*@thymesVar id="playerH2H1" type="org.strangeforest.tcb.stats.model.core.WonDrawLost"*/-->
 <!--/*@thymesVar id="playerH2H2" type="org.strangeforest.tcb.stats.model.core.WonDrawLost"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+<!--/*@thymesVar id="adjustedH2H" type="org.strangeforest.tcb.stats.model.H2H"*/-->
+<!--/*@thymesVar id="surfaceAdjH2H" type="org.strangeforest.tcb.stats.model.H2H"*/-->
+<!--/*@thymesVar id="importanceAdjH2H" type="org.strangeforest.tcb.stats.model.H2H"*/-->
 <script type="text/javascript">
 	$(function() {
 		decorateSurface("#favoriteSurface1, #favoriteSurface2, #lastEventSurface1, #lastEventSurface2");
@@ -55,6 +58,24 @@
 		<th class="text-center">H2H</th>
 		<th class="text-left" colspan="2" th:text="${stats1.matchesLost}">9</th>
 	</tr>
+	<th:block th:unless="${stats1.empty}">
+	<tr>
+		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(adjustedH2H.won1, 1, 1)}">15.1</th>
+		<th class="text-center" th:title="#{h2h.adjustedH2H.title}">Adjusted H2H</th>
+		<th class="text-left" colspan="2" th:text="${#numbers.formatDecimal(adjustedH2H.won2, 1, 1)}">9.7</th>
+	</tr>
+	<tr>
+		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(surfaceAdjH2H.won1, 1, 1)}">15.1</th>
+		<th class="text-center" th:title="#{h2h.surfaceAdjustedH2H.title}">Surface Adj. H2H</th>
+		<th class="text-left" colspan="2" th:text="${#numbers.formatDecimal(surfaceAdjH2H.won2, 1, 1)}">9.7</th>
+	</tr>
+	<tr>
+		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(importanceAdjH2H.won1, 1, 1)}">15.1</th>
+		<th class="text-center" th:title="#{h2h.importanceAdjustedH2H.title}">Import. Adj. H2H</th>
+		<th class="text-left" colspan="2" th:text="${#numbers.formatDecimal(importanceAdjH2H.won2, 1, 1)}">9.7</th>
+	</tr>
+	<tr><td colspan="5">&nbsp;</td></tr>
+	</th:block>
 	<tr th:if="${player1.dob != null || player2.dob != null}">
 		<td class="text-right" colspan="2" th:text="${player1.age != null ? player1.age + ' (' + #temporals.format(player1.dob, 'dd-MM-yyyy') + ')' : _}">25 (1-1-1990)</td>
 		<th class="text-center">Age</th>

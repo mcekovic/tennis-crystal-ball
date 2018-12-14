@@ -36,6 +36,10 @@ public class MatchFilter extends TournamentEventResultFilter {
 		return new MatchFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, null, tournamentId, null, OpponentFilter.forStats(opponentId), OutcomeFilter.forStats(outcome), ScoreFilter.forStats(score), null, false, null);
 	}
 
+	public static MatchFilter forOpponent(int opponentId, String outcome) {
+		return new MatchFilter(null, null, null, null, null, null, null, null, null, null, null, OpponentFilter.forMatches(opponentId), OutcomeFilter.forMatches(outcome), null, null, false, null);
+	}
+
 	public static MatchFilter forSeason(int season) {
 		return new MatchFilter(season, null, null, null, null, null, null, null, null, null, null, null, null, null, null, false, null);
 	}

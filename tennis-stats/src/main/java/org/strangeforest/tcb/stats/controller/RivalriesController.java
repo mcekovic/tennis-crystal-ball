@@ -38,6 +38,7 @@ public class RivalriesController extends PageController {
 	@Autowired private TournamentService tournamentService;
 	@Autowired private MatchesService matchesService;
 	@Autowired private GOATPointsService goatPointsService;
+	@Autowired private GOATLegendService goatLegendService;
 	@Autowired private MatchPredictionService matchPredictionService;
 	@Autowired private RankingsService rankingsService;
 	@Autowired private DataService dataService;
@@ -110,6 +111,11 @@ public class RivalriesController extends PageController {
 		WonDrawLost playerH2H2 = rivalriesService.getPlayerH2H(playerId2).orElse(null);
 
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2));
+		PlayerPerformance perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2));
+		H2H surfaceAdjH2H = AdjustedH2H.surfaceAdjustedH2H(perf1, performance1, performance2);
+		List<Match> matches1 = matchesService.getPlayerMatchesTable(playerId1, MatchFilter.forOpponent(playerId2, OutcomeFilter.PLAYED), false, "match_id", 1000, 1).getRows();
+		H2H importanceAdjH2H = AdjustedH2H.importanceAdjustedH2H(playerId1, playerId2, perf1, matches1, goatLegendService.getBigWinMatchFactors());
+		H2H adjustedH2H = surfaceAdjH2H.add(importanceAdjH2H).scale(0.5);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
@@ -133,6 +139,9 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("playerH2H1", playerH2H1);
 		modelMap.addAttribute("playerH2H2", playerH2H2);
 		modelMap.addAttribute("stats1", stats1);
+		modelMap.addAttribute("adjustedH2H", adjustedH2H);
+		modelMap.addAttribute("surfaceAdjH2H", surfaceAdjH2H);
+		modelMap.addAttribute("importanceAdjH2H", importanceAdjH2H);
 		return new ModelAndView("h2hProfiles", modelMap);
 	}
 
