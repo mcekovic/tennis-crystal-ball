@@ -17,7 +17,7 @@
 <!--/*@thymesVar id="surfaceTitles2" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="playerH2H1" type="org.strangeforest.tcb.stats.model.core.WonDrawLost"*/-->
 <!--/*@thymesVar id="playerH2H2" type="org.strangeforest.tcb.stats.model.core.WonDrawLost"*/-->
-<!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+<!--/*@thymesVar id="h2h" type="org.strangeforest.tcb.stats.model.H2H"*/-->
 <!--/*@thymesVar id="adjustedH2H" type="org.strangeforest.tcb.stats.model.H2H"*/-->
 <!--/*@thymesVar id="surfaceAdjH2H" type="org.strangeforest.tcb.stats.model.H2H"*/-->
 <!--/*@thymesVar id="importanceAdjH2H" type="org.strangeforest.tcb.stats.model.H2H"*/-->
@@ -54,11 +54,11 @@
 		<th class="text-left" colspan="2" width="40%"><a th:href="@{/playerProfile(playerId=${player2.id})}" th:text="${player2.name}">Rafael Nadal</a></th>
 	</tr>
 	<tr>
-		<th class="text-right" colspan="2" th:text="${stats1.matchesWon}">15</th>
+		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(h2h.won1, 1, 0)}">15</th>
 		<th class="text-center">H2H</th>
-		<th class="text-left" colspan="2" th:text="${stats1.matchesLost}">9</th>
+		<th class="text-left" colspan="2" th:text="${#numbers.formatDecimal(h2h.won2, 1, 0)}">9</th>
 	</tr>
-	<th:block th:unless="${stats1.empty}">
+	<th:block th:unless="${h2h.empty}">
 	<tr>
 		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(adjustedH2H.won1, 1, 1)}">15.1</th>
 		<th class="text-center" th:title="#{h2h.adjustedH2H.title}">Adjusted H2H</th>

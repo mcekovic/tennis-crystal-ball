@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.core.*;
 
 public final class H2H {
@@ -18,6 +20,19 @@ public final class H2H {
 		this.won2 = won2;
 	}
 
+	public H2H(int playerId1, int playerId2, List<Match> matches) {
+		int won1 = 0, won2 = 0;
+		for (Match match : matches) {
+			int winnerId = match.getWinner().getId();
+			if (winnerId == playerId1)
+				won1++;
+			if (winnerId == playerId2)
+				won2++;
+		}
+		this.won1 = won1;
+		this.won2 = won2;
+	}
+
 	public double getWon1() {
 		return won1;
 	}
@@ -28,6 +43,10 @@ public final class H2H {
 
 	public double getTotal() {
 		return won1 + won2;
+	}
+
+	public boolean isEmpty() {
+		return getTotal() == 0.0;
 	}
 
 	public H2H add(H2H h2h) {

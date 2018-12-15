@@ -110,10 +110,10 @@ public class RivalriesController extends PageController {
 		WonDrawLost playerH2H1 = rivalriesService.getPlayerH2H(playerId1).orElse(null);
 		WonDrawLost playerH2H2 = rivalriesService.getPlayerH2H(playerId2).orElse(null);
 
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2));
-		PlayerPerformance perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2));
-		H2H surfaceAdjH2H = AdjustedH2H.surfaceAdjustedH2H(perf1, performance1, performance2);
 		List<Match> matches1 = matchesService.getPlayerMatchesTable(playerId1, MatchFilter.forOpponent(playerId2, OutcomeFilter.PLAYED), false, "match_id", 1000, 1).getRows();
+		PlayerPerformance perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2));
+		H2H h2h = new H2H(playerId1, playerId2, matches1);
+		H2H surfaceAdjH2H = AdjustedH2H.surfaceAdjustedH2H(perf1, performance1, performance2);
 		H2H importanceAdjH2H = AdjustedH2H.importanceAdjustedH2H(playerId1, playerId2, perf1, matches1, goatLegendService.getBigWinMatchFactors());
 		H2H adjustedH2H = surfaceAdjH2H.add(importanceAdjH2H).scale(0.5);
 
@@ -138,7 +138,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surfaceTitles2", surfaceTitles2);
 		modelMap.addAttribute("playerH2H1", playerH2H1);
 		modelMap.addAttribute("playerH2H2", playerH2H2);
-		modelMap.addAttribute("stats1", stats1);
+		modelMap.addAttribute("h2h", h2h);
 		modelMap.addAttribute("adjustedH2H", adjustedH2H);
 		modelMap.addAttribute("surfaceAdjH2H", surfaceAdjH2H);
 		modelMap.addAttribute("importanceAdjH2H", importanceAdjH2H);
