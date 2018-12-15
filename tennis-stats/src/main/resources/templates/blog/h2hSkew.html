@@ -1,0 +1,58 @@
+<p  xmlns:th="http://www.thymeleaf.org">
+<script type="text/javascript">
+	$(function() {
+		bindPopovers();
+	});
+</script>
+<h3 class="text-nowrap"><i class="fa fa-user"></i><i class="fa fa-user-times" style="margin-left: -3px"></i> H2H Skew</h3>
+<p>
+	This time we talk H2H skew!<br/>
+	People often talk about how H2H can be skewed because players played a lot on one player's favorite surface or because some player performs in H2H matches better on bigger occasions.
+	Most notable example is Federer vs Nadal H2H. It is often believed that Federer is penalized in H2H score against Nadal because they played a lot on clay where Nadal got better out of him most of the time.
+	Ultimate Tennis Statistics will try to find an answer to this question, is Federer - Nadal H2H skewed and if yes, how much?
+</p>
+<h4>Surface Adjusted H2H</h4>
+<p>
+	First and most often talked about H2H skew type is the surface H2H skew.
+	This is addressed by calculating Surface Adjusted H2H that takes into account how much two players have played against each other on different surfaces and then weights their surface H2Hs with how much each of them played on the particular surface.<br/>
+	Example:<br/>
+	Federer has 2:13 vs Nadal on Clay and that is 15 out of their 38 matches (~39.5%).<br/>
+	Federer played 282 out of 1440 matches on clay (~19.6%).<br/>
+	Nadal played 451 out of 1109 matches on clay (~40.7%).<br/>
+	Average Clay pct between these 2 is then ~30.15%, but they played ~39.5% H2H matches on clay (more, but then not that much more!).<br/>
+	Clay H2H adjustment factor is then 30.15/39.5 = ~0.76 and 2 : 13 is adjusted to ~1.52 : ~9.88<br/>
+	In an analogue way, hard and grass H2Hs are adjusted and there adjustment factor is greater than 1, boosting Federer H2H:<br/>
+	Hard 11:9, factor (((886/1440)+(563/1109))/2/((11+9)/38) = (61.5%+50.8%)/2/52.6% = 56.15%/52.6% ~ 1.07 -> 11.77 : 9.63<br/>
+	Grass 2:1, factor (((202/1440)+(85/1109))/2/((2+1)/38) = (14.0%+7.7%)/2/7.9% = 10.85%/7.9% ~ 1.37 -> 2.74 : 1.37<br/>
+	When we sum all 3 we get 16.0 : 20.9 and when this is normalized to have the total H2H 38 then the final Surface Adjusted Federer vs Nadal H2H is 16.5 : 21.5 as opposed to the official H2H 15 : 23.
+	This means that Federer vs Nadal H2H is really surface skewed, but not that much as believed.
+</p>
+<h4>Importance Adjusted H2H</h4>
+<p>
+	Next H2H skew is the importance H2H skew. It is not the same if one player wins in GS Final and the other in ATP 250 R32.
+	This is addressed by calculating Importance Adjusted H2H, weighting each H2H match by importance by tournament level and round similar as in UTS Big Wins match factor:
+	<ul>
+		<li>GS: F=8, SF=4, QF=2, R16=1, Rest=0.5</li>
+		<li>Tour Finals: F=6, SF=3, RR=1</li>
+		<li>M1000: F=4, SF=2, QF=1, Rest=0.5</li>
+		<li>Olympics: F=3, BR/SF=1, Rest=0.5</li>
+		<li>ATP500: F=2, SF=1, Rest=0.5</li>
+		<li>ATP250: F=1, Rest=0.5</li>
+		<li>Davis Cup: F=1, Rest=0.5</li>
+	</ul>
+	Then this importance weighted H2H is normalized to match the total number of matches as in the official H2H.
+	Importance Adjusted Federer vs Nadal H2H is then 14.5 : 23.5 as opposed to official H2H 15 : 23, as Nadal won slightly more important matches.
+</p>
+<h4>The Mix: Adjusted H2H</h4>
+<p>
+	Final Adjusted H2H is then calculated as the average of Surface Adjusted H2H and Importance Adjusted H2H:<br/>
+	<p><b>15.5 : 22.5</b>, as opposed to the official 15 : 23</p>
+	More details at <a href="/headToHead?name1=Roger%20Federer&name2=Rafael%20Nadal">Roger Federer vs Rafael Nadal</a>
+</p>
+<h4>Conclusion</h4>
+<p>
+	Conclusion is that Federer vs Nadal H2H is skewed, but by a very tiny bit, as opposed to the usual thinking that it is completely skewed due to the number of matches they played on clay!
+</p>
+<footer class="text-right"><i class="fa fa-calendar"></i> 15-12-2018</footer>
+<th:block th:include="blog/blogComments :: comments('h2hSkew')"/>
+</th:block>

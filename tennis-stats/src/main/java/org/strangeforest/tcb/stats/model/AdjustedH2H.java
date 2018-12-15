@@ -50,7 +50,7 @@ public abstract class AdjustedH2H {
 	private static double matchFactor(Match match, List<BigWinMatchFactor> matchFactors) {
 		String level = match.getLevel();
 		String round = match.getRound();
-		return matchFactors.stream().filter(f1 -> Objects.equals(f1.getLevel(), level) && Objects.equals(f1.getRound(), round)).findFirst()
+		return matchFactors.stream().filter(f -> Objects.equals(f.getLevel(), level) && Objects.equals(f.getRound(), round)).findFirst()
 				.map(f -> (double)f.getMatchFactor()).orElse(0.5);
 	}
 }
