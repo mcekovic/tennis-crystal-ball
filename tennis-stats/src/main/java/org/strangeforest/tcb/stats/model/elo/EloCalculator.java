@@ -101,7 +101,7 @@ public abstract class EloCalculator {
 		}
 	}
 
-	static double newRating(double rating, double delta, String type) {
+	public static double newRating(double rating, double delta, String type) {
 		return rating + capDeltaRating(delta * kFunction(rating, type), type);
 	}
 

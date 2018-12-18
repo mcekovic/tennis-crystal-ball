@@ -212,6 +212,7 @@ $$ LANGUAGE plpgsql;
 
 -- merge_elo_ranking
 
+-- deprecated
 CREATE OR REPLACE FUNCTION merge_elo_ranking(
 	p_rank_date DATE,
 	p_player_id INTEGER,

@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.cli.commons.CliBuilder
+import groovy.cli.commons.*
 
 import static org.strangeforest.tcb.dataload.LoadParams.*
 
@@ -9,6 +9,7 @@ cli.bd(args: 1, argName: 'Base Data Directory', 'Base Data Directory where CSV d
 cli.u(args: 1, argName: 'DB username', 'Database login username [default tcb]')
 cli.p(args: 1, argName: 'DB password', 'Database login password [default tcb]')
 cli.c(args: 1, argName: 'DB connections', 'Number of database connections to allocate [default 2]')
+cli.t(args: 1, argName: 'Processing threads', 'Number of processing threads to use (Elo Ratings) [default 8]')
 cli.f('Full load [default]')
 cli.d('Delta load')
 cli.dd('Drop database objects')
@@ -55,7 +56,6 @@ if (options && (options.dd || options.cd || options.lt || options.ln || options.
 		new LoadNewTournaments().run()
 	if (options.el)
 		new ComputeEloRatings().run()
-//		new ComputeEloRatingsNew().run()
 	if (options.rc) {
 		callLoader('correctData')
 		callLoader('refreshMaterializedViews')
@@ -84,6 +84,7 @@ static def setProperties(def options) {
 	setBooleanProperty(options.getProperty('d'), FULL_LOAD_PROPERTY, false)
 	setBooleanProperty(options.getProperty('ff'), FORCE_FORECAST_PROPERTY, true)
 	setProperty(options.getProperty('rp'), RECORD_PAUSE_PROPERTY)
+	setProperty(options.getProperty('t'), THREADS_PROPERTY)
 }
 
 static def setProperty(cmdArgument, String systemProperty) {

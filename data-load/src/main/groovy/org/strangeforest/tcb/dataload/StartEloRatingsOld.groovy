@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.dataload
 
-class StartEloRatings {
+@Deprecated
+class StartEloRatingsOld {
 
 	static final int START_RATING = 1500
 	static final int START_RATING_RANK = 1000

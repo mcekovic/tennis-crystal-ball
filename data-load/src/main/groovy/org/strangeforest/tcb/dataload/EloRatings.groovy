@@ -13,17 +13,18 @@ import groovy.transform.*
 
 import static java.lang.Math.*
 import static java.lang.String.*
-import static org.strangeforest.tcb.dataload.StartEloRatings.*
+import static StartEloRatingsOld.*
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
+@Deprecated
 class EloRatings {
 
 	final SqlPool sqlPool
 	final LockManager<Integer> lockManager
 	final LockManager<RankKey> rankLockManager
 	final Map<Integer, CompletableFuture> playerMatchFutures
-	EloSurfaceFactors eloSurfaceFactors
+	EloSurfaceFactorsOld eloSurfaceFactors
 	Map<Integer, EloRating> playerRatings
 	Map<String, Map<Integer, EloRating>> playerRatingsByType
 	Set<LocalDate> dates
@@ -122,7 +123,7 @@ class EloRatings {
 		lockManager = new LockManager<>()
 		rankLockManager = new LockManager<>()
 		playerMatchFutures = new HashMap<>()
-		sqlPool.withSql { sql -> eloSurfaceFactors = new EloSurfaceFactors(sql) }
+		sqlPool.withSql { sql -> eloSurfaceFactors = new EloSurfaceFactorsOld(sql) }
 	}
 
 	def compute(boolean save = false, boolean fullSave = true, Date saveFromDate = null, boolean preLoadRanks = true) {

@@ -18,7 +18,7 @@ public class EloRatingsJob {
 
 	@Scheduled(cron = "${tennis-stats.jobs.compute-elo-ratings:0 46 5 * * MON}")
 	public void computeEloRatings() {
-		if (dataLoadCommand.execute("EloRatings", "-el", "-c 3", "-d") == 0)
+		if (dataLoadCommand.execute("EloRatings", "-el", "-d") == 0)
 			clearCaches();
 	}
 

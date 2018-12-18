@@ -23,7 +23,7 @@ LoadNewTournaments.loadTournaments(sqlPool)
 sqlPool.withSql { sql -> loader.vacuum(sql) }
 
 sqlPool.withSql { sql -> loader.correctDataFull(sql) }
-new EloRatings(sqlPool).compute(true)
+EloRatingsRunner.computeEloRatings(true)
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }
 

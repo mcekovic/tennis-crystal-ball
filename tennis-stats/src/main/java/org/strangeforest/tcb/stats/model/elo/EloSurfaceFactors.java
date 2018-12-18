@@ -5,6 +5,8 @@ import java.time.*;
 import java.time.temporal.*;
 import java.util.*;
 
+import javax.sql.*;
+
 import org.springframework.jdbc.core.*;
 
 import com.google.common.base.*;
@@ -33,7 +35,11 @@ public class EloSurfaceFactors {
 		"GROUP BY season\n" +
 		"ORDER BY season";
 
-	
+
+	public EloSurfaceFactors(DataSource dataSource) {
+		this(new JdbcTemplate(dataSource));
+	}
+
 	public EloSurfaceFactors(JdbcTemplate jdbcTemplate) {
 		this(jdbcTemplate, START_SEASON);
 	}

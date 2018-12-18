@@ -11,7 +11,7 @@ def loader = new ATPTennisLoader()
 LoadNewRankings.loadRankings(sqlPool)
 LoadNewTournaments.loadTournaments(sqlPool)
 
-new EloRatings(sqlPool).compute(save = true, fullSave = false)
+EloRatingsRunner.computeEloRatings(false)
 
 sqlPool.withSql { sql -> loader.correctData(sql) }
 sqlPool.withSql { sql -> loader.refreshMaterializedViews(sql) }

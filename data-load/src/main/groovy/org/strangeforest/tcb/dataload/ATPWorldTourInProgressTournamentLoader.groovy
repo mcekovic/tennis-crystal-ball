@@ -6,6 +6,7 @@ import org.jsoup.nodes.*
 import org.jsoup.select.*
 import org.springframework.jdbc.core.namedparam.*
 import org.strangeforest.tcb.stats.model.core.*
+import org.strangeforest.tcb.stats.model.elo.*
 import org.strangeforest.tcb.stats.model.forecast.*
 import org.strangeforest.tcb.stats.service.*
 
@@ -91,7 +92,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	ATPWorldTourInProgressTournamentLoader(Sql sql) {
 		super(sql)
 		forceForecast = getBooleanProperty(FORCE_FORECAST_PROPERTY, FORCE_FORECAST_DEFAULT)
-		eloSurfaceFactors = new EloSurfaceFactors(sql, LocalDate.now().year - 1)
+		eloSurfaceFactors = new EloSurfaceFactors(SqlPool.dataSource(), LocalDate.now().year - 1)
 	}
 
 	def loadAndForecastTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {

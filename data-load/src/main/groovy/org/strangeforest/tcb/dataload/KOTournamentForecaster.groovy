@@ -1,15 +1,17 @@
 package org.strangeforest.tcb.dataload
 
+import java.util.function.*
+
 import org.strangeforest.tcb.stats.model.core.*
+import org.strangeforest.tcb.stats.model.elo.*
 import org.strangeforest.tcb.stats.model.forecast.*
 
 import groovy.transform.*
 
-import java.util.function.Function
-
 import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 import static org.strangeforest.tcb.dataload.KOTournamentForecaster.MatchResult.*
+import static org.strangeforest.tcb.util.DateUtil.*
 
 class KOTournamentForecaster {
 
@@ -92,8 +94,8 @@ class KOTournamentForecaster {
 			def match = matches[i]
 			def winner = match.winner
 			if (winner) {
-				setMatchEloRatings(i)
-				setMatchEloRatings(i, 'r')
+				setMatchEloRatings(i, 'E')
+				setMatchEloRatings(i, 'R')
 				setMatchEloRatings(i, match.surface, eloSurfaceFactors)
 				setMatchEloRatings(i, match.indoor ? 'I' : 'O', eloSurfaceFactors)
 				setMatchEloRatings(i, 's')
@@ -102,13 +104,13 @@ class KOTournamentForecaster {
 	}
 
 	static Map<String, String> ELO_PREFIX = [
-		r: 'recent_',
+		R: 'recent_',
 		H: 'surface_', C: 'surface_', G: 'surface_', P: 'surface_',
 		I: 'in_out_', O: 'in_out_',
 		s: 'set_'
 	]
 
-	def setMatchEloRatings(int i, String type = null, EloSurfaceFactors eloSurfaceFactors = null) {
+	def setMatchEloRatings(int i, String type, EloSurfaceFactors eloSurfaceFactors = null) {
 		def match = matches[i]
 		def winner = match.winner
 		if (winner) {
@@ -125,26 +127,26 @@ class KOTournamentForecaster {
 				def winner1 = winner == 1
 				def winnerRating = winner1 ? rating1 : rating2
 				def loserRating = winner1 ? rating2 : rating1
-				def deltaRating = EloRatings.deltaRating(winnerRating, loserRating, match.level, match.round, (short) match.best_of, match.outcome)
+				def deltaRating = EloCalculator.deltaRating(winnerRating, loserRating, match.level, match.round, (short)match.best_of, match.outcome)
 				switch (type) {
 					case 'H': case 'C': case 'G': case 'P': case 'O': case 'I':
-						deltaRating *= eloSurfaceFactors.surfaceKFactor(type, match.date)
+						deltaRating *= eloSurfaceFactors.surfaceKFactor(type, toLocalDate(match.date).year)
 						break
-					case 'r':
-						deltaRating = EloRatings.RECENT_K_FACTOR * deltaRating
+					case 'R':
+						deltaRating = EloCalculator.RECENT_K_FACTOR * deltaRating
 						break
 					case 's':
 						def wDelta = deltaRating
-						def lDelta = EloRatings.deltaRating(loserRating, winnerRating, match.level, match.round, (short) match.best_of, match.outcome)
+						def lDelta = EloCalculator.deltaRating(loserRating, winnerRating, match.level, match.round, (short)match.best_of, match.outcome)
 						def wSets = (winner1 ? match.p1_sets : match.p2_sets) ?: 0d
 						def lSets = (winner1 ? match.p2_sets : match.p1_sets) ?: 0d
-						deltaRating = EloRatings.SET_K_FACTOR * (wDelta * wSets - lDelta * lSets)
+						deltaRating = EloCalculator.SET_K_FACTOR * (wDelta * wSets - lDelta * lSets)
 						break
 				}
 				def deltaRating1 = winner1 ? deltaRating : -deltaRating
 				def deltaRating2 = winner1 ? -deltaRating : deltaRating
-				rating1 = EloRatings.newRating(rating1, deltaRating1, type)
-				rating2 = EloRatings.newRating(rating2, deltaRating2, type)
+				rating1 = EloCalculator.newRating(rating1, deltaRating1, type)
+				rating2 = EloCalculator.newRating(rating2, deltaRating2, type)
 				setNextMatchesEloRating(player1Id, rating1, prefix, i)
 				setNextMatchesEloRating(player2Id, rating2, prefix, i)
 			}

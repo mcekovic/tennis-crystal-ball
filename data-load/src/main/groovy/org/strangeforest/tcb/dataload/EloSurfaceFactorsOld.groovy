@@ -1,14 +1,15 @@
 package org.strangeforest.tcb.dataload
 
-import com.google.common.base.*
-import groovy.sql.*
-
 import java.time.*
 import java.time.temporal.*
 
+import com.google.common.base.*
+import groovy.sql.*
+
 import static org.strangeforest.tcb.util.DateUtil.*
 
-class EloSurfaceFactors {
+@Deprecated
+class EloSurfaceFactorsOld {
 
 	static final String QUERY_SURFACE_RATIOS = //language=SQL
 		"SELECT extract(YEAR FROM date) AS season,\n" +
@@ -30,7 +31,7 @@ class EloSurfaceFactors {
 	private Map<Integer, Double> outdoorFactors = new TreeMap<>()
 	private Map<Integer, Double> indoorFactors = new TreeMap<>()
 
-	EloSurfaceFactors(Sql sql, int fromSeason = 1968) {
+	EloSurfaceFactorsOld(Sql sql, int fromSeason = 1968) {
 		print 'Loading Elo Ratings surface ratios'
 		def stopwatch = Stopwatch.createStarted()
 		def fromDate = java.sql.Date.valueOf LocalDate.of(fromSeason, 1, 1)

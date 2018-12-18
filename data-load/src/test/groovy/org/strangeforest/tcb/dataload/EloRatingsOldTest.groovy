@@ -6,7 +6,8 @@ import org.junit.jupiter.api.*
 import static org.assertj.core.api.Assertions.*
 import static org.strangeforest.tcb.dataload.EloRatings.*
 
-class EloRatingsTest {
+@Deprecated
+class EloRatingsOldTest {
 
 	@Test
 	void "Start rating is calculated correctly"() {

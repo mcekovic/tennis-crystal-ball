@@ -43,8 +43,7 @@ public class EloRatingsManager {
 	private LocalDate saveFromDate;
 	private ExecutorService saveExecutor;
 	private BlockingQueue<MatchEloRating> matchRatingsForSave;
-	private ProgressTicker matchTicker;
-	private ProgressTicker saveTicker;
+	private ProgressTicker matchTicker, saveTicker;
 
 	// Factors and tennis constants
 	private static final List<String> RATING_TYPES = asList("E", "R", "H", "C", "G", "P", "O", "I", "s", "g", "sg", "rg", "tb");
@@ -68,14 +67,14 @@ public class EloRatingsManager {
 
 	// Technical
 	private static final int MATCHES_FETCH_SIZE = 200;
-	private static final int RANK_PRELOAD_FETCH_SIZE = 1000;
+	private static final int RANK_PRELOAD_FETCH_SIZE = 2000;
 	private static final int SAVE_EXECUTOR_QUEUE_CAPACITY = 200;
 	private static final int MATCH_RATINGS_FOR_SAVE_QUEUE_CAPACITY = 10000;
 
 	// Progress tracking
 	private static final int MATCHES_PER_DOT = 1000;
 	private static final int SAVES_PER_PLUS = 20;
-	private static final int RANK_PRELOADS_PER_DOT = 20000;
+	private static final int RANK_PRELOADS_PER_DOT = 50000;
 	private static final int TICKS_PER_LINE = 100;
 
 
@@ -122,15 +121,18 @@ public class EloRatingsManager {
 		lockManager = new LockManager<>();
 		playerRatings = new HashMap<>();
 		predictionResults = new HashMap<>();
+		txTemplate.execute(s -> {
+			loadRanks();
+			return null;
+		});
 	}
 
-	public void compute(boolean save, boolean fullSave, LocalDate saveFromDate, int saveThreads) throws InterruptedException {
+	public PredictionResult compute(boolean save, boolean fullSave, LocalDate saveFromDate, int saveThreads) throws InterruptedException {
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		for (String type : RATING_TYPES) {
 			playerRatings.put(type, new ConcurrentHashMap<>());
 			predictionResults.put(type, new PredictionResult());
 		}
-		loadRanks();
 
 		if (save) {
 			if (fullSave)
@@ -149,24 +151,27 @@ public class EloRatingsManager {
 		saveTicker = new ProgressTicker('+', SAVES_PER_PLUS, newLineTicker);
 		try {
 			AtomicReference<LocalDate> lastDateRef = new AtomicReference<>();
-			jdbcTemplate.query(MATCHES_QUERY, ps -> ps.setFetchSize(MATCHES_FETCH_SIZE), rs -> {
-				MatchForElo match = mapMatch(rs);
-				LocalDate lastDate = lastDateRef.get();
-				if (lastDate != null && !lastDate.equals(match.endDate))
-					saveCurrentRatings(lastDate);
-				processMatch(match, "E");
-				processMatch(match, "R");
-				processMatch(match, true, false);
-				processMatch(match, false, true);
-				processMatch(match, "s");
-				processMatch(match, "g");
-				if (match.hasStats) {
-					processMatch(match, "sg");
-					processMatch(match, "rg");
-				}
-				processMatch(match, "tb");
-				lastDateRef.set(match.endDate);
-				matchTicker.tick();
+			txTemplate.execute(s -> {
+				jdbcTemplate.query(MATCHES_QUERY, ps -> ps.setFetchSize(MATCHES_FETCH_SIZE), rs -> {
+					MatchForElo match = mapMatch(rs);
+					LocalDate lastDate = lastDateRef.get();
+					if (lastDate != null && !lastDate.equals(match.endDate))
+						saveCurrentRatings(lastDate);
+					processMatch(match, "E");
+					processMatch(match, "R");
+					processMatch(match, true, false);
+					processMatch(match, false, true);
+					processMatch(match, "s");
+					processMatch(match, "g");
+					if (match.hasStats) {
+						processMatch(match, "sg");
+						processMatch(match, "rg");
+					}
+					processMatch(match, "tb");
+					lastDateRef.set(match.endDate);
+					matchTicker.tick();
+				});
+				return null;
 			});
 			saveCurrentRatings(lastDateRef.get());
 		}
@@ -194,6 +199,7 @@ public class EloRatingsManager {
 			predictionResult.complete();
 			System.out.printf("%1$s: %2$s\n", type, predictionResult);
 		}
+		return predictionResults.get("E");
 	}
 
 	public List<EloRating> getRatings(String type, int count, LocalDate date) {
