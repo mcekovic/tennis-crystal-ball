@@ -30,7 +30,7 @@ def showPeak(EloRatings eloRatings, Sql sql) {
 	def i = 0
 	eloRatings.peak(100).each {
 		def bestRating = it.bestRating
-		printf '%1$4s %2$-30s %3$4s %4$10s %5$4s/%6$4s%n', ++i, getPlayerName(sql, it.playerId), bestRating, bestRating.lastDate.format('dd-MM-yyyy'), bestRating.matches, it.matches
+		printf '%1$4s %2$-30s %3$4s %4$td-%4$tm-%4$tY %5$4s/%6$4s%n', ++i, getPlayerName(sql, it.playerId), bestRating, bestRating.lastDate, bestRating.matches, it.matches
 	}
 }
 

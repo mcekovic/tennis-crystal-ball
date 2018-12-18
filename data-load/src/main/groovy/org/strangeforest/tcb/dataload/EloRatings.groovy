@@ -519,7 +519,7 @@ class EloRatings {
 			if (matches >= minMatches(type))
 				bestRating && bestRating >= newRating ? bestRating : newRating
 			else
-				null
+				bestRating
 		}
 
 		String toString() {

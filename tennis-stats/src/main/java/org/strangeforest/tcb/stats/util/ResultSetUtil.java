@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.service;
+package org.strangeforest.tcb.stats.util;
 
 import java.sql.*;
 import java.time.*;

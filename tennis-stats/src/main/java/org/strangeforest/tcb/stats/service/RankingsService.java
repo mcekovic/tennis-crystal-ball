@@ -18,8 +18,8 @@ import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
 import static org.strangeforest.tcb.stats.model.core.RankType.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 import static org.strangeforest.tcb.stats.util.NameUtil.*;
 import static org.strangeforest.tcb.util.EnumUtil.*;
 

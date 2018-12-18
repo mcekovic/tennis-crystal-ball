@@ -1,4 +1,6 @@
-package org.strangeforest.tcb.stats.service;
+package org.strangeforest.tcb.stats.util;
+
+import java.sql.*;
 
 import org.springframework.jdbc.core.namedparam.*;
 
@@ -15,5 +17,12 @@ public abstract class ParamsUtil {
 			params.addValue(name + "From", range.lowerEndpoint());
 		if (range.hasUpperBound())
 			params.addValue(name + "To", range.upperEndpoint());
+	}
+
+	public static void setInteger(PreparedStatement ps, int index, Integer value) throws SQLException {
+		if (value != null)
+			ps.setInt(index, value);
+		else
+			ps.setNull(index, Types.INTEGER);
 	}
 }

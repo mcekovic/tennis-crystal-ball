@@ -23,8 +23,8 @@ import static java.util.Collections.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class TournamentForecastService {

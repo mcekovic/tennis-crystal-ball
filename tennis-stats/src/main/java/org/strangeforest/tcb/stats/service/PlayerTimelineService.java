@@ -7,8 +7,8 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class PlayerTimelineService {

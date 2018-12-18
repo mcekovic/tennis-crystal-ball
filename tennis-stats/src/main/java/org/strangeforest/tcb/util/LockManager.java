@@ -34,6 +34,22 @@ public class LockManager<T> {
 		}
 	}
 
+	public void runLocked(T key1, T key2, Runnable callback)  {
+		getLock(key1).lock();
+		try {
+			getLock(key2).lock();
+			try {
+				callback.run();
+			}
+			finally {
+				unlock(key2);
+			}
+		}
+		finally {
+			unlock(key1);
+		}
+	}
+
 	private synchronized EntryLock getLock(T key) {
 		EntryLock lock = locks.get(key);
 		if (lock == null) {

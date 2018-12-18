@@ -11,7 +11,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 
 import static java.lang.String.*;
 import static java.util.Collections.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
 
 @Service
 public class PerformanceService {

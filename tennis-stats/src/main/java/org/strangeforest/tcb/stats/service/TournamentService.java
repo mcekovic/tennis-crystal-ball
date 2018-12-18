@@ -28,8 +28,8 @@ import static java.util.Comparator.*;
 import static java.util.Map.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 import static org.strangeforest.tcb.util.CompareUtil.*;
 
 @Service

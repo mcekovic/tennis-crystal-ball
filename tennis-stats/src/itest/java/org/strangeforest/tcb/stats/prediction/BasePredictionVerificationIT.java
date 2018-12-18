@@ -18,8 +18,8 @@ import com.google.common.base.*;
 
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
 abstract class BasePredictionVerificationIT {

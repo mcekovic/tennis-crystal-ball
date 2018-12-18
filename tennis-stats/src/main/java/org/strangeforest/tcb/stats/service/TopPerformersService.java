@@ -13,7 +13,7 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.getInternedString;
 
 @Service
 public class TopPerformersService {

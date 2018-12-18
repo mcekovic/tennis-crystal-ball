@@ -55,6 +55,7 @@ if (options && (options.dd || options.cd || options.lt || options.ln || options.
 		new LoadNewTournaments().run()
 	if (options.el)
 		new ComputeEloRatings().run()
+//		new ComputeEloRatingsNew().run()
 	if (options.rc) {
 		callLoader('correctData')
 		callLoader('refreshMaterializedViews')

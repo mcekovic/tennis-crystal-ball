@@ -15,8 +15,8 @@ import eu.bitwalker.useragentutils.*;
 
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.getInternedString;
 
 @Repository @VisitorSupport
 public class VisitorRepository {

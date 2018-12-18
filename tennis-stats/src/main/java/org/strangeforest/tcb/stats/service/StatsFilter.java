@@ -11,7 +11,7 @@ import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
 
 public class StatsFilter {
 

@@ -19,8 +19,8 @@ import com.neovisionaries.i18n.*;
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static java.util.Collections.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class MatchesService {

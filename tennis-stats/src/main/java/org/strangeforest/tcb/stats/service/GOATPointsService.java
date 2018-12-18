@@ -12,8 +12,8 @@ import org.strangeforest.tcb.stats.model.core.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.service.ResultSetUtil.getInternedString;
+import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.getInternedString;
 
 @Service
 public class GOATPointsService {
