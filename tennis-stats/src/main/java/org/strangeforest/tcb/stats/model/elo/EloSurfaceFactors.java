@@ -36,15 +36,15 @@ public class EloSurfaceFactors {
 		"ORDER BY season";
 
 
-	public EloSurfaceFactors(DataSource dataSource) {
-		this(new JdbcTemplate(dataSource));
+	public EloSurfaceFactors(DataSource dataSource, int fromSeason) {
+		this(new JdbcTemplate(dataSource), fromSeason);
 	}
 
 	public EloSurfaceFactors(JdbcTemplate jdbcTemplate) {
 		this(jdbcTemplate, START_SEASON);
 	}
 
-	public EloSurfaceFactors(JdbcTemplate jdbcTemplate, int fromSeason) {
+	private EloSurfaceFactors(JdbcTemplate jdbcTemplate, int fromSeason) {
 		System.out.print("Loading Elo Ratings surface ratios");
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		LocalDate fromDate = LocalDate.of(fromSeason, 1, 1);

@@ -136,6 +136,10 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def matches = [:]
 		short matchNum = 0
 		def startDate = date extractStartDate(dates)
+		if (!startDate) {
+			println "Skipping tournament at '$url', cannot find start date"
+			return 0
+		}
 		def seedEntries = [:]
 
 		def params = [:]

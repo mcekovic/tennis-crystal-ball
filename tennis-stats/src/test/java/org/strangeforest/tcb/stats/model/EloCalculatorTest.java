@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.strangeforest.tcb.stats.model.elo.EloCalculator.*;
+import static org.strangeforest.tcb.stats.model.elo.StartEloRatings.*;
 
 class EloCalculatorTest {
 
