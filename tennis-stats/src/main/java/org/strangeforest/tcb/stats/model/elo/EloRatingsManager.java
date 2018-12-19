@@ -194,12 +194,11 @@ public class EloRatingsManager {
 		System.out.printf("Elo Ratings for %1$d matches computed in %2$s\n", matchTicker.getTicks(), stopwatch);
 		if (save)
 			System.out.printf("Saves: %1$d\n", saveTicker.getTicks());
-		for (String type : RATING_TYPES) {
-			PredictionResult predictionResult = predictionResults.get(type);
-			predictionResult.complete();
-			System.out.printf("%1$s: %2$s\n", type, predictionResult);
-		}
-		return predictionResults.get("E");
+		PredictionResult bySurfaceResult = new PredictionResult().add(getPredictionResult("H")).add(getPredictionResult("C")).add(getPredictionResult("G")).add(getPredictionResult("P"));
+		for (String type : RATING_TYPES)
+			printPredictionResult(type, getPredictionResult(type));
+		printPredictionResult("S", bySurfaceResult);
+		return getPredictionResult("E");
 	}
 
 	public List<EloRating> getRatings(String type, int count, LocalDate date) {
@@ -256,7 +255,7 @@ public class EloRatingsManager {
 			EloRating winnerNextRating = winnerRating;
 			EloRating loserNextRating = loserRating;
 			if (!Objects.equals(match.outcome, "ABD")) {
-				predictionResults.get(type).newMatch(type, match, winnerRating.rating, loserRating.rating);
+				getPredictionResult(type).newMatch(type, match, winnerRating.rating, loserRating.rating);
 				winnerNextRating = winnerRating.newRating(delta, date);
 				getRatings(type).put(winnerRating.playerId, winnerNextRating);
 				loserNextRating = loserRating.newRating(-delta, date);
@@ -298,6 +297,15 @@ public class EloRatingsManager {
 			case "rg": return "sg";
 			default: return type;
 		}
+	}
+
+	private PredictionResult getPredictionResult(String type) {
+		return predictionResults.get(type);
+	}
+
+	private static void printPredictionResult(String type, PredictionResult predictionResult) {
+		predictionResult.complete();
+		System.out.printf("%1$s: %2$s\n", type, predictionResult);
 	}
 
 	public static final class EloRating implements Comparable<EloRating> {
@@ -364,16 +372,12 @@ public class EloRatingsManager {
 				long daysSinceLastMatch = getDaysSinceLastMatch(date);
 				int adjustmentPeriod = inactivityAdjustmentPeriod(type);
 				if (daysSinceLastMatch > adjustmentPeriod) {
-					double newRating = ratingAdjusted(daysSinceLastMatch, adjustmentPeriod, type);
+					double newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, adjustmentPeriod, type);
 					int newMatches = daysSinceLastMatch > adjustmentPeriod * 5 ? 0 : matches;
 					return new EloRating(playerId, type, newRating, newMatches, dates.copy());
 				}
 			}
 			return this;
-		}
-
-		private double ratingAdjusted(long daysSinceLastMatch, int adjustmentPeriod, String type) {
-			return max(START_RATING, rating - (daysSinceLastMatch - adjustmentPeriod) * ratingDiffForType(200.0, type) / adjustmentPeriod);
 		}
 
 		@Override public String toString() {
@@ -674,6 +678,15 @@ public class EloRatingsManager {
 				double pDelta = winnerScore / totalScore - winnerProbability;
 				pDelta2 += pDelta * pDelta;
 			}
+		}
+
+		private PredictionResult add(PredictionResult result) {
+			total += result.total;
+			predicted += result.predicted;
+			p += result.p;
+			pDelta2 += result.pDelta2;
+			pLog += result.pLog;
+			return this;
 		}
 
 		private void complete() {

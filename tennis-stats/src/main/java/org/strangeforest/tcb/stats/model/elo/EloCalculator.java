@@ -109,6 +109,13 @@ public abstract class EloCalculator {
 		return signum(delta) * min(abs(delta), ratingDiffForType(200.0, type));
 	}
 
+	/**
+	 * Adjusts rating after period of inactivity
+ 	 */
+	public static double adjustRating(double rating, long daysSinceLastMatch, int adjustmentPeriod, String type) {
+		return max(START_RATING, rating - (daysSinceLastMatch - adjustmentPeriod) * ratingDiffForType(200.0, type) / adjustmentPeriod);
+	}
+
 	static double returnToServeRatio(String surface) {
 		if (surface == null)
 			return 0.297;
