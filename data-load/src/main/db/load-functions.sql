@@ -78,18 +78,13 @@ BEGIN
 			WHERE full_name(first_name, last_name) = full_name(p_first_name, p_last_name) AND (dob IS NULL OR p_dob IS NULL);
 		END IF;
 		IF l_player_id IS NULL THEN
-			BEGIN
-				INSERT INTO player
-				(first_name, last_name, dob, country_id, hand)
-				VALUES
-				(p_first_name, p_last_name, p_dob, p_country_id, p_hand::player_hand)
-				RETURNING player_id INTO l_player_id;
-			EXCEPTION WHEN unique_violation THEN
-				UPDATE player
-				SET country_id = coalesce(country_id, p_country_id), hand = coalesce(hand, p_hand::player_hand)
-				WHERE first_name = p_first_name AND last_name = p_last_name AND dob = p_dob
-				RETURNING player_id INTO l_player_id;
-			END;
+			INSERT INTO player
+			(first_name, last_name, dob, country_id, hand)
+			VALUES
+			(p_first_name, p_last_name, p_dob, p_country_id, p_hand::player_hand)
+			ON CONFLICT (first_name, last_name, dob)
+			DO UPDATE SET country_id = coalesce(country_id, p_country_id), hand = coalesce(hand, p_hand::player_hand)
+			RETURNING player_id INTO l_player_id;
 		ELSE
 			UPDATE player
 			SET dob = coalesce(dob, p_dob), country_id = coalesce(country_id, p_country_id), hand = coalesce(hand, p_hand::player_hand)
@@ -128,16 +123,12 @@ BEGIN
 	IF l_player_id IS NULL THEN
 		RAISE EXCEPTION 'Player % not found', p_ext_player_id;
 	END IF;
-	BEGIN
-		INSERT INTO player_ranking
-		(rank_date, player_id, rank, rank_points)
-		VALUES
-		(p_rank_date, l_player_id, p_rank, p_rank_points);
-   EXCEPTION WHEN unique_violation THEN
-		UPDATE player_ranking
-		SET rank = p_rank, rank_points = p_rank_points
-		WHERE rank_date = p_rank_date AND player_id = l_player_id;
-   END;
+	INSERT INTO player_ranking
+	(rank_date, player_id, rank, rank_points)
+	VALUES
+	(p_rank_date, l_player_id, p_rank, p_rank_points)
+	ON CONFLICT (rank_date, player_id)
+	DO UPDATE SET rank = p_rank, rank_points = p_rank_points;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -154,16 +145,12 @@ DECLARE
 	l_player_id INTEGER;
 BEGIN
 	l_player_id := find_player(p_player_name, p_rank_date);
-	BEGIN
-		INSERT INTO player_ranking
-		(rank_date, player_id, rank, rank_points)
-		VALUES
-		(p_rank_date, l_player_id, p_rank, p_rank_points);
-   EXCEPTION WHEN unique_violation THEN
-		UPDATE player_ranking
-		SET rank = p_rank, rank_points = p_rank_points
-		WHERE rank_date = p_rank_date AND player_id = l_player_id;
-   END;
+	INSERT INTO player_ranking
+	(rank_date, player_id, rank, rank_points)
+	VALUES
+	(p_rank_date, l_player_id, p_rank, p_rank_points)
+	ON CONFLICT (rank_date, player_id)
+   DO UPDATE SET rank = p_rank, rank_points = p_rank_points;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -489,22 +476,18 @@ BEGIN
 
 	-- merge match_stats
 	IF l_has_stats THEN
-		BEGIN
-			INSERT INTO match_stats
-			(match_id, set, minutes,
-			 w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,
-			 l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc)
-			VALUES
-			(l_match_id, 0, p_minutes,
-			 p_w_ace, p_w_df, p_w_sv_pt, p_w_1st_in, p_w_1st_won, p_w_2nd_won, p_w_sv_gms, p_w_bp_sv, p_w_bp_fc,
-			 p_l_ace, p_l_df, p_l_sv_pt, p_l_1st_in, p_l_1st_won, p_l_2nd_won, p_l_sv_gms, p_l_bp_sv, p_l_bp_fc);
-		EXCEPTION WHEN unique_violation THEN
-			UPDATE match_stats
-			SET minutes = p_minutes,
-				w_ace = p_w_ace, w_df = p_w_df, w_sv_pt = p_w_sv_pt, w_1st_in = p_w_1st_in, w_1st_won = p_w_1st_won, w_2nd_won = p_w_2nd_won, w_sv_gms = p_w_sv_gms, w_bp_sv = p_w_bp_sv, w_bp_fc = p_w_bp_fc,
-				l_ace = p_l_ace, l_df = p_l_df, l_sv_pt = p_l_sv_pt, l_1st_in = p_l_1st_in, l_1st_won = p_l_1st_won, l_2nd_won = p_l_2nd_won, l_sv_gms = p_l_sv_gms, l_bp_sv = p_l_bp_sv, l_bp_fc = p_l_bp_fc
-			WHERE match_id = l_match_id AND set = 0;
-		END;
+		INSERT INTO match_stats
+		(match_id, set, minutes,
+		 w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,
+		 l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc)
+		VALUES
+		(l_match_id, 0, p_minutes,
+		 p_w_ace, p_w_df, p_w_sv_pt, p_w_1st_in, p_w_1st_won, p_w_2nd_won, p_w_sv_gms, p_w_bp_sv, p_w_bp_fc,
+		 p_l_ace, p_l_df, p_l_sv_pt, p_l_1st_in, p_l_1st_won, p_l_2nd_won, p_l_sv_gms, p_l_bp_sv, p_l_bp_fc)
+		ON CONFLICT (match_id, set)
+		DO UPDATE SET minutes = p_minutes,
+			w_ace = p_w_ace, w_df = p_w_df, w_sv_pt = p_w_sv_pt, w_1st_in = p_w_1st_in, w_1st_won = p_w_1st_won, w_2nd_won = p_w_2nd_won, w_sv_gms = p_w_sv_gms, w_bp_sv = p_w_bp_sv, w_bp_fc = p_w_bp_fc,
+			l_ace = p_l_ace, l_df = p_l_df, l_sv_pt = p_l_sv_pt, l_1st_in = p_l_1st_in, l_1st_won = p_l_1st_won, l_2nd_won = p_l_2nd_won, l_sv_gms = p_l_sv_gms, l_bp_sv = p_l_bp_sv, l_bp_fc = p_l_bp_fc;
 	ELSEIF NOT l_new THEN
 		DELETE FROM match_stats
 		WHERE match_id = l_match_id AND set = 0;
@@ -514,16 +497,12 @@ BEGIN
 	l_set_count = array_upper(p_w_set_games, 1);
 	IF l_set_count IS NOT NULL THEN
 		FOR l_set IN 1 .. l_set_count LOOP
-			BEGIN
-				INSERT INTO set_score
-				(match_id, set, w_games, l_games, w_tb_pt, l_tb_pt, w_tbs, l_tbs)
-				VALUES
-				(l_match_id, l_set, p_w_set_games[l_set], p_l_set_games[l_set], p_w_set_tb_pt[l_set], p_l_set_tb_pt[l_set], p_w_set_tbs[l_set], p_l_set_tbs[l_set]);
-			EXCEPTION WHEN unique_violation THEN
-				UPDATE set_score
-				SET w_games = p_w_set_games[l_set], l_games = p_l_set_games[l_set], w_tb_pt = p_w_set_tb_pt[l_set], l_tb_pt = p_l_set_tb_pt[l_set], w_tbs = p_w_set_tbs[l_set], l_tbs = p_l_set_tbs[l_set]
-				WHERE match_id = l_match_id AND set = l_set;
-			END;
+			INSERT INTO set_score
+			(match_id, set, w_games, l_games, w_tb_pt, l_tb_pt, w_tbs, l_tbs)
+			VALUES
+			(l_match_id, l_set, p_w_set_games[l_set], p_l_set_games[l_set], p_w_set_tb_pt[l_set], p_l_set_tb_pt[l_set], p_w_set_tbs[l_set], p_l_set_tbs[l_set])
+			ON CONFLICT (match_id, set)
+			DO UPDATE SET w_games = p_w_set_games[l_set], l_games = p_l_set_games[l_set], w_tb_pt = p_w_set_tb_pt[l_set], l_tb_pt = p_l_set_tb_pt[l_set], w_tbs = p_w_set_tbs[l_set], l_tbs = p_l_set_tbs[l_set];
 		END LOOP;
 		DELETE FROM set_score
 		WHERE match_id = l_match_id AND set > l_set_count;
@@ -736,22 +715,18 @@ BEGIN
 
 	-- merge match_stats
 	IF l_has_stats THEN
-		BEGIN
-			INSERT INTO in_progress_match_stats
-			(in_progress_match_id, set, minutes,
-			 p1_ace, p1_df, p1_sv_pt, p1_1st_in, p1_1st_won, p1_2nd_won, p1_sv_gms, p1_bp_sv, p1_bp_fc,
-			 p2_ace, p2_df, p2_sv_pt, p2_1st_in, p2_1st_won, p2_2nd_won, p2_sv_gms, p2_bp_sv, p2_bp_fc)
-			VALUES
-			(l_in_progress_match_id, 0, p_minutes,
-			 p_p1_ace, p_p1_df, p_p1_sv_pt, p_p1_1st_in, p_p1_1st_won, p_p1_2nd_won, p_p1_sv_gms, p_p1_bp_sv, p_p1_bp_fc,
-			 p_p2_ace, p_p2_df, p_p2_sv_pt, p_p2_1st_in, p_p2_1st_won, p_p2_2nd_won, p_p2_sv_gms, p_p2_bp_sv, p_p2_bp_fc);
-		EXCEPTION WHEN unique_violation THEN
-			UPDATE in_progress_match_stats
-			SET minutes = p_minutes,
-				p1_ace = p_p1_ace, p1_df = p_p1_df, p1_sv_pt = p_p1_sv_pt, p1_1st_in = p_p1_1st_in, p1_1st_won = p_p1_1st_won, p1_2nd_won = p_p1_2nd_won, p1_sv_gms = p_p1_sv_gms, p1_bp_sv = p_p1_bp_sv, p1_bp_fc = p_p1_bp_fc,
-				p2_ace = p_p2_ace, p2_df = p_p2_df, p2_sv_pt = p_p2_sv_pt, p2_1st_in = p_p2_1st_in, p2_1st_won = p_p2_1st_won, p2_2nd_won = p_p2_2nd_won, p2_sv_gms = p_p2_sv_gms, p2_bp_sv = p_p2_bp_sv, p2_bp_fc = p_p2_bp_fc
-			WHERE in_progress_match_id = l_in_progress_match_id AND set = 0;
-		END;
+		INSERT INTO in_progress_match_stats
+		(in_progress_match_id, set, minutes,
+		 p1_ace, p1_df, p1_sv_pt, p1_1st_in, p1_1st_won, p1_2nd_won, p1_sv_gms, p1_bp_sv, p1_bp_fc,
+		 p2_ace, p2_df, p2_sv_pt, p2_1st_in, p2_1st_won, p2_2nd_won, p2_sv_gms, p2_bp_sv, p2_bp_fc)
+		VALUES
+		(l_in_progress_match_id, 0, p_minutes,
+		 p_p1_ace, p_p1_df, p_p1_sv_pt, p_p1_1st_in, p_p1_1st_won, p_p1_2nd_won, p_p1_sv_gms, p_p1_bp_sv, p_p1_bp_fc,
+		 p_p2_ace, p_p2_df, p_p2_sv_pt, p_p2_1st_in, p_p2_1st_won, p_p2_2nd_won, p_p2_sv_gms, p_p2_bp_sv, p_p2_bp_fc)
+		ON CONFLICT (in_progress_match_id, set)
+		DO UPDATE SET minutes = p_minutes,
+			p1_ace = p_p1_ace, p1_df = p_p1_df, p1_sv_pt = p_p1_sv_pt, p1_1st_in = p_p1_1st_in, p1_1st_won = p_p1_1st_won, p1_2nd_won = p_p1_2nd_won, p1_sv_gms = p_p1_sv_gms, p1_bp_sv = p_p1_bp_sv, p1_bp_fc = p_p1_bp_fc,
+			p2_ace = p_p2_ace, p2_df = p_p2_df, p2_sv_pt = p_p2_sv_pt, p2_1st_in = p_p2_1st_in, p2_1st_won = p_p2_1st_won, p2_2nd_won = p_p2_2nd_won, p2_sv_gms = p_p2_sv_gms, p2_bp_sv = p_p2_bp_sv, p2_bp_fc = p_p2_bp_fc;
 	ELSEIF NOT l_new THEN
 		DELETE FROM in_progress_match_stats
 		WHERE in_progress_match_id = l_in_progress_match_id AND set = 0;
@@ -772,17 +747,12 @@ CREATE OR REPLACE FUNCTION load_player_in_progress_result(
 	p_no_draw_probability REAL
 ) RETURNS VOID AS $$
 BEGIN
-	BEGIN
-		INSERT INTO player_in_progress_result
-		(in_progress_event_id, player_id, base_result, result, probability, avg_draw_probability, no_draw_probability)
-		VALUES
-		(p_in_progress_event_id, p_player_id, p_base_result::tournament_event_result, p_result::tournament_event_result, p_probability, p_avg_draw_probability, p_no_draw_probability);
-	EXCEPTION WHEN unique_violation THEN
-		UPDATE player_in_progress_result
-		SET probability = p_probability, avg_draw_probability = p_avg_draw_probability, no_draw_probability = p_no_draw_probability
-		WHERE in_progress_event_id = p_in_progress_event_id AND player_id = p_player_id
-		AND base_result = p_base_result::tournament_event_result AND result = p_result::tournament_event_result;
-	END;
+	INSERT INTO player_in_progress_result
+	(in_progress_event_id, player_id, base_result, result, probability, avg_draw_probability, no_draw_probability)
+	VALUES
+	(p_in_progress_event_id, p_player_id, p_base_result::tournament_event_result, p_result::tournament_event_result, p_probability, p_avg_draw_probability, p_no_draw_probability)
+	ON CONFLICT (in_progress_event_id, player_id, base_result, result)
+	DO UPDATE SET probability = p_probability, avg_draw_probability = p_avg_draw_probability, no_draw_probability = p_no_draw_probability;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -822,16 +792,12 @@ CREATE OR REPLACE FUNCTION merge_match_prices(
 BEGIN
 	IF p_winner_price IS NOT NULL AND p_loser_price IS NOT NULL THEN
 		IF p_winner_price > 0.0 AND p_loser_price > 0.0 AND 1.0 / p_winner_price + 1.0 / p_loser_price > 1 THEN
-			BEGIN
-				INSERT INTO match_price
-				(match_id, source, winner_price, loser_price)
-				VALUES
-				(p_match_id, p_source, p_winner_price, p_loser_price);
-			EXCEPTION WHEN unique_violation THEN
-				UPDATE match_price
-				SET winner_price = p_winner_price, loser_price = p_loser_price
-				WHERE match_id = p_match_id AND source = p_source;
-			END;
+			INSERT INTO match_price
+			(match_id, source, winner_price, loser_price)
+			VALUES
+			(p_match_id, p_source, p_winner_price, p_loser_price)
+			ON CONFLICT (match_id, source)
+			DO UPDATE SET winner_price = p_winner_price, loser_price = p_loser_price;
 		ELSE
 			RAISE WARNING 'Invalid prices % and %', p_winner_price, p_loser_price;
 		END IF;

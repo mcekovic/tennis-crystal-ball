@@ -78,7 +78,7 @@ abstract class BaseATPWorldTourTournamentLoader {
 			return true
 		switch (surface) {
 			case 'P': return true
-			case 'H': return season >= 2017 && (
+			case 'H': return (season >= 2017 && (
 				name.startsWith('Montpellier') ||
 				name.startsWith('Sofia') ||
 				name.startsWith('Memphis') ||
@@ -93,7 +93,9 @@ abstract class BaseATPWorldTourTournamentLoader {
 				name.startsWith('Vienna') ||
 				name.startsWith('Paris Masters') ||
 				name.startsWith('Tour Finals') ||
-				name.startsWith('Milan')
+				name.startsWith('Milan'))
+				||
+				(season >= 2018 && name.startsWith('Tokyo'))
 			)
 			default: return false
 		}
