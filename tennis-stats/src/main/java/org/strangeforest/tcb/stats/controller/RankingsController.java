@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.time.*;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
@@ -12,6 +13,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.service.*;
 
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 import static org.thymeleaf.util.StringUtils.*;
 
@@ -27,10 +29,23 @@ public class RankingsController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date
 	) {
+		return showRankingsTable(rankType, season, date, false);
+	}
+
+	@GetMapping("/eloRatings")
+	public ModelAndView eloRatings(
+		@RequestParam(name = "rankType", defaultValue = "ELO_RANK") RankType rankType,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date
+	) {
+		return showRankingsTable(rankType, season, date, true);
+	}
+
+	private ModelAndView showRankingsTable(RankType rankType, Integer season, LocalDate date, boolean eloOnly) {
 		if (date != null)
 			season = date.getYear();
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("rankCategories", RankCategory.values());
+		modelMap.addAttribute("rankCategories", eloOnly ? EnumSet.of(ELO) : EnumSet.of(ATP, ELO));
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("tableDate", rankingsService.getRankingsDate(rankType, season, date));
 		modelMap.addAttribute("rankType", rankType);
@@ -38,6 +53,7 @@ public class RankingsController extends PageController {
 		modelMap.addAttribute("date", date);
 		if (season != null)
 			modelMap.addAttribute("dates", rankingsService.getSeasonRankingDates(rankType, season));
+		modelMap.addAttribute("eloOnly", eloOnly);
 		return new ModelAndView("rankingsTable", modelMap);
 	}
 
@@ -46,7 +62,7 @@ public class RankingsController extends PageController {
 		@RequestParam(name = "rankType", defaultValue = "ELO_RATING") RankType rankType
 	) {
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("rankTypes", RankCategory.ELO.getRankTypes());
+		modelMap.addAttribute("rankTypes", ELO.getRankTypes());
 		modelMap.addAttribute("rankType", rankType);
 		return new ModelAndView("peakEloRatings", modelMap);
 	}

@@ -68,7 +68,8 @@
 				<li><a href="/headsToHeads"><i class="fa fa-users"></i> Heads-to-Heads</a> - Heads-to-heads clusters among several players (i.e. among 'Big 4')</li>
 				<li><a href="/greatestRivalries"><i class="fa fa-handshake-o"></i> Greatest Rivalries</a> - Explore greatest rivalries, overall or by season, tournament level, surface or round</li>
 				<li><a href="/greatestMatches"><i class="fa fa-signing"></i> Greatest Matches</a> - Explore greatest matches ranked by special Match Greatness Score formula</li>
-				<li><a href="/rankingsTable"><i class="fa fa-list-ol"></i> Ranking Tables</a> - Player ranking tables, including <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" class="external">Elo rating</a> (overall, by surface, set or game) using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">Elo rating formula</a></li>
+				<li><a href="/rankingsTable"><i class="fa fa-list-ol"></i> Ranking Tables</a> - Player weekly ranking tables</li>
+				<li><a href="/eloRatings"><i class="fa fa-sort-amount-desc"></i> Elo Ratings</a> - Player weekly <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" class="external">Elo rating</a> tables (overall, by surface, outdoor or indoor, set or game) using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">Elo rating formula</a></li>
 				<li><a href="/rankingsChart"><i class="fa fa-bar-chart"></i> Ranking Charts</a> - Player ranking and ranking point charts (including Elo rating), compare players by constructing custom charts</li>
 				<li><a href="/peakEloRatings"><i class="fa fa-tachometer"></i> Peak Elo Ratings</a><sup class="cool-feature"></sup> - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie break)</li>
 				<li><a href="/topPerformers"><i class="fa fa-tasks"></i> Top Performers</a> - Find top performers in both performance and pressure situations categories</li>
@@ -147,6 +148,22 @@
 			</p>
 			<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 			<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-thumbs-up"></i> Credits</h4>
+			<p><th:block th:include="fragments/promotion :: logo"/> is powered by the Open-Source Software:</p>
+			<table class="table table-condensed text-nowrap" style="text-align: center; width: 200px">
+				<tr>
+					<td><img src="/images/linux-logo.png" width="50" height="50" alt="Linux"/></td>
+					<td><img src="/images/postgresql-logo.png" width="50" height="50" alt="PostgreSQL"/></td>
+					<td><img src="/images/java-logo.png" width="50" height="50" alt="Java"/></td>
+					<td><img src="/images/spring-boot-logo.png" width="50" height="50" alt="Spring Boot"/></td>
+				</tr>
+				<tr>
+					<td><a href="https://www.linux.org">Linux</a></td>
+					<td><a href="https://www.postgresql.org">PostgreSQL</a></td>
+					<td><a href="https://www.oracle.com/java">Java</a></td>
+					<td><a href="https://spring.io/projects/spring-boot">Spring Boot</a></td>
+				</tr>
+			</table>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-legal"></i> License</h4>
 			<p>
 				<th:block th:include="fragments/promotion :: logo"/> and <th:block th:include="fragments/promotion :: tcb"/> source code is licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" class="external">Apache 2.0 License</a>.

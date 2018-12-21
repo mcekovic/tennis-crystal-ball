@@ -7,10 +7,10 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="dates" type="java.util.List<java.time.LocalDate>"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
-	<title>Rankings Table</title>
+<!--/*@thymesVar id="eloOnly" type="java.lang.Boolean"*/-->
+<head th:replace="fragments/head :: commonHead(${eloOnly ? 'Elo Ratings' : 'Rankings Table'}, true, ~{::template})">
 	<template>
-	<meta name="description" content="Weekly ATP and Elo rankings"/>
+	<meta name="description" th:content="${eloOnly ? 'Weekly Elo ratings' : 'Weekly ATP and Elo rankings'}"/>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			[# th:if=${dates}]populateDates([(${season})], [[${dates}]]);[/]
@@ -153,10 +153,10 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3><i class="fa fa-list-ol"></i> <span id="tableTitle" th:text="${rankType.text + 's Table ' + #temporals.format(tableDate, 'dd-MM-yyyy')}">Rankings Table 01-11-2015</span></h3>
+	<h3><i class="fa " th:classappend="${eloOnly ? 'fa-sort-amount-desc' : 'fa-list-ol'}"></i> <span id="tableTitle" th:text="${rankType.text + 's Table ' + #temporals.format(tableDate, 'dd-MM-yyyy')}">Rankings Table 01-11-2015</span></h3>
 	<div id="rankTypeDiv" class="btn-group pull-left no-margin-left margin-right">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
-			<optgroup th:each="rankCategory : ${rankCategories}" th:if="${rankCategory.name() != 'GOAT'}" th:label="${rankCategory.text}" label="ATP">
+			<optgroup th:each="rankCategory : ${rankCategories}" th:label="${rankCategory.text}" label="ATP">
 				<option th:each="aRankType : ${rankCategory.rankTypes}" th:unless="${aRankType.points}" th:value="${aRankType}" value="RANK" th:selected="${aRankType == rankType}" th:class="${aRankType.surface != null ? 'bg-surface-' + aRankType.surface.code : _}" th:text="${aRankType.text}">ATP Ranking</option>
 			</optgroup>
 		</select>
