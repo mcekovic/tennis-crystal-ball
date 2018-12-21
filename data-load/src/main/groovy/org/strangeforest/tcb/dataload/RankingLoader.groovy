@@ -10,7 +10,7 @@ class RankingLoader extends BaseCSVLoader {
 
 	RankingLoader(SqlPool sqlPool) {
 		super(sqlPool)
-		maxRank = getLongProperty(MAX_RANK_PROPERTY)
+		maxRank = getIntProperty(MAX_RANK_PROPERTY)
 	}
 
 	List columnNames() {
@@ -18,20 +18,15 @@ class RankingLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call load_ranking(:rank_date, :ext_player_id, :rank, :rank_points)}'
+		'{call load_ranking(?, ?, ?, ?)}'
 	}
 
-	int batchSize() { 500 }
+	int batchSize() { 1000 }
 
-	Map params(record, Connection conn) {
+	List params(record, Connection conn) {
 		def rank = integer record.rank
 		if (maxRank && rank > maxRank)
 			return null
-		def params = [:]
-		params.rank_date = date record.rank_date
-		params.ext_player_id = integer record.player_id
-		params.rank = rank
-		params.rank_points = integer record.rank_points
-		return params
+		[date(record.rank_date), integer(record.player_id), rank, integer(record.rank_points)]
 	}
 }

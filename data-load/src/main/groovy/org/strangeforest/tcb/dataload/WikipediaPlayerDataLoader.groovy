@@ -1,10 +1,10 @@
 package org.strangeforest.tcb.dataload
 
 import java.util.concurrent.*
-import java.util.concurrent.atomic.*
 
 import org.springframework.jdbc.core.namedparam.*
 import org.strangeforest.tcb.stats.service.*
+import org.strangeforest.tcb.util.*
 
 import com.google.common.base.*
 
@@ -15,7 +15,6 @@ class WikipediaPlayerDataLoader {
 	final SqlPool sqlPool
 	final PlayerService playerService
 
-	static final int PROGRESS_LINE_WRAP = 100
 	static final int FETCH_THREAD_COUNT = 5
 
 	static final String FETCH_PLAYERS_FOR_DATA_UPDATE_SQL = //language=SQL
@@ -35,7 +34,11 @@ class WikipediaPlayerDataLoader {
 		def playerIds = sqlPool.withSql {
 			sql -> sql.rows(FETCH_PLAYERS_FOR_DATA_UPDATE_SQL).collect { row -> row.player_id }
 		}
-		def updates = new AtomicInteger(), errors = new AtomicInteger(), total = new AtomicInteger()
+		def updates = new ProgressTicker('.' as char, 1)
+		def errors = new ProgressTicker('!' as char, 1)
+		def newLine = ProgressTicker.newLineTicker().withPreAction { printf(' %1$.2f%%', 100.0 * (updates.ticks + errors.ticks) / playerIds.size()) }
+		updates.withDownstreamTicker(newLine)
+		errors.withDownstreamTicker(newLine)
 		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
 		try {
 			pool.submit{
@@ -45,15 +48,10 @@ class WikipediaPlayerDataLoader {
 						def playerData = findPlayerData(url)
 						if (playerData) {
 							updatePlayer(playerId, playerData)
-							updates.incrementAndGet()
-							print '.'
+							updates.tick()
 						}
-						else {
-							errors.incrementAndGet()
-							print '!'
-						}
-						if (total.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-							printf(' %1$.2f%%\n', 100.0 * total.get() / playerIds.size())
+						else
+							errors.tick()
 					}
 					catch (Exception ex) {
 						System.err.println 'Error finding player data for player: ' + playerId

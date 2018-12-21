@@ -78,13 +78,18 @@ BEGIN
 			WHERE full_name(first_name, last_name) = full_name(p_first_name, p_last_name) AND (dob IS NULL OR p_dob IS NULL);
 		END IF;
 		IF l_player_id IS NULL THEN
-			INSERT INTO player
-			(first_name, last_name, dob, country_id, hand)
-			VALUES
-			(p_first_name, p_last_name, p_dob, p_country_id, p_hand::player_hand)
-			ON CONFLICT (first_name, last_name, dob)
-			DO UPDATE SET country_id = coalesce(country_id, p_country_id), hand = coalesce(hand, p_hand::player_hand)
-			RETURNING player_id INTO l_player_id;
+			BEGIN
+				INSERT INTO player
+				(first_name, last_name, dob, country_id, hand)
+				VALUES
+				(p_first_name, p_last_name, p_dob, p_country_id, p_hand::player_hand)
+				RETURNING player_id INTO l_player_id;
+			EXCEPTION WHEN unique_violation THEN
+				UPDATE player
+				SET country_id = coalesce(country_id, p_country_id), hand = coalesce(hand, p_hand::player_hand)
+				WHERE first_name = p_first_name AND last_name = p_last_name AND dob = p_dob
+				RETURNING player_id INTO l_player_id;
+			END;
 		ELSE
 			UPDATE player
 			SET dob = coalesce(dob, p_dob), country_id = coalesce(country_id, p_country_id), hand = coalesce(hand, p_hand::player_hand)

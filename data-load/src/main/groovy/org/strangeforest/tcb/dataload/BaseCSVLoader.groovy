@@ -3,7 +3,6 @@ package org.strangeforest.tcb.dataload
 import java.sql.*
 import java.text.*
 import java.util.concurrent.*
-import java.util.concurrent.atomic.*
 
 import org.strangeforest.tcb.util.*
 
@@ -16,8 +15,6 @@ abstract class BaseCSVLoader {
 
 	protected final SqlPool sqlPool
 
-	private static final int PROGRESS_LINE_WRAP = 100
-
 	private static final String DEADLOCK_DETECTED = "40P01"
 
 	BaseCSVLoader(SqlPool sqlPool) {
@@ -28,7 +25,7 @@ abstract class BaseCSVLoader {
 	int threadCount() { Integer.MAX_VALUE }
 	abstract String loadSql()
 	abstract int batchSize()
-	abstract Map params(record, Connection conn)
+	abstract def params(record, Connection conn)
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
@@ -60,7 +57,7 @@ abstract class BaseCSVLoader {
 		def loadSql = loadSql()
 		def batchSize = batchSize()
 		def rows = 0
-		def batches = new AtomicInteger()
+		def batches = new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker())
 		def paramsBatch = []
 		sqlPool.withSql { sql ->
 			def executor = Executors.newFixedThreadPool(Math.min(sqlPool.size(), threadCount()))
@@ -85,14 +82,10 @@ abstract class BaseCSVLoader {
 		rows
 	}
 
-	def execute(ExecutorService executor, String loadSql, Collection<Map> paramsBatch, AtomicInteger batches) {
-		def lineWrap = PROGRESS_LINE_WRAP
+	def execute(ExecutorService executor, String loadSql, Collection<Map> paramsBatch, ProgressTicker batches) {
 		executor.execute {
 			executeWithBatch(loadSql, paramsBatch)
-			if (batches.incrementAndGet() % lineWrap == 0)
-				println '.'
-			else
-				print '.'
+			batches.tick()
 		}
 	}
 

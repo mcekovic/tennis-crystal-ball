@@ -12,7 +12,7 @@ class LoadParams {
 
 	static final boolean FULL_LOAD_DEFAULT = true
 	static final boolean VERBOSE_DEFAULT = false
-	static final long RECORD_PAUSE_DEFAULT = 0L
+	static final long RECORD_PAUSE_DEFAULT = 2000L
 	static final boolean FORCE_FORECAST_DEFAULT = false
 	static final int THREADS_DEFAULT = Runtime.runtime.availableProcessors()
 

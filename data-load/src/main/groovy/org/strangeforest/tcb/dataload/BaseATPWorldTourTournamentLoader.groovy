@@ -1,9 +1,9 @@
 package org.strangeforest.tcb.dataload
 
 import java.util.concurrent.*
-import java.util.concurrent.atomic.*
 
 import org.jsoup.nodes.*
+import org.strangeforest.tcb.util.*
 
 import groovy.sql.*
 
@@ -15,7 +15,6 @@ abstract class BaseATPWorldTourTournamentLoader {
 	protected final Sql sql
 
 	protected static final int FETCH_THREAD_COUNT = 5
-	protected static final int PROGRESS_LINE_WRAP = 100
 
 	BaseATPWorldTourTournamentLoader(Sql sql) {
 		this.sql = sql
@@ -258,8 +257,8 @@ abstract class BaseATPWorldTourTournamentLoader {
 	// Statistics
 
 	static loadStats(matches, String prefix1, String prefix2) {
-		AtomicInteger rows = new AtomicInteger()
-		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
+		def progress = new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker())
+		def pool = new ForkJoinPool(FETCH_THREAD_COUNT)
 		try {
 			pool.submit {
 				matches.parallelStream().forEach { params ->
@@ -270,11 +269,9 @@ abstract class BaseATPWorldTourTournamentLoader {
 						def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
 						if (matchStats) {
 							setATPStatsParams(params, matchStats, prefix1, prefix2)
-							print '.'
+							progress.tick()
 						}
 					}
-					if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-						println()
 				}
 			}.get()
 		}
@@ -282,13 +279,13 @@ abstract class BaseATPWorldTourTournamentLoader {
 			pool.shutdown()
 		}
 		pool.awaitTermination(1L, TimeUnit.HOURS)
-		if (rows.get() > 0)
+		if (progress.ticks > 0)
 			println()
 	}
 
 	static reloadStats(matches, int season, extId, String prefix1, String prefix2) {
-		AtomicInteger rows = new AtomicInteger()
-		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
+		def progress = new ProgressTicker('.', 1).withDownstreamTicker(ProgressTicker.newLineTicker())
+		def pool = new ForkJoinPool(FETCH_THREAD_COUNT)
 		def matchNums = 1..matches.size()
 		try {
 			pool.submit {
@@ -301,10 +298,8 @@ abstract class BaseATPWorldTourTournamentLoader {
 						def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
 						if (matchStats) {
 							setATPStatsParams(match, matchStats, prefix1, prefix2)
-							print '.'
+							progress.tick()
 						}
-						if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-							println()
 					}
 				}
 			}
@@ -313,7 +308,7 @@ abstract class BaseATPWorldTourTournamentLoader {
 			pool.shutdown()
 		}
 		pool.awaitTermination(1L, TimeUnit.HOURS)
-		if (rows.get() > 0)
+		if (progress.ticks > 0)
 			println()
 	}
 

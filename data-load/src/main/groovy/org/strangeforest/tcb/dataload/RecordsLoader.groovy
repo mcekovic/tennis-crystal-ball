@@ -1,12 +1,12 @@
 package org.strangeforest.tcb.dataload
 
-import com.google.common.base.*
-import groovy.sql.*
 import org.springframework.jdbc.core.namedparam.*
 import org.strangeforest.tcb.stats.model.records.*
 import org.strangeforest.tcb.stats.service.*
+import org.strangeforest.tcb.util.*
 
-import java.util.concurrent.atomic.*
+import com.google.common.base.*
+import groovy.sql.*
 
 import static org.strangeforest.tcb.dataload.LoadParams.*
 
@@ -14,9 +14,6 @@ class RecordsLoader {
 
 	RecordsService recordsService
 	long pause
-
-	static final int PROGRESS_LINE_WRAP = 100
-	static final long BIG_PAUSE = 2000L
 
 	RecordsLoader() {
 		recordsService = new RecordsService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
@@ -39,12 +36,12 @@ class RecordsLoader {
 
 	private doLoadRecords(List<RecordCategory> categories, String name) {
 		println "Loading $name records"
-		def progress = new AtomicInteger()
+		def progress = createTicker()
 		def stopwatch = Stopwatch.createStarted()
 		for (RecordCategory recordCategory : categories) {
 			for (Record record : recordCategory.getRecords()) {
 				recordsService.refreshRecord(record.getId(), false)
-				progressTick(progress)
+				progress.tick()
 			}
 		}
 		println "\nLoading $name records finished in $stopwatch"
@@ -59,25 +56,19 @@ class RecordsLoader {
 	}
 
 	private doLoadRecords(String... recordIds) {
-		def progress = new AtomicInteger()
+		def progress = createTicker()
 		for (String recordId : recordIds) {
 			recordsService.refreshRecord(recordId, false)
-			progressTick(progress)
+			progress.tick()
 		}
 	}
 
-	private progressTick(progress) {
-		print '.'
-		Thread.sleep(pause)
-		if (progress.incrementAndGet() % PROGRESS_LINE_WRAP == 0) {
-			println()
-			System.gc()
-			Thread.sleep(BIG_PAUSE + pause * 10)
-		}
+	private ProgressTicker createTicker() {
+		new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker().withPostAction({ doPause() }))
 	}
 
 	private doPause() {
 		System.gc()
-		Thread.sleep(BIG_PAUSE + pause * 10)
+		Thread.sleep(pause)
 	}
 }

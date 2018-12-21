@@ -75,7 +75,6 @@ public class EloRatingsManager {
 	private static final int MATCHES_PER_DOT = 1000;
 	private static final int SAVES_PER_PLUS = 20;
 	private static final int RANK_PRELOADS_PER_DOT = 50000;
-	private static final int TICKS_PER_LINE = 100;
 
 
 	private static final String LAST_DATE_QUERY = //language=SQL
@@ -146,9 +145,9 @@ public class EloRatingsManager {
 		else
 			System.out.println("Processing matches");
 
-		ProgressTicker newLineTicker = new ProgressTicker('\n', TICKS_PER_LINE);
-		matchTicker = new ProgressTicker('.', MATCHES_PER_DOT, newLineTicker);
-		saveTicker = new ProgressTicker('+', SAVES_PER_PLUS, newLineTicker);
+		ProgressTicker newLineTicker = ProgressTicker.newLineTicker();
+		matchTicker = new ProgressTicker('.', MATCHES_PER_DOT).withDownstreamTicker(newLineTicker);
+		saveTicker = new ProgressTicker('+', SAVES_PER_PLUS).withDownstreamTicker(newLineTicker);
 		try {
 			AtomicReference<LocalDate> lastDateRef = new AtomicReference<>();
 			txTemplate.execute(s -> {
@@ -413,7 +412,7 @@ public class EloRatingsManager {
 		System.out.print("Preloading ranks");
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		rankingTables = new LinkedHashMap<>();
-		ProgressTicker ticker = new ProgressTicker('.', RANK_PRELOADS_PER_DOT, new ProgressTicker('\n', TICKS_PER_LINE));
+		ProgressTicker ticker = new ProgressTicker('.', RANK_PRELOADS_PER_DOT).withDownstreamTicker(ProgressTicker.newLineTicker());
 		jdbcTemplate.query(PLAYER_RANKS_QUERY, ps -> {
 			ps.setInt(1, START_RATING_RANK);
 			ps.setFetchSize(RANK_PRELOAD_FETCH_SIZE);

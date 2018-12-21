@@ -2,19 +2,36 @@ package org.strangeforest.tcb.util;
 
 public class ProgressTicker {
 
+	private static final int TICKS_PER_LINE = 100;
+
+	public static ProgressTicker newLineTicker() {
+		return new ProgressTicker('\n', TICKS_PER_LINE);
+	}
+
 	private final char tick;
 	private final long each;
-	private final ProgressTicker downstreamTicker;
+	private Runnable preAction;
+	private Runnable postAction;
 	private long ticks;
 
 	public ProgressTicker(char tick, int each) {
-		this(tick, each, null);
-	}
-
-	public ProgressTicker(char tick, int each, ProgressTicker downstreamTicker) {
 		this.tick = tick;
 		this.each = each;
-		this.downstreamTicker = downstreamTicker;
+	}
+
+	public synchronized ProgressTicker withPreAction(Runnable action) {
+		preAction = action;
+		return this;
+	}
+
+	public synchronized ProgressTicker withPostAction(Runnable action) {
+		postAction = action;
+		return this;
+	}
+
+	public synchronized ProgressTicker withDownstreamTicker(ProgressTicker downstreamTicker) {
+		postAction = downstreamTicker::tick;
+		return this;
 	}
 
 	public synchronized long getTicks() {
@@ -23,9 +40,11 @@ public class ProgressTicker {
 
 	public synchronized void tick() {
 		if (++ticks % each == 0L) {
+			if (preAction != null)
+				preAction.run();
 			System.out.print(tick);
-			if (downstreamTicker != null)
-				downstreamTicker.tick();
+			if (postAction != null)
+				postAction.run();
 		}
 	}
 }

@@ -14,7 +14,6 @@ abstract class BaseXMLLoader {
 	protected final Sql sql
 
 	private static def CLASSPATH_PREFIX = 'classpath:'
-	private static def PROGRESS_LINE_WRAP = 100
 
 	BaseXMLLoader(Sql sql) {
 		this.sql = sql
@@ -28,22 +27,17 @@ abstract class BaseXMLLoader {
 		def stopwatch = Stopwatch.createStarted()
 		def batch = batch()
 		def data = new XmlSlurper().parse(getReader(file))
-		def rows = 0
+		def progress = new ProgressTicker('.' as char, batch).withPreAction({ sql.commit() }).withDownstreamTicker(ProgressTicker.newLineTicker())
 
 		for (item in data.children()) {
-			if (loadItem(item)) {
-				if (++rows % batch == 0) {
-					sql.commit()
-					print '.'
-					if (rows % (batch * PROGRESS_LINE_WRAP) == 0)
-						println()
-				}
-			}
+			if (loadItem(item))
+				progress.tick()
 		}
 		sql.commit()
 		println()
 		stopwatch.stop()
 		def seconds = stopwatch.elapsed(TimeUnit.SECONDS)
+		def rows = progress.ticks
 		int rowsPerSecond = seconds ? rows / seconds : 0
 		println "Rows: $rows in $stopwatch ($rowsPerSecond row/s)"
 		return rows
@@ -90,9 +84,9 @@ abstract class BaseXMLLoader {
 		f != null ? f.toFloat() : null
 	}
 
-	static java.sql.Date date(d) {
+	static Date date(d) {
 		d = d?.toString()
-		d ? new java.sql.Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time) : null
+		d ? new Date(new SimpleDateFormat('yyyy-MM-dd').parse(d).time) : null
 	}
 
 	static Array shortArray(Connection conn, a) {
