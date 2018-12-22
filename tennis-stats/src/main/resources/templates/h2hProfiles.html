@@ -77,9 +77,9 @@
 	<tr><td colspan="5">&nbsp;</td></tr>
 	</th:block>
 	<tr th:if="${player1.dob != null || player2.dob != null}">
-		<td class="text-right" colspan="2" th:text="${player1.age != null ? player1.age + ' (' + #temporals.format(player1.dob, 'dd-MM-yyyy') + ')' : _}">25 (1-1-1990)</td>
+		<td class="text-right" colspan="2" th:text="${player1.age != null ? player1.age + ' (' + #temporals.format(player1.dob, 'dd-MM-yyyy') + (player1.dod != null ? ' - ' + #temporals.format(player1.dod, 'dd-MM-yyyy') : '') + ')' : _}">25 (1-1-1990)</td>
 		<th class="text-center">Age</th>
-		<td class="text-left" colspan="2" th:text="${player2.age != null ? player2.age + ' (' + #temporals.format(player2.dob, 'dd-MM-yyyy') + ')' : _}">25 (1-1-1990)</td>
+		<td class="text-left" colspan="2" th:text="${player2.age != null ? player2.age + ' (' + #temporals.format(player2.dob, 'dd-MM-yyyy') + (player2.dod != null ? ' - ' + #temporals.format(player2.dod, 'dd-MM-yyyy') : '') + ')' : _}">25 (1-1-1990)</td>
 	</tr>
 	<tr>
 		<td class="text-right" colspan="2"><img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/us.png" th:title="${player1.country.id}" title="USA" width="24" height="20"/> <span th:text="${player1.country.name}">United States</span></td>

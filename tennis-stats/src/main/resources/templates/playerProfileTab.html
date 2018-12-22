@@ -32,10 +32,20 @@
 	<div class="col-md-4 col-lg-3">
 		<table class="table table-condensed text-nowrap">
 			<!--/* General */-->
-			<tr th:if="${player.dob}">
+			<tr th:if="${player.dob != null && player.dod == null}">
 				<th>Age</th>
 				<td th:text="|${player.age} (${#temporals.format(player.dob, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
 			</tr>
+			<th:block th:if="${player.dob != null && player.dod != null}">
+			<tr>
+				<th>Born</th>
+				<td th:text="${#temporals.format(player.dob, 'dd-MM-yyyy')}">1-1-1990</td>
+			</tr>
+			<tr>
+				<th>Died</th>
+				<td th:text="|${#temporals.format(player.dod, 'dd-MM-yyyy')} (aged ${player.age})|">1-1-1990 (aged 55)</td>
+			</tr>
+			</th:block>
 			<tr>
 				<th>Country</th>
 				<td><img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/us.png" th:title="${player.country.id}" title="USA" width="24" height="20"/> <span th:text="${player.country.name}">United States</span></td>

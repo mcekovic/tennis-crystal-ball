@@ -2485,7 +2485,8 @@ CREATE UNIQUE INDEX ON player_surface_goat_points (surface, player_id);
 -- player_v
 
 CREATE OR REPLACE VIEW player_v AS
-SELECT p.*, full_name(first_name, last_name) AS name, regexp_replace(initcap(first_name), '[^A-Z\s]+', '.', 'g') || ' ' || last_name AS short_name, age(dob) AS age,
+SELECT p.*, full_name(first_name, last_name) AS name, regexp_replace(initcap(first_name), '[^A-Z\s]+', '.', 'g') || ' ' || last_name AS short_name,
+   CASE WHEN dod IS NULL THEN age(dob) ELSE age(dod, dob) END AS age,
 	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
 	current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,
 	goat_rank, coalesce(goat_points, 0) AS goat_points, coalesce(weeks_at_no1, 0) weeks_at_no1,

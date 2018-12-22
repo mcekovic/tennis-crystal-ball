@@ -1,1 +1,0 @@
-ALTER TABLE in_progress_event ADD COLUMN completed BOOLEAN NOT NULL DEFAULT FALSE;

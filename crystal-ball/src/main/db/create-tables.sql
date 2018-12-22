@@ -67,6 +67,7 @@ CREATE TABLE player (
 	first_name TEXT,
 	last_name TEXT,
 	dob DATE,
+	dod DATE,
 	country_id TEXT NOT NULL,
 	birthplace TEXT,
 	residence TEXT,

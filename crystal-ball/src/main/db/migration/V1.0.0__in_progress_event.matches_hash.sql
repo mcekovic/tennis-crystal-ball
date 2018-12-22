@@ -1,1 +1,0 @@
-ALTER TABLE in_progress_event ADD COLUMN matches_hash TEXT;

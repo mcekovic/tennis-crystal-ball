@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.dataload
 
+import java.time.*
 import java.util.concurrent.*
 
 import org.springframework.jdbc.core.namedparam.*
@@ -64,7 +65,7 @@ class WikipediaPlayerDataLoader {
 			pool.shutdown()
 		}
 
-		println "\n$updates players updated in $stopwatch, cannot update $errors players"
+		println "\n$updates.ticks players updated in $stopwatch, cannot update $errors.ticks players"
 	}
 
 	static def findPlayerData(String url) {
@@ -117,6 +118,11 @@ class WikipediaPlayerDataLoader {
 		if (website)
 			playerData['web_site'] = website
 
+		// DoD
+		def died = findVCardField(vcard, 'died')
+		if (died)
+			playerData['dod'] = parseDate(died)
+
 		playerData
 	}
 
@@ -137,6 +143,44 @@ class WikipediaPlayerDataLoader {
 	static Integer safeInteger(i) {
 		try {
 			i ? i.toInteger() : null
+		}
+		catch (Exception ex) {
+			null
+		}
+	}
+
+	static LocalDate parseDate(String d) {
+		parseDate1(d) ?: parseDate2(d)
+	}
+
+	static LocalDate parseDate1(String d) {
+		try {
+			def sep1 = d.indexOf(' ')
+			if (sep1 <= 0) return null
+			def month = Month.valueOf(d.substring(0, sep1).toUpperCase())
+			def sep2 = d.indexOf(', ', ++sep1)
+			if (sep2 <= 0) return null
+			def day = Integer.parseInt(d.substring(sep1, sep2))
+			sep2 += 2
+			def sep3 = d.indexOf(' ', sep2)
+			if (sep3 <= 0) return null
+			sep3 = d.indexOf('(', sep2)
+			if (sep3 <= 0) return null
+			def year = Integer.parseInt(d.substring(sep2, sep3))
+			LocalDate.of(year, month, day)
+		}
+		catch (Exception ex) {
+			null
+		}
+	}
+
+	static LocalDate parseDate2(String d) {
+		try {
+			def sep1 = d.indexOf('(')
+			if (sep1 <= 0) return null
+			def sep2 = d.indexOf(')', ++sep1)
+			if (sep2 <= 0) return null
+			LocalDate.parse(d.substring(sep1, sep2))
 		}
 		catch (Exception ex) {
 			null

@@ -31,7 +31,7 @@ public class PlayerService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PlayerService.class);
 
 	private static final String PLAYER_BY_ID_QUERY =
-		"SELECT player_id, name, dob, extract(YEAR FROM age) AS age, country_id, birthplace, residence, height, weight,\n" +
+		"SELECT player_id, name, dob, dod, extract(YEAR FROM age) AS age, country_id, birthplace, residence, height, weight,\n" +
 		"  hand, backhand, active, turned_pro, coach, prize_money, wikipedia, web_site, facebook, twitter, nicknames,\n" +
 		"  titles, grand_slams, tour_finals, alt_finals, masters, olympics,\n" +
 		"  current_rank, current_rank_points, best_rank, best_rank_date,\n" +
@@ -250,6 +250,7 @@ public class PlayerService {
 		Player p = new Player(rs.getInt("player_id"));
 		p.setName(rs.getString("name"));
 		p.setDob(getLocalDate(rs, "dob"));
+		p.setDod(getLocalDate(rs, "dod"));
 		p.setAge(rs.getInt("age"));
 		p.setCountryId(getInternedString(rs, "country_id"));
 		p.setBirthplace(rs.getString("birthplace"));
