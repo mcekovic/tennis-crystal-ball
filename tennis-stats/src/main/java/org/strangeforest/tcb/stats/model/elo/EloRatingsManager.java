@@ -250,11 +250,11 @@ public class EloRatingsManager {
 		lockManager.runLocked(playerId1, playerId2, () -> {
 			EloRating winnerRating = getRating(type, winnerId, date);
 			EloRating loserRating = getRating(loserType, loserId, date);
-			double delta = deltaRating(eloSurfaceFactors, winnerRating.rating, loserRating.rating, match, type, forSurface || forIndoor);
 			EloRating winnerNextRating = winnerRating;
 			EloRating loserNextRating = loserRating;
 			if (!Objects.equals(match.outcome, "ABD")) {
 				getPredictionResult(type).newMatch(type, match, winnerRating.rating, loserRating.rating);
+				double delta = deltaRating(eloSurfaceFactors, winnerRating.rating, loserRating.rating, match, type, forSurface || forIndoor);
 				winnerNextRating = winnerRating.newRating(delta, date);
 				getRatings(type).put(winnerRating.playerId, winnerNextRating);
 				loserNextRating = loserRating.newRating(-delta, date);
@@ -355,8 +355,8 @@ public class EloRatingsManager {
 			return ChronoUnit.DAYS.between(getFirstDate(), date);
 		}
 
-		private long getDaysSinceLastMatch(LocalDate date) {
-			return ChronoUnit.DAYS.between(getLastDate(), date);
+		private int getDaysSinceLastMatch(LocalDate date) {
+			return (int)ChronoUnit.DAYS.between(getLastDate(), date);
 		}
 
 		private EloRating newRating(double delta, LocalDate date) {
@@ -368,7 +368,7 @@ public class EloRatingsManager {
 
 		private EloRating adjustRating(LocalDate date) {
 			if (!dates.isEmpty()) {
-				long daysSinceLastMatch = getDaysSinceLastMatch(date);
+				int daysSinceLastMatch = getDaysSinceLastMatch(date);
 				int adjustmentPeriod = inactivityAdjustmentPeriod(type);
 				if (daysSinceLastMatch > adjustmentPeriod) {
 					double newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, adjustmentPeriod, type);

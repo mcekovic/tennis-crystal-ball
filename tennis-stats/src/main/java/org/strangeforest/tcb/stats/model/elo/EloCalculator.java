@@ -112,7 +112,7 @@ public abstract class EloCalculator {
 	/**
 	 * Adjusts rating after period of inactivity
  	 */
-	public static double adjustRating(double rating, long daysSinceLastMatch, int adjustmentPeriod, String type) {
+	public static double adjustRating(double rating, int daysSinceLastMatch, int adjustmentPeriod, String type) {
 		return max(START_RATING, rating - (daysSinceLastMatch - adjustmentPeriod) * ratingDiffForType(200.0, type) / adjustmentPeriod);
 	}
 

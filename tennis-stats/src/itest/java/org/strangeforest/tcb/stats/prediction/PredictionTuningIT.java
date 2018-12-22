@@ -161,7 +161,7 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 			printWeights(config, false);
 			printResultDistribution(result);
 			if (SAVE_BEST_CONFIG) {
-				try (PrintStream out = new PrintStream(new FileOutputStream("tennis-stats/src/main/resources" + PredictionConfig.getConfigFileName(TUNING_SET)))) {
+				try (PrintStream out = new PrintStream(new FileOutputStream("src/main/resources" + PredictionConfig.getConfigFileName(TUNING_SET)))) {
 					out.println("# TENNIS CRYSTAL BALL - " + TUNING_SET);
 					out.println("# " + result.getResult());
 					out.println("# " + result.getProbabilityRangeResults());
