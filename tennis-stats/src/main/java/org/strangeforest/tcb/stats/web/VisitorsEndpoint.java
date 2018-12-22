@@ -21,7 +21,7 @@ public class VisitorsEndpoint {
 
 	@GetMapping("/")
 	public ModelAndView visitors(
-		@RequestParam(name = "stat", defaultValue = "HITS") VisitorStat stat,
+		@RequestParam(name = "stat", defaultValue = "VISITS") VisitorStat stat,
 		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval,
 		@RequestParam(name = "robots", defaultValue = F) boolean robots
 	) {
