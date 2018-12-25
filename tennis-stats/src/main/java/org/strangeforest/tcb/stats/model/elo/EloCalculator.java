@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model.elo;
 
 import java.util.*;
 
+import com.google.common.collect.*;
+
 import static java.lang.Math.*;
 import static org.strangeforest.tcb.stats.model.elo.StartEloRatings.*;
 
@@ -13,7 +15,13 @@ public abstract class EloCalculator {
 	private static final double SERVICE_GAME_K_FACTOR = 0.1667;
 	private static final double RETURN_GAME_K_FACTOR = 0.1667;
 	private static final double TIE_BREAK_K_FACTOR = 1.5;
-	private static final double ADJUSTMENT_FACTOR = 6.0;
+	private static final double INACTIVITY_ADJ_RATING_FACTOR = 5.0;
+	static final int INACTIVITY_ADJ_PERIOD = 500;
+	static final int INACTIVITY_ADJ_NO_PENALTY_PERIOD = 30;
+	private static final double INACTIVITY_ADJ_GRADIENT = 100.0;
+	private static final double INACTIVITY_ADJ_DRIFT = 1.0 / (1.0 + pow(E, (INACTIVITY_ADJ_PERIOD - INACTIVITY_ADJ_NO_PENALTY_PERIOD) / INACTIVITY_ADJ_GRADIENT));
+	private static final double DEFAULT_INACTIVITY_ADJ_FACTOR = 1.0;
+	private static final Map<String, Double> INACTIVITY_ADJ_FACTOR = ImmutableMap.<String, Double>builder().put("R", 2.0).build();
 
 //	public static volatile double tuningValue;
 
@@ -113,13 +121,17 @@ public abstract class EloCalculator {
 	}
 
 	/**
-	 * Adjusts rating after period of inactivity
+	 * Adjusts rating after period of inactivity using logistic function
  	 */
-	public static double adjustRating(double rating, int daysSinceLastMatch, int adjustmentPeriod, double adjustmentPeriodFactor, String type) {
-		double maxAdjustment = ratingDiffForType((rating - START_RATING) / ADJUSTMENT_FACTOR, type);
-		double drift = 1.0 / (1.0 + pow(E, adjustmentPeriod / adjustmentPeriodFactor));
-		double adjustment = (maxAdjustment + drift) * (1.0 / (1.0 + pow(E, (adjustmentPeriod - daysSinceLastMatch) / adjustmentPeriodFactor)) - drift);
+	public static double adjustRating(double rating, int daysSinceLastMatch, String type) {
+		double adjustmentFactor = inactivityAdjustmentFactor(type);
+		double maxAdjustment = ratingDiffForType((rating - START_RATING) / INACTIVITY_ADJ_RATING_FACTOR, type);
+		double adjustment = adjustmentFactor * maxAdjustment * (1.0 / (1.0 + pow(E, (INACTIVITY_ADJ_PERIOD - adjustmentFactor * daysSinceLastMatch) / INACTIVITY_ADJ_GRADIENT)) - INACTIVITY_ADJ_DRIFT) / (1 - INACTIVITY_ADJ_DRIFT);
 		return max(START_RATING, rating - adjustment);
+	}
+
+	private static double inactivityAdjustmentFactor(String type) {
+		return INACTIVITY_ADJ_FACTOR.getOrDefault(type, DEFAULT_INACTIVITY_ADJ_FACTOR);
 	}
 
 	static double returnToServeRatio(String surface) {

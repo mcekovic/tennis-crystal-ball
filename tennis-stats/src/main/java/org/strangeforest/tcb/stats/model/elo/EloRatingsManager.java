@@ -59,10 +59,6 @@ public class EloRatingsManager {
 	private static final int DEFAULT_MIN_MATCHES_PERIOD = 365;
 	private static final Map<String, Integer> MIN_MATCHES_PERIOD = ImmutableMap.<String, Integer>builder().put("R", 90).build();
 	private static final int MIN_MATCHES_IN_PERIOD = 3;
-	private static final int DEFAULT_INACTIVITY_ADJ_PERIOD = 550;
-	private static final Map<String, Integer> INACTIVITY_ADJ_PERIOD = ImmutableMap.<String, Integer>builder().put("R", 150).build();
-	private static final double DEFAULT_INACTIVITY_ADJ_FACTOR = 100.0;
-	private static final Map<String, Double> INACTIVITY_ADJ_FACTOR = ImmutableMap.<String, Double>builder().put("R", 50.0).build();
 
 	// Player counts
 	private static final int PLAYERS_TO_SAVE = 200;
@@ -221,14 +217,6 @@ public class EloRatingsManager {
 		return MIN_MATCHES_PERIOD.getOrDefault(type, DEFAULT_MIN_MATCHES_PERIOD);
 	}
 
-	private static int inactivityAdjustmentPeriod(String type) {
-		return INACTIVITY_ADJ_PERIOD.getOrDefault(type, DEFAULT_INACTIVITY_ADJ_PERIOD);
-	}
-
-	private static double inactivityAdjustmentFactor(String type) {
-		return INACTIVITY_ADJ_FACTOR.getOrDefault(type, DEFAULT_INACTIVITY_ADJ_FACTOR);
-	}
-
 	private void processMatch(MatchForElo match, String forType) {
 		processMatch(match, false, false, forType);
 	}
@@ -379,10 +367,9 @@ public class EloRatingsManager {
 		private EloRating adjustRating(LocalDate date) {
 			if (!dates.isEmpty()) {
 				int daysSinceLastMatch = getDaysSinceLastMatch(date);
-				int adjustmentPeriod = inactivityAdjustmentPeriod(type);
-				if (daysSinceLastMatch > 0) {
-					if (daysSinceLastMatch <= adjustmentPeriod * 4) {
-						double newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, adjustmentPeriod, inactivityAdjustmentFactor(type), type);
+				if (daysSinceLastMatch > INACTIVITY_ADJ_NO_PENALTY_PERIOD) {
+					if (daysSinceLastMatch <= INACTIVITY_ADJ_PERIOD * 4) {
+						double newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, type);
 						return new EloRating(playerId, type, newRating, matches, dates.copy());
 					}
 					else

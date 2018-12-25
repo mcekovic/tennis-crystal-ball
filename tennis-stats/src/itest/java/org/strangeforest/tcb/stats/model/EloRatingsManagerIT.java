@@ -19,7 +19,7 @@ class EloRatingsManagerIT {
 
 	@Autowired private DataSource dataSource;
 
-	@Test //@Disabled
+	@Test @Disabled
 	void tuneEloRatingsManager() throws InterruptedException {
 		EloRatingsManager eloRatingsManager = new EloRatingsManager(dataSource);
 		double maxValue = 0.0;

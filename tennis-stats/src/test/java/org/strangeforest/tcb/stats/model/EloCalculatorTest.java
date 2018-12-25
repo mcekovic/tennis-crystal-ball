@@ -98,6 +98,35 @@ class EloCalculatorTest {
 	}
 
 	@Test
+	void ratingAdjustmentIsCalculatedCorrectly() {
+		Offset<Double> offset = Offset.offset(0.1);
+
+		assertThat(adjustRating(2000.0,  30, "E")).isCloseTo(2000.0, offset);
+		assertThat(adjustRating(2000.0,  60, "E")).isCloseTo(1999.7, offset);
+		assertThat(adjustRating(2000.0,  90, "E")).isCloseTo(1999.3, offset);
+		assertThat(adjustRating(2000.0, 120, "E")).isCloseTo(1998.7, offset);
+		assertThat(adjustRating(2000.0, 180, "E")).isCloseTo(1997.0, offset);
+		assertThat(adjustRating(2000.0, 365, "E")).isCloseTo(1980.1, offset);
+		assertThat(adjustRating(2000.0, 730, "E")).isCloseTo(1909.2, offset);
+
+		assertThat(adjustRating(2500.0,  30, "E")).isCloseTo(2500.0, offset);
+		assertThat(adjustRating(2500.0,  60, "E")).isCloseTo(2499.4, offset);
+		assertThat(adjustRating(2500.0,  90, "E")).isCloseTo(2498.5, offset);
+		assertThat(adjustRating(2500.0, 120, "E")).isCloseTo(2497.4, offset);
+		assertThat(adjustRating(2500.0, 180, "E")).isCloseTo(2494.0, offset);
+		assertThat(adjustRating(2500.0, 365, "E")).isCloseTo(2460.2, offset);
+		assertThat(adjustRating(2500.0, 730, "E")).isCloseTo(2318.4, offset);
+
+		assertThat(adjustRating(2000.0,  15, "R")).isCloseTo(2000.0, offset);
+		assertThat(adjustRating(2000.0,  30, "R")).isCloseTo(1999.3, offset);
+		assertThat(adjustRating(2000.0,  60, "R")).isCloseTo(1997.1, offset);
+		assertThat(adjustRating(2000.0,  90, "R")).isCloseTo(1993.3, offset);
+		assertThat(adjustRating(2000.0, 120, "R")).isCloseTo(1986.7, offset);
+		assertThat(adjustRating(2000.0, 180, "R")).isCloseTo(1958.1, offset);
+		assertThat(adjustRating(2000.0, 365, "R")).isCloseTo(1800.2, offset);
+	}
+
+	@Test
 	void deltaRatingIsCalculatedAsExpected() {
 		Offset<Double> offset = Offset.offset(0.1);
 
