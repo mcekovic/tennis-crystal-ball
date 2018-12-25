@@ -48,7 +48,7 @@
 			thus it is a relatively good indication of comparable player strengths across Eras.<br/>
 			<strong>Not playing penalty</strong> - In original Elo, there is no penalty when players are not playing for longer periods of time.
 			However, after they start playing matches again, the Elo rating obviously does not reflect their current form. To address this, non-playing Elo rating penalty is introduced.
-			Penalty starts after player does not play for 1 year, and increases linearly by 200 Elo rating points for each year of non-playing: not playing for 1 year: no penalty, 1.5 years: 100 points penalty, 2 years: 200, 3 years: 400, etc.
+			Penalty is proportional to the number of days passed since the last match and is using special logistic function with several experimentally tuned parameters for maximum predictability.
 			<br/><br/>
 			<strong>Examples</strong> (upsets make bigger points exchange):
 			<ul>

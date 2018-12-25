@@ -4,6 +4,7 @@ import java.sql.*
 import java.util.concurrent.*
 import javax.sql.*
 
+import org.postgresql.ds.*
 import org.springframework.jdbc.datasource.*
 
 import com.zaxxer.hikari.*
@@ -70,13 +71,16 @@ class SqlPool extends LinkedBlockingDeque<Sql> {
 	}
 
 	static DataSource connectionPoolDataSource(size = null) {
+		def pgDataSource = new PGSimpleDataSource()
+		pgDataSource.url = dbURL
+		pgDataSource.user = username
+		pgDataSource.password = password
+		pgDataSource.prepareThreshold = 1
+		pgDataSource.reWriteBatchedInserts = true
 		HikariConfig config = new HikariConfig()
-		config.jdbcUrl = dbURL
-		config.username = username
-		config.password = password
+		config.dataSource = pgDataSource
 		config.maximumPoolSize = size ?: connections
 		config.poolName = 'TCB'
-		config.dataSourceProperties = [prepareThreshold: 1, reWriteBatchedInserts: true]
 		new HikariDataSource(config)
 	}
 
