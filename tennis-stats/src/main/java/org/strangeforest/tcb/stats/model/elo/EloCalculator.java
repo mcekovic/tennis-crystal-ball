@@ -21,7 +21,8 @@ public abstract class EloCalculator {
 	private static final double INACTIVITY_ADJ_GRADIENT = 100.0;
 	private static final double INACTIVITY_ADJ_DRIFT = 1.0 / (1.0 + pow(E, (INACTIVITY_ADJ_PERIOD - INACTIVITY_ADJ_NO_PENALTY_PERIOD) / INACTIVITY_ADJ_GRADIENT));
 	private static final double DEFAULT_INACTIVITY_ADJ_FACTOR = 1.0;
-	private static final Map<String, Double> INACTIVITY_ADJ_FACTOR = ImmutableMap.<String, Double>builder().put("R", 2.0).build();
+	private static final Map<String, Double> INACTIVITY_ADJ_FACTOR = ImmutableMap.<String, Double>builder()
+		.put("R", 2.0).put("H", 0.85).put("C", 0.75).put("G", 0.5).put("P", 0.5).put("O", 0.85).put("I", 0.6).build();
 
 //	public static volatile double tuningValue;
 

@@ -13,20 +13,20 @@ class EloCalculatorTest {
 	void startRatingIsCalculatedCorrectly() {
 		Offset<Double> offset = Offset.offset(1.0);
 
-		assertThat(startRating(   1)).isCloseTo(2394, offset);
-		assertThat(startRating(   2)).isCloseTo(2323, offset);
-		assertThat(startRating(   3)).isCloseTo(2275, offset);
-		assertThat(startRating(   4)).isCloseTo(2237, offset);
-		assertThat(startRating(   5)).isCloseTo(2204, offset);
-		assertThat(startRating(   6)).isCloseTo(2182, offset);
-		assertThat(startRating(   7)).isCloseTo(2160, offset);
-		assertThat(startRating(   8)).isCloseTo(2145, offset);
-		assertThat(startRating(   9)).isCloseTo(2131, offset);
-		assertThat(startRating(  10)).isCloseTo(2117, offset);
-		assertThat(startRating(  40)).isCloseTo(1942, offset);
-		assertThat(startRating( 125)).isCloseTo(1765, offset);
-		assertThat(startRating( 250)).isCloseTo(1648, offset);
-		assertThat(startRating( 500)).isCloseTo(1598, offset);
+		assertThat(startRating(   1)).isCloseTo(2405, offset);
+		assertThat(startRating(   2)).isCloseTo(2336, offset);
+		assertThat(startRating(   3)).isCloseTo(2285, offset);
+		assertThat(startRating(   4)).isCloseTo(2246, offset);
+		assertThat(startRating(   5)).isCloseTo(2212, offset);
+		assertThat(startRating(   6)).isCloseTo(2195, offset);
+		assertThat(startRating(   7)).isCloseTo(2178, offset);
+		assertThat(startRating(   8)).isCloseTo(2165, offset);
+		assertThat(startRating(   9)).isCloseTo(2152, offset);
+		assertThat(startRating(  10)).isCloseTo(2139, offset);
+		assertThat(startRating(  40)).isCloseTo(1978, offset);
+		assertThat(startRating( 125)).isCloseTo(1805, offset);
+		assertThat(startRating( 250)).isCloseTo(1700, offset);
+		assertThat(startRating( 500)).isCloseTo(1633, offset);
 		assertThat(startRating(1000)).isCloseTo(1500, offset);
 	}
 

@@ -10,21 +10,21 @@ public abstract class StartEloRatings {
 
 	static final int START_RATING_RANK = 1000;
 	private static final List<RatingPoint> START_RATING_TABLE = asList(
-		new RatingPoint(  1, 2394),
-		new RatingPoint(  2, 2323),
-		new RatingPoint(  3, 2275),
-		new RatingPoint(  4, 2237),
-		new RatingPoint(  5, 2204),
-		new RatingPoint(  7, 2160),
-		new RatingPoint( 10, 2117),
-		new RatingPoint( 15, 2070),
-		new RatingPoint( 20, 2035),
-		new RatingPoint( 30, 1978),
-		new RatingPoint( 50, 1907),
-		new RatingPoint( 70, 1856),
-		new RatingPoint(100, 1801),
-		new RatingPoint(150, 1730),
-		new RatingPoint(200, 1658),
+		new RatingPoint(  1, 2405),
+		new RatingPoint(  2, 2336),
+		new RatingPoint(  3, 2285),
+		new RatingPoint(  4, 2246),
+		new RatingPoint(  5, 2212),
+		new RatingPoint(  7, 2178),
+		new RatingPoint( 10, 2139),
+		new RatingPoint( 15, 2096),
+		new RatingPoint( 20, 2057),
+		new RatingPoint( 30, 2010),
+		new RatingPoint( 50, 1947),
+		new RatingPoint( 70, 1888),
+		new RatingPoint(100, 1835),
+		new RatingPoint(150, 1775),
+		new RatingPoint(200, 1714),
 		new RatingPoint(START_RATING_RANK, START_RATING)
 	);
 
