@@ -54,12 +54,12 @@ public class EloSurfaceFactors {
 			ps.setObject(2, toDate, Types.DATE);
 		}, rs -> {
 			int season = rs.getInt("season");
-			hardFactors.put(season, (1.4 + pctToFactor(rs.getDouble("hard_pct"))) / 2.0);
+			hardFactors.put(season, (1.2 + pctToFactor(rs.getDouble("hard_pct"))) / 2.0);
 			clayFactors.put(season, (1.45 + pctToFactor(rs.getDouble("clay_pct"))) / 2.0);
-			grassFactors.put(season, (2.05 + pctToFactor(rs.getDouble("grass_pct"))) / 2.0);
+			grassFactors.put(season, (2.1 + pctToFactor(rs.getDouble("grass_pct"))) / 2.0);
 			carpetFactors.put(season, (2.3 + pctToFactor(rs.getDouble("carpet_pct"))) / 2.0);
 			outdoorFactors.put(season, (1.05 + pctToFactor(rs.getDouble("outdoor_pct"))) / 2.0);
-			indoorFactors.put(season, (1.95 + pctToFactor(rs.getDouble("indoor_pct"))) / 2.0);
+			indoorFactors.put(season, (1.9 + pctToFactor(rs.getDouble("indoor_pct"))) / 2.0);
 		});
 		System.out.println(" " + stopwatch);
 	}

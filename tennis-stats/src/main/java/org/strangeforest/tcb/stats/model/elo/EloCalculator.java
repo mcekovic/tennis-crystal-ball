@@ -13,6 +13,9 @@ public abstract class EloCalculator {
 	private static final double SERVICE_GAME_K_FACTOR = 0.1667;
 	private static final double RETURN_GAME_K_FACTOR = 0.1667;
 	private static final double TIE_BREAK_K_FACTOR = 1.5;
+	private static final double ADJUSTMENT_FACTOR = 6.0;
+
+//	public static volatile double tuningValue;
 
 	public static double kFactor(String level, String round, short bestOf, String outcome) {
 		double kFactor = 32.0;
@@ -112,8 +115,11 @@ public abstract class EloCalculator {
 	/**
 	 * Adjusts rating after period of inactivity
  	 */
-	public static double adjustRating(double rating, int daysSinceLastMatch, int adjustmentPeriod, String type) {
-		return max(START_RATING, rating - (daysSinceLastMatch - adjustmentPeriod) * ratingDiffForType(200.0, type) / adjustmentPeriod);
+	public static double adjustRating(double rating, int daysSinceLastMatch, int adjustmentPeriod, double adjustmentPeriodFactor, String type) {
+		double maxAdjustment = ratingDiffForType((rating - START_RATING) / ADJUSTMENT_FACTOR, type);
+		double drift = 1.0 / (1.0 + pow(E, adjustmentPeriod / adjustmentPeriodFactor));
+		double adjustment = (maxAdjustment + drift) * (1.0 / (1.0 + pow(E, (adjustmentPeriod - daysSinceLastMatch) / adjustmentPeriodFactor)) - drift);
+		return max(START_RATING, rating - adjustment);
 	}
 
 	static double returnToServeRatio(String surface) {

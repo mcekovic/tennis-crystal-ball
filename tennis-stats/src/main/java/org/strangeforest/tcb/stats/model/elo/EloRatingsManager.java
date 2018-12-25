@@ -59,8 +59,10 @@ public class EloRatingsManager {
 	private static final int DEFAULT_MIN_MATCHES_PERIOD = 365;
 	private static final Map<String, Integer> MIN_MATCHES_PERIOD = ImmutableMap.<String, Integer>builder().put("R", 90).build();
 	private static final int MIN_MATCHES_IN_PERIOD = 3;
-	private static final int DEFAULT_INACTIVITY_ADJ_PERIOD = 365;
-	private static final Map<String, Integer> INACTIVITY_ADJ_PERIOD = ImmutableMap.<String, Integer>builder().put("R", 90).build();
+	private static final int DEFAULT_INACTIVITY_ADJ_PERIOD = 550;
+	private static final Map<String, Integer> INACTIVITY_ADJ_PERIOD = ImmutableMap.<String, Integer>builder().put("R", 150).build();
+	private static final double DEFAULT_INACTIVITY_ADJ_FACTOR = 100.0;
+	private static final Map<String, Double> INACTIVITY_ADJ_FACTOR = ImmutableMap.<String, Double>builder().put("R", 50.0).build();
 
 	// Player counts
 	private static final int PLAYERS_TO_SAVE = 200;
@@ -126,7 +128,7 @@ public class EloRatingsManager {
 		});
 	}
 
-	public PredictionResult compute(boolean save, boolean fullSave, LocalDate saveFromDate, int saveThreads) throws InterruptedException {
+	public Map<String, PredictionResult> compute(boolean save, boolean fullSave, LocalDate saveFromDate, int saveThreads) throws InterruptedException {
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		for (String type : RATING_TYPES) {
 			playerRatings.put(type, new ConcurrentHashMap<>());
@@ -197,7 +199,7 @@ public class EloRatingsManager {
 		for (String type : RATING_TYPES)
 			printPredictionResult(type, getPredictionResult(type));
 		printPredictionResult("S", bySurfaceResult);
-		return getPredictionResult("E");
+		return predictionResults;
 	}
 
 	public List<EloRating> getRatings(String type, int count, LocalDate date) {
@@ -212,15 +214,19 @@ public class EloRatingsManager {
 	}
 
 	private static int minMatches(String type) {
-		return type != null ? MIN_MATCHES.getOrDefault(type, DEFAULT_MIN_MATCHES) : DEFAULT_MIN_MATCHES;
+		return MIN_MATCHES.getOrDefault(type, DEFAULT_MIN_MATCHES);
 	}
 
 	private static int minMatchesPeriod(String type) {
-		return type != null ? MIN_MATCHES_PERIOD.getOrDefault(type, DEFAULT_MIN_MATCHES_PERIOD) : DEFAULT_MIN_MATCHES_PERIOD;
+		return MIN_MATCHES_PERIOD.getOrDefault(type, DEFAULT_MIN_MATCHES_PERIOD);
 	}
 
 	private static int inactivityAdjustmentPeriod(String type) {
-		return type != null ? INACTIVITY_ADJ_PERIOD.getOrDefault(type, DEFAULT_INACTIVITY_ADJ_PERIOD) : DEFAULT_INACTIVITY_ADJ_PERIOD;
+		return INACTIVITY_ADJ_PERIOD.getOrDefault(type, DEFAULT_INACTIVITY_ADJ_PERIOD);
+	}
+
+	private static double inactivityAdjustmentFactor(String type) {
+		return INACTIVITY_ADJ_FACTOR.getOrDefault(type, DEFAULT_INACTIVITY_ADJ_FACTOR);
 	}
 
 	private void processMatch(MatchForElo match, String forType) {
@@ -316,7 +322,7 @@ public class EloRatingsManager {
 		private final RingBuffer<LocalDate> dates;
 
 		private EloRating(int playerId, String type, Integer rank) {
-			this(playerId, type, ratingForType(startRating(rank), type), 0, new RingBuffer<>(MIN_MATCHES_IN_PERIOD));
+			this(playerId, type, ratingForType(startRating(rank), type), 0, newDates());
 		}
 
 		private EloRating(int playerId, String type, double rating, int matches, RingBuffer<LocalDate> dates) {
@@ -325,6 +331,10 @@ public class EloRatingsManager {
 			this.rating = rating;
 			this.matches = matches;
 			this.dates = dates;
+		}
+
+		private static RingBuffer<LocalDate> newDates() {
+			return new RingBuffer<>(MIN_MATCHES_IN_PERIOD);
 		}
 
 		public int getPlayerId() {
@@ -370,10 +380,13 @@ public class EloRatingsManager {
 			if (!dates.isEmpty()) {
 				int daysSinceLastMatch = getDaysSinceLastMatch(date);
 				int adjustmentPeriod = inactivityAdjustmentPeriod(type);
-				if (daysSinceLastMatch > adjustmentPeriod) {
-					double newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, adjustmentPeriod, type);
-					int newMatches = daysSinceLastMatch > adjustmentPeriod * 5 ? 0 : matches;
-					return new EloRating(playerId, type, newRating, newMatches, dates.copy());
+				if (daysSinceLastMatch > 0) {
+					if (daysSinceLastMatch <= adjustmentPeriod * 4) {
+						double newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, adjustmentPeriod, inactivityAdjustmentFactor(type), type);
+						return new EloRating(playerId, type, newRating, matches, dates.copy());
+					}
+					else
+						return new EloRating(playerId, type, START_RATING, 0, newDates());
 				}
 			}
 			return this;
@@ -601,7 +614,7 @@ public class EloRatingsManager {
 		}
 	}
 
-	private static final class PredictionResult {
+	public static final class PredictionResult {
 
 		private int total;
 		private int predicted;
@@ -614,6 +627,34 @@ public class EloRatingsManager {
 		private double logLoss;
 		private double score;
 		private double calibration;
+
+		public int getTotal() {
+			return total;
+		}
+
+		public int getPredicted() {
+			return predicted;
+		}
+
+		public double getPredictionRate() {
+			return predictionRate;
+		}
+
+		public double getBrier() {
+			return brier;
+		}
+
+		public double getLogLoss() {
+			return logLoss;
+		}
+
+		public double getScore() {
+			return score;
+		}
+
+		public double getCalibration() {
+			return calibration;
+		}
 
 		private void newMatch(String type, MatchForElo match, double winnerRating, double loserRating) {
 			if (winnerRating == loserRating || match.outcome != null || match.endDate.compareTo(PREDICTION_START_DATE) < 0)
