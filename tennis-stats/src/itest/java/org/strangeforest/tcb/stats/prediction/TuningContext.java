@@ -23,6 +23,10 @@ public class TuningContext {
 		candidateNextResults = new PriorityQueue<>(resultComparator.reversed());
 	}
 
+	public PredictionResult getBestResult() {
+		return bestResult;
+	}
+
 	public void initialResult(PredictionVerificationResult verificationResult) {
 		PredictionResult result = verificationResult.getResult();
 		addResult(result);

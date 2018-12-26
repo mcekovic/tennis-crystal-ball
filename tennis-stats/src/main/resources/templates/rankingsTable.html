@@ -10,7 +10,7 @@
 <!--/*@thymesVar id="eloOnly" type="java.lang.Boolean"*/-->
 <head th:replace="fragments/head :: commonHead(${eloOnly ? 'Elo Ratings' : 'Rankings Table'}, true, ~{::template})">
 	<template>
-	<meta name="description" th:content="${eloOnly ? 'Weekly Elo ratings' : 'Weekly ATP and Elo rankings'}"/>
+	<meta name="description" th:content="${eloOnly ? 'Weekly tennis Elo ratings' : 'Weekly ATP and Elo rankings'}"/>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			[# th:if=${dates}]populateDates([(${season})], [[${dates}]]);[/]

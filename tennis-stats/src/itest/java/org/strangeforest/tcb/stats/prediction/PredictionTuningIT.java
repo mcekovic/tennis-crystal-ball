@@ -68,11 +68,12 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 	@Test
 	void scriptedTuneDefaultPrediction() throws InterruptedException {
 		int factor = 100;
-		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING, 5 * factor);
-		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM, 5 * factor);
-		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), H2H, 3 * factor);
-		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), WINNING_PCT, 2 * factor);
-		doTunePredictionByArea(PredictionConfig.defaultConfig(TUNING_SET), 10 * factor);
+		PredictionConfig config = PredictionConfig.defaultConfig(TUNING_SET);
+		config = doTunePredictionInArea(config, RANKING, 5 * factor).getConfig();
+		config = doTunePredictionInArea(config, RECENT_FORM, 5 * factor).getConfig();
+		config = doTunePredictionInArea(config, H2H, 3 * factor).getConfig();
+		config = doTunePredictionInArea(config, WINNING_PCT, 2 * factor).getConfig();
+		doTunePredictionByArea(config, 10 * factor);
 	}
 
 
@@ -116,33 +117,31 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	// Tuning
 
-	private void doTunePrediction(PredictionConfig config, Integer maxSteps) throws InterruptedException {
-		tunePrediction(config,  Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getAreaAndItems())).collect(toList()), METRICS, maxSteps);
+	private PredictionResult doTunePrediction(PredictionConfig config, Integer maxSteps) throws InterruptedException {
+		return tunePrediction(config,  Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getAreaAndItems())).collect(toList()), METRICS, maxSteps);
 	}
 
-	private void doTunePredictionByArea(PredictionConfig config, Integer maxSteps) throws InterruptedException {
-		tunePrediction(config, asList(PredictionArea.values()), METRICS, maxSteps);
+	private PredictionResult doTunePredictionByArea(PredictionConfig config, Integer maxSteps) throws InterruptedException {
+		return tunePrediction(config, asList(PredictionArea.values()), METRICS, maxSteps);
 	}
 
-	private void doTunePredictionByItem(PredictionConfig config, Integer maxSteps) throws InterruptedException {
-		tunePrediction(config, Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getItems())).collect(toList()), METRICS, maxSteps);
+	private PredictionResult doTunePredictionByItem(PredictionConfig config, Integer maxSteps) throws InterruptedException {
+		return tunePrediction(config, Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getItems())).collect(toList()), METRICS, maxSteps);
 	}
 
-	private void doTunePredictionInAreaFromPointZero(PredictionArea area, Integer maxSteps) throws InterruptedException {
-		tunePrediction(PredictionConfig.areaEqualWeights(area), asList(area.getItems()), METRICS, maxSteps);
+	private PredictionResult doTunePredictionInAreaFromPointZero(PredictionArea area, Integer maxSteps) throws InterruptedException {
+		return tunePrediction(PredictionConfig.areaEqualWeights(area), asList(area.getItems()), METRICS, maxSteps);
 	}
 
-	private void doTunePredictionInArea(PredictionConfig config, PredictionArea area, Integer maxSteps) throws InterruptedException {
-		tunePrediction(config, asList(area.getItems()), METRICS, maxSteps);
+	private PredictionResult doTunePredictionInArea(PredictionConfig config, PredictionArea area, Integer maxSteps) throws InterruptedException {
+		return tunePrediction(config, asList(area.getItems()), METRICS, maxSteps);
 	}
 
-	private void tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics, Integer maxSteps) throws InterruptedException {
+	private PredictionResult tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics, Integer maxSteps) throws InterruptedException {
 		TuningContext context = new TuningContext(comparing(metrics));
 		PredictionVerificationResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
 
-		for (context.initialResult(result); context.startStep() != null; context.endStep()) {
-			if (maxSteps != null && context.currentStep() > maxSteps)
-				break;
+		for (context.initialResult(result); (maxSteps == null || context.currentStep() <= maxSteps) && context.startStep() != null; context.endStep()) {
 			for (Weighted weighted : features) {
 				PredictionConfig stepDownConfig = context.stepDown(weighted);
 				if (stepDownConfig != null)
@@ -153,6 +152,7 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 			}
 		}
 		context.finish();
+		return context.getBestResult();
 	}
 
 	private void tuningStep(TuningContext context, PredictionConfig config) throws InterruptedException {
