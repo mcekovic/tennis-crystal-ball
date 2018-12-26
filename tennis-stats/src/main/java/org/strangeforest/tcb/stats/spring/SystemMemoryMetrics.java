@@ -57,9 +57,6 @@ public class SystemMemoryMetrics {
 				method.setAccessible(true);
 				return method.invoke(obj);
 			}
-			catch (IllegalAccessException | NoSuchMethodException ignored) {
-				LOGGER.error(ignored.getMessage(), ignored);
-			}
 			catch (InvocationTargetException ex) {
 				Throwable target = ex.getTargetException();
 				if (target == null)

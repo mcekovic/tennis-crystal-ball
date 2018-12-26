@@ -2,7 +2,6 @@ package org.strangeforest.tcb.stats.prediction;
 
 import java.sql.*;
 import java.time.*;
-import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 
@@ -26,7 +25,7 @@ abstract class BasePredictionVerificationIT {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private MatchPredictionService predictionService;
-	private ExecutorService executor;
+	private ForkJoinPool forkJoinPool;
 
 	private static final TuningSetLevel TUNING_SET_LEVEL = TuningSetLevel.SURFACE;
 	private static final double MIN_PREDICTABILITY = 0.25;
@@ -38,18 +37,18 @@ abstract class BasePredictionVerificationIT {
 		"SELECT m.winner_id, m.loser_id, m.date, m.tournament_id, m.tournament_event_id, m.level, m.best_of, m.surface, m.indoor, m.round, m.winner_rank, m.loser_rank, p.winner_price, p.loser_price\n" +
 		"FROM match_for_stats_v m\n" +
 		"LEFT JOIN match_price p ON p.match_id = m.match_id AND source = :source\n" +
-		"WHERE outcome IS NULL AND (m.date BETWEEN :date1 AND :date2)%1$s\n" +
+		"WHERE outcome IS NULL AND (m.date BETWEEN :fromDate AND :toDate)%1$s\n" +
 		"ORDER BY m.date";
 
 
 	@BeforeAll
 	void setUp() {
-		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 	}
 
 	@AfterAll
 	void tearDown() {
-		executor.shutdown();
+		forkJoinPool.shutdown();
 	}
 
 	PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
@@ -69,69 +68,72 @@ abstract class BasePredictionVerificationIT {
 		printWeights(config, tuningSet, true);
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		PredictionVerificationResult verificationResult = new PredictionVerificationResult(config);
-		List<MatchForVerification> matches = matches(fromDate, toDate, tuningSet.getCondition());
-		CountDownLatch matchCount = new CountDownLatch(matches.size());
-		for (MatchForVerification match : matches) {
-			executor.execute(() -> {
-				try {
-					Surface surface = match.surface;
-					boolean indoor = match.indoor;
-					TournamentLevel level = match.level;
-					short bestOf = match.bestOf;
-					PredictionConfig matchConfig = config != null ? config : PredictionConfig.defaultConfig(TUNING_SET_LEVEL.select(surface, indoor, level, bestOf));
-					MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, surface, indoor, level, bestOf, match.round, matchConfig);
-					boolean predictable = false, predicted = false, withPrice = false, beatingPrice = false, profitable = false;
-					double winnerProbability = 0.0, stake = 0.0, return_ = 0.0;
-					if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
-						winnerProbability = prediction.getWinProbability1();
-						double loserProbability = prediction.getWinProbability2();
-						Double winnerPrice = match.winnerPrice;
-						Double loserPrice = match.loserPrice;
-						predictable = winnerProbability != 0.5;
-						if (winnerProbability > 0.5)
-							predicted = true;
-						if (winnerPrice != null || loserPrice != null) {
-							withPrice = true;
-							if (winnerProbability > 0.5 || BET_ON_OUTSIDER) {
-								if (winnerPrice != null && winnerProbability > 1.0 / winnerPrice) {
-									beatingPrice = true;
-									profitable = true;
-									stake = KELLY_STAKE ? kellyStake(winnerProbability, winnerPrice) : 1.0;
-									return_ = stake * winnerPrice;
-								}
-							}
-							if (loserProbability > 0.5 || BET_ON_OUTSIDER) {
-								if (loserPrice != null && loserProbability > 1.0 / loserPrice) {
-									beatingPrice = true;
-									stake = KELLY_STAKE ? kellyStake(loserProbability, loserPrice) : 1.0;
-								}
-							}
-						}
+		Phaser phaser = new Phaser();
+		jdbcTemplate.query(
+			format(MATCHES_QUERY, tuningSet.getCondition()),
+			params("source", PRICE_SOURCE).addValue("fromDate", fromDate).addValue("toDate", toDate), rs -> {
+				MatchForVerification match = match(rs);
+				phaser.register();
+				forkJoinPool.submit(() -> {
+					try {
+						processMatch(match, config, verificationResult);
 					}
-					verificationResult.newMatch(match, predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
-				}
-				finally {
-					matchCount.countDown();
-				}
-			});
-		}
-		matchCount.await();
+					catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					finally {
+						phaser.arrive();
+					}
+				});
+			}
+		);
+		phaser.awaitAdvanceInterruptibly(0);
 		verificationResult.complete();
 		PredictionResult result = verificationResult.getResult();
 		System.out.printf("%1$s in %2$s\n", result, stopwatch);
 		return verificationResult;
 	}
 
-	private static double kellyStake(double probability, double price) {
-		return (probability * price - 1) / (price - 1);
+	private void processMatch(MatchForVerification match, PredictionConfig config, PredictionVerificationResult verificationResult) {
+		Surface surface = match.surface;
+		boolean indoor = match.indoor;
+		TournamentLevel level = match.level;
+		short bestOf = match.bestOf;
+		PredictionConfig matchConfig = config != null ? config : PredictionConfig.defaultConfig(TUNING_SET_LEVEL.select(surface, indoor, level, bestOf));
+		MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, surface, indoor, level, bestOf, match.round, matchConfig);
+		boolean predictable = false, predicted = false, withPrice = false, beatingPrice = false, profitable = false;
+		double winnerProbability = 0.0, stake = 0.0, return_ = 0.0;
+		if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
+			winnerProbability = prediction.getWinProbability1();
+			double loserProbability = prediction.getWinProbability2();
+			Double winnerPrice = match.winnerPrice;
+			Double loserPrice = match.loserPrice;
+			predictable = winnerProbability != 0.5;
+			if (winnerProbability > 0.5)
+				predicted = true;
+			if (winnerPrice != null || loserPrice != null) {
+				withPrice = true;
+				if (winnerProbability > 0.5 || BET_ON_OUTSIDER) {
+					if (winnerPrice != null && winnerProbability > 1.0 / winnerPrice) {
+						beatingPrice = true;
+						profitable = true;
+						stake = KELLY_STAKE ? kellyStake(winnerProbability, winnerPrice) : 1.0;
+						return_ = stake * winnerPrice;
+					}
+				}
+				if (loserProbability > 0.5 || BET_ON_OUTSIDER) {
+					if (loserPrice != null && loserProbability > 1.0 / loserPrice) {
+						beatingPrice = true;
+						stake = KELLY_STAKE ? kellyStake(loserProbability, loserPrice) : 1.0;
+					}
+				}
+			}
+		}
+		verificationResult.newMatch(match, predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 	}
 
-	private List<MatchForVerification> matches(LocalDate date1, LocalDate date2, String condition) {
-		return jdbcTemplate.query(
-			format(MATCHES_QUERY,  condition),
-			params("source", PRICE_SOURCE).addValue("date1", date1).addValue("date2", date2),
-			(rs, rowNum) -> match(rs)
-		);
+	private static double kellyStake(double probability, double price) {
+		return (probability * price - 1) / (price - 1);
 	}
 
 	private static MatchForVerification match(ResultSet rs) throws SQLException {

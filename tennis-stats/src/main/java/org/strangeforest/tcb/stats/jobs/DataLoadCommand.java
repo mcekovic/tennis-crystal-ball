@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 import static java.util.Arrays.*;
-import static java.util.stream.Collectors.*;
 
 @Component
 public class DataLoadCommand {
@@ -27,7 +26,7 @@ public class DataLoadCommand {
 			List<String> command = new ArrayList<>();
 			command.add(dataLoadCommand);
 			command.addAll(asList(params));
-			LOGGER.info("Executing {} [{}]", name, command.stream().collect(joining(" ")));
+			LOGGER.info("Executing {} [{}]", name, String.join(" ", command));
 			Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 				StringBuilder sb = new StringBuilder(200);
