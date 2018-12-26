@@ -69,10 +69,15 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 	void scriptedTuneDefaultPrediction() throws InterruptedException {
 		int factor = 100;
 		PredictionConfig config = PredictionConfig.defaultConfig(TUNING_SET);
+		System.out.println("Tuning RANKING area...");
 		config = doTunePredictionInArea(config, RANKING, 5 * factor).getConfig();
+		System.out.println("Tuning RECENT_FORM area...");
 		config = doTunePredictionInArea(config, RECENT_FORM, 5 * factor).getConfig();
+		System.out.println("Tuning H2H area...");
 		config = doTunePredictionInArea(config, H2H, 3 * factor).getConfig();
+		System.out.println("Tuning WINNING_PCT area...");
 		config = doTunePredictionInArea(config, WINNING_PCT, 2 * factor).getConfig();
+		System.out.println("Tuning by area...");
 		doTunePredictionByArea(config, 10 * factor);
 	}
 

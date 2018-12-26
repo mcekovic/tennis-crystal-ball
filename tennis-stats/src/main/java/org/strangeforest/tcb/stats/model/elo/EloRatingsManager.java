@@ -301,7 +301,7 @@ public class EloRatingsManager {
 		System.out.printf("%1$s: %2$s\n", type, predictionResult);
 	}
 
-	public static final class EloRating implements Comparable<EloRating> {
+	public final class EloRating implements Comparable<EloRating> {
 
 		private final int playerId;
 		private final String type;
@@ -310,7 +310,7 @@ public class EloRatingsManager {
 		private final RingBuffer<LocalDate> dates;
 
 		private EloRating(int playerId, String type, Integer rank) {
-			this(playerId, type, ratingForType(startRating(rank), type), 0, newDates());
+			this(playerId, type, ratingForType(startRating(rank), type), 0, new RingBuffer<>(MIN_MATCHES_IN_PERIOD));
 		}
 
 		private EloRating(int playerId, String type, double rating, int matches, RingBuffer<LocalDate> dates) {
@@ -319,10 +319,6 @@ public class EloRatingsManager {
 			this.rating = rating;
 			this.matches = matches;
 			this.dates = dates;
-		}
-
-		private static RingBuffer<LocalDate> newDates() {
-			return new RingBuffer<>(MIN_MATCHES_IN_PERIOD);
 		}
 
 		public int getPlayerId() {
@@ -368,12 +364,12 @@ public class EloRatingsManager {
 			if (!dates.isEmpty()) {
 				int daysSinceLastMatch = getDaysSinceLastMatch(date);
 				if (daysSinceLastMatch > INACTIVITY_ADJ_NO_PENALTY_PERIOD) {
-					if (daysSinceLastMatch <= INACTIVITY_ADJ_PERIOD * 4) {
+					if (daysSinceLastMatch <= INACTIVITY_RESET_PERIOD) {
 						double newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, type);
 						return new EloRating(playerId, type, newRating, matches, dates.copy());
 					}
 					else
-						return new EloRating(playerId, type, START_RATING, 0, newDates());
+						return new EloRating(playerId, type, getPlayerRank(playerId, date));
 				}
 			}
 			return this;

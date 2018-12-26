@@ -9,15 +9,24 @@ import static org.strangeforest.tcb.stats.model.elo.StartEloRatings.*;
 
 public abstract class EloCalculator {
 
+	private static final double RATING_SCALE = 400.0;
+	private static final double K_FACTOR = 32.0;
+	private static final double K_FUNCTION_AMPLIFIER = 10.0;
+	private static final double K_FUNCTION_AMPLIFIER_GRADIENT = 63.0;
+	private static final double K_FUNCTION_MULTIPLIER = 2.0 * (K_FUNCTION_AMPLIFIER - 1.0);
+	private static final double DELTA_RATING_CAP = 200.0;
+
 	private static final double RECENT_K_FACTOR = 2.0;
 	private static final double SET_K_FACTOR = 0.5;
 	private static final double GAME_K_FACTOR = 0.0556;
 	private static final double SERVICE_GAME_K_FACTOR = 0.1667;
 	private static final double RETURN_GAME_K_FACTOR = 0.1667;
 	private static final double TIE_BREAK_K_FACTOR = 1.5;
+	
 	private static final double INACTIVITY_ADJ_RATING_FACTOR = 5.0;
-	static final int INACTIVITY_ADJ_PERIOD = 500;
+	private static final int INACTIVITY_ADJ_PERIOD = 500;
 	static final int INACTIVITY_ADJ_NO_PENALTY_PERIOD = 30;
+	static final int INACTIVITY_RESET_PERIOD = INACTIVITY_ADJ_PERIOD * 4;
 	private static final double INACTIVITY_ADJ_GRADIENT = 100.0;
 	private static final double INACTIVITY_ADJ_DRIFT = 1.0 / (1.0 + pow(E, (INACTIVITY_ADJ_PERIOD - INACTIVITY_ADJ_NO_PENALTY_PERIOD) / INACTIVITY_ADJ_GRADIENT));
 	private static final double DEFAULT_INACTIVITY_ADJ_FACTOR = 1.0;
@@ -26,8 +35,12 @@ public abstract class EloCalculator {
 
 //	public static volatile double tuningValue;
 
+	/**
+	 * Tennis-customized Elo K-Factor depending on tournament level, round and best of
+	 * @return Elo K-Factor
+	 */
 	public static double kFactor(String level, String round, short bestOf, String outcome) {
-		double kFactor = 32.0;
+		double kFactor = K_FACTOR;
 		switch (level) {
 			case "G": break;
 			case "F": kFactor *= 0.90; break;
@@ -66,7 +79,7 @@ public abstract class EloCalculator {
 	 * @return values from 1 to 10, depending on current rating
 	 */
 	public static double kFunction(double rating, String type) {
-		return 1.0 + 18.0 / (1.0 + pow(2.0, (ratingFromType(rating, type) - START_RATING) / 63.0));
+		return 1.0 + K_FUNCTION_MULTIPLIER / (1.0 + pow(2.0, (ratingFromType(rating, type) - START_RATING) / K_FUNCTION_AMPLIFIER_GRADIENT));
 	}
 	
 	public static double kFunction(double rating) {
@@ -76,7 +89,7 @@ public abstract class EloCalculator {
 	public static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
 		if (Objects.equals(outcome, "ABD"))
 			return 0.0;
-		double delta = 1.0 / (1.0 + pow(10.0, (winnerRating - loserRating) / 400.0));
+		double delta = 1.0 / (1.0 + pow(10.0, (winnerRating - loserRating) / RATING_SCALE));
 		return kFactor(level, round, bestOf, outcome) * delta;
 	}
 
@@ -118,7 +131,7 @@ public abstract class EloCalculator {
 	}
 
 	private static double capDeltaRating(double delta, String type) {
-		return signum(delta) * min(abs(delta), ratingDiffForType(200.0, type));
+		return signum(delta) * min(abs(delta), ratingDiffForType(DELTA_RATING_CAP, type));
 	}
 
 	/**
