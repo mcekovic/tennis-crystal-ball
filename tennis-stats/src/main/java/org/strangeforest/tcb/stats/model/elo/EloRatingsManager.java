@@ -203,7 +203,8 @@ public class EloRatingsManager {
 		int minMatches = minMatches(type);
 		int minMatchesPeriod = minMatchesPeriod(type);
 		return getRatings(type).values().stream()
-			.filter(r ->r.rating >= START_RATING && r.matches >= minMatches && !r.getLastDate().isBefore(minDate) && r.getDaysSpan(date) <= minMatchesPeriod)
+			.filter(r -> r.rating >= START_RATING && r.matches >= minMatches && !r.getLastDate().isBefore(minDate) && r.getDaysSpan(date) <= minMatchesPeriod)
+			.map(r -> r.adjustRating(date))
 			.sorted(reverseOrder())
 			.limit(count)
 			.collect(toList());
