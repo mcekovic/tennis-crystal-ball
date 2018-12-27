@@ -25,7 +25,7 @@ abstract class BasePredictionVerificationIT {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private MatchPredictionService predictionService;
-	private ForkJoinPool forkJoinPool;
+	private ExecutorService executor;
 
 	private static final TuningSetLevel TUNING_SET_LEVEL = TuningSetLevel.SURFACE;
 	private static final double MIN_PREDICTABILITY = 0.25;
@@ -43,12 +43,12 @@ abstract class BasePredictionVerificationIT {
 
 	@BeforeAll
 	void setUp() {
-		forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
+		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	}
 
 	@AfterAll
 	void tearDown() {
-		forkJoinPool.shutdown();
+		executor.shutdown();
 	}
 
 	PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
@@ -74,7 +74,7 @@ abstract class BasePredictionVerificationIT {
 			params("source", PRICE_SOURCE).addValue("fromDate", fromDate).addValue("toDate", toDate), rs -> {
 				MatchForVerification match = match(rs);
 				phaser.register();
-				forkJoinPool.submit(() -> {
+				executor.submit(() -> {
 					try {
 						processMatch(match, config, verificationResult);
 					}

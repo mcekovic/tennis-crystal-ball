@@ -67,16 +67,24 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	void scriptedTuneDefaultPrediction() throws InterruptedException {
-		int factor = 100;
+		int factor = 50;
 		PredictionConfig config = PredictionConfig.defaultConfig(TUNING_SET);
-		System.out.println("Tuning RANKING area...");
-		config = doTunePredictionInArea(config, RANKING, 5 * factor).getConfig();
-		System.out.println("Tuning RECENT_FORM area...");
-		config = doTunePredictionInArea(config, RECENT_FORM, 5 * factor).getConfig();
-		System.out.println("Tuning H2H area...");
-		config = doTunePredictionInArea(config, H2H, 3 * factor).getConfig();
-		System.out.println("Tuning WINNING_PCT area...");
-		config = doTunePredictionInArea(config, WINNING_PCT, 2 * factor).getConfig();
+		if (config.isAreaEnabled(RANKING)) {
+			System.out.println("Tuning RANKING area...");
+			config = doTunePredictionInArea(config, RANKING, 10 * factor).getConfig();
+		}
+		if (config.isAreaEnabled(RECENT_FORM)) {
+			System.out.println("Tuning RECENT_FORM area...");
+			config = doTunePredictionInArea(config, RECENT_FORM, 8 * factor).getConfig();
+		}
+		if (config.isAreaEnabled(H2H)) {
+			System.out.println("Tuning H2H area...");
+			config = doTunePredictionInArea(config, H2H, 6 * factor).getConfig();
+		}
+		if (config.isAreaEnabled(WINNING_PCT)) {
+			System.out.println("Tuning WINNING_PCT area...");
+			config = doTunePredictionInArea(config, WINNING_PCT, 5 * factor).getConfig();
+		}
 		System.out.println("Tuning by area...");
 		doTunePredictionByArea(config, 10 * factor);
 	}
