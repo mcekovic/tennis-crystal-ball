@@ -154,7 +154,7 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 		TuningContext context = new TuningContext(comparing(metrics));
 		PredictionVerificationResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
 
-		for (context.initialResult(result); (maxSteps == null || context.currentStep() <= maxSteps) && context.startStep() != null; context.endStep()) {
+		for (context.initialResult(result); (maxSteps == null || context.currentStep() < maxSteps) && context.startStep() != null; context.endStep()) {
 			for (Weighted weighted : features) {
 				PredictionConfig stepDownConfig = context.stepDown(weighted);
 				if (stepDownConfig != null)
