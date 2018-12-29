@@ -11,6 +11,8 @@ import groovy.transform.*
 import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 import static org.strangeforest.tcb.dataload.KOTournamentForecaster.MatchResult.*
+import static org.strangeforest.tcb.stats.model.elo.EloCalculator.*
+import static org.strangeforest.tcb.stats.model.elo.StartEloRatings.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
 class KOTournamentForecaster {
@@ -104,7 +106,7 @@ class KOTournamentForecaster {
 	}
 
 	static Map<String, String> ELO_PREFIX = [
-		R: 'recent_',
+		E: '', R: 'recent_',
 		H: 'surface_', C: 'surface_', G: 'surface_', P: 'surface_',
 		I: 'in_out_', O: 'in_out_',
 		s: 'set_'
@@ -115,44 +117,32 @@ class KOTournamentForecaster {
 		def winner = match.winner
 		if (winner) {
 			def prefix = type ? ELO_PREFIX[type] : ''
-			def rating1 = match['player1_' + prefix + 'elo_rating']
-			def rating2 = match['player2_' + prefix + 'elo_rating']
+			def rating1 = match['player1_' + prefix + 'elo_rating'] ?: startRating(match.player1_rank)
+			def rating2 = match['player2_' + prefix + 'elo_rating'] ?: startRating(match.player2_rank)
 			def player1Id = match.player1_id
 			def player2Id = match.player2_id
 			if (player1Id && player2Id) {
-				if (!rating1)
-					rating1 = StartEloRatings.START_RATING
-				if (!rating2)
-					rating2 = StartEloRatings.START_RATING
 				def winner1 = winner == 1
-				def winnerRating = winner1 ? rating1 : rating2
-				def loserRating = winner1 ? rating2 : rating1
-				def deltaRating = EloCalculator.deltaRating(winnerRating, loserRating, match.level, match.round, (short)match.best_of, match.outcome)
-				switch (type) {
-					case 'H': case 'C': case 'G': case 'P': case 'O': case 'I':
-						deltaRating *= eloSurfaceFactors.surfaceKFactor(type, toLocalDate(match.date).year)
-						break
-					case 'R':
-						deltaRating = EloCalculator.RECENT_K_FACTOR * deltaRating
-						break
-					case 's':
-						def wDelta = deltaRating
-						def lDelta = EloCalculator.deltaRating(loserRating, winnerRating, match.level, match.round, (short)match.best_of, match.outcome)
-						def wSets = (winner1 ? match.p1_sets : match.p2_sets) ?: 0d
-						def lSets = (winner1 ? match.p2_sets : match.p1_sets) ?: 0d
-						deltaRating = EloCalculator.SET_K_FACTOR * (wDelta * wSets - lDelta * lSets)
-						break
-				}
+				def deltaRating = deltaRating(eloSurfaceFactors, winner1 ? rating1 : rating2, winner1 ? rating2 : rating1, matchForElo(match), type)
 				def deltaRating1 = winner1 ? deltaRating : -deltaRating
 				def deltaRating2 = winner1 ? -deltaRating : deltaRating
-				rating1 = EloCalculator.newRating(rating1, deltaRating1, type)
-				rating2 = EloCalculator.newRating(rating2, deltaRating2, type)
+				rating1 = newRating(rating1, deltaRating1, type)
+				rating2 = newRating(rating2, deltaRating2, type)
 				setNextMatchesEloRating(player1Id, rating1, prefix, i)
 				setNextMatchesEloRating(player2Id, rating2, prefix, i)
 			}
 			match['player1_next_' + prefix + 'elo_rating'] = safeRound rating1
 			match['player2_next_' + prefix + 'elo_rating'] = safeRound rating2
 		}
+	}
+
+	private matchForElo(def match) {
+		def winner1 = match.winner == 1
+		new MatchForElo(
+			match.match_id, winner1 ? match.player1_id : match.player2_id, winner1 ? match.player2_id : match.player1_id, toLocalDate(match.date),
+			match.level, match.best_of as short, match.surface, match.indoor, match.round, match.outcome,
+			(winner1 ? match.p1_sets : match.p2_sets) ?: 0d, (winner1 ? match.p2_sets : match.p1_sets) ?: 0d
+		)
 	}
 
 	private setNextMatchesEloRating(playerId, rating, String prefix, int fromMatchIndex) {

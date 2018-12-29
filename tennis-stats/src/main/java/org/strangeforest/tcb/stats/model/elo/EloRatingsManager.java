@@ -249,7 +249,7 @@ public class EloRatingsManager {
 			EloRating loserNextRating = loserRating;
 			if (!Objects.equals(match.outcome, "ABD")) {
 				getPredictionResult(type).newMatch(type, match, winnerRating.rating, loserRating.rating);
-				double delta = deltaRating(eloSurfaceFactors, winnerRating.rating, loserRating.rating, match, type, forSurface || forIndoor);
+				double delta = deltaRating(eloSurfaceFactors, winnerRating.rating, loserRating.rating, match, type);
 				winnerNextRating = winnerRating.newRating(delta, date);
 				getRatings(type).put(winnerRating.playerId, winnerNextRating);
 				loserNextRating = loserRating.newRating(-delta, date);

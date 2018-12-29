@@ -93,35 +93,35 @@ public abstract class EloCalculator {
 		return kFactor(level, round, bestOf, outcome) * delta;
 	}
 
-	public static double deltaRating(EloSurfaceFactors eloSurfaceFactors, double winnerRating, double loserRating, MatchForElo match, String type, boolean forSurface) {
+	public static double deltaRating(EloSurfaceFactors eloSurfaceFactors, double winnerRating, double loserRating, MatchForElo match, String type) {
 		String level = match.level;
 		String round = match.round;
 		short bestOf = Character.isLowerCase(type.charAt(0)) ? (short)5 : match.bestOf;
 		String outcome = match.outcome;
 		double delta = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome);
-		if (type.equals("E"))
-			return delta;
-		else if (forSurface)
-			return delta * eloSurfaceFactors.surfaceKFactor(type, match.endDate.getYear());
-		else {
-			if (type.equals("R"))
-				return RECENT_K_FACTOR * delta;
-			double wDelta = delta;
-			double lDelta = deltaRating(loserRating, winnerRating, level, round, bestOf, outcome);
-			switch (type) {
-				case "s": return SET_K_FACTOR * (wDelta * match.wSets - lDelta * match.lSets);
-				case "g": return GAME_K_FACTOR * (wDelta * match.wGames - lDelta * match.lGames);
-				case "sg": return SERVICE_GAME_K_FACTOR * (wDelta * match.wSvGms * returnToServeRatio(match.surface) - lDelta * match.lRtGms);
-				case "rg": return RETURN_GAME_K_FACTOR * (wDelta * match.wRtGms - lDelta * match.lSvGms * returnToServeRatio(match.surface));
-				case "tb": {
-					int wTBs = match.wTbs;
-					int lTBs = match.lTbs;
-					if (lTBs > wTBs) {
-						double d = wDelta; wDelta = lDelta; lDelta = d;
+		switch (type) {
+			case "E": return delta;
+			case "R": return RECENT_K_FACTOR * delta;
+			case "H": case "C": case "G": case "P":
+			case "O": case "I": return eloSurfaceFactors.surfaceKFactor(type, match.endDate.getYear()) * delta;
+			default: {
+				double wDelta = delta;
+				double lDelta = deltaRating(loserRating, winnerRating, level, round, bestOf, outcome);
+				switch (type) {
+					case "s": return SET_K_FACTOR * (wDelta * match.wSets - lDelta * match.lSets);
+					case "g": return GAME_K_FACTOR * (wDelta * match.wGames - lDelta * match.lGames);
+					case "sg": return SERVICE_GAME_K_FACTOR * (wDelta * match.wSvGms * returnToServeRatio(match.surface) - lDelta * match.lRtGms);
+					case "rg": return RETURN_GAME_K_FACTOR * (wDelta * match.wRtGms - lDelta * match.lSvGms * returnToServeRatio(match.surface));
+					case "tb": {
+						int wTBs = match.wTbs;
+						int lTBs = match.lTbs;
+						if (lTBs > wTBs) {
+							double d = wDelta; wDelta = lDelta; lDelta = d;
+						}
+						return TIE_BREAK_K_FACTOR * (wDelta * wTBs - lDelta * lTBs);
 					}
-					return TIE_BREAK_K_FACTOR * (wDelta * wTBs - lDelta * lTBs);
+					default: throw new IllegalStateException();
 				}
-				default: throw new IllegalStateException();
 			}
 		}
 	}

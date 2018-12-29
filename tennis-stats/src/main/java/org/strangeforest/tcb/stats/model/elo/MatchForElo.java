@@ -21,6 +21,10 @@ public class MatchForElo {
 	public final int wTbs, lTbs;
 	public final boolean hasStats;
 
+	public MatchForElo(long matchId, int winnerId, int loserId, LocalDate endDate, String level, short bestOf, String surface, boolean indoor, String round, String outcome, int wSets, int lSets) {
+		this(matchId, winnerId, loserId, endDate, level, bestOf, surface, indoor, round, outcome, wSets, lSets, 0, 0, 0, 0, 0, 0, 0, 0, false);
+	}
+
 	public MatchForElo(long matchId, int winnerId, int loserId, LocalDate endDate, String level, short bestOf, String surface, boolean indoor, String round, String outcome, int wSets, int lSets, int wGames, int lGames, int wSvGms, int lSvGms, int wRtGms, int lRtGms, int wTbs, int lTbs, boolean hasStats) {
 		this.matchId = matchId;
 		this.winnerId = winnerId;
