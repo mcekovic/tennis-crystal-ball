@@ -8,10 +8,10 @@ fun maxSets(bestOf: Int): Int {
 	}
 }
 
-fun finalSetTieBreaker(bestOf: Int): Boolean {
+fun finalSetTieBreaker(bestOf: Int): Int? {
 	return when (bestOf) {
-		3 -> true
-		5 -> false
+		3 -> 6
+		5 -> null
 		else -> throw IllegalStateException()
 	}
 }

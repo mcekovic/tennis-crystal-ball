@@ -14,10 +14,10 @@ class OutcomeCurveIT {
 				GameOutcome(p).pWin(),
 				TieBreakOutcome(p, p).pWin(),
 				SetOutcome(p, p).pWin(),
-				SetOutcome(p, p, false).pWin(),
+				SetOutcome(p, p, null).pWin(),
 				MatchOutcome(p, p, 3).pWin(),
 				MatchOutcome(p, p, 5).pWin(),
-				MatchOutcome(p, p, 5, true).pWin()
+				MatchOutcome(p, p, 5, 6).pWin()
 			)
 			p += 0.005
 		}

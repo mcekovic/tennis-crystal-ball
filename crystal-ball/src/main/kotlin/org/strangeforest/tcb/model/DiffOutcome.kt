@@ -18,10 +18,10 @@ abstract class DiffOutcome	protected constructor(
 			else {
 				val nextItem = items1 + items2 + 1
 				when (diff) {
-					0 -> pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1))
+					0 -> pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1), items1, items2)
 					1 -> {
 						val p = pItemWin(nextItem)
-						p + (1 - p) * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2))
+						p + (1 - p) * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2), items1, items2)
 					}
 					else -> throw IllegalStateException()
 				}
@@ -34,10 +34,10 @@ abstract class DiffOutcome	protected constructor(
 			else {
 				val nextItem = items1 + items2 + 1
 				when (diff) {
-					0 -> pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1))
+					0 -> pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1), items1, items2)
 					1 -> {
 						val p = pItemWin(nextItem)
-						p * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2))
+						p * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2), items1, items2)
 					}
 					else -> throw IllegalStateException()
 				}
@@ -47,7 +47,7 @@ abstract class DiffOutcome	protected constructor(
 		return p * pWin(items1 + 1, items2) + (1 - p) * pWin(items1, items2 + 1)
 	}
 
-	protected open fun pDeuce(p1: Double, p2: Double): Double {
+	protected open fun pDeuce(p1: Double, p2: Double, items1: Int, items2: Int): Double {
 		val p12 = p1 * p2
 		return p12 / (1.0 - p1 - p2 + 2 * p12)
 	}

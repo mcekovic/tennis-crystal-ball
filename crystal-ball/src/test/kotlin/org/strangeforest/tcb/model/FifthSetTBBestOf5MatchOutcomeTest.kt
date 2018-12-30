@@ -8,14 +8,14 @@ class FifthSetTBBestOf5MatchOutcomeTest {
 
 	@Test
 	fun testEqualP() {
-		val match = MatchOutcome(0.5, 0.5, 5, true)
+		val match = MatchOutcome(0.5, 0.5, 5, 6)
 
 		assertThat(match.pWin()).isEqualTo(0.5)
 	}
 
 	@Test
 	fun testFinalStep() {
-		val match = MatchOutcome(0.8, 0.4, 5, true)
+		val match = MatchOutcome(0.8, 0.4, 5, 6)
 
 		assertThat(match.pWin(3, 0)).isEqualTo(1.0)
 		assertThat(match.pWin(3, 1)).isEqualTo(1.0)

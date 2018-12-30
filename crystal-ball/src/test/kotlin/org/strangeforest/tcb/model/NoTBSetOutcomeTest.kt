@@ -8,14 +8,14 @@ class NoTBSetOutcomeTest {
 
 	@Test
 	fun testEqualP() {
-		val set = SetOutcome(0.5, 0.5, false)
+		val set = SetOutcome(0.5, 0.5, null)
 
 		assertThat(set.pWin()).isEqualTo(0.5)
 	}
 
 	@Test
 	fun testFinalStep() {
-		val set = SetOutcome(0.8, 0.4, false)
+		val set = SetOutcome(0.8, 0.4, null)
 
 		assertThat(set.pWin(6, 0)).isEqualTo(1.0)
 		assertThat(set.pWin(6, 1)).isEqualTo(1.0)
@@ -31,7 +31,7 @@ class NoTBSetOutcomeTest {
 
 	@Test
 	fun testDeuce() {
-		val game = SetOutcome(0.75, 0.25, false)
+		val game = SetOutcome(0.75, 0.25, null)
 
 		assertThat(game.pWin(6, 5)).isEqualTo(0.974609375)
 		assertThat(game.pWin(6, 6)).isEqualTo(0.5)

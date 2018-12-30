@@ -4,7 +4,7 @@ class MatchOutcome @JvmOverloads constructor(
 	pServe: Double,
 	pReturn: Double,
 	bestOf: Int,
-	finalSetTieBreaker: Boolean = finalSetTieBreaker(bestOf)
+	finalSetTieBreaker: Int? = finalSetTieBreaker(bestOf)
 )
-	: DiffOutcome(maxSets(bestOf), 1, { setNo -> SetOutcome(pServe, pReturn, finalSetTieBreaker || setNo < maxSets(bestOf)).pWin() }
+	: DiffOutcome(maxSets(bestOf), 1, { setNo -> SetOutcome(pServe, pReturn, if (setNo < maxSets(bestOf)) finalSetTieBreaker else 5).pWin() }
 )
