@@ -139,9 +139,9 @@ class KOTournamentForecaster {
 	private matchForElo(def match) {
 		def winner1 = match.winner == 1
 		new MatchForElo(
-			match.match_id, winner1 ? match.player1_id : match.player2_id, winner1 ? match.player2_id : match.player1_id, toLocalDate(match.date),
+			match.in_progress_match_id, winner1 ? match.player1_id : match.player2_id, winner1 ? match.player2_id : match.player1_id, toLocalDate(match.date),
 			match.level, match.best_of as short, match.surface, match.indoor, match.round, match.outcome,
-			(winner1 ? match.p1_sets : match.p2_sets) ?: 0d, (winner1 ? match.p2_sets : match.p1_sets) ?: 0d
+			(winner1 ? match.p1_sets : match.p2_sets) ?: 0, (winner1 ? match.p2_sets : match.p1_sets) ?: 0
 		)
 	}
 
