@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model.forecast;
 
-import org.strangeforest.tcb.stats.model.core.*;
+import org.strangeforest.tcb.stats.model.elo.*;
 
 public class EloRatingDelta {
 
@@ -37,6 +37,6 @@ public class EloRatingDelta {
 	}
 
 	private static int ensureEloRating(Integer eloRating) {
-		return eloRating != null ? eloRating : Player.START_ELO_RATING;
+		return eloRating != null ? eloRating : (int)StartEloRatings.START_RATING;
 	}
 }

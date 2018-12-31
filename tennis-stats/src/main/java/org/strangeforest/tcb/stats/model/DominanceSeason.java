@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
+import org.strangeforest.tcb.stats.model.elo.*;
 
 import com.google.common.collect.*;
 
@@ -115,7 +116,7 @@ public class DominanceSeason {
 	}
 
 	public int getAverageEloRating(int topN) {
-		return averageEloRatings.getOrDefault(topN, Player.START_ELO_RATING);
+		return averageEloRatings.getOrDefault(topN, (int)StartEloRatings.START_RATING);
 	}
 
 	public int getAverageEloRatingPoints(int topN) {

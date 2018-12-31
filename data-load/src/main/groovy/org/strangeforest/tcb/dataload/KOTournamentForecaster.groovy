@@ -117,8 +117,8 @@ class KOTournamentForecaster {
 		def winner = match.winner
 		if (winner) {
 			def prefix = type ? ELO_PREFIX[type] : ''
-			def rating1 = match['player1_' + prefix + 'elo_rating'] ?: startRating(match.player1_rank)
-			def rating2 = match['player2_' + prefix + 'elo_rating'] ?: startRating(match.player2_rank)
+			def rating1 = match['player1_' + prefix + 'elo_rating'] ?: START_RATING
+			def rating2 = match['player2_' + prefix + 'elo_rating'] ?: START_RATING
 			def player1Id = match.player1_id
 			def player2Id = match.player2_id
 			if (player1Id && player2Id) {

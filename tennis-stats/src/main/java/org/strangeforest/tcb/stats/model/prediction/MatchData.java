@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.prediction;
 import java.time.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
+import org.strangeforest.tcb.stats.model.elo.*;
 
 public final class MatchData {
 
@@ -88,8 +89,8 @@ public final class MatchData {
 
 	public double getOpponentEloScore() {
 		if (opponentEloRating != null) {
-			int ratingDelta = opponentEloRating - Player.START_ELO_RATING;
-			if (ratingDelta > 0) {
+			double ratingDelta = opponentEloRating - StartEloRatings.START_RATING;
+			if (ratingDelta > 0.0) {
 				if (oMatches > pMatches)
 					ratingDelta = -ratingDelta;
 				return ratingDelta;

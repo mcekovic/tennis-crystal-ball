@@ -98,6 +98,16 @@ class EloCalculatorTest {
 	}
 
 	@Test
+	void ratingIsCappedCorrectly() {
+		Offset<Double> offset = Offset.offset(0.1);
+
+		assertThat(newRating(2000.0,   30.0, "E")).isCloseTo(2032.2, offset);
+		assertThat(newRating(2000.0,  230.0, "E")).isCloseTo(2200.0, offset);
+		assertThat(newRating(1500.0,  500.0, "E")).isCloseTo(1700.0, offset);
+		assertThat(newRating(2500.0, -300.0, "E")).isCloseTo(2300.0, offset);
+	}
+
+	@Test
 	void ratingAdjustmentIsCalculatedCorrectly() {
 		Offset<Double> offset = Offset.offset(0.1);
 
