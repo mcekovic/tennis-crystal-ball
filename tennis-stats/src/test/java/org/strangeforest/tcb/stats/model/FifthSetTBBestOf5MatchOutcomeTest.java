@@ -1,7 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
 import org.junit.jupiter.api.*;
-import org.strangeforest.tcb.stats.model.forecast.*;
+import org.strangeforest.tcb.stats.model.prediction.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.strangeforest.tcb.stats.model.core.TieBreakRules.*;
