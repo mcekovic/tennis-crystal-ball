@@ -2,30 +2,28 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 import org.strangeforest.tcb.stats.model.core.*;
 
+import static org.strangeforest.tcb.stats.model.core.SetRules.*;
+
 public class SetOutcome extends DiffOutcome {
 
 	private final double pServe;
 	private final double pReturn;
-	private final TieBreakRules tieBreakRules;
+	private final SetRules rules;
 
 	public SetOutcome(double pServe, double pReturn) {
-		this(pServe, pReturn, TieBreakRules.COMMON_TIE_BREAK);
+		this(pServe, pReturn, COMMON_SET);
 	}
 
-	public SetOutcome(double pServe, double pReturn, TieBreakRules tieBreakRules) {
-		this(pServe, pReturn, 6, tieBreakRules);
-	}
-
-	public SetOutcome(double pServe, double pReturn, int games, TieBreakRules tieBreakRules) {
-		super(games, 2, i -> i % 2 == 0 ? new GameOutcome(pServe).pWin() : new GameOutcome(pReturn).pWin());
+	public SetOutcome(double pServe, double pReturn, SetRules rules) {
+		super(rules.getGames(), rules.getGamesDiff(), i -> i % 2 == 0 ? new GameOutcome(pServe).pWin() : new GameOutcome(pReturn).pWin());
 		this.pServe = pServe;
 		this.pReturn = pReturn;
-		this.tieBreakRules = tieBreakRules;
+		this.rules = rules;
 	}
 
 	@Override protected double pDeuce(double p1, double p2, int items1, int items2) {
-		if (items1 == items2 && tieBreakRules.isTieBreakFor(items1))
-			return new TieBreakOutcome(pServe, pReturn, tieBreakRules.getTieBreakPoints()).pWin();
+		if (rules.isTieBreak(items1, items2))
+			return new TieBreakOutcome(pServe, pReturn, rules.getTieBreak()).pWin();
 		else
 			return super.pDeuce(p1, p2, items1, items2);
 	}

@@ -4,14 +4,14 @@ import java.util.function.*;
 
 public abstract class DiffOutcome {
 
-	private int maxItems;
+	private int items;
 	private int itemsDiff;
 	private Function<Integer, Double> pItemWin;
 
-	protected DiffOutcome(int maxItems, int itemsDiff, Function<Integer, Double> pItemWin) {
+	protected DiffOutcome(int items, int itemsDiff, Function<Integer, Double> pItemWin) {
 		if (itemsDiff > 2)
 			throw new IllegalArgumentException();
-		this.maxItems = maxItems;
+		this.items = items;
 		this.itemsDiff = itemsDiff;
 		this.pItemWin = pItemWin;
 	}
@@ -21,7 +21,7 @@ public abstract class DiffOutcome {
 	}
 
 	public double pWin(int items1, int items2) {
-		if (items1 == maxItems) {
+		if (items1 == items) {
 			int diff = items1 - items2;
 			if (diff >= itemsDiff)
 				return 1.0;
@@ -37,7 +37,7 @@ public abstract class DiffOutcome {
 				}
 			}
 		}
-		if (items2 >= maxItems) {
+		if (items2 >= items) {
 			int diff = items2 - items1;
 			if (diff >= itemsDiff)
 				return 0.0;

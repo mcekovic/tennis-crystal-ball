@@ -1,14 +1,13 @@
 package org.strangeforest.tcb.stats.model.core;
 
-public class TieBreakRules {
+public class GameRules {
 
-	public static final TieBreakRules COMMON_TIE_BREAK = new TieBreakRules(7, 2);
-	public static final TieBreakRules SUPER_TIE_BREAK = new TieBreakRules(10, 2);
+	public static final GameRules COMMON_GAME = new GameRules(4, 2);
 
 	private final int points;
 	private final int pointsDiff;
 
-	public TieBreakRules(int points, int pointsDiff) {
+	public GameRules(int points, int pointsDiff) {
 		this.points = points;
 		this.pointsDiff = pointsDiff;
 	}

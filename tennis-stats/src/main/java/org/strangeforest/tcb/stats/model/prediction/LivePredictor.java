@@ -9,12 +9,12 @@ public abstract class LivePredictor {
 	private static final double P_OFFSET = 0.0001;
 	private static final double STEP = 0.05;
 
-	public static BaseProbabilities normalize(BaseProbabilities probabilities, int sets, int setGames, TieBreakRules tieBreakRules, TieBreakRules finalSetTieBreakRules) {
+	public static BaseProbabilities normalize(BaseProbabilities probabilities, MatchRules rules) {
 		double pWin = probabilities.getpWin();
 		double pServe = probabilities.getpServe();
 		double pReturn = probabilities.getpReturn();
 		while (true) {
-			double currentPWin = new MatchOutcome(pServe, pReturn, sets, setGames, tieBreakRules, finalSetTieBreakRules).pWin();
+			double currentPWin = new MatchOutcome(pServe, pReturn, rules).pWin();
 			if (Math.abs(currentPWin - pWin) < P_OFFSET)
 				return new BaseProbabilities(pWin, pServe, pReturn);
 			double relDiff = pctDiff(PCT * currentPWin, PCT * pWin) / PCT;

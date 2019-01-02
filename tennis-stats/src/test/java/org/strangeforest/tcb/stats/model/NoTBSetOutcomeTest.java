@@ -4,20 +4,20 @@ import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.strangeforest.tcb.stats.model.core.TieBreakRules.*;
+import static org.strangeforest.tcb.stats.model.core.SetRules.*;
 
 class NoTBSetOutcomeTest {
 
 	@Test
 	void testEqualP() {
-		SetOutcome set = new SetOutcome(0.5, 0.5, NO_TIE_BREAK);
+		SetOutcome set = new SetOutcome(0.5, 0.5, NO_TB_SET);
 
 		assertThat(set.pWin()).isEqualTo(0.5);
 	}
 
 	@Test
 	void testFinalStep() {
-		SetOutcome set = new SetOutcome(0.8, 0.4, NO_TIE_BREAK);
+		SetOutcome set = new SetOutcome(0.8, 0.4, NO_TB_SET);
 
 		assertThat(set.pWin(6, 0)).isEqualTo(1.0);
 		assertThat(set.pWin(6, 1)).isEqualTo(1.0);
@@ -33,7 +33,7 @@ class NoTBSetOutcomeTest {
 
 	@Test
 	void testDeuce() {
-		SetOutcome set = new SetOutcome(0.75, 0.25, NO_TIE_BREAK);
+		SetOutcome set = new SetOutcome(0.75, 0.25, NO_TB_SET);
 
 		assertThat(set.pWin(6, 5)).isEqualTo(0.974609375);
 		assertThat(set.pWin(6, 6)).isEqualTo(0.5);
