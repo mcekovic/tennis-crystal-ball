@@ -34,15 +34,22 @@ abstract class BaseATPWorldTourTournamentLoader {
 				def location = doc.select('td.title-content > span:nth-child(2)').text()
 				def pos = location.indexOf(',')
 				def name = pos > 0 ? location.substring(0, pos) : location
-				if (level == 'M') {
-					if (name.startsWith('Montreal'))
-						name = 'Canada' + name.substring(8)
-					else if (name.startsWith('Toronto'))
-						name = 'Canada' + name.substring(7)
-					if (season >= 1990 && !name.endsWith(' Masters'))
-						name += ' Masters'
+				switch (level) {
+					case 'M':
+						if (name.startsWith('Montreal'))
+							name = 'Canada' + name.substring(8)
+						else if (name.startsWith('Toronto'))
+							name = 'Canada' + name.substring(7)
+						if (season >= 1990 && !name.endsWith(' Masters'))
+							name += ' Masters'
+						return name
+					case 'H':
+						if (name.startsWith('Milan') && season >= 2017)
+							return 'Next Gen Finals'
+						else
+							return name
+					default: return name
 				}
-				return name
 		}
 	}
 
