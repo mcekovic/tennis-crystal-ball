@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.assertj.core.data.*;
 import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
@@ -9,9 +10,9 @@ class TieBreakOutcomeTest {
 
 	@Test
 	void testEqualP() {
-		TieBreakOutcome tieBreak = new TieBreakOutcome(0.5, 0.5);
+		TieBreakOutcome tieBreak = new TieBreakOutcome(0.8, 0.2);
 
-		assertThat(tieBreak.pWin()).isEqualTo(0.5);
+		assertThat(tieBreak.pWin()).isCloseTo(0.5, Offset.offset(1E-10));
 	}
 
 	@Test

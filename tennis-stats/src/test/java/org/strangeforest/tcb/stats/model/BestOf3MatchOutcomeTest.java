@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.assertj.core.data.*;
 import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
@@ -10,9 +11,9 @@ class BestOf3MatchOutcomeTest {
 
 	@Test
 	void testEqualP() {
-		MatchOutcome match = new MatchOutcome(0.5, 0.5, BEST_OF_3_MATCH);
+		MatchOutcome match = new MatchOutcome(0.6, 0.4, BEST_OF_3_MATCH);
 
-		assertThat(match.pWin()).isEqualTo(0.5);
+		assertThat(match.pWin()).isCloseTo(0.5, Offset.offset(1E-10));
 	}
 
 	@Test

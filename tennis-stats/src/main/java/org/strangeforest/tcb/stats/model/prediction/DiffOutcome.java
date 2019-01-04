@@ -1,19 +1,15 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
-import java.util.function.*;
-
 public abstract class DiffOutcome {
 
 	private int items;
 	private int itemsDiff;
-	private Function<Integer, Double> pItemWin;
 
-	protected DiffOutcome(int items, int itemsDiff, Function<Integer, Double> pItemWin) {
+	protected DiffOutcome(int items, int itemsDiff) {
 		if (itemsDiff > 2)
 			throw new IllegalArgumentException();
 		this.items = items;
 		this.itemsDiff = itemsDiff;
-		this.pItemWin = pItemWin;
 	}
 
 	public double pWin() {
@@ -28,10 +24,10 @@ public abstract class DiffOutcome {
 			else {
 				int nextItem = items1 + items2 + 1;
 				switch (diff) {
-					case 0: return pDeuce(pItemWin.apply(nextItem), pItemWin.apply(nextItem + 1), items1, items2);
+					case 0: return pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1), items1, items2);
 					case 1: {
-						double p = pItemWin.apply(nextItem);
-						return p + (1 - p) * pDeuce(pItemWin.apply(nextItem + 1), pItemWin.apply(nextItem + 2), items1, items2);
+						double p = pItemWin(nextItem);
+						return p + (1.0 - p) * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2), items1, items2);
 					}
 					default: throw new IllegalStateException();
 				}
@@ -44,21 +40,23 @@ public abstract class DiffOutcome {
 			else {
 				int nextItem = items1 + items2 + 1;
 				switch (diff) {
-					case 0: return pDeuce(pItemWin.apply(nextItem), pItemWin.apply(nextItem + 1), items1, items2);
+					case 0: return pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1), items1, items2);
 					case 1: {
-						double p = pItemWin.apply(nextItem);
-						return p * pDeuce(pItemWin.apply(nextItem + 1), pItemWin.apply(nextItem + 2), items1, items2);
+						double p = pItemWin(nextItem);
+						return p * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2), items1, items2);
 					}
 					default: throw new IllegalStateException();
 				}
 			}
 		}
-		double p = pItemWin.apply(items1 + items2 + 1);
-		return p * pWin(items1 + 1, items2) + (1 - p) * pWin(items1, items2 + 1);
+		double p = pItemWin(items1 + items2 + 1);
+		return p * pWin(items1 + 1, items2) + (1.0 - p) * pWin(items1, items2 + 1);
 	}
+
+	protected abstract double pItemWin(int item);
 
 	protected double pDeuce(double p1, double p2, int items1, int items2) {
 		double p12 = p1 * p2;
-		return p12 / (1.0 - p1 - p2 + 2 * p12);
+		return p12 / (1.0 - p1 - p2 + 2.0 * p12);
 	}
 }

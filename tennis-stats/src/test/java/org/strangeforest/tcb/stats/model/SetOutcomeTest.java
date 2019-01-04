@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.assertj.core.data.*;
 import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
@@ -9,9 +10,9 @@ class SetOutcomeTest {
 
 	@Test
 	void testEqualP() {
-		SetOutcome set = new SetOutcome(0.5, 0.5);
+		SetOutcome set = new SetOutcome(0.75, 0.25);
 
-		assertThat(set.pWin()).isEqualTo(0.5);
+		assertThat(set.pWin()).isCloseTo(0.5, Offset.offset(1E-10));
 	}
 
 	@Test

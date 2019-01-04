@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model.core;
 
+import static org.strangeforest.tcb.stats.model.core.GameRules.*;
 import static org.strangeforest.tcb.stats.model.core.TieBreakRules.*;
 
 public class SetRules {
@@ -11,16 +12,18 @@ public class SetRules {
 
 	private final int games;
 	private final int gamesDiff;
+	private final GameRules game;
 	private final Integer tieBreakAt;
 	private final TieBreakRules tieBreak;
 
 	public SetRules(Integer tieBreakAt, TieBreakRules tieBreak) {
-		this(6, 2, tieBreakAt, tieBreak);
+		this(6, 2, COMMON_GAME, tieBreakAt, tieBreak);
 	}
 
-	public SetRules(int games, int gamesDiff, Integer tieBreakAt, TieBreakRules tieBreak) {
+	public SetRules(int games, int gamesDiff, GameRules game, Integer tieBreakAt, TieBreakRules tieBreak) {
 		this.games = games;
 		this.gamesDiff = gamesDiff;
+		this.game = game;
 		this.tieBreakAt = tieBreakAt;
 		this.tieBreak = tieBreak;
 	}
@@ -31,6 +34,10 @@ public class SetRules {
 
 	public int getGamesDiff() {
 		return gamesDiff;
+	}
+
+	public GameRules getGame() {
+		return game;
 	}
 
 	public Integer getTieBreakAt() {
