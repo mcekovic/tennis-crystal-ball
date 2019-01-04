@@ -195,6 +195,9 @@ public class TournamentController extends PageController {
 				throw new NotFoundException("In-Progress Event", null);
 		}
 		InProgressEventForecast forecast = forecastService.getInProgressEventForecast(inProgressEventId);
+		List<InProgressEvent> events = forecastService.getInProgressEventsTable(InProgressEventsResource.defaultOrderBy(), priceFormat).getRows();
+		int eventCount = events.size();
+		int currentEventIndex = findEventIndex(events, inProgressEventId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("inProgressEventId", inProgressEventId);
@@ -205,9 +208,22 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("eloTypes", ForecastEloType.values());
 		modelMap.addAttribute("eloType", eloType);
 		modelMap.addAttribute("playerId", playerId);
+		if (currentEventIndex >= 0 && eventCount > 1) {
+			modelMap.addAttribute("prevEvent", events.get((currentEventIndex + 1) % eventCount));
+			modelMap.addAttribute("nextEvent", events.get((currentEventIndex - 1 + eventCount) % eventCount));
+		}
 		modelMap.addAttribute("priceFormat", priceFormat);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("inProgressEventForecast", modelMap);
+	}
+
+	private int findEventIndex(List<InProgressEvent> events, int inProgressEventId) {
+		for (int i = 0, count = events.size(); i < count; i++) {
+			InProgressEvent event = events.get(i);
+			if (event.getId() == inProgressEventId)
+				return i;
+		}
+		return -1;
 	}
 
 	@GetMapping("/inProgressEventResults")

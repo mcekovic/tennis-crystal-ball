@@ -8,6 +8,8 @@
 <!--/*@thymesVar id="eloTypes" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType[]"*/-->
 <!--/*@thymesVar id="eloType" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType"*/-->
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="prevEvent" type="org.strangeforest.tcb.stats.model.forecast.InProgressEvent"*/-->
+<!--/*@thymesVar id="nextEvent" type="org.strangeforest.tcb.stats.model.forecast.InProgressEvent"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 <!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::template})">
@@ -33,6 +35,8 @@
 				[/]
 			[/]
 			bindPopovers();
+			[# th:if="${prevEvent}"]$("#prevInProgressEvent").tooltip({html: true, animation: true, placement: "auto left", title: "<a href='#' class='label label-[(${prevEvent.level})]'>[(${prevEvent.name})]</a> " + formatSurface([[${prevEvent.surface}]], [[${prevEvent.indoor}]])});[/]
+			[# th:if="${nextEvent}"]$("#nextInProgressEvent").tooltip({html: true, animation: true, placement: "auto right", title: "<a href='#' class='label label-[(${nextEvent.level})]'>[(${nextEvent.name})]</a> " + formatSurface([[${nextEvent.surface}]], [[${nextEvent.indoor}]])});[/]
 			loadRankingTopN("ELO_RANK", 20);
 		});
 		function eloTypeChanged() {
@@ -104,7 +108,9 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3>
+		<a id="prevInProgressEvent" th:if="${prevEvent}" class="btn btn-info btn-xs" th:href="@{/inProgressEventForecast(inProgressEventId=${prevEvent.id})}"><i class="fa fa-chevron-left"></i></a>
 		[[${inProgressEvent.name}]] Forecast <a th:href="@{/inProgressEventForecast(name=${forecast.event.name})}" th:title="|Permalink to ${forecast.event.name} forecast|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
+		<a id="nextInProgressEvent" th:if="${nextEvent}" class="btn btn-info btn-xs" th:href="@{/inProgressEventForecast(inProgressEventId=${nextEvent.id})}"><i class="fa fa-chevron-right"></i></a>
 		<footer style="margin-top: -10px; margin-left: 50px"><i class="text-muted" style="font-size: x-small">Powered by <th:block th:include="fragments/promotion :: tcb"/></i></footer>
 	</h3>
 	<div class="row">

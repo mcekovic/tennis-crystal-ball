@@ -12,6 +12,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 
+import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
@@ -38,5 +39,9 @@ public class InProgressEventsResource {
 	) {
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		return forecastService.getInProgressEventsTable(orderBy, priceFormat);
+	}
+
+	static String defaultOrderBy() {
+		return BootgridUtil.getOrderBy(emptyMap(), ORDER_MAP, DEFAULT_ORDER);
 	}
 }
