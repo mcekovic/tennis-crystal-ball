@@ -19,8 +19,11 @@ public class MatchOutcome extends DiffOutcome {
 		this.rules = rules;
 	}
 
-	@Override protected double pItemWin(int item) {
-		return pSetWin.get();
+	@Override protected double pItemWin(int set) {
+		if (rules.isDecidingSet(set) && rules.hasDecidingSetSpecificRules())
+			return getSetOutcome(rules.getDecidingSet()).pWin();
+		else
+			return pSetWin.get();
 	}
 
 	private double pSetWin() {
@@ -28,14 +31,11 @@ public class MatchOutcome extends DiffOutcome {
 	}
 
 	@Override protected double pDeuce(double p1, double p2, int sets1, int sets2) {
-		if (rules.isDecidingSet(sets1, sets2))
-			return rules.hasDecidingSetSpecificRules() ? getSetOutcome(rules.getDecidingSet()).pWin() : pSetWin.get();
-		else
-			throw new IllegalStateException();
+		throw new IllegalStateException();
 	}
 
 	public double pWin(int sets1, int sets2, int games1, int games2, int points1, int points2) {
-		if (rules.isDecidingSet(sets1, sets2))
+		if (rules.isDecidingSet(sets1 + sets2))
 			return getSetOutcome(rules.getDecidingSet()).pWin(games1, games2, points1, points2);
 		else {
 			double pSetWin = getSetOutcome(rules.getSet()).pWin(games1, games2, points1, points2);

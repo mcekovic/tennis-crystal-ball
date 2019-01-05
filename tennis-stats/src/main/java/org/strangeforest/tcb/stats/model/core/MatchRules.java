@@ -36,12 +36,12 @@ public class MatchRules {
 		return decidingSet;
 	}
 
-	public boolean isDecidingSet(int sets1, int sets2) {
-		return sets1 == sets2 && sets1 == sets - 1;
+	public boolean isDecidingSet(int sets) {
+		return sets == (this.sets - 1) * 2;
 	}
 
 	public boolean hasDecidingSetSpecificRules() {
-		return Objects.equals(set, decidingSet);
+		return !Objects.equals(set, decidingSet);
 	}
 
 

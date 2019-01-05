@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.assertj.core.data.*;
 import org.junit.jupiter.api.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
@@ -8,11 +9,13 @@ import static org.strangeforest.tcb.stats.model.core.SetRules.*;
 
 class NoTBSetOutcomeTest {
 
+	private static final Offset<Double> OFFSET = Offset.offset(1E-10);
+
 	@Test
 	void testEqualP() {
-		SetOutcome set = new SetOutcome(0.5, 0.5, NO_TB_SET);
+		SetOutcome set = new SetOutcome(0.6, 0.4, NO_TB_SET);
 
-		assertThat(set.pWin()).isEqualTo(0.5);
+		assertThat(set.pWin()).isEqualTo(0.5, OFFSET);
 	}
 
 	@Test
@@ -33,10 +36,19 @@ class NoTBSetOutcomeTest {
 
 	@Test
 	void testDeuce() {
-		SetOutcome set = new SetOutcome(0.75, 0.25, NO_TB_SET);
+		SetOutcome set = new SetOutcome(0.75, 0.35, NO_TB_SET);
 
-		assertThat(set.pWin(6, 5)).isEqualTo(0.974609375);
-		assertThat(set.pWin(6, 6)).isEqualTo(0.5);
-		assertThat(set.pWin(5, 6)).isEqualTo(0.474609375);
+		assertThat(set.pWin(6, 5)).isEqualTo(0.9895040835, OFFSET);
+		assertThat(set.pWin(6, 6)).isEqualTo(0.7933111835, OFFSET);
+		assertThat(set.pWin(5, 6)).isEqualTo(0.7530258500, OFFSET);
+	}
+
+	@Test
+	void testTBpDiff() {
+		double pTB = new SetOutcome(0.75, 0.35, COMMON_SET).pWin();
+		double pNoTB = new SetOutcome(0.75, 0.35, NO_TB_SET).pWin();
+
+		assertThat(pTB).isEqualTo(0.7817143146, OFFSET);
+		assertThat(pNoTB).isEqualTo(0.8196805996, OFFSET);
 	}
 }

@@ -26,8 +26,8 @@ public class SetOutcome extends DiffOutcome {
 		this.rules = rules;
 	}
 
-	@Override protected double pItemWin(int item) {
-		return item % 2 == 0 ? pServeWin.get() : pReturnWin.get();
+	@Override protected double pItemWin(int game) {
+		return game % 2 == 0 ? pServeWin.get() : pReturnWin.get();
 	}
 
 	private double pServeWin() {
@@ -50,8 +50,7 @@ public class SetOutcome extends DiffOutcome {
 			return new TieBreakOutcome(pServe, pReturn, rules.getTieBreak()).pWin(points1, points2);
 		else {
 			int game = games1 + games2 + 1;
-			GameOutcome gameOutcome = getGameOutcome(game % 2 == 0 ? pServe : pReturn);
-			double pGameWin = gameOutcome.pWin(points1, points2);
+			double pGameWin = getGameOutcome(game % 2 == 0 ? pServe : pReturn).pWin(points1, points2);
 			return pGameWin * pWin(games1 + 1, games2) + (1.0 - pGameWin) * pWin(games1, games2 + 1);
 		}
 	}

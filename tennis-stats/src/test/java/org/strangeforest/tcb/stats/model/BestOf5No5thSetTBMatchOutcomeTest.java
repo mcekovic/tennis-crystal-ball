@@ -9,11 +9,13 @@ import static org.strangeforest.tcb.stats.model.core.MatchRules.*;
 
 class BestOf5No5thSetTBMatchOutcomeTest {
 
+	private static final Offset<Double> OFFSET = Offset.offset(1E-10);
+
 	@Test
 	void testEqualP() {
 		MatchOutcome match = new MatchOutcome(0.7, 0.3, BEST_OF_5_NO_5TH_SET_TB_MATCH);
 
-		assertThat(match.pWin()).isCloseTo(0.5, Offset.offset(1E-10));
+		assertThat(match.pWin()).isEqualTo(0.5, OFFSET);
 	}
 
 	@Test
@@ -26,5 +28,14 @@ class BestOf5No5thSetTBMatchOutcomeTest {
 		assertThat(match.pWin(0, 3)).isEqualTo(0.0);
 		assertThat(match.pWin(1, 3)).isEqualTo(0.0);
 		assertThat(match.pWin(2, 3)).isEqualTo(0.0);
+	}
+
+	@Test
+	void testTBpDiff() {
+		MatchOutcome bestOf5 = new MatchOutcome(0.7, 0.35, BEST_OF_5_MATCH);
+		MatchOutcome bestOf5NoTB = new MatchOutcome(0.7, 0.35, BEST_OF_5_NO_5TH_SET_TB_MATCH);
+
+		assertThat(bestOf5.pWin()).isEqualTo(0.7734624402, OFFSET);
+		assertThat(bestOf5NoTB.pWin()).isEqualTo(0.7792698753, OFFSET);
 	}
 }
