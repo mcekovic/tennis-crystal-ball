@@ -28,15 +28,15 @@ public class MatchOutcome extends DiffOutcome {
 	}
 
 	@Override protected double pDeuce(double p1, double p2, int sets1, int sets2) {
-		if (rules.isFinalSet(sets1, sets2))
-			return getSetOutcome(rules.getFinalSet()).pWin();
+		if (rules.isDecidingSet(sets1, sets2))
+			return rules.hasDecidingSetSpecificRules() ? getSetOutcome(rules.getDecidingSet()).pWin() : pSetWin.get();
 		else
 			throw new IllegalStateException();
 	}
 
 	public double pWin(int sets1, int sets2, int games1, int games2, int points1, int points2) {
-		if (rules.isFinalSet(sets1, sets2))
-			return getSetOutcome(rules.getFinalSet()).pWin(games1, games2, points1, points2);
+		if (rules.isDecidingSet(sets1, sets2))
+			return getSetOutcome(rules.getDecidingSet()).pWin(games1, games2, points1, points2);
 		else {
 			double pSetWin = getSetOutcome(rules.getSet()).pWin(games1, games2, points1, points2);
 			return pSetWin * pWin(sets1 + 1, sets2) + (1.0 - pSetWin) * pWin(sets1, sets2 + 1);

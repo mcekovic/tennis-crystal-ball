@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.core;
 
+import java.util.*;
+
 public abstract class BaseGameRules {
 
 	private final int points;
@@ -16,5 +18,19 @@ public abstract class BaseGameRules {
 
 	public int getPointsDiff() {
 		return pointsDiff;
+	}
+
+
+	// Object Methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof BaseGameRules)) return false;
+		BaseGameRules rules = (BaseGameRules) o;
+		return points == rules.points && pointsDiff == rules.pointsDiff;
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(points, pointsDiff);
 	}
 }

@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.core;
 
+import java.util.*;
+
 import static org.strangeforest.tcb.stats.model.core.SetRules.*;
 
 public class MatchRules {
@@ -10,16 +12,16 @@ public class MatchRules {
 
 	private final int sets;
 	private final SetRules set;
-	private final SetRules finalSet;
+	private final SetRules decidingSet;
 
 	public MatchRules(int sets, SetRules set) {
 		this(sets, set, set);
 	}
 
-	public MatchRules(int sets, SetRules set, SetRules finalSet) {
+	public MatchRules(int sets, SetRules set, SetRules decidingSet) {
 		this.sets = sets;
 		this.set = set;
-		this.finalSet = finalSet;
+		this.decidingSet = decidingSet;
 	}
 
 	public int getSets() {
@@ -30,11 +32,29 @@ public class MatchRules {
 		return set;
 	}
 
-	public SetRules getFinalSet() {
-		return finalSet;
+	public SetRules getDecidingSet() {
+		return decidingSet;
 	}
 
-	public boolean isFinalSet(int sets1, int sets2) {
+	public boolean isDecidingSet(int sets1, int sets2) {
 		return sets1 == sets2 && sets1 == sets - 1;
+	}
+
+	public boolean hasDecidingSetSpecificRules() {
+		return Objects.equals(set, decidingSet);
+	}
+
+
+	// Object Methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof MatchRules)) return false;
+		MatchRules rules = (MatchRules) o;
+		return sets == rules.sets && Objects.equals(set, rules.set) && Objects.equals(decidingSet, rules.decidingSet);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(sets, set, decidingSet);
 	}
 }

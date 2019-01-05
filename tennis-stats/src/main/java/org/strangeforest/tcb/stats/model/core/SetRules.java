@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.core;
 
+import java.util.*;
+
 import static org.strangeforest.tcb.stats.model.core.GameRules.*;
 import static org.strangeforest.tcb.stats.model.core.TieBreakRules.*;
 
@@ -50,5 +52,20 @@ public class SetRules {
 
 	public boolean isTieBreak(int games1, int games2) {
 		return tieBreakAt != null && games1 == games2 && games1 == tieBreakAt;
+	}
+
+
+	// Object Methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof SetRules)) return false;
+		SetRules rules = (SetRules) o;
+		return games == rules.games && gamesDiff == rules.gamesDiff &&	Objects.equals(game, rules.game) &&
+				Objects.equals(tieBreakAt, rules.tieBreakAt) && Objects.equals(tieBreak, rules.tieBreak);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(games, gamesDiff, game, tieBreakAt, tieBreak);
 	}
 }
