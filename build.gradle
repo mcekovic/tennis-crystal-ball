@@ -39,6 +39,11 @@ subprojects {
 			user = 'root'
 			identity = file("${home}/.ssh/id_rsa")
 		}
+		utsTest {
+			host = '192.168.0.200'
+			user = 'root'
+			password = 'Chicker5'
+		}
 	}
 
 	dependencies {

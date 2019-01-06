@@ -1,9 +1,10 @@
-DELETE FROM player_alias;
+DELETE FROM player_alias WHERE TRUE;
 INSERT INTO player_alias
 (alias, name)
 VALUES
    ('Alejandro Gomez', 'Alejandro Gomez Gb42'),
    ('Alexandar Lazov', 'Alexander Lazov'),
+   ('Alafia Ayeni', 'Olukayode Alafia Damina Ayeni'),
    ('Andre Thielemans', 'Andre Tielemans'),
    ('Andres Artunedo Martinavarro', 'Andres Artunedo Martinavarr'),
    ('Antoine Hoang', 'Antonie Hoang'),
@@ -52,6 +53,7 @@ VALUES
    ('Juan Gisbert Sr', 'Juan Gisbert'),
    ('Junjo Kawamuri', 'Junzo Kawamori'),
    ('Jurabek Karimov', 'Djurabek Karimov'),
+   ('Khumoyun Sultanov', 'Khumoun Sultanov'),
    ('Lloyd Harris', 'Lloyd George Muirhead Harris'),
    ('Marcelo Lara', 'Marcello Lara'),
    ('Matthias A Muller', 'Matthias Muller'),
