@@ -2504,6 +2504,16 @@ LEFT JOIN player_weeks_at_no1 USING (player_id)
 LEFT JOIN player_titles USING (player_id);
 
 
+-- match_price_v
+
+CREATE OR REPLACE VIEW match_price_v AS
+SELECT m.*, (winner_price + loser_price) / (winner_price * loser_price) - 1.0 AS margin,
+	loser_price / (winner_price + loser_price) AS winner_probability,
+	winner_price / (winner_price + loser_price) AS loser_probability,
+	winner_price < loser_price AS predicted
+FROM match_price m;
+
+
 -- visitor_summary_v
 
 CREATE OR REPLACE VIEW visitor_summary_v AS

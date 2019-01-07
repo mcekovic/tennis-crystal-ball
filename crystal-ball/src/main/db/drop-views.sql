@@ -1,5 +1,6 @@
 DROP VIEW visitor_summary_all_v;
 DROP VIEW visitor_summary_v;
+DROP VIEW match_price_v;
 
 DROP VIEW player_v;
 
