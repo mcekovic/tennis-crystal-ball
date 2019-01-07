@@ -110,9 +110,9 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 			}
 		}
 
-		loadStats(matches, 'w_', 'l_')
+		loadStats(matches, 'w_', 'l_', 'winner_name', 'loser_name')
 		if (forceReloadStats)
-			reloadStats(matches, season, extId, 'w_', 'l_')
+			reloadStats(matches, season, extId, 'w_', 'l_', 'winner_name', 'loser_name')
 
 		withTx sql, { Sql s ->
 			s.withBatch(LOAD_SQL) { ps ->

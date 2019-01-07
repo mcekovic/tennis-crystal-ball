@@ -287,7 +287,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			prevMatchNumOffset = matchNumOffset
 		}
 
-		loadStats(matches.values(), 'p1_', 'p2_')
+		loadStats(matches.values(), 'p1_', 'p2_', 'player1_name', 'player2_name')
 
 		def matchCount = 0
 		if (matches) {

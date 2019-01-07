@@ -97,6 +97,7 @@ PERFORM create_player('Colin', 'Rees', NULL, 'RSA');
 PERFORM create_player('Dennis', 'Foley', NULL, 'IRL');
 PERFORM create_player('Don', 'Bitler', NULL, 'USA');
 PERFORM create_player('Douglas', 'Irvine', NULL, 'ZIM');
+PERFORM create_player('Francesco', 'Forti', DATE '1999-07-26', 'ITA');
 PERFORM create_player('Giuseppe', 'Belli', DATE '1951-01-08', 'ITA');
 PERFORM create_player('Harry', 'Barniville', NULL, 'IRL');
 PERFORM create_player('Ivan', 'Mikysa', NULL, 'USA');

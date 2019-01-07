@@ -263,21 +263,16 @@ abstract class BaseATPWorldTourTournamentLoader {
 
 	// Statistics
 
-	static loadStats(matches, String prefix1, String prefix2) {
+	static loadStats(matches, String prefix1, String prefix2, String nameProperty1, String nameProperty2) {
 		def progress = new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker())
 		def pool = new ForkJoinPool(FETCH_THREAD_COUNT)
 		try {
 			pool.submit {
-				matches.parallelStream().forEach { params ->
-					def statsUrl = params.statsUrl
+				matches.parallelStream().forEach { match ->
+					def statsUrl = match.statsUrl
 					if (statsUrl) {
 						def statsDoc = retriedGetDoc(statsUrl)
-						params.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
-						def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
-						if (matchStats) {
-							setATPStatsParams(params, matchStats, prefix1, prefix2)
-							progress.tick()
-						}
+						setMatchStatsParams(match, statsDoc, prefix1, prefix2, nameProperty1, nameProperty2, progress)
 					}
 				}
 			}.get()
@@ -290,8 +285,8 @@ abstract class BaseATPWorldTourTournamentLoader {
 			println()
 	}
 
-	static reloadStats(matches, int season, extId, String prefix1, String prefix2) {
-		def progress = new ProgressTicker('.', 1).withDownstreamTicker(ProgressTicker.newLineTicker())
+	static reloadStats(matches, int season, extId, String prefix1, String prefix2, String nameProperty1, String nameProperty2) {
+		def progress = new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker())
 		def pool = new ForkJoinPool(FETCH_THREAD_COUNT)
 		def matchNums = 1..matches.size()
 		try {
@@ -299,15 +294,9 @@ abstract class BaseATPWorldTourTournamentLoader {
 				matchNums.parallelStream().forEach { matchNum ->
 					def statsUrl = matchStatsUrl(season, extId, String.format('%03d', matchNum))
 					def statsDoc = retriedGetDoc(statsUrl)
-					def match = findMatch(matches, statsDoc.select('div.modal-scores-header h3.section-title').text())
-					if (match) {
-						match.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
-						def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
-						if (matchStats) {
-							setATPStatsParams(match, matchStats, prefix1, prefix2)
-							progress.tick()
-						}
-					}
+					def match = findMatch(matches, statsDoc.select('div.modal-scores-header h3.section-title').text(), nameProperty1, nameProperty2)
+					if (match)
+						setMatchStatsParams(match, statsDoc, prefix1, prefix2, nameProperty1, nameProperty2, progress)
 				}
 			}
 		}
@@ -325,6 +314,24 @@ abstract class BaseATPWorldTourTournamentLoader {
 
 	static matchStatsUrl(int season, extId, String matchNum) {
 		"http://www.atpworldtour.com/en/scores/$season/$extId/MS$matchNum/match-stats"
+	}
+
+	static setMatchStatsParams(Map match, statsDoc, String prefix1, String prefix2, String nameProperty1, String nameProperty2, ProgressTicker progress) {
+		match.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
+		def leftName = statsExtractName(statsDoc.select('#modalScoresContentContainer div.match-stats-player-left'))
+		def rightName = statsExtractName(statsDoc.select('#modalScoresContentContainer div.match-stats-player-right'))
+		if (leftName.toLowerCase() == match[nameProperty2].toLowerCase() && rightName.toLowerCase() == match[nameProperty1].toLowerCase()) {
+			def temp = prefix1; prefix1 = prefix2; prefix2 = temp
+		}
+		def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
+		if (matchStats) {
+			setATPStatsParams(match, matchStats, prefix1, prefix2)
+			progress.tick()
+		}
+	}
+
+	static statsExtractName(playerElem) {
+		player(playerElem.select('span.first-name').text()) + ' ' + player(playerElem.select('span.last-name').text())
 	}
 
 	static setATPStatsParams(Map params, stats, String prefix1, String prefix2) {
@@ -365,10 +372,10 @@ abstract class BaseATPWorldTourTournamentLoader {
 		extract(s, '/', ')')
 	}
 
-	static findMatch(matches, String title) {
+	static Map findMatch(matches, String title, String nameProperty1, String nameProperty2) {
 		title = title.toLowerCase()
 		matches.find { match ->
-			title.contains(match.winner_name.toLowerCase()) && title.contains(match.loser_name.toLowerCase())
+			title.contains(match[nameProperty1].toLowerCase()) && title.contains(match[nameProperty2].toLowerCase())
 		}
 	}
 }
