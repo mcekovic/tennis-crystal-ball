@@ -1,7 +1,15 @@
+import org.apache.tools.ant.filters.*
+
 buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2"
+		}
+	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 		classpath "io.spring.gradle:dependency-management-plugin:$springDependencyManagementVersion"
+		classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitPropertiesVersion"
 	}
 }
 
@@ -9,6 +17,7 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'application'
+apply plugin: "com.gorylenko.gradle-git-properties"
 
 mainClassName = 'org.strangeforest.tcb.stats.TennisStatsApplication'
 applicationDefaultJvmArgs = [
@@ -38,8 +47,8 @@ configurations {
 
 processResources {
 	filesMatching('application.properties') {
-		filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-			'info.app.version': (project.property('version') + '-' + git.head().abbreviatedId).toString()
+		filter ReplaceTokens, tokens: [
+			'info.app.version': project.version.toString()
 		]
 	}
 }

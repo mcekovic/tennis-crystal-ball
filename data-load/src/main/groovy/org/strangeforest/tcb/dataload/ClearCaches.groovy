@@ -1,11 +1,11 @@
 package org.strangeforest.tcb.dataload
 
-import org.jsoup.*
+import javax.management.remote.*
 
 clearCaches()
 
 static clearCaches() {
-	def doc = Jsoup.connect('http://localhost/actuator/clearcache').timeout(10 * 1000).post()
-	println doc.select('body').text()
+	def server = JMXConnectorFactory.connect(new JMXServiceURL('service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi')).MBeanServerConnection
+	println  new GroovyMBean(server, 'org.springframework.boot:type=Endpoint,name=Cache').clearCache('')
 }
 

@@ -29,6 +29,7 @@ dependencies {
 	compile ("org.codehaus.groovy:groovy-xml:$groovyVersion")
 	compile ("org.codehaus.groovy:groovy-json:$groovyVersion")
 	compile ("org.codehaus.groovy:groovy-cli-commons:$groovyVersion")
+	compile ("org.codehaus.groovy:groovy-jmx:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
 	compile ("org.jsoup:jsoup:$jsoupVersion")
 	compile ("org.springframework:spring-jdbc:$springVersion")
