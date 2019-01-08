@@ -8,7 +8,7 @@ import org.springframework.stereotype.*;
 @Profile("!dev")
 public class GCEndpoint {
 
-	@ReadOperation
+	@WriteOperation
 	public String gc() {
 		System.gc();
 		return "Garbage collection initiated";

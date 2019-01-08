@@ -16,7 +16,7 @@ public class ClearCacheEndpoint {
 
 	@Autowired private DataService dataService;
 
-	@GetMapping(path = "/", produces = MediaType.TEXT_PLAIN_VALUE) @ResponseBody
+	@PostMapping(path = "/", produces = MediaType.TEXT_PLAIN_VALUE) @ResponseBody
 	public String clearCache(
 		@RequestParam(name = "name", defaultValue = ".*") String name
 	) {
