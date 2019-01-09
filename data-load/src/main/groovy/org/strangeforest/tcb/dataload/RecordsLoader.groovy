@@ -27,7 +27,7 @@ class RecordsLoader {
 		doPause()
 		doLoadRecords(Records.getInfamousRecordCategories(), 'infamous')
 		doPause()
-		atpTennisLoader.refreshMaterializedViews(sql, 'player_goat_points')
+		atpTennisLoader.refreshMaterializedViews(sql, 'player_goat_points', 'player_surface_goat_points')
 		doPause()
 		reloadRecordsGOATPointsRecords()
 		recordsService.clearActivePlayersRecords()
