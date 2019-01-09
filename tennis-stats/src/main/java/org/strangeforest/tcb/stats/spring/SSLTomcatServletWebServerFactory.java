@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.spring;
 
 import java.io.*;
-
 import javax.annotation.*;
 
 import org.apache.catalina.*;
@@ -16,15 +15,18 @@ import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.util.*;
 
+import static com.google.common.base.Strings.*;
+
 @Component
 @Profile("ssl")
 public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFactory {
 
-	@Value("${server.port:8443}") private int port;
 	@Value("${server.http-port:8080}") private int httpPort;
 	@Value("${server.ssl.native:false}") private boolean nativeSsl;
-	@Value("${server.ssl.certificate-key}") private String sslCertificateKey;
-	@Value("${server.ssl.certificate}") private String sslCertificate;
+	@Value("${server.ssl.certificate-key:}") private String sslCertificateKey;
+	@Value("${server.ssl.certificate:}") private String sslCertificate;
+	@Value("${server.ssl.certificate-chain:}") private String sslCertificateChain;
+	@Value("${server.ssl.ca-certificate:}") private String sslCACertificate;
 
 	@PostConstruct
 	public void init() {
@@ -32,7 +34,7 @@ public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFact
 			setProtocol(Http11AprProtocol.class.getName());
 			addConnectorCustomizers(this::naiveHTTPSConnectorCustomizer);
 		}
-		addStandardConnector();
+		addRedirectConnector();
 	}
 
 	@Override public Ssl getSsl() {
@@ -52,25 +54,32 @@ public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFact
 		connector.setScheme("https");
 		connector.setSecure(true);
 		ProtocolHandler protocol = connector.getProtocolHandler();
-		if (protocol instanceof Http11AprProtocol) {
-			Http11AprProtocol aprProtocol = (Http11AprProtocol)protocol;
-			aprProtocol.setSSLEnabled(true);
+		if (protocol instanceof AbstractHttp11Protocol) {
+			AbstractHttp11Protocol httpProtocol = (AbstractHttp11Protocol)protocol;
+			httpProtocol.setSSLEnabled(true);
 			try {
-				aprProtocol.setSSLCertificateKeyFile(ResourceUtils.getFile(sslCertificateKey).toString());
-				aprProtocol.setSSLCertificateFile(ResourceUtils.getFile(sslCertificate).toString());
+				if (!isNullOrEmpty(sslCertificateKey))
+					httpProtocol.setSSLCertificateKeyFile(ResourceUtils.getFile(sslCertificateKey).toString());
+				if (!isNullOrEmpty(sslCertificate))
+					httpProtocol.setSSLCertificateFile(ResourceUtils.getFile(sslCertificate).toString());
+				if (!isNullOrEmpty(sslCertificateChain))
+					httpProtocol.setSSLCertificateChainFile(ResourceUtils.getFile(sslCertificateChain).toString());
+				if (!isNullOrEmpty(sslCACertificate))
+					httpProtocol.setSSLCACertificateFile(ResourceUtils.getFile(sslCACertificate).toString());
 			}
 			catch (FileNotFoundException ex) {
 				throw new WebServerException("Could not load SSL certificate files: " + ex.getMessage(), ex);
 			}
+			httpProtocol.setSSLDisableCompression(false);
 		}
 	}
 
-	private void addStandardConnector() {
+	private void addRedirectConnector() {
 		Connector connector = new Connector();
 		connector.setScheme("http");
 		connector.setPort(httpPort);
 		connector.setSecure(false);
-		connector.setRedirectPort(port);
+		connector.setRedirectPort(getPort() > 0 ? getPort() : 0);
 		addAdditionalTomcatConnectors(connector);
 	}
 }
