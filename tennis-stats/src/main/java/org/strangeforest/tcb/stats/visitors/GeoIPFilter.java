@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.web;
+package org.strangeforest.tcb.stats.visitors;
 
 import java.io.*;
 import javax.servlet.*;

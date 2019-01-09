@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.web;
+package org.strangeforest.tcb.stats.visitors;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.info.*;
@@ -6,8 +6,8 @@ import org.springframework.stereotype.*;
 
 import com.google.common.collect.*;
 
-import static org.strangeforest.tcb.stats.web.VisitorInterval.*;
-import static org.strangeforest.tcb.stats.web.VisitorStat.*;
+import static org.strangeforest.tcb.stats.visitors.VisitorInterval.*;
+import static org.strangeforest.tcb.stats.visitors.VisitorStat.*;
 
 @Component @VisitorSupport
 public class VisitorsInfoContributor implements InfoContributor {
