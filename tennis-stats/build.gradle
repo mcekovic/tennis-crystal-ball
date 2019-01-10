@@ -75,6 +75,7 @@ dependencies {
 	compile ('org.springframework.boot:spring-boot-starter-actuator') {
 		exclude group: 'org.apache.logging.log4j'
 	}
+	compileOnly ('org.springframework.boot:spring-boot-configuration-processor')
 	annotationProcessor ("org.springframework:spring-context-indexer:$springVersion")
 	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 	compile ("com.zaxxer:HikariCP:$hikariCPVersion")
