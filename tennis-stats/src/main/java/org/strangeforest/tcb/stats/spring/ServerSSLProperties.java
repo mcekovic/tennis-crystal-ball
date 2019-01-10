@@ -14,8 +14,8 @@ public class ServerSSLProperties {
 
 	private int redirectFromPort = DEFAULT_REDIRECT_FROM_PORT;
 	private boolean nativeEnabled = false;
-	private String certificateKey;
 	private String certificate;
+	private String certificateKey;
 	private String certificateChain;
 	private String caCertificate;
 
@@ -41,16 +41,16 @@ public class ServerSSLProperties {
 		return certificateKey;
 	}
 
-	public void setCertificateKey(String certificateKey) {
-		this.certificateKey = certificateKey;
-	}
-
 	public String getCertificate() {
 		return certificate;
 	}
 
 	public void setCertificate(String certificate) {
 		this.certificate = certificate;
+	}
+
+	public void setCertificateKey(String certificateKey) {
+		this.certificateKey = certificateKey;
 	}
 
 	public String getCertificateChain() {
@@ -71,10 +71,10 @@ public class ServerSSLProperties {
 
 	public void customizeProtocol(AbstractHttp11Protocol protocol) {
 		try {
-			if (!isNullOrEmpty(certificateKey))
-				protocol.setSSLCertificateKeyFile(ResourceUtils.getFile(certificateKey).toString());
 			if (!isNullOrEmpty(certificate))
 				protocol.setSSLCertificateFile(ResourceUtils.getFile(certificate).toString());
+			if (!isNullOrEmpty(certificateKey))
+				protocol.setSSLCertificateKeyFile(ResourceUtils.getFile(certificateKey).toString());
 			if (!isNullOrEmpty(certificateChain))
 				protocol.setSSLCertificateChainFile(ResourceUtils.getFile(certificateChain).toString());
 			if (!isNullOrEmpty(caCertificate))
