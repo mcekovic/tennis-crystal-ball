@@ -57,7 +57,7 @@ public class EloRatingsManager {
 		.put("s", 5).put("g", 2).put("sg", 3).put("rg", 3)
 	.build();
 	private static final int DEFAULT_MIN_MATCHES_PERIOD = 365;
-	private static final Map<String, Integer> MIN_MATCHES_PERIOD = ImmutableMap.<String, Integer>builder().put("R", 90).build();
+	private static final Map<String, Integer> MIN_MATCHES_PERIOD = ImmutableMap.<String, Integer>builder().put("R", 122).build();
 	private static final int MIN_MATCHES_IN_PERIOD = 3;
 
 	// Player counts
