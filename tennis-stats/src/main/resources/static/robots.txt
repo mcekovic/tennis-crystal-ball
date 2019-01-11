@@ -1,4 +1,5 @@
 User-Agent: *
 Disallow: /inProgressEventForecast
 Disallow: /inProgressEventProbableMatches
+Disallow: /inProgressEventPlayerPath
 Disallow: /inProgressEventFavorites
