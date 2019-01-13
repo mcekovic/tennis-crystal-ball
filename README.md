@@ -42,7 +42,7 @@ Ultimate Tennis Statistics and Big Data Analysis with nice web GUI.
 PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groovy...
 
 ### Web Site
-http://www.ultimatetennisstatistics.com
+https://www.ultimatetennisstatistics.com
 
 ### Data Loaders
 - For Jeff Sackmann ATP CSV repository: https://github.com/JeffSackmann/tennis_atp
