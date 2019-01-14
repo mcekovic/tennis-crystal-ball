@@ -1,10 +1,10 @@
-# Tennis Crystal Ball
+# Ultimate Tennis Statistics
 
 [![Build Status](https://travis-ci.org/mcekovic/tennis-crystal-ball.svg?branch=master)](https://travis-ci.org/mcekovic/tennis-crystal-ball)
 [![Web Site](https://img.shields.io/website/https/www.ultimatetennisstatistics.com.svg)](https://www.ultimatetennisstatistics.com)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
 
-Ultimate Tennis Statistics and Big Data Analysis with nice web GUI.
+Ultimate Tennis Statistics and Tennis Crystal Ball Big Data Analysis with nice web GUI.
 
 ## Features
 
