@@ -1,4 +1,4 @@
-<th:block  xmlns:th="http://www.thymeleaf.org">
+<th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="int[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
@@ -11,11 +11,8 @@
 </script>
 <script type="text/javascript">
 	var statsChartData, statsPointCount, isPct;
-	function loadGoogleChartsForStats() {
-		google.load("visualization", "1.0", {packages:["corechart"], "language": "en", callback: function() {
-			drawStatsChart();
-		}});
-	}
+	google.charts.load("current", {packages: ["corechart"]});
+	google.charts.setOnLoadCallback(drawStatsChart);
 	function drawStatsChart() {
 		var category = $("#statsCategory").val();
 		var dataUrl = "[[@{/playerStatisticsTable(playerId=${playerId})}]]".replace("&amp;", "&") + "&category=" + category + "&surface=" + $("#statsChartSurface").val();
@@ -50,7 +47,6 @@
 		$("#statsByAgeDiv").css("display", $("#statsFromSeason").val() == "" && $("#statsToSeason").val() == "" ? "block" : "none");
 	}
 </script>
-<script async defer type="text/javascript" src="https://www.google.com/jsapi?callback=loadGoogleChartsForStats"></script>
 <style scoped="scoped">
 	.checkbox {
 		margin-top: 7px;

@@ -2,21 +2,14 @@ package org.strangeforest.tcb.dataload
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.*
-import java.util.concurrent.atomic.*
-
-import org.jsoup.select.*
 
 import com.google.common.base.*
 import groovy.json.JsonSlurper
 import groovy.sql.*
 
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
-import static org.strangeforest.tcb.dataload.LoaderUtil.*
-import static org.strangeforest.tcb.dataload.SqlPool.*
-import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 
-class DavisCupTieLoader extends BaseATPWorldTourTournamentLoader {
+class DavisCupTieLoader extends BaseATPTourTournamentLoader {
 
 	static final int FETCH_THREAD_COUNT = 5
 
@@ -208,7 +201,7 @@ class DavisCupTieLoader extends BaseATPWorldTourTournamentLoader {
 	}
 
 	static matchStatsUrl(String url) {
-		url ? "http://www.atpworldtour.com" + url : null
+		url ? "http://www.atptour.com" + url : null
 	}
 
 	static isUnknownOrQualifier(String name) {

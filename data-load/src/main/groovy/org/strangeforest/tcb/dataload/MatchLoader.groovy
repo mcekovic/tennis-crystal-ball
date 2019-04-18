@@ -32,7 +32,7 @@ class MatchLoader extends BaseCSVLoader {
 		def level = string record.tourney_level
 		def name = string(record.tourney_name).trim()
 		def season = smallint tourneyId.substring(0, 4)
-		if (season == ((short)1971) && name == 'Toronto WCT')
+		if (isInvalid(season, name))
 			return null
 		params.season = season
 		def date = date record.tourney_date
@@ -44,7 +44,7 @@ class MatchLoader extends BaseCSVLoader {
 		if (mappedLevel == 'C' || mappedLevel == 'U')
 			return null
 		def dcInfo = level == 'D' ? extractDCTournamentInfo(record, season) : null
-		params.ext_tournament_id = mapExtTournamentId(extTourneyId, mappedLevel, dcInfo)
+		params.ext_tournament_id = mapExtTournamentId(season, extTourneyId, mappedLevel, dcInfo)
 		def eventName = mapEventName(name, mappedLevel, season, dcInfo)
 		params.tournament_name = mappedLevel != 'O' ? eventName : 'Olympics'
 		params.event_name = eventName
@@ -140,7 +140,12 @@ class MatchLoader extends BaseCSVLoader {
 		return params
 	}
 
-	static mapExtTournamentId(String extTourneyId, String level, DavisCupTournamentInfo dcInfo) {
+	static isInvalid(int season, String name) {
+		(season == 1971 && name == 'Toronto WCT')	||
+		(season == 1982 && name == 'Itaparica')
+	}
+
+	static mapExtTournamentId(int season, String extTourneyId, String level, DavisCupTournamentInfo dcInfo) {
 		switch (level) {
 			case 'D': return dcInfo.extId
 			case 'O': return level
@@ -159,6 +164,7 @@ class MatchLoader extends BaseCSVLoader {
 				case 'M024': return '422'
 				case 'M035': return '418'
 				case 'M052': return '6932'
+				case '306': return season == 2009 ? '319' : extTourneyId
 				default:	return extTourneyId
 			}
 		}
@@ -305,24 +311,28 @@ class MatchLoader extends BaseCSVLoader {
 		switch (surface) {
 			case 'Carpet': return true
 			case 'Hard': return (season >= 2017 && (
-				name.startsWith('Montpellier') ||
-				name.startsWith('Sofia') ||
-				name.startsWith('Memphis') ||
-				name.startsWith('Rotterdam') ||
-				name.startsWith('Marseille') ||
-				name.startsWith('Metz') ||
-				name.startsWith('St. Petersburg') ||
-				name.startsWith('Antwerp') ||
-				name.startsWith('Moscow') ||
-				name.startsWith('Stockholm') ||
-				name.startsWith('Basel') ||
-				name.startsWith('Vienna') ||
-				name.startsWith('Paris Masters') ||
-				name.startsWith('Tour Finals') ||
-				name.startsWith('Milan'))
-				||
-				(season >= 2018 && name.startsWith('Tokyo'))
-			)
+					name.startsWith('Montpellier') ||
+					name.startsWith('Sofia') ||
+					name.startsWith('Memphis') ||
+					name.startsWith('Rotterdam') ||
+					name.startsWith('Marseille') ||
+					name.startsWith('Metz') ||
+					name.startsWith('St. Petersburg') ||
+					name.startsWith('Antwerp') ||
+					name.startsWith('Moscow') ||
+					name.startsWith('Stockholm') ||
+					name.startsWith('Basel') ||
+					name.startsWith('Vienna') ||
+					name.startsWith('Paris Masters') ||
+					name.startsWith('Next Gen Finals') ||
+					name.startsWith('Tour Finals')
+				)) ||
+				(season >= 2018 && (
+					name.startsWith('Tokyo')
+				))
+			case 'C': return (season >= 2018 && (
+					name.startsWith('Sao Paulo')
+				))
 			default: return false
 		}
 	}

@@ -27,20 +27,34 @@ public class MatchOutcome extends DiffOutcome {
 	}
 
 	private double pSetWin() {
-		return getSetOutcome(rules.getSet()).pWin();
+		return getSetOutcome().pWin();
+	}
+
+	public double getPSetWin() {
+		return pSetWin.get();
+	}
+
+	public SetOutcome getSetOutcome() {
+		return getSetOutcome(rules.getSet());
 	}
 
 	@Override protected double pDeuce(double p1, double p2, int sets1, int sets2) {
 		throw new IllegalStateException();
 	}
 
-	public double pWin(int sets1, int sets2, int games1, int games2, int points1, int points2) {
-		if (rules.isDecidingSet(sets1 + sets2))
-			return getSetOutcome(rules.getDecidingSet()).pWin(games1, games2, points1, points2);
-		else {
-			double pSetWin = getSetOutcome(rules.getSet()).pWin(games1, games2, points1, points2);
-			return pSetWin * pWin(sets1 + 1, sets2) + (1.0 - pSetWin) * pWin(sets1, sets2 + 1);
-		}
+	public MatchProbabilities pWin(int sets1, int sets2, int games1, int games2, int points1, int points2, boolean serve) {
+		int set = sets1 + sets2 + 1;
+		int sets = rules.getSets();
+		if (sets1 >= sets)
+			return MatchProbabilities.WON;
+		if (sets2 >= sets)
+			return MatchProbabilities.LOST;
+		SetProbabilities setProbs = getSetOutcome(rules.getSet(set)).pWin(games1, games2, points1, points2, serve);
+		double pSetWin = setProbs.getPSet();
+		if (rules.isDecidingSet(set))
+			return new MatchProbabilities(setProbs, pSetWin);
+		else
+			return new MatchProbabilities(setProbs, pSetWin * pWin(sets1 + 1, sets2) + (1.0 - pSetWin) * pWin(sets1, sets2 + 1));
 	}
 
 	private SetOutcome getSetOutcome(SetRules set) {

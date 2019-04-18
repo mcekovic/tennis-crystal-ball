@@ -16,11 +16,10 @@
 	<template>
 	<meta name="description" content="Compare tennis players via statistics figures charts with various filters"/>
 	<script th:src="@{/js/tennis-chart.js}"></script>
-	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript" th:inline="javascript">
-		google.load("visualization", "1.0", {packages:["corechart"], "language": "en"[# th:if="${players}"], callback: function() {
-			drawChart();
-		}[/]});
+		google.charts.load("current", {packages: ["corechart"]});
+		[# th:if="${players}"]google.charts.setOnLoadCallback(drawChart);[/]
 		var urlParams, chartData, pointCount, isPct, legendPosition;
 		var categoryTypes = [[${categoryTypes}]];
 		function drawChart() {
@@ -92,6 +91,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3><i class="fa fa-bar-chart"></i> Statistics Chart <a href="javascript:chartPermalink()" title="Permalink to this chart"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
 	<div class="row">
 		<div class="col-md-11">

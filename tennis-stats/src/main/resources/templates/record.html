@@ -61,6 +61,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3 th:text="${record.name}">Record</h3>
 	<ol id="recordTable-title" class="grid-title breadcrumb-title">
 		<li><a href="/records">Records</a></li>

@@ -20,7 +20,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
@@ -364,9 +364,9 @@
 				<optgroup label="Misc">
 					<option value="*SS" th:selected="${score == '*SS'}">Straight Sets</option>
 					<option value="*DS" th:selected="${score == '*DS'}">Deciding Set</option>
-					<option value="*TB" th:selected="${score == '*TB'}">Tie Break</option>
-					<option value="*TBW" th:selected="${score == '*TBW'}">Tie Break Won</option>
-					<option value="*TBL" th:selected="${score == '*TBL'}">Tie Break Lost</option>
+					<option value="*TB" th:selected="${score == '*TB'}">Tie-Break</option>
+					<option value="*TBW" th:selected="${score == '*TBW'}">Tie-Break Won</option>
+					<option value="*TBL" th:selected="${score == '*TBL'}">Tie-Break Lost</option>
 					<option value="*DSTB" th:selected="${score == '*DSTB'}">Dec. Set TB</option>
 				</optgroup>
 				<optgroup label="Set Score">
@@ -382,7 +382,7 @@
 		<div class="col-md-2">
 			<select id="matchesSpeed" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
 				<option value="">All speeds</option>
-				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.code == speed}">Medium</option>
 			</select>
 		</div>
 		<div class="col-md-1">

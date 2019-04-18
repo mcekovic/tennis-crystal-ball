@@ -20,6 +20,7 @@ public class SurfaceService {
 		"  count(match_id) FILTER (WHERE m.surface = 'G') AS grass_match_count,\n" +
 		"  count(match_id) FILTER (WHERE m.surface = 'P') AS carpet_match_count,\n" +
 		"  count(match_id) FILTER (WHERE m.surface = 'H' AND m.indoor) AS hard_indoor_match_count,\n" +
+		"  count(match_id) FILTER (WHERE m.surface = 'C' AND m.indoor) AS clay_indoor_match_count,\n" +
 		"  round(avg(es.court_speed)) AS court_speed\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING(tournament_event_id)\n" +
@@ -40,6 +41,7 @@ public class SurfaceService {
 				rs.getInt("grass_match_count"),
 				rs.getInt("carpet_match_count"),
 				rs.getInt("hard_indoor_match_count"),
+				rs.getInt("clay_indoor_match_count"),
 				rs.getInt("court_speed")
 			)
 		);

@@ -517,7 +517,7 @@ function wonLostFormatter(playerId, extended) {
 			var o = outcome ? outcome.substr(0, 1) : "";
 			var ol = extended && o ? "<sub>" + o + "</sub>" : "";
 			var oc = o ? "-" + o : "";
-			return row.winner.id === playerId ? "<label class='label label-won" + oc + "'>W" + ol + "</label>" : "<label class='label label-lost" + oc + "'>L" + ol + "</label>";
+			return row.winner.id === playerId || row.winner === true ? "<label class='label label-won" + oc + "'>W" + ol + "</label>" : "<label class='label label-lost" + oc + "'>L" + ol + "</label>";
 		}
 		else
 			return "<label class='label label-abd'>A</label>";

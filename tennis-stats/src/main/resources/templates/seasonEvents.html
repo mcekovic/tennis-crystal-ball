@@ -106,7 +106,7 @@
 <div id="eventsSpeedDiv" class="btn-group pull-left margin-right">
 	<select id="eventsSpeed" class="form-control" onchange="reloadSeasonEvents()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
 		<option value="">All speeds</option>
-		<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+		<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
 	</select>
 </div>
 <div id="eventsClearDiv" class="btn-group margin-right">

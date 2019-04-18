@@ -1,9 +1,8 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutForecast(drawLuck)">
 	<p>
 		<em>* <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#tournamentForecastPopover"><strong>Tournament Event Forecasts</strong></a> are driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><strong><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</strong></a></em><br/>
-		<em>** Updated twice an hour</em><br/>
-		<!--/*<em th:if="${drawLuck}">*** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawLuckPopover"><strong><i class="fa fa-sitemap"></i> Draw Luck</strong></a> and <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> are visible only on entry round forecast tab</a></em>*/-->
-		<em th:if="${drawLuck}">*** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> is visible only on entry round forecast tab</a></em>
+		<!--/*<em th:if="${drawLuck}">** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawLuckPopover"><strong><i class="fa fa-sitemap"></i> Draw Luck</strong></a> and <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> are visible only on entry round forecast tab</a></em>*/-->
+		<em th:if="${drawLuck}">** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> is visible only on entry round forecast tab</a></em>
 	</p>
 	<div th:include="fragments/aboutForecast :: aboutTournamentForecast"></div>
 	<div th:include="fragments/aboutForecast :: aboutPrediction"></div>
@@ -17,24 +16,24 @@
 			<p><strong>About Tournament Forecast</strong></p>
 			<p>
 				Tournament Forecast is driven by individual Match Prediction. In each round, probabilities for each match in the draw are calculated using Neural Network Match Prediction Algorithm.<br/>
-				Based on this probabilities, chances for probable matchups in the further tournament rounds are calculated. Finally, probability of the player to win the title is calculated as a multiplier of probabilities to win in the each or the rounds.<br/>
+				Based on this probabilities, chances for probable matchups in the further tournament rounds are calculated. Finally, the probability of the player to win the title is calculated as a multiplier of probabilities to win in the each of the rounds.<br/>
 				If the round is far, like semi-final or final, there are many potential opponents and probabilities for a player to win over all of them are calculated.<br/>
-				For example, probability to win the title depends on the probability of the player to reach the final as well as probabilities of all players in the other half of the draw to reach the final, multiplied by probabilities for player to win the final match over the each of them.
+				For example, a probability to win the title depends on the probability of the player to reach the final as well as probabilities of all players in the other half of the draw to reach the final, multiplied by probabilities for a player to win the final match over the each of them.
 			</p>
 			<p><strong>Tracking Tournament Progress</strong></p>
 			<p>
-				As tournament progresses, outcome of some matches gets known, thus the match probabilities are set to 100% and 0% for the winner and for the loser respectively.<br/>
+				As a tournament progresses, the outcome of some matches gets known, thus the match probabilities are set to 100% and 0% for the winner and for the loser respectively.<br/>
 				Elo Ratings are recalculated after the each round and Elo rating points earned/lost by wins/loss in all the previous rounds (including current round if the match is finished) are presented in brackets.
 			</p>
 			<p><strong>Unknown Qualifiers</strong></p>
 			<p>
-				Sometimes, as initial tournament draws are out, they include unknown qualifiers. Probability for the player to win over an unknown qualifier is determined by variation of the Match Prediction algorithm that includes average Elo Rating and ATP ranking points of the qualifiers as well as winning percentages vs qualifiers, overall and by surface, level, etc...
+				Sometimes, as initial tournament draws are out, they include unknown qualifiers. The probability for the player to win over an unknown qualifier is determined by variation of the Match Prediction algorithm that includes average Elo Rating and ATP ranking points of the qualifiers as well as winning percentages vs qualifiers, overall and by surface, level, etc...
 			</p>
 			<p><strong>Mathematical details</strong></p>
 			<p>
 				Lets name match probability that player A wins over player B as <span class="text-nowrap"><strong>Pm<sub>A vs B</sub></strong></span>.<br/>
 				These probabilities determine the probability for each player to pass to the second round <span class="text-nowrap"><strong>Pr<sub>A</sub>(R2) = Pm<sub>A vs B</sub></strong></span>.<br/>
-				Probability of the player A to reach the next round R+1 is calculated this way:<br/>
+				The probability of the player A to reach the next round R+1 is calculated this way:<br/>
 				<span class="text-nowrap"><strong>Pr<sub>A</sub>(R+1) = Pr<sub>A</sub>(R) * &Sigma;<sub>N=1-n</sub> ( Pr<sub>N</sub>(R) * Pm<sub>A vs N</sub> )</strong></span><br/>
 				This means that probability for player A to reach the next round R+1 depend on probability for player A to reach the previous round R multiplied by the weighted sum of probabilities for player A to win over his potential opponents in the next round.
 				Weights of the potential opponents are the probabilities of each opponent to reach the round R.
@@ -56,14 +55,14 @@
 			<p><strong>Training and Tuning</strong></p>
 			<p>
 				Neural Network is trained on the historical data for the highest prediction rates and to determine optimal feature weights.<br/>
-				In order to further increase prediction accuracy, Neural Network is trained specifically for different surfaces, resulting in different feature weights per surface.<br/>
+				In order to further increase prediction accuracy, the Neural Network is trained specifically for different surfaces, resulting in different feature weights per surface.<br/>
 				During training, some neurons are determined to be useless and they are removed from the network, thus about ~40 neurons remain.
 			</p>
 			<p><strong>Primary and Secondary Probability Contributors</strong></p>
 			<p>
 				Elo Ratings, overall, by surface and by set, are the primary contributors to the match prediction, followed by the recent form, H2H and winning percentages.<br/>
 				Elo Rating neurons individually give high prediction rates, but when they are combined with the recent form, H2H and various winning percentages, the prediction accuracy is even further increased.<br/>
-				However, importance of the secondary contributors is very surface dependent, so for example on grass, recent form is pretty much irrelevant, because momentum of form is often disturbed by the surface adaptation and because of relatively short length of the grass season.
+				However, the importance of the secondary contributors is very surface dependent, so for example on grass, recent form is pretty much irrelevant because the momentum of form is often disturbed by the surface adaptation and because of a relatively short length of the grass season.
 				Instead, winning percentages are more important on grass than on other surfaces.
 			</p>
 		</div>

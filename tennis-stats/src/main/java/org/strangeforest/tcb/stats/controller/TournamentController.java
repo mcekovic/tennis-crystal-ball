@@ -41,8 +41,17 @@ public class TournamentController extends PageController {
 
 	@GetMapping("/tournament")
 	public ModelAndView tournament(
-		@RequestParam(name = "tournamentId") int tournamentId
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "name", required = false) String name,
+		@RequestParam(name = "extId", required = false) String extId
 	) {
+		if (tournamentId == null) {
+			if (name != null)
+				tournamentId = tournamentService.findTournamentId(name, extId);
+			else
+				throw new NotFoundException("Tournament", null);
+		}
+
 		Tournament tournament = tournamentService.getTournament(tournamentId);
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournament", tournament);
@@ -57,7 +66,7 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
 		ModelMap modelMap = new ModelMap();
@@ -79,8 +88,18 @@ public class TournamentController extends PageController {
 
 	@GetMapping("/tournamentEvent")
 	public ModelAndView tournamentEvent(
-		@RequestParam(name = "tournamentEventId") int tournamentEventId
+		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "name", required = false) String name,
+		@RequestParam(name = "extId", required = false) String extId,
+		@RequestParam(name = "season", required = false) Integer season
 	) {
+		if (tournamentEventId == null) {
+			if (name != null && season != null)
+				tournamentEventId = tournamentService.findTournamentEventId(name, extId, season);
+			else
+				throw new NotFoundException("Tournament Event", name);
+		}
+
 		TournamentEvent tournamentEvent = tournamentService.getTournamentEvent(tournamentEventId);
 		TournamentEventResults results = matchesService.getTournamentEventResults(tournamentEventId);
 
@@ -287,5 +306,18 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("eloType", eloType);
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventFavorites", modelMap);
+	}
+
+	@GetMapping("/inProgressEventStats")
+	public ModelAndView inProgressEventStats(
+		@RequestParam(name = "inProgressEventId") int inProgressEventId
+	) {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("inProgressEventId", inProgressEventId);
+		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("opponentCategories", Opponent.categories());
+		modelMap.addAttribute("countries", matchesService.getInProgressEventCountries(inProgressEventId));
+		return new ModelAndView("inProgressEventStats", modelMap);
 	}
 }

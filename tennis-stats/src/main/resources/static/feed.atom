@@ -2,12 +2,28 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 	<title>Ultimate Tennis Statistics Feed</title>
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
-	<link href="http://www.ultimatetennisstatistics.com/feed.atom" rel="self"/>
+	<link href="https://www.ultimatetennisstatistics.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2018-05-26T12:00:00Z</updated>
+	<updated>2019-02-09T12:00:00Z</updated>
+	<entry>
+		<title>Top Match Stats</title>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/topMatchStats"/>
+		<id>urn:uuid:1206daf0-0b44-41ca-ac8f-8a846262baf3</id>
+		<updated>2019-02-09T12:00:00Z</updated>
+		<summary>Top Match Stats - Top single match statistics figures filtered by various filters</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Top match statistics figures, like who and when had most aces, service or return points won in a single match</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>Greatest Matches</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/greatestMatches"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/greatestMatches"/>
 		<id>urn:uuid:4eba5106-d4b9-437e-8cc9-8d14c2047640</id>
 		<updated>2018-05-26T12:00:00Z</updated>
 		<summary>Greatest Matches - Explore greatest matches ranked by special Match Greatness Score formula</summary>
@@ -23,7 +39,7 @@
 	</entry>
 	<entry>
 		<title>Title Difficulty</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/records?category=HardestTitles"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/records?category=HardestTitles"/>
 		<id>urn:uuid:8e64796d-a248-471a-8958-148ef755f832</id>
 		<updated>2018-05-26T12:00:00Z</updated>
 		<summary>Title Difficulty factor represents how difficult was to win the title</summary>
@@ -39,7 +55,7 @@
 	</entry>
 	<entry>
 		<title>Statistics Timeline</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/statsTimeline"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/statsTimeline"/>
 		<id>urn:uuid:55168d66-40d5-11e8-842f-0ed5f89f718b</id>
 		<updated>2018-04-15T12:00:00Z</updated>
 		<summary>Statistics Timeline - How tennis game evolved through time</summary>
@@ -55,7 +71,7 @@
 	</entry>
 	<entry>
 		<title>Personalized and by Surface GOAT Lists!</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/goatList"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/goatList"/>
 		<id>urn:uuid:4a4233ac-e37b-11e7-80c1-9a214cf093ae</id>
 		<updated>2017-12-18T12:00:00Z</updated>
 		<summary>Personalized GOAT list with configurable weights for GOAT Points formula and permalink to save your 'GOAT' List and share it (overall and by surface)</summary>
@@ -71,7 +87,7 @@
 	</entry>
 	<entry>
 		<title>Alternative Tour Finals</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/tournaments?level=L"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/tournaments?level=L"/>
 		<id>urn:uuid:b66c3606-720b-4500-9028-44aaf0b1a259</id>
 		<updated>2017-10-26T12:00:00Z</updated>
 		<summary>Alternative Tour Finals - Dallas WCT Finals and Grand Slam Cup recognized as alternative tour Finals, weighted similarly as Masters tournaments</summary>
@@ -87,7 +103,7 @@
 	</entry>
 	<entry>
 		<title>Tournament Forecasts enhancements</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/inProgressEventsForecasts"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/inProgressEventsForecasts"/>
 		<id>urn:uuid:8cce3c86-6008-4131-bb3a-27f343eacc1f</id>
 		<updated>2017-10-14T12:00:00Z</updated>
 		<summary>Tournament Forecasts enhancements - Improved match prediction accuracy, progressive Elo rating calculations and Favorites on the glance!</summary>
@@ -103,7 +119,7 @@
 	</entry>
 	<entry>
 		<title>Tournaments browser</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/tournaments"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/tournaments"/>
 		<id>urn:uuid:22643f5b-3a8c-43a4-b8e0-c951d983d2108</id>
 		<updated>2017-10-14T12:00:00Z</updated>
 		<summary>Tournaments browser - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation</summary>
@@ -119,7 +135,7 @@
 	</entry>
 	<entry>
 		<title>Top Performers and Statistics Leaders enhancements</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/topPerformers"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/topPerformers"/>
 		<id>urn:uuid:8d1421f4-ce1c-4af5-b8fa-be9863a46f08</id>
 		<updated>2017-08-22T12:00:00Z</updated>
 		<summary>Top Performers and Statistics Leaders enhancements</summary>
@@ -135,7 +151,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - GOAT Points for selected records</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/record?recordId=RecordsGOATPoints"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/record?recordId=RecordsGOATPoints"/>
 		<id>urn:uuid:c85750a0-72f2-11e7-8cf7-a6006ad3dba0</id>
 		<updated>2017-07-27T12:00:00Z</updated>
 		<summary>GOAT Points for selected records, see GOAT Legend for the details</summary>
@@ -151,7 +167,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - GOAT Points for the consecutive and repeating wins at the same Grand Slam tournament</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/record?recordId=GrandSlamGOATPoints"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/record?recordId=GrandSlamGOATPoints"/>
 		<id>urn:uuid:5f18bd90-0f5e-419b-b541-ba1fc387c3cf</id>
 		<updated>2017-07-26T12:00:00Z</updated>
 		<summary>New Feature - GOAT Points for the consecutive and repeating wins at the same Grand Slam tournament</summary>
@@ -167,7 +183,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Rankings table improvements</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/rankingsTable?rankType=ELO_RANK"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/rankingsTable?rankType=ELO_RANK"/>
 		<id>urn:uuid:56556a53-273c-4341-8d87-a61a7ff580c9</id>
 		<updated>2017-07-26T12:00:00Z</updated>
 		<summary>New Feature - Rankings table improvements</summary>
@@ -183,7 +199,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Player Season Summary</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/playerProfile?name=Roger Federer&amp;tab=season"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/playerProfile?name=Roger Federer&amp;tab=season"/>
 		<id>urn:uuid:0535ef3b-84e9-4ef0-9342-221a033a7d82</id>
 		<updated>2017-05-07T12:00:00Z</updated>
 		<summary>New Feature - Player Season Summary</summary>
@@ -199,7 +215,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Weeks at Elo Top 5 'GOAT' Points</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/record?recordId=WeeksAtEloTopNGOATPoints"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/record?recordId=WeeksAtEloTopNGOATPoints"/>
 		<id>urn:uuid:47de62be-2aa5-11e7-93ae-92361f002671</id>
 		<updated>2017-04-26T12:00:00Z</updated>
 		<summary>New Feature - 'GOAT' Points for weeks at Elo Top 5 (see 'GOAT' Legend) to better reflect domination over fellow players in the same Era</summary>
@@ -215,7 +231,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Tournament Forecasts</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/inProgressEventsForecasts"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/inProgressEventsForecasts"/>
 		<id>urn:uuid:f2a6fd96-2393-11e7-93ae-92361f002671</id>
 		<updated>2017-04-17T12:00:00Z</updated>
 		<summary>New Feature - Tournament Event Forecasts based on the Neural Network Match Prediction Algorithm</summary>
@@ -233,7 +249,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Head-to-Head Charts</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/headToHead"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/headToHead"/>
 		<id>urn:uuid:c867bf62-1efb-11e7-93ae-92361f002671</id>
 		<updated>2017-04-11T12:00:00Z</updated>
 		<summary>New Feature - Head-to-Head Charts - Ranking, performance and statistics charts for comparing head-to-head players</summary>
@@ -249,7 +265,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Filtering by Statistics Conditions</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com"/>
 		<id>urn:uuid:0eb7f97a-1a0b-48f7-a123-877511fc85bd</id>
 		<updated>2017-02-11T12:00:00Z</updated>
 		<summary>New Feature - Filtering by Statistics Conditions - Player matches and tournaments can be filtered by statistics conditions</summary>
@@ -265,7 +281,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Seasons Browser</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/seasons"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/seasons"/>
 		<id>urn:uuid:f6c96a45-59c8-4a2d-909e-584d51bcad27</id>
 		<updated>2017-01-28T12:00:00Z</updated>
 		<summary>New Feature - Seasons Browser - Browse seasons and check season details</summary>
@@ -281,7 +297,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Head-to-Head</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/headToHead"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/headToHead"/>
 		<id>urn:uuid:827430b9-ba27-44c8-8485-8669ff68c1b8</id>
 		<updated>2017-01-14T12:00:00Z</updated>
 		<summary>New Feature - Head-to-head between two players with Hypothetical Matchup prediction</summary>
@@ -297,7 +313,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Statistics Comparision</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/playerProfile?name=Roger%20Federer&amp;tab=statistics"/>
+		<link rel="alternate" type="text/html" href="https://www.ultimatetennisstatistics.com/playerProfile?name=Roger%20Federer&amp;tab=statistics"/>
 		<id>urn:uuid:a5526244-d0da-11e6-bf26-cec0c932ce01</id>
 		<updated>2017-01-02T12:00:01Z</updated>
 		<summary>New Feature - Statistics comparision - Compare match or selected matches statistics with career, season, tournament level or surface statistics</summary>

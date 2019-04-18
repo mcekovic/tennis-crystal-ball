@@ -23,7 +23,7 @@ mainClassName = 'org.strangeforest.tcb.stats.TennisStatsApplication'
 applicationDefaultJvmArgs = [
 	'-Xms256m',
 	'-Xmx256m',
-	'-Dspring.profiles.active=digitalocean,jobs',
+	'-Dspring.profiles.active=digitalocean,jobs,ssl',
 	'-Dcom.sun.management.jmxremote',
 	'-Dcom.sun.management.jmxremote.port=9999',
 	'-Dcom.sun.management.jmxremote.authenticate=false',
@@ -42,7 +42,9 @@ sourceSets {
 
 configurations {
 	itestCompile.extendsFrom testCompile
+	itestImplementation.extendsFrom testImplementation
 	itestRuntime.extendsFrom testRuntime
+	itestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 processResources {
@@ -162,7 +164,7 @@ task fullDeployToDigitalOcean {
 
 task productionHealthCheck {
 	doLast {
-		def health = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/actuator/health'))
+		def health = new groovy.json.JsonSlurper().parse(new URL('https://www.ultimatetennisstatistics.com/actuator/health'))
 		println "Ultimate Tennis Statistics is ${health.status}"
 		println "Disk usage: ${health.quota.blocks.pctUsed}"
 	}
@@ -170,7 +172,7 @@ task productionHealthCheck {
 
 task productionInfo {
 	doLast {
-		def info = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/actuator/info'))
+		def info = new groovy.json.JsonSlurper().parse(new URL('https://www.ultimatetennisstatistics.com/actuator/info'))
 		println "Ultimate Tennis Statistics: ${info.app.version}"
 		println "DB size: ${info.db.size}"
 		println "Visitors: ${info.visitors}"

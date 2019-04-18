@@ -14,7 +14,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
@@ -96,6 +96,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3><i class="fa fa-align-left"></i> Statistics Timeline</h3>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('lg')"/>
 	<div class="row">
@@ -159,7 +160,7 @@
 			<div class="col-md-2">
 				<select id="speed" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
 					<option value="">All speeds</option>
-					<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
+					<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.code == speed}">Medium</option>
 				</select>
 			</div>
 			<div class="col-md-4">

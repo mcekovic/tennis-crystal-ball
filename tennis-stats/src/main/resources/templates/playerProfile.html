@@ -9,7 +9,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.String"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String"*/-->
@@ -94,12 +94,14 @@
 			[# th:unless="${tab}"] $("#profilePill").click(); [/]
 		});
 	</script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3>
-		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 		<th:block th:text="${player.name}">Roger Federer</th:block> <a th:href="@{/playerProfile(name=${player.name})}" th:title="|Permalink to ${player.name} profile|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
 	</h3>
 	<ul id="playerPills" class="nav nav-pills tab-param">

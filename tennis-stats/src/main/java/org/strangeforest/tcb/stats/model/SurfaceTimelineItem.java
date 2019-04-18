@@ -13,6 +13,8 @@ public class SurfaceTimelineItem {
 	private double carpetPct;
 	private double hardOutdoorPct;
 	private double hardIndoorPct;
+	private double clayOutdoorPct;
+	private double clayIndoorPct;
 	private final int speed;
 
 	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int speed) {
@@ -34,10 +36,12 @@ public class SurfaceTimelineItem {
 		this.speed = speed;
 	}
 
-	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int hardIndoorMatchCount, int speed) {
+	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int hardIndoorMatchCount, int clayIndoorMatchCount, int speed) {
 		this(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount, speed);
 		hardOutdoorPct = roundedPct(hardMatchCount - hardIndoorMatchCount, matchCount);
 		hardIndoorPct = hardPct - hardOutdoorPct;
+		clayOutdoorPct = roundedPct(clayMatchCount - clayIndoorMatchCount, matchCount);
+		clayIndoorPct = clayPct - clayOutdoorPct;
 	}
 
 	public int getSeason() {
@@ -66,6 +70,14 @@ public class SurfaceTimelineItem {
 
 	public String getHardIndoorPct() {
 		return formatPct(hardIndoorPct);
+	}
+
+	public String getClayOutdoorPct() {
+		return formatPct(clayOutdoorPct);
+	}
+
+	public String getClayIndoorPct() {
+		return formatPct(clayIndoorPct);
 	}
 
 	private static double roundedPct(int value, int from) {

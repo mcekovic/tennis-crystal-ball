@@ -8,7 +8,7 @@ sqlPool.withSql { Sql sql ->
 }
 
 static loadRankings(Sql sql) {
-	def rankingsLoader = new ATPWorldTourRankingsLoader(sql)
+	def rankingsLoader = new ATPTourRankingsLoader(sql)
 	println 'Fixing invalid rankings...'
 	rankingsLoader.load('1994-12-26', 500)
 	rankingsLoader.load('1996-09-02', 500)

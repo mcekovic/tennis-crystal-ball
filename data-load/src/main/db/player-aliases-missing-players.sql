@@ -1,4 +1,4 @@
-DELETE FROM player_alias WHERE TRUE;
+DELETE FROM player_alias;
 INSERT INTO player_alias
 (alias, name)
 VALUES
@@ -14,6 +14,7 @@ VALUES
    ('Ben Patael', 'Ben Fatael'),
    ('Brendan OShea', 'Bill Oshea'),
    ('Chris Lewis (NZL)', 'Chris Lewis Nzl'),
+   ('Cristian Garin', 'Christian Garin'),
    ('Christopher O''Connell', 'Christopher Oconnell'),
    ('Daniel Elahi Galan', 'Daniel Elahi Galan Riveros'),
    ('Dave Phillips', 'David D Phillips'),

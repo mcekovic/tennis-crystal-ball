@@ -65,12 +65,9 @@ public class GOATPointsService {
 		"GROUP BY season, level, result";
 
 	private static final String TEAM_TOURNAMENT_POINTS_QUERY = //language=SQL
-		"SELECT e.season, count(*) AS count\n" +
-		"FROM player_tournament_event_result r\n" +
-		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"LEFT JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id\n" +
-		"WHERE e.level IN (%1$s) AND m.round = 'F' AND r.goat_points > 0 AND r.player_id = :playerId%2$s\n" +
-		"GROUP BY e.season";
+		"SELECT season, tournament_dt_goat_points AS count\n" +
+		"FROM player_surface_season_goat_points\n" +
+		"WHERE tournament_dt_goat_points > 0 AND player_id = :playerId%1$s";
 
 
 	@Cacheable(value = "Global", key = "'GOATPointsLevelResults'")
@@ -149,7 +146,7 @@ public class GOATPointsService {
 				goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown().addItem(level, result, count);
 			});
 
-			String teamTournamentPointsSql = format(TEAM_TOURNAMENT_POINTS_QUERY, overall ? "'D', 'T'" : "'T'", overall ? "" : " AND m.surface = :surface::surface");
+			String teamTournamentPointsSql = format(TEAM_TOURNAMENT_POINTS_QUERY, overall ? "" : " AND surface = :surface::surface");
 			jdbcTemplate.query(teamTournamentPointsSql, params, rs -> {
 				int season = rs.getInt("season");
 				int count = rs.getInt("count");

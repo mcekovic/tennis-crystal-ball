@@ -2,20 +2,21 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="tcb"><span style="color: dodgerblue">Tennis</span> <span style="color: mediumorchid">Crystal</span> <span style="color: darkorange">Ball</span></th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="facebook">
 	<div id="fb-root"></div>
-	<script type="text/javascript">
-		(function(d, s, id) {
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.12";
-		fjs.parentNode.insertBefore(js, fjs);
+	<script>
+		window.fbAsyncInit = function() { FB.init({appId: "UltimateTennisStatistics", autoLogAppEvents: true, xfbml:true, version: "v3.2"}); };
+		(function(d, s, id){
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement(s); js.id = id;
+			js.src = "https://connect.facebook.net/en_US/sdk.js";
+			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 	</script>
-	<div class="fb-like text-center" style="width: 100%; min-height: 20px" data-href="http://www.ultimatetennisstatistics.com" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+	<div class="fb-like text-center" style="width: 100%; min-height: 20px" data-href="https://www.ultimatetennisstatistics.com" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
 </th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="twitter(url)">
 	<div style="text-align: center; margin-top: 20px; min-height: 25px">
-		<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" th:data-url="${'http://www.ultimatetennisstatistics.com' + (url != null ? url : _)}" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+		<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" th:data-url="${'https://www.ultimatetennisstatistics.com' + (url != null ? url : _)}" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 	</div>
 </th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="paypal">
@@ -23,7 +24,7 @@
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 			<input type="hidden" name="cmd" value="_s-xclick">
 			<input type="hidden" name="hosted_button_id" value="YSPA9L86SVHFN">
-			<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+			<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
 			<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 		</form>
 		<p style="font-size: x-small">

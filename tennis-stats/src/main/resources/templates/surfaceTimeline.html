@@ -36,6 +36,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3><i class="fa fa-paw"></i> Surface Timeline</h3>
 	<table class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
@@ -44,7 +45,7 @@
 				<th>
 					<div class="pull-left">Surfaces</div>
 					<div class="checkbox pull-right" style="margin: 0 5px">
-						<label data-toggle="tooltip" data-placement="top" onchange="indoorChanged()" title="Distinguish hard outdoor / indoor">
+						<label data-toggle="tooltip" data-placement="top" onchange="indoorChanged()" title="Distinguish outdoor / indoor">
 							<input id="indoor" type="checkbox" th:checked="${indoor}"/> Indoor
 						</label>
 					</div>
@@ -74,8 +75,14 @@
 						<div class="progress-bar progress-bar-warning" role="progressbar" th:style="|width: ${item.carpetPct}|" data-toggle="tooltip" data-placement="top" th:title="|Carpet ${item.carpetPct}|">
 							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=P)}" title="Show carpet tournaments"><strong th:text="${item.carpetPct}">25.0%</strong></a>
 						</div>
-						<div class="progress-bar progress-bar-danger" role="progressbar" th:style="|width: ${item.clayPct}|" data-toggle="tooltip" data-placement="top" th:title="|Clay ${item.clayPct}|">
+						<div th:unless="${indoor}" class="progress-bar progress-bar-danger" role="progressbar" th:style="|width: ${item.clayPct}|" data-toggle="tooltip" data-placement="top" th:title="|Clay ${item.clayPct}|">
 							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=C)}" title="Show clay tournaments"><strong th:text="${item.clayPct}">25.0%</strong></a>
+						</div>
+						<div th:if="${indoor}" class="progress-bar progress-bar-danger" role="progressbar" th:style="|width: ${item.clayOutdoorPct}|" data-toggle="tooltip" data-placement="top" th:title="|Outdoor Clay ${item.clayOutdoorPct}|">
+							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=C, indoor=false)}" title="Show outdoor clay tournaments"><strong th:text="${item.clayOutdoorPct}">15.0%</strong></a>
+						</div>
+						<div th:if="${indoor}" class="progress-bar progress-bar-warning" role="progressbar" th:style="|width: ${item.clayIndoorPct}|" data-toggle="tooltip" data-placement="top" th:title="|Indoor Clay ${item.clayIndoorPct}|">
+							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=C, indoor=true)}" title="Show indoor clay tournaments"><strong th:text="${item.clayIndoorPct}">25.0%</strong></a>
 						</div>
 						<div class="progress-bar progress-bar-success" role="progressbar" th:style="|width: ${item.grassPct}|" data-toggle="tooltip" data-placement="top" th:title="|Grass ${item.grassPct}|">
 							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=G)}" title="Show grass tournaments"><strong th:text="${item.grassPct}">25.0%</strong></a>

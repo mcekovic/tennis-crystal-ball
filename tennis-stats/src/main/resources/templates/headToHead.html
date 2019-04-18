@@ -12,7 +12,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
@@ -104,11 +104,13 @@
 			window.location.href = "/headToHead?playerId1=[(${player2.id})]&playerId2=[(${player1.id})]&tab=" + tab.substr(1);
 		} [/]
 	</script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<div class="row">
+	<th:block th:include="fragments/ads :: responsive"/>
+	<div class="row margin-top">
 		<div class="col-md-6">
 			<div class="input-group">
 				<label for="player1" class="input-group-addon"><i class="fa fa-user"></i> Player 1:</label>
@@ -125,7 +127,7 @@
 	<div th:if="${anyPlayerSelected}" class="row">
 		<div class="col-xs-5 text-left">
 			<h3 th:if="${player1}">
-				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
+				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
 				<a th:href="@{/playerProfile(playerId=${player1.id})}" th:text="${player1.name}">Roger Federer</a>
 			</h3>
 		</div>

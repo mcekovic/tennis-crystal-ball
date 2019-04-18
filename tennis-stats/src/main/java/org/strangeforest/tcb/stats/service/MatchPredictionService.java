@@ -11,6 +11,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import com.github.benmanes.caffeine.cache.*;
 
@@ -22,7 +23,7 @@ import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
-public class MatchPredictionService {
+public class MatchPredictionService implements HasCache {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Value("${tennis-stats.prediction.tuning-set-level:SURFACE}") TuningSetLevel tuningSetLevel;
@@ -50,10 +51,10 @@ public class MatchPredictionService {
 		"UNION\n" +
 		"SELECT date + (INTERVAL '1 day') rank_date, elo_rating, recent_elo_rating, surface_elo_rating, in_out_elo_rating, set_elo_rating FROM (\n" +
 		"  SELECT date, round, match_num, player1_next_elo_rating elo_rating, player1_next_recent_elo_rating recent_elo_rating, player1_next_surface_elo_rating surface_elo_rating, player1_next_in_out_elo_rating in_out_elo_rating, player1_next_set_elo_rating set_elo_rating FROM in_progress_match\n" +
-		"  WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '1 weeks') AND player1_id = :playerId AND player2_id > 0\n" +
+		"  WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '15 days') AND player1_id = :playerId AND player2_id > 0\n" +
 		"  UNION\n" +
 		"  SELECT date, round, match_num, player2_next_elo_rating, player2_next_recent_elo_rating, player2_next_surface_elo_rating, player2_next_in_out_elo_rating, player2_next_set_elo_rating FROM in_progress_match\n" +
-		"  WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '1 weeks') AND player2_id = :playerId AND player1_id > 0\n" +
+		"  WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '15 days') AND player2_id = :playerId AND player1_id > 0\n" +
 		"  ORDER BY date DESC, round DESC, match_num LIMIT 1\n" +
 		") AS elo_ranking_data\n";
 
@@ -133,51 +134,50 @@ public class MatchPredictionService {
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round, PredictionConfig config) {
+		short bstOf = defaultBestOf(level, bestOf);
 		if (playerId1 > 0) {
 			if (playerId2 > 0)
-				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config);
+				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bstOf, round, config);
 			else
-				return predictMatchVsQualifier(playerId1, date1, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config);
+				return predictMatchVsQualifier(playerId1, date1, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bstOf, round, config);
 		}
 		else {
 			if (playerId2 > 0)
-				return predictMatchVsQualifier(playerId2, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config).swap();
+				return predictMatchVsQualifier(playerId2, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bstOf, round, config).swap();
 			else
-				return MatchPrediction.TIE;
+				return MatchPrediction.tie(bstOf);
 		}
 	}
 
-	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round, PredictionConfig config) {
+	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, short bestOf, Round round, PredictionConfig config) {
 		PlayerData playerData1 = getPlayerData(playerId1);
 		PlayerData playerData2 = getPlayerData(playerId2);
 		RankingData rankingData1 = getRankingData(playerId1, date1, surface, indoor);
 		RankingData rankingData2 = getRankingData(playerId2, date2, surface, indoor);
 		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
-		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
-			new RankingMatchPredictor(rankingData1, rankingData2, bstOf, config),
-			new RecentFormMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, config),
-			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bstOf, config),
-			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, tournamentId, bstOf, config)
-		), config);
+			new RankingMatchPredictor(rankingData1, rankingData2, bestOf, config),
+			new RecentFormMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, bestOf, config),
+			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bestOf, config),
+			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, tournamentId, bestOf, config)
+		), config, bestOf);
 		prediction.setRankingData1(rankingData1);
 		prediction.setRankingData2(rankingData2);
 		return prediction;
 	}
 
-	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round, PredictionConfig config) {
+	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, short bestOf, Round round, PredictionConfig config) {
 		RankingData rankingData = getRankingData(playerId, date, surface, indoor);
 		List<MatchData> matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
-		short bstOf = defaultBestOf(level, bestOf);
 		return predictMatch(asList(
-			new RankingMatchPredictor(rankingData, getQualifierRankingData(), bstOf, config),
-			new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf, config)
-		), config);
+			new RankingMatchPredictor(rankingData, getQualifierRankingData(), bestOf, config),
+			new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bestOf, config)
+		), config, bestOf);
 	}
 
-	private MatchPrediction predictMatch(Iterable<MatchPredictor> predictors, PredictionConfig config) {
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight());
+	private MatchPrediction predictMatch(Iterable<MatchPredictor> predictors, PredictionConfig config, short bestOf) {
+		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
 		for (MatchPredictor predictor : predictors) {
 			PredictionArea area = predictor.getArea();
 			if (config.isAreaEnabled(area)) {
@@ -301,7 +301,6 @@ public class MatchPredictionService {
 
 	// Util
 
-
 	Cache getPlayersCache() {
 		return players;
 	}
@@ -314,14 +313,14 @@ public class MatchPredictionService {
 		return playersMatches;
 	}
 
-	void clearCaches() {
+	@Override public void clearCache() {
 		players.invalidateAll();
 		playersRankings.invalidateAll();
 		playersMatches.invalidateAll();
 	}
 
 	private static final RankingKey QUALIFIER_RANKING_KEY = new RankingKey(-1, null, null, null);
-	
+
 	private static final class RankingKey {
 
 		public final int playerId;
@@ -329,14 +328,14 @@ public class MatchPredictionService {
 		public final Surface surface;
 		public final Boolean indoor;
 
-		public RankingKey(int playerId, LocalDate date, Surface surface, Boolean indoor) {
+		RankingKey(int playerId, LocalDate date, Surface surface, Boolean indoor) {
 			this.playerId = playerId;
 			this.date = date;
 			this.surface = surface;
 			this.indoor = indoor;
 		}
 
-		public boolean isQualifier() {
+		boolean isQualifier() {
 			return playerId == QUALIFIER_RANKING_KEY.playerId;
 		}
 

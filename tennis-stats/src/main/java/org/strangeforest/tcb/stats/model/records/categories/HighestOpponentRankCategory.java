@@ -29,8 +29,8 @@ public class HighestOpponentRankCategory extends RecordCategory {
 	}
 
 	public enum RankingType {
-		RANK("Rank", "Rank", "exp(sum(ln(coalesce(opponent_rank, 1500)))/count(*))", " WHERE unrounded_value < 1500", false, "Using geometric mean"),
-		ELO_RATING("EloRating", "Elo Rating", "sum(coalesce(opponent_elo_rating, 1500))::REAL/count(*)", "", true, "Using arithmetic mean");
+		RANK("Rank", "Rank", "exp(sum(ln(coalesce(opponent_rank, 1500))) / count(*))", " WHERE unrounded_value < 1500", false, "Using geometric mean"),
+		ELO_RATING("EloRating", "Elo Rating", "sum(coalesce(opponent_elo_rating, 1500))::REAL / count(*)", "", true, "Using arithmetic mean");
 
 		private final String id;
 		private final String name;

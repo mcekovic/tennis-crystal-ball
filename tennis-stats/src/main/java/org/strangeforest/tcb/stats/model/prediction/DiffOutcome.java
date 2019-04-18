@@ -18,7 +18,7 @@ public abstract class DiffOutcome {
 
 	public double pWin(int items1, int items2) {
 		int nextItem = items1 + items2 + 1;
-		if (items1 >= items) {
+		if (items1 >= items && items1 >= items2) {
 			int diff = items1 - items2;
 			if (diff >= itemsDiff)
 				return 1.0;

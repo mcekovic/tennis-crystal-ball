@@ -86,7 +86,7 @@
 						if (row.rankingPoints > 0) {
 							var title = "";
 							title = appendPointsTitle(title, row, "yearEndRankPoints", "Year-end ranking");
-							title = appendPointsTitle(title, row, "bestRankPoints", "Career high ranking");
+							title = appendPointsTitle(title, row, "bestRankPoints", "Career-high ranking");
 							title = appendPointsTitle(title, row, "weeksAtNo1Points", "Weeks at No. 1");
 							title = appendPointsTitle(title, row, "weeksAtEloTopNPoints", "Weeks at Elo Top 5");
 							title = appendPointsTitle(title, row, "bestEloRatingPoints", "Peak Elo rating");
@@ -186,7 +186,7 @@
 				{id: "bestRankPoints", title: "Best rank GOAT points"},
 				{id: "weeksAtNo1Points", title: "Weeks at No. 1 GOAT points"},
 				{id: "weeksAtEloTopNPoints", title: "Weeks at Elo Top 5 GOAT points"},
-				{id: "bestEloRatingPoints", title: "Best Elo Rating GOAT points"},
+				{id: "bestEloRatingPoints", title: "Peak Elo Rating GOAT points"},
 				{id: "achievementsPoints", title: "Achievements, performance and statistics GOAT points"},
 				{id: "grandSlamPoints", title: "Grand Slam achievements GOAT points"},
 				{id: "bigWinsPoints", title: "Big Wins GOAT points"},
@@ -323,7 +323,7 @@
 			window.location.href = goatListUrl();
 		}
 		function goatListTweet() {
-			window.open("https://twitter.com/intent/tweet?text=My+GOAT+List&via=UltmTennisStats&url=" + encodeURIComponent("http://www.ultimatetennisstatistics.com" + goatListUrl()), "Tweet this GOAT List", "width=600, height=600, left=" + (screen.width-600)/2 + ", top=" + (screen.height-600)/2);
+			window.open("https://twitter.com/intent/tweet?text=My+GOAT+List&via=UltmTennisStats&url=" + encodeURIComponent("https://www.ultimatetennisstatistics.com" + goatListUrl()), "Tweet this GOAT List", "width=600, height=600, left=" + (screen.width-600)/2 + ", top=" + (screen.height-600)/2);
 			return false;
 		}
 		function param(param, def) {
@@ -365,6 +365,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3 id="goatListTable-title" class="grid-title text-nowrap">
 		<i class="fa fa-flag"></i> Open Era GOAT List
 		<a href="javascript:goatListPermalink()" title="Permalink to this GOAT List"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
@@ -386,11 +387,12 @@
 	<div id="goatListQuickPicks" class="btn-group margin-right">
 		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
 		<ul class="dropdown-menu">
-			<li><a href="/goatList" title="All GOAT Points constituents are included with weight x 1"><i class="fa fa-flag"></i> Default</a></li>
+			<li><a href="/goatList" title="All GOAT Points categories are included with weight x 1"><i class="fa fa-flag"></i> Default</a></li>
 			<li><a href="/goatList?levelFactors=G=2&resultFactors=W=2&weeksAtNo1Factor=4&grandSlamFactor=4" title="Grand Slam tournament titles are emphasized with x 4 the default weight, other GS tournament points (F, SF, QF) x 2, other titles x 2 (resulting in 1 GS = 4 Masters, 1 title = 4 finals), Grand Slam achievement points x 4 and weeks at No. 1 points x 4"><i class="fa fa-trophy"></i> GS, titles and No. 1 focus</a></li>
 			<li><a href="/goatList?levelFactors=F=0,L=0,M=0,O=0,A=0,B=0,D=0,T=0&resultFactors=F=0,SF=0,QF=0,RR=0,BR=0&yearEndRankFactor=0&bestRankFactor=0&weeksAtEloTopNFactor=0&bestEloRatingFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&bestSeasonFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Grand Slam titles and achievement points and weeks at No. 1 points are the only ones selected"><i class="fa fa-sun-o"></i> Minimalist</a></li>
-			<li><a href="/goatList?bestRankFactor=4&bestEloRatingFactor=4&bestSeasonFactor=4" title="Peak achievements (Career High Ranking, Peak Elo Ratings, and Best Seasons) are emphasized x 4 the default weight"><i class="fa fa-bullseye"></i> Peak emphasis</a></li>
-			<li><a href="/goatList?tournamentFactor=0&yearEndRankFactor=0&weeksAtNo1Factor=0&weeksAtEloTopNFactor=0&grandSlamFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Peak achievements (Career High Ranking, Peak Elo Ratings and Best Seasons) are the only ones selected"><i class="fa fa-dot-circle-o"></i> Minimalist Peak</a></li>
+			<li><a href="/goatList?bestRankFactor=4&bestEloRatingFactor=4&bestSeasonFactor=4" title="Peak achievements (Career-High Ranking, Peak Elo Ratings, and Best Seasons) are emphasized x 4 the default weight"><i class="fa fa-bullseye"></i> Peak emphasis</a></li>
+			<li><a href="/goatList?tournamentFactor=0&yearEndRankFactor=0&weeksAtNo1Factor=0&weeksAtEloTopNFactor=0&grandSlamFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Peak achievements (Career-High Ranking, Peak Elo Ratings and Best Seasons) are the only ones selected"><i class="fa fa-dot-circle-o"></i> Minimalist peak</a></li>
+			<li><a href="/goatList?bestEloRatingFactor=2&bigWinsFactor=4" title="Big Wins points are emphasized x 4, Peak Elo Rating points x 2"><i class="fa fa-adjust"></i> Era difficulty tweak</a></li>
 		</ul>
 	</div>
 	<table id="goatListTable" class="table table-condensed table-hover table-striped">
@@ -411,7 +413,7 @@
 			<th data-column-id="bestRankPoints" data-formatter="bestRankPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right" data-visible="false">BR P</th>
 			<th data-column-id="weeksAtNo1Points" data-formatter="weeksAtNo1Points" data-order="desc" data-width="75" data-align="right" data-header-align="right" data-visible="false">W@1 P</th>
 			<th data-column-id="weeksAtEloTopNPoints" data-formatter="weeksAtEloTopNPoints" data-order="desc" data-width="85" data-align="right" data-header-align="right" data-visible="false">W@E5 P</th>
-			<th data-column-id="bestEloRatingPoints" data-formatter="bestEloRatingPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right" data-visible="false">BER P</th>
+			<th data-column-id="bestEloRatingPoints" data-formatter="bestEloRatingPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right" data-visible="false">PER P</th>
 			<th data-column-id="achievementsPoints" data-formatter="achievementsPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Ach P</th>
 			<th data-column-id="grandSlamPoints" data-formatter="grandSlamPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right" data-visible="false">GSA P</th>
 			<th data-column-id="bigWinsPoints" data-formatter="bigWinsPoints" data-order="desc" data-width="65" data-align="right" data-header-align="right" data-visible="false">BW P</th>
@@ -439,6 +441,7 @@
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#goatListConfig">
 				<i class="fa fa-calculator"></i>&nbsp;&nbsp;Config&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
 			</button>
+			<a href="/blog?post=goatCalculator" title="GOAT Calculator explained"><i class="fa fa-question-circle" style="font-size: 133%; vertical-align: top"></i></a>
 		</div>
 	</div>
 	<div id="goatListConfig" class="collapse" th:attrappend="class=${countryId == null && config.default ? _ : ' in'}" style="margin-bottom: 10px; margin-top: 10px">
@@ -490,7 +493,7 @@
 			<div class="row">
 				<div th:each="level : ${levels}" class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
-						<label th:for="|level${level}Factor|" class="input-group-addon small-control factor-label" th:text="${T(org.strangeforest.tcb.stats.model.core.TournamentLevel).decode(level).text + ' Pts.:'}">Grand Slam Pts.:</label>
+						<label th:for="|level${level}Factor|" class="input-group-addon small-control factor-label" th:text="${#uts.level(level).text + ' Pts.:'}">Grand Slam Pts.:</label>
 						<select th:id="|level${level}Factor|" class="form-control small-control" onchange="reloadGOATListTableAndLegend()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.getLevelFactor(level)}">x 0</option>
 						</select>
@@ -500,7 +503,7 @@
 			<div class="row">
 				<div th:each="result : ${results}" class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
-						<label th:for="|result${result}Factor|" class="input-group-addon small-control factor-label" th:text="${(result == 'W' ? 'Title' : T(org.strangeforest.tcb.stats.model.core.EventResult).decode(result).text) + ' Pts.:'}">Title Pts.:</label>
+						<label th:for="|result${result}Factor|" class="input-group-addon small-control factor-label" th:text="${(result == 'W' ? 'Title' : #uts.result(result).text) + ' Pts.:'}">Title Pts.:</label>
 						<select th:id="|result${result}Factor|" class="form-control small-control" onchange="reloadGOATListTableAndLegend()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.getResultFactor(result)}">x 0</option>
 						</select>
@@ -547,7 +550,7 @@
 				</div>
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
-						<label for="bestRankFactor" class="input-group-addon small-control factor-label">Career High Ranking Pts.:</label>
+						<label for="bestRankFactor" class="input-group-addon small-control factor-label">Career-High Ranking Pts.:</label>
 						<select id="bestRankFactor" class="form-control small-control" onchange="reloadGOATListTableAndLegend()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bestRankFactor}">x 0</option>
 						</select>
@@ -703,15 +706,15 @@
 		<div class="popover-title"><strong>Open Era GOAT List - a.k.a. GOATometer</strong></div>
 		<div class="popover-content">
 			<p><strong>GOAT Points formula</strong></p>
-			<p>Open Era GOAT List quantifies tennis achievements using the GOAT Points formula. For detailed visual description of the formula used, please see GOAT Points Legend below.</p>
+			<p>Open Era GOAT List quantifies tennis achievements using the GOAT Points formula. For a detailed visual description of the formula used, please see GOAT Points Legend below.</p>
 			<p><strong>Open Era exclusive</strong></p>
-			<p><a href="https://en.wikipedia.org/wiki/History_of_tennis#Open_Era" target="_blank">Open Era</a> GOAT List quantifies tennis achievements during Open Era only. Tennis achievements that predate the Open Era are not included.</p>
+			<p><a href="https://en.wikipedia.org/wiki/History_of_tennis#Open_Era" target="_blank">Open Era</a> GOAT List quantifies tennis achievements during the Open Era only. Tennis achievements that predate the Open Era are not included.</p>
 			<p><strong>Why Open Era only?</strong></p>
-			<p>The reason is simple: GOAT Points formula on which Open Era GOAT List is based needs detailed information about all matches players played. Unfortunately, this information is available for wide audience only for the Open Era.</p>
+			<p>The reason is simple: GOAT Points formula on which Open Era GOAT List is based needs detailed information about all matches players played. Unfortunately, this information is available for a wide audience only for the Open Era.</p>
 			<p><strong>GOAT Lists by surface</strong></p>
 			<p>GOAT Lists by different surfaces are available by choosing a surface in the surface combo box at the top.</p>
 			<p><strong>Configurability and weight factors</strong></p>
-			<p>GOAT List is not a simple list, but a full 'GOAT Calculator' with configurable weight factors for different GOAT Points areas and sub-areas. Please click 'Config' button below to open the calculator and configuration form.</p>
+			<p>GOAT List is not a simple list, but a full <a href="/blog?post=goatCalculator">'GOAT Calculator'</a> with configurable weight factors for different GOAT Points areas and sub-areas. Please click 'Config' button below to open the calculator and configuration form.</p>
 		</div>
 	</div>
 	<div class="hidden" id="extrapolateCareerPopover">
@@ -719,21 +722,21 @@
 		<div class="popover-content">
 			<p>GOAT Points extrapolation extrapolate GOAT Points for active players and players born before 1952 to their full hypothetical career.<br/>
 			For active players, extrapolation tries to estimate how much GOAT Points players would earn by the end of their careers.<br/>
-			For players born before 1952, extrapolation tries to estimate how much GOAT Points players would had been earned before Open Era started under the same conditions as in Open Era.</p>
+			For players born before 1952, extrapolation tries to estimate how much GOAT Points players would have been earned before the Open Era started under the same conditions as in Open Era.</p>
 			<p><strong>How it is calculated?</strong></p>
-			<p>Extrapolation creates an age-weight curve telling an average proportion of GOAT Points earned at specific age.<br/>
+			<p>Extrapolation creates an age-weight curve telling an average proportion of GOAT Points earned at a specific age.<br/>
 			Starting from player's real GOAT Points earned in Open Era, extrapolations uses age-weight curve to estimate player's GOAT Points in years outside of Open Era span (either before or after).<br/>
 			<em>Example:</em><br/>
 			Say a player has 30 years. Say that through the Open Era, players in average earn around 10% GOAT Points at age greater than 30.<br/>
 			If player now has 200 normal GOAT Points, it is estimated that he would have 200 / (1 - 10%) = 222 GOAT Points by the end of his career.</p>
 			<p><strong>Season capping</strong></p>
-			<p>Extrapolation caps estimated points in single season to the maximum points someone earned in one season at specific age.<br/>
+			<p>Extrapolation caps estimated points in a single season to the maximum points someone earned in one season at a specific age.<br/>
 			<em>Example:</em><br/>
-			If extrapolation says player would earn 100 points at age 28, but maximum points someone earned at age 28 is 70, extrapolation will be capped to 70 points.</p>
+			If extrapolation says a player would earn 100 points at age 28, but maximum points someone earned at age 28 is 70, extrapolation will be capped to 70 points.</p>
 			<p><strong>Career capping</strong></p>
 			<p>Extrapolation caps estimated points for the whole career to the 10 times points earned in the Open Era.<br/>
 			<em>Example:</em><br/>
-			If extrapolation says player would earn 750 points for the whole career, but player currently has 50 points, extrapolation will be capped to 500 points.</p>
+			If extrapolation says a player would earn 750 points for the whole career, but player currently has 50 points, extrapolation will be capped to 500 points.</p>
 		</div>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>

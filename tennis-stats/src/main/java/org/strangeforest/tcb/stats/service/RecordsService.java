@@ -27,18 +27,26 @@ public class RecordsService {
 	private static final int MAX_PLAYER_COUNT = 100;
 
 	private static final String RECORDS_TABLE_QUERY = //language=SQL
-		"SELECT r.record_id, r.player_id, p.name, p.country_id, p.active, r.detail,\n" +
-		"  (SELECT string_agg(g.goat_points::TEXT, ', ' ORDER BY g.rank) FROM records_goat_points g WHERE g.record_id = r.record_id) AS goat_points\n" +
+		"WITH record_goat_points AS (\n" +
+		"  SELECT record_id, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
+		"  FROM records_goat_points\n" +
+		"  GROUP BY record_id\n" +
+		")\n" +
+		"SELECT r.record_id, r.player_id, p.name, p.country_id, p.active, r.detail, g.goat_points\n" +
 		"FROM player_record r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
+		"LEFT JOIN record_goat_points g USING (record_id)\n" +
 		"WHERE r.rank = 1 AND r.record_id = ANY(?)";
 
 	private static final String PLAYER_RECORDS_TABLE_QUERY = //language=SQL
-		"SELECT r.record_id, r.player_id, p.name, p.country_id, p.active, r.detail\n" +
-		"FROM player_record r\n" +
-		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.rank = 1 AND r.record_id = ANY(?)" +
-		"AND exists(SELECT TRUE FROM player_record r2 WHERE r2.record_id = r.record_id AND r2.player_id = ? AND r2.rank = 1)";
+		"WITH player_records AS (\n" +
+		"  SELECT record_id FROM player_record\n" +
+		"  WHERE record_id = ANY(?) AND player_id = ? AND rank = 1\n" +
+		")\n" +
+		"SELECT r.record_id, player_id, p.name, p.country_id, p.active, r.detail\n" +
+		"FROM player_records pr\n" +
+		"INNER JOIN player_record r ON r.record_id = pr.record_id AND r.rank = 1\n" +
+		"INNER JOIN player_v p USING (player_id)";
 
 	private static final String RECORD_TABLE_QUERY = //language=SQL
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.detail\n" +

@@ -20,7 +20,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints", playerId);
 
 	public BestPlayerThatNeverCategory() {
-		super("Best Player That Never...");
+		super("The Best Player That Never...");
 		register(bestPlayerThatNeverWon(GRAND_SLAM, "grand_slams"));
 		register(bestPlayerThatNeverWon(TOUR_FINALS, "tour_finals"));
 		register(bestPlayerThatNeverWon(ALL_FINALS, "tour_finals + coalesce(alt_finals, 0)", N_A, "Any Tour Finals Title (Official or Alternative)", null));

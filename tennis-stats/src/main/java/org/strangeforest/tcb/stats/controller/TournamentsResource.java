@@ -52,7 +52,7 @@ public class TournamentsResource {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,

@@ -28,10 +28,11 @@ cli.ip('Load in-progress tournaments')
 cli.ff('Force in-progress tournaments forecast')
 cli.vc('Vacuum space')
 cli.cc('Clear caches')
+cli.rsc('Restart connector')
 cli.help('Print this message')
 def options = cli.parse(args)
 
-if (options && (options.dd || options.cd || options.lt || options.ln || options.lp || options.la || options.nr || options.nt || options.el || options.rc || options.rr || options.rp || options.ip || options.ff || options.vc || options.cc)) {
+if (options && (options.dd || options.cd || options.lt || options.ln || options.lp || options.la || options.nr || options.nt || options.el || options.rc || options.rr || options.rp || options.ip || options.ff || options.vc || options.cc || options.rsc)) {
 	setProperties(options)
 
 	if (options.dd)
@@ -70,7 +71,9 @@ if (options && (options.dd || options.cd || options.lt || options.ln || options.
 	if (options.vc)
 		callLoader('vacuum')
 	if (options.cc)
-		new ClearCaches().run()
+		JMXFacade.clearCaches()
+	if (options.rsc)
+		JMXFacade.restartConnector()
 }
 else
 	cli.usage()

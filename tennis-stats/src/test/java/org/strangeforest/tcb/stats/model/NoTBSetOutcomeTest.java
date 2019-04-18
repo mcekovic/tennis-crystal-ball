@@ -41,6 +41,12 @@ class NoTBSetOutcomeTest {
 		assertThat(set.pWin(6, 5)).isEqualTo(0.9895040835, OFFSET);
 		assertThat(set.pWin(6, 6)).isEqualTo(0.7933111835, OFFSET);
 		assertThat(set.pWin(5, 6)).isEqualTo(0.7530258500, OFFSET);
+
+		assertThat(set.pWin(11, 10)).isEqualTo(0.9895040835, OFFSET);
+		assertThat(set.pWin(10, 10)).isEqualTo(0.7933111835, OFFSET);
+		assertThat(set.pWin(10, 11)).isEqualTo(0.7530258500, OFFSET);
+		assertThat(set.pWin(50, 10)).isEqualTo(1.0, OFFSET);
+		assertThat(set.pWin(10, 50)).isEqualTo(0.0, OFFSET);
 	}
 
 	@Test

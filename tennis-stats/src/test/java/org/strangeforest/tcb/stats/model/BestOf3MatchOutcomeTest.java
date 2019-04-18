@@ -27,4 +27,12 @@ class BestOf3MatchOutcomeTest {
 		assertThat(match.pWin(0, 2)).isEqualTo(0.0);
 		assertThat(match.pWin(1, 2)).isEqualTo(0.0);
 	}
+
+	@Test
+	void testSymmetry() {
+		MatchOutcome match = new MatchOutcome(0.8, 0.4, BEST_OF_3_MATCH);
+
+		assertThat(match.pWin(0, 0)).isEqualTo(match.pWin(0, 0, 0, 0, 0, 0, true).getPMatch(), OFFSET);
+		assertThat(match.pWin(0, 0, 0, 0, 0, 0, true).getPMatch()).isEqualTo(match.pWin(0, 0, 0, 0, 0, 0, false).getPMatch(), OFFSET);
+	}
 }

@@ -14,6 +14,9 @@ WHERE last_name = 'Mcenroe';
 UPDATE player SET first_name = 'Stan'
 WHERE first_name = 'Stanislas' AND last_name = 'Wawrinka';
 
+UPDATE player SET first_name = 'Frances'
+WHERE first_name = 'Francis' AND last_name = 'Tiafoe';
+
 COMMIT;
 
 

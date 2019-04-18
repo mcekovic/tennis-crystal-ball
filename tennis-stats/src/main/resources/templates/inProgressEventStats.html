@@ -1,0 +1,154 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="inProgressEventId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.core.StatsCategory>>"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
+<!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
+<script type="text/javascript">
+	$(function() {
+		var $statsLeadersTable = $("#statsLeadersTable");
+		var device = detectDevice();
+		setBootgridColumnsWidths($statsLeadersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
+		$statsLeadersTable.bootgrid({
+			ajax: true,
+			ajaxSettings: {
+				method: "GET",
+				cache: false
+			},
+			url: "/inProgressStatsLeadersTable?inProgressEventId=[(${inProgressEventId})]",
+			requestHandler: function(request) {
+				request.category = $("#statsCategory").val();
+				request.round = $("#statsRound").val();
+				request.opponent = $("#statsOpponent").val();
+				request.countryId = $("#statsCountry").val();
+				request.minEntries = $("#statsMinEntriesOverride").val();
+				return request;
+			},
+			rowCount: [15, 25, 50, -1],
+			searchSettings: {
+				delay: 300,
+				characters: 2
+			},
+			formatters: {
+				"country": countryFormatter,
+				"player": playerFormatter
+			},
+			labels: {
+				loading: bootgridTemplateLoading,
+				noResults: "No statistics found"
+			},
+			templates: {
+				paginationItem: bootgridTemplatePaginationItem
+			}
+		});
+		var $statsLeadersTableHeader = $("#statsLeadersTable-header");
+		var $search = $statsLeadersTableHeader.find("div.search");
+		$search.before($("#statsRoundDiv").remove());
+		$search.before($("#statsOpponentDiv").remove());
+		$search.after($("#statsClearDiv").remove());
+		$statsLeadersTableHeader.find("div.actions").after($("#statsAdvancedFilterDiv").remove());
+		statsCategoryChanged();
+		$("[data-toggle='tooltip']").tooltip();
+	});
+	function statsCategoryChanged() {
+		var $category = $("#statsCategory");
+		$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
+		var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentEventId=[(${inProgressEventId})]";
+		url += "&round=" + encodeURIComponent($("#statsRound").val());
+		url += "&opponent=" + $("#statsOpponent").val();
+		url += "&countryId=" + $("#statsCountry").val();
+		var $minEntries = $("#statsMinEntriesOverride");
+		if (!validateNumber($minEntries))
+			return false;
+		var minEntries = $minEntries.val();
+		if (minEntries && minEntries < 2) {
+			$minEntries.tooltip({title: "Minimum entries must be greater or equal to 2", placement: "bottom"}).tooltip("show");
+			$minEntries.focus();
+			return false;
+		}
+		url += "&minEntries=" + minEntries;
+		$.get(url, function (data) {
+			$("#statsMinEntries").html(data);
+		});
+			return true;
+	}
+	function reloadStatsLeaders() {
+		if (statsCategoryChanged())
+			$("#statsLeadersTable").bootgrid("reload");
+	}
+	function clearStatsLeadersFilter() {
+		$("#statsRound").val("");
+		$("#statsOpponent").val("");
+		$("#statsCountry").val("");
+		$("#statsMinEntriesOverride").val("");
+		$("#statsLeadersTable").bootgrid("search", "");
+		reloadStatsLeaders();
+	}
+</script>
+<div class="row margin-top">
+	<div class="col-md-8">
+		<h3 class="text-nowrap" style="display: inline">Statistics Leaders</h3>
+	</div>
+	<div class="col-md-4">
+		<div class="input-group" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+			<label for="statsCategory" class="input-group-addon">Category:</label>
+			<select id="statsCategory" class="form-control" onchange="reloadStatsLeaders()">
+				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+					<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+				</optgroup>
+			</select>
+		</div>
+	</div>
+</div>
+<div id="statsAdvancedFilter" class="collapse row margin-top">
+	<div class="col-md-3">
+		<select id="statsCountry" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+			<option value="">Vs all countries</option>
+			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+		</select>
+	</div>
+	<div class="col-md-3">
+		<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
+			<label for="statsMinEntriesOverride" class="input-group-addon">Min. entries:</label>
+			<input id="statsMinEntriesOverride" type="text" size="8" class="form-control" oninput="reloadStatsLeaders()" onchange="reloadStatsLeaders()"/>
+		</div>
+	</div>
+</div>
+<div id="statsRoundDiv" class="btn-group pull-left margin-right no-margin-left">
+	<select id="statsRound" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+		<option value="">All rounds</option>
+		<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+	</select>
+</div>
+<div id="statsOpponentDiv" class="btn-group pull-left margin-right">
+	<select id="statsOpponent" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+		<option value="">Vs all</option>
+		<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+			<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
+		</optgroup>
+	</select>
+</div>
+<div id="statsClearDiv" class="btn-group margin-right">
+	<button type="button" class="btn btn-default" onclick="clearStatsLeadersFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+		<i class="fa fa-eraser"></i>
+	</button>
+</div>
+<div id="statsAdvancedFilterDiv" class="btn-group margin-left no-margin-right">
+	<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+		<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#statsAdvancedFilter">
+			Adv.&nbsp;&nbsp;<i class="fa fa-chevron-up"></i>
+		</button>
+	</div>
+</div>
+<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">
+	<thead>
+	<tr>
+		<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
+		<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
+		<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
+		<th data-column-id="value" data-type="numeric" data-order="desc" data-width="200" data-align="right" data-header-align="right">Value</th>
+	</tr>
+	</thead>
+</table>
+<p><i>* Minimum <span id="statsMinEntries">2 matches</span></i></p>
+</th:block>

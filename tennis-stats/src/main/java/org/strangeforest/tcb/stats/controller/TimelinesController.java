@@ -51,7 +51,8 @@ public class TimelinesController extends PageController {
 		modelMap.addAttribute("averageElo", averageElo);
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("minGOATPoints", minGOATPoints);
-		modelMap.addAttribute("dominanceRatioCoefficient", (int)DominanceSeason.getDominanceRatioCoefficient(aSurface));
+		modelMap.addAttribute("dominanceeRatioCoefficient", (int)DominanceSeason.getDominanceRatioCoefficient(aSurface));
+		modelMap.addAttribute("skipAds", true);
 		return new ModelAndView("dominanceTimeline", modelMap);
 	}
 
@@ -129,7 +130,7 @@ public class TimelinesController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData

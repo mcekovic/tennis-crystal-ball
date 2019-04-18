@@ -62,6 +62,15 @@ subprojects {
 	test {
 		useJUnitPlatform()
 	}
+
+	dependencyUpdates.resolutionStrategy {
+		componentSelection { rules ->
+			rules.all { ComponentSelection selection ->
+				if (['alpha', 'beta', 'rc', 'cr', 'm', 'preview', 'b', 'ea'].any { qualifier -> selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-+]*/ })
+					selection.reject('Release candidate')
+			}
+		}
+	}
 }
 
 ext {

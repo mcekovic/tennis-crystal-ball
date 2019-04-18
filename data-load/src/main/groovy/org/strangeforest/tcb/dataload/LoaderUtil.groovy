@@ -2,6 +2,8 @@ package org.strangeforest.tcb.dataload
 
 import org.jsoup.*
 
+import com.google.common.base.*
+
 abstract class LoaderUtil {
 
 	private static final int TIMEOUT = 30 * 1000
@@ -22,7 +24,7 @@ abstract class LoaderUtil {
 			catch (Throwable th) {
 				if (isNonRecoverableKnownError(th))
 					throw th
-				def rootCause = extractRootCause(th)
+				def rootCause = Throwables.getRootCause(th)
 				if (retry < count && predicate.curry(rootCause)) {
 					System.err.println "Exception occurred: ${rootCause} [retry ${retry + 1} follows]"
 					Thread.sleep(delay)
@@ -31,18 +33,6 @@ abstract class LoaderUtil {
 					throw th
 			}
 		}
-	}
-
-	static List<Throwable> getThrowableList(Throwable th) {
-		def ths = []
-		for (Throwable t = th; t && !(t in ths); t = t.getCause())
-			ths << t
-		ths
-	}
-
-	static Throwable extractRootCause(Throwable th) {
-		def ths = getThrowableList(th)
-		ths ? ths[ths.size() - 1] : null
 	}
 
 	static <E> List<Collection<E>> tile(Collection<E> col) {

@@ -40,5 +40,25 @@ class SetOutcomeTest {
 		assertThat(set.pWin(6, 5)).isEqualTo(0.9832912945, OFFSET);
 		assertThat(set.pWin(6, 6)).isEqualTo(0.6709670307, OFFSET);
 		assertThat(set.pWin(5, 6)).isEqualTo(0.6368944861, OFFSET);
+
+		assertThat(set.pWin(11, 10)).isEqualTo(0.9832912945, OFFSET);
+		assertThat(set.pWin(10, 10)).isEqualTo(0.6709670307, OFFSET);
+		assertThat(set.pWin(10, 11)).isEqualTo(0.6368944861, OFFSET);
+		assertThat(set.pWin(50, 10)).isEqualTo(1.0, OFFSET);
+		assertThat(set.pWin(10, 50)).isEqualTo(0.0, OFFSET);
+	}
+
+	@Test
+	void testSymmetry() {
+		SetOutcome set = new SetOutcome(0.75, 0.35);
+
+		assertThat(set.pWin(0, 0)).isEqualTo(set.pWin(0, 0, true), OFFSET);
+		assertThat(set.pWin(0, 0, true)).isEqualTo(1.0 - set.invertedOutcome().pWin(0, 0, false), OFFSET);
+
+		assertThat(set.pWin(3, 3)).isEqualTo(set.pWin(3, 3, true), OFFSET);
+		assertThat(set.pWin(3, 3, true)).isEqualTo(1.0 - set.invertedOutcome().pWin(3, 3, false), OFFSET);
+
+		assertThat(set.pWin(4, 2)).isEqualTo(set.pWin(4, 2, true), OFFSET);
+		assertThat(set.pWin(4, 2, true)).isEqualTo(1.0 - set.invertedOutcome().pWin(2, 4, false), OFFSET);
 	}
 }

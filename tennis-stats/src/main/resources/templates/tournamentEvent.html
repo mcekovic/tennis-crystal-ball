@@ -34,9 +34,10 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 th:text="${tournamentEvent.name} + ' ' + ${tournamentEvent.season}">Australian Open 2016</h3>
+	<th:block th:include="fragments/ads :: responsive"/>
+	<h3>[[${tournamentEvent.name} + ' ' + ${tournamentEvent.season}]] <a th:href="@{/tournamentEvent(name=${tournamentEvent.name}, extId=${tournamentEvent.tournamentExtId}, season=${tournamentEvent.season})}" th:title="|Permalink to ${tournamentEvent.name} ${tournamentEvent.season} event|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
 	<div class="row" th:with="isTeam=${tournamentEvent.level == 'D' || tournamentEvent.level == 'T'}">
-		<div class="col-md-3">
+		<div class="col-md-2">
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Level</th>
@@ -53,17 +54,25 @@
 					<th>Date</th>
 					<td th:text="${#temporals.format(tournamentEvent.date, 'dd-MM-yyyy')}">1-1-1990</td>
 				</tr>
-				<tr>
+				<tr th:if="${isTeam}">
 					<th>Draw</th>
 					<td th:text="${tournamentEvent.draw}">KO 128</td>
+				</tr>
+				<tr>
+					<th></th>
+					<td>
+						<a role="button" th:href="${!isTeam ? ('/tournament?tournamentId=' + tournamentEvent.tournamentId) : ('/teamTournamentLevelTimeline?level=' + tournamentEvent.level)}" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" title="Tournament history">
+							<i class="fa fa-calendar"></i>&nbsp;&nbsp;History
+						</a>
+					</td>
 				</tr>
 			</table>
 		</div>
 		<div class="col-md-3" th:unless="${isTeam}">
 			<table class="table table-condensed text-nowrap">
 				<tr>
-					<th>Players</th>
-					<td th:text="${tournamentEvent.playerCount}">128</td>
+					<th>Draw / Players</th>
+					<td th:text="${tournamentEvent.draw + ' / ' + tournamentEvent.playerCount}">KO 128 / 128</td>
 				</tr>
 				<tr th:title="#{event.participation.title}">
 					<th>Participation</th>
@@ -85,7 +94,7 @@
 					<th>Winner</th>
 					<td th:with="player=${tournamentEvent.winner}">
 						<th:block th:unless="${tournamentEvent.outcome == 'ABD'}">
-							<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+							<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 							<strong><a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" title="Show profile">Roger Federer</a>[(${player.formattedSeedAndEntry()})]</strong>
 						</th:block>
 						<th:block th:if="${tournamentEvent.outcome == 'ABD'}">ABD</th:block>
@@ -102,20 +111,21 @@
 					<th>Final Score</th>
 					<td th:utext="${tournamentEvent.scoreFormatted()}">6-4 6-3</td>
 				</tr>
+			</table>
+		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
 				<tr th:if="${tournamentEvent.titleDifficulty}">
 					<th th:title="#{event.titleDifficulty.title}">Title Difficulty<sup class="new-feature"></sup></th>
 					<td th:utext="${#numbers.formatDecimal(tournamentEvent.titleDifficulty, 1, 3)}">1.23</td>
 				</tr>
-			</table>
-		</div>
-		<div class="col-md-2">
-			<table class="table table-condensed text-nowrap">
-				<tr>
-					<th>
-						<a role="button" th:href="${!isTeam ? ('/tournament?tournamentId=' + tournamentEvent.tournamentId) : ('/teamTournamentLevelTimeline?level=' + tournamentEvent.level)}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Tournament history">
-							<i class="fa fa-calendar"></i>&nbsp;&nbsp;History
-						</a>
-					</th>
+				<tr th:if="${tournamentEvent.titleAvgRank}">
+					<th th:title="#{event.titleAverageOpponentRank.title}">Title Avg. Opp. Rank</th>
+					<td th:utext="${#numbers.formatDecimal(tournamentEvent.titleAvgRank, 1, 1)}">31.4</td>
+				</tr>
+				<tr th:if="${tournamentEvent.titleAvgEloRating}">
+					<th th:title="#{event.titleAverageOpponentEloRating.title}">Title Avg. Opp. Elo</sup></th>
+					<td th:utext="${tournamentEvent.titleAvgEloRating}">2135</td>
 				</tr>
 			</table>
 		</div>

@@ -6,26 +6,28 @@ import static org.strangeforest.tcb.stats.model.core.SetRules.*;
 
 public class MatchRules {
 
-	public static final MatchRules BEST_OF_3_MATCH = new MatchRules(2, COMMON_SET);
-	public static final MatchRules BEST_OF_5_MATCH = new MatchRules(3, COMMON_SET);
-	public static final MatchRules BEST_OF_5_NO_5TH_SET_TB_MATCH = new MatchRules(3, COMMON_SET, NO_TB_SET);
+	public static final MatchRules BEST_OF_3_MATCH = new MatchRules(3, COMMON_SET);
+	public static final MatchRules BEST_OF_5_MATCH = new MatchRules(5, COMMON_SET);
+	public static final MatchRules BEST_OF_5_NO_5TH_SET_TB_MATCH = new MatchRules(5, COMMON_SET, NO_TB_SET);
+	public static final MatchRules BEST_OF_5_AO_MATCH = new MatchRules(5, COMMON_SET, AO_5TH_SET);
+	public static final MatchRules BEST_OF_5_WB_MATCH = new MatchRules(5, COMMON_SET, WB_5TH_SET);
 
-	private final int sets;
+	private final int bestOf;
 	private final SetRules set;
 	private final SetRules decidingSet;
 
-	public MatchRules(int sets, SetRules set) {
-		this(sets, set, set);
+	public MatchRules(int bestOf, SetRules set) {
+		this(bestOf, set, set);
 	}
 
-	public MatchRules(int sets, SetRules set, SetRules decidingSet) {
-		this.sets = sets;
+	public MatchRules(int bestOf, SetRules set, SetRules decidingSet) {
+		this.bestOf = bestOf;
 		this.set = set;
 		this.decidingSet = decidingSet;
 	}
 
 	public int getSets() {
-		return sets;
+		return (bestOf + 1) / 2;
 	}
 
 	public SetRules getSet() {
@@ -36,8 +38,12 @@ public class MatchRules {
 		return decidingSet;
 	}
 
-	public boolean isDecidingSet(int sets) {
-		return sets == (this.sets - 1) * 2;
+	public SetRules getSet(int set) {
+		return isDecidingSet(set) ? decidingSet : this.set;
+	}
+
+	public boolean isDecidingSet(int set) {
+		return set == bestOf;
 	}
 
 	public boolean hasDecidingSetSpecificRules() {
@@ -51,10 +57,10 @@ public class MatchRules {
 		if (this == o) return true;
 		if (!(o instanceof MatchRules)) return false;
 		MatchRules rules = (MatchRules) o;
-		return sets == rules.sets && Objects.equals(set, rules.set) && Objects.equals(decidingSet, rules.decidingSet);
+		return bestOf == rules.bestOf && Objects.equals(set, rules.set) && Objects.equals(decidingSet, rules.decidingSet);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(sets, set, decidingSet);
+		return Objects.hash(bestOf, set, decidingSet);
 	}
 }

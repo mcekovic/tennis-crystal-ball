@@ -1,0 +1,1 @@
+ALTER TABLE in_progress_event ADD COLUMN court_speed REAL;

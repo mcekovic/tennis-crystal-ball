@@ -18,10 +18,9 @@
 <header th:include="fragments/header :: title"></header>
 <div class="row">
 	<div class="col-lg-10 col-md-9">
-		<div>
-			<h1 style="margin-top: 10px; margin-bottom: 20px"><a href="/" title="Home"><th:block th:include="fragments/promotion :: logo"/></a></h1>
-		</div>
-		<h4 class="text-nowrap"><i class="fa fa-thumbs-o-up"></i> Thank You!</h4>
+		<h1 style="margin-top: 0; margin-bottom: 20px"><img src="/images/uts-logo.png" class="uts-logo" alt="UTS"/> <a href="/" title="Home"><th:block th:include="fragments/promotion :: logo"/></a></h1>
+		<th:block th:include="fragments/ads :: responsive"/>
+		<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-thumbs-o-up"></i> Thank You!</h4>
 		<p>
 			<th:block th:include="fragments/promotion :: logo"/> thanks you for your generous donation.<br/>
 			Please be assured that donation will be used only to pay the web hosting bill and to improve the availability and the performance of the <th:block th:include="fragments/promotion :: logo"/> website.

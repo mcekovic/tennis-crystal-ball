@@ -2,7 +2,7 @@
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1984" name="Memphis" date="1984-02-06" ext-id="402">
 		<level>A</level>
-		<surface>C</surface>
+		<surface>P</surface>
 		<draw-type>KO</draw-type>
 		<draw-size>48</draw-size>
 		<!-- R64 -->

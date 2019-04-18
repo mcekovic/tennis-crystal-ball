@@ -42,7 +42,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -58,7 +58,7 @@ public class TopPerformersResource {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, null, opponentFilter);
+		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, null, opponentFilter, null);
 		TopPerformersView view = new TopPerformersView(category, filter).optimize();
 		int playerCount = topPerformersService.getPlayerCount(view.getCategory(), view.getFilter(), minEntries);
 
@@ -77,7 +77,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,

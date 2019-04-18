@@ -25,6 +25,8 @@ public class TournamentEvent {
 	private String score;
 	private String outcome;
 	private Double titleDifficulty;
+	private Double titleAvgRank;
+	private Integer titleAvgEloRating;
 	private String mapProperties;
 
 	public TournamentEvent(int id, int tournamentId, String tournamentExtId, int season, LocalDate date, String name, String level, String surface, boolean indoor) {
@@ -66,8 +68,10 @@ public class TournamentEvent {
 		outcome = null;
 	}
 
-	public void setTitleDifficulty(Double titleDifficulty) {
+	public void setTitleDifficulty(Double titleDifficulty, Double titleAvgRank, Integer titleAvgEloRating) {
 		this.titleDifficulty = titleDifficulty;
+		this.titleAvgRank = titleAvgRank;
+		this.titleAvgEloRating = titleAvgEloRating;
 	}
 
 	public void setMapProperties(String mapProperties) {
@@ -164,6 +168,14 @@ public class TournamentEvent {
 
 	public Double getTitleDifficulty() {
 		return titleDifficulty;
+	}
+
+	public Double getTitleAvgRank() {
+		return titleAvgRank;
+	}
+
+	public Integer getTitleAvgEloRating() {
+		return titleAvgEloRating;
 	}
 
 	public String getMapProperties() {

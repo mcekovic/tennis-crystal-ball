@@ -49,10 +49,9 @@
 	<header th:include="fragments/header :: title"></header>
 	<div class="row">
 		<div class="col-lg-10 col-md-9">
-			<div>
-				<h1 style="margin-top: 10px; margin-bottom: 20px"><a href="/" title="Home"><th:block th:include="fragments/promotion :: logo"/></a></h1>
-			</div>
-			<h4 class="text-nowrap"><i class="fa fa-book"></i> Glossary</h4>
+			<h1 style="margin-top: 0; margin-bottom: 20px"><a href="/" title="Home"><img src="/images/uts-logo.png" class="uts-logo" alt="UTS"/> <th:block th:include="fragments/promotion :: logo"/></a></h1>
+			<th:block th:include="fragments/ads :: responsive"/>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-book"></i> Glossary</h4>
 			<ul>
 				<li><strong><i class="fa fa-flag"></i> 'GOAT' Points</strong> - The points assigned to players for various tennis achievements, like winning or going deep into tournaments, ATP and Elo rankings, Grand Slam (career and calendar year), big wins, head-to-head ratios, title, streak, performance and statistics records.</li>
 				<li><strong>Elo Rating System</strong> - The <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" class="external">Elo rating</a> is a method for calculating the relative skill levels of players in competitor-versus-competitor games such as chess or tennis. It is named after its creator Arpad Elo, a Hungarian-born American physics professor.</li>
@@ -83,7 +82,7 @@
 				<li><strong>Points to Games Over-Performing Ratio</strong> - [[#{stats.pointsToGamesOverPerformingRatio.title}]]</li>
 				<li><strong>Service Points to Service Games Over-Performing Ratio</strong> - [[#{stats.servicePointsToServiceGamesOverPerformingRatio.title}]]</li>
 				<li><strong>Return Points to Return Games Over-Performing Ratio</strong> - [[#{stats.returnPointsToReturnGamesOverPerformingRatio.title}]]</li>
-				<li><strong>Points to Tie Breaks Over-Performing Ratio</strong> - [[#{stats.pointsToTieBreaksOverPerformingRatio.title}]]</li>
+				<li><strong>Points to Tie-Breaks Over-Performing Ratio</strong> - [[#{stats.pointsToTieBreaksOverPerformingRatio.title}]]</li>
 				<li><strong>Games to Matches Over-Performing Ratio</strong> - [[#{stats.gamesToMatchesOverPerformingRatio.title}]]</li>
 				<li><strong>Games to Sets Over-Performing Ratio</strong> - [[#{stats.gamesToSetsOverPerformingRatio.title}]]</li>
 				<li><strong>Sets to Matches Over-Performing Ratio</strong> - [[#{stats.setsToMatchesOverPerformingRatio.title}]]</li>
@@ -105,6 +104,8 @@
 			<div id="rankingTopN"></div>
 			<th:block th:include="fragments/promotion :: facebook"/>
 			<th:block th:include="fragments/promotion :: twitter('')"/>
+			<br/>
+			<th:block th:include="fragments/ads :: matchedContent"/>
 			<th:block th:include="fragments/promotion :: paypal"/>
 			<th:block th:include="fragments/promotion :: license"/>
 		</div>

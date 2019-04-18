@@ -317,24 +317,24 @@
 </th:block>
 <th:block th:unless="${careerPerf.tieBreaks.empty}">
 <tr class="pct-data">
-	<td class="stats-header stats-pressure">Tie Breaks</td>
+	<td class="stats-header stats-pressure">Tie-Breaks</td>
 	<td th:text="${careerPerf.tieBreaks.wonPctStr}" class="stats">75.2%</td>
 	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).tieBreaks.wonPctStr}" class="stats">75.2%</td>
 </tr>
 <tr class="raw-data">
-	<td class="stats-header stats-pressure">Tie Breaks</td>
+	<td class="stats-header stats-pressure">Tie-Breaks</td>
 	<td th:text="${careerPerf.tieBreaks.WL}" class="stats">456-167</td>
 	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).tieBreaks.WL}" class="stats">456-167</td>
 </tr>
 </th:block>
 <th:block th:unless="${careerPerf.decidingSetTieBreaks.empty}">
 <tr class="pct-data">
-	<td class="stats-header stats-pressure">Deciding Set Tie Breaks</td>
+	<td class="stats-header stats-pressure">Deciding Set Tie-Breaks</td>
 	<td th:text="${careerPerf.decidingSetTieBreaks.wonPctStr}" class="stats">75.2%</td>
 	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).decidingSetTieBreaks.wonPctStr}" class="stats">75.2%</td>
 </tr>
 <tr class="raw-data">
-	<td class="stats-header stats-pressure">Deciding Set Tie Breaks</td>
+	<td class="stats-header stats-pressure">Deciding Set Tie-Breaks</td>
 	<td th:text="${careerPerf.decidingSetTieBreaks.WL}" class="stats">456-167</td>
 	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).decidingSetTieBreaks.WL}" class="stats">456-167</td>
 </tr>

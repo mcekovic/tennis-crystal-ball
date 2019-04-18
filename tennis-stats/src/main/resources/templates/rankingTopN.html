@@ -60,7 +60,7 @@
 		<tr th:each="player : ${rankingTopN}">
 			<td th:text="${player.rank}" class="top-rank">1</td>
 			<td class="top-player">
-				<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+				<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 				<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
 			</td>
 			<td th:text="${player.points}" class="top-points">1000</td>

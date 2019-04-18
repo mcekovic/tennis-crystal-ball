@@ -119,29 +119,34 @@ public class MatchesService {
 		"WHERE m.in_progress_match_id = :matchId";
 
 	private static final String COUNTRIES_QUERY = //language=SQL
-		"SELECT DISTINCT loser_country_id FROM match\n" +
+		"SELECT DISTINCT winner_country_id FROM match\n" +
 		"UNION\n" +
-		"SELECT DISTINCT winner_country_id FROM match";
+		"SELECT DISTINCT loser_country_id FROM match";
 
 	private static final String SEASON_COUNTRIES_QUERY = //language=SQL
-		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE season = :season\n" +
+		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE season = :season\n" +
 		"UNION\n" +
-		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE season = :season";
+		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE season = :season";
 
 	private static final String TOURNAMENT_COUNTRIES_QUERY = //language=SQL
-		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_id = :tournamentId\n" +
+		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_id = :tournamentId\n" +
 		"UNION\n" +
-		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_id = :tournamentId";
+		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_id = :tournamentId";
 
 	private static final String TOURNAMENT_EVENT_COUNTRIES_QUERY = //language=SQL
-		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_event_id = :tournamentEventId\n" +
+		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_event_id = :tournamentEventId\n" +
 		"UNION\n" +
-		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_event_id = :tournamentEventId";
+		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_event_id = :tournamentEventId";
+
+	private static final String IN_PROGRESS_EVENT_COUNTRIES_QUERY = //language=SQL
+		"SELECT DISTINCT player1_country_id FROM in_progress_match INNER JOIN in_progress_event USING (in_progress_event_id) WHERE in_progress_event_id = :inProgressEventId AND player1_country_id IS NOT NULL\n" +
+		"UNION\n" +
+		"SELECT DISTINCT player2_country_id FROM in_progress_match INNER JOIN in_progress_event USING (in_progress_event_id) WHERE in_progress_event_id = :inProgressEventId AND player2_country_id IS NOT NULL";
 
 	private static final String OPPONENT_COUNTRIES_QUERY = //language=SQL
-		"SELECT DISTINCT loser_country_id FROM match WHERE winner_id = :playerId\n" +
+		"SELECT DISTINCT winner_country_id FROM match WHERE winner_id = :playerId\n" +
 		"UNION\n" +
-		"SELECT DISTINCT winner_country_id FROM match WHERE loser_id = :playerId";
+		"SELECT DISTINCT loser_country_id FROM match WHERE loser_id = :playerId";
 
 
 	public TournamentEventResults getTournamentEventResults(int tournamentEventId) {
@@ -373,6 +378,11 @@ public class MatchesService {
 	@Cacheable("TournamentEventCountries")
 	public List<CountryCode> getTournamentEventCountries(int tournamentEventId) {
 		return Country.codes(jdbcTemplate.queryForList(TOURNAMENT_EVENT_COUNTRIES_QUERY, params("tournamentEventId", tournamentEventId), String.class));
+	}
+
+	@Cacheable("InProgressEventCountries")
+	public List<CountryCode> getInProgressEventCountries(int inProgressEventId) {
+		return Country.codes(jdbcTemplate.queryForList(IN_PROGRESS_EVENT_COUNTRIES_QUERY, params("inProgressEventId", inProgressEventId), String.class));
 	}
 
 	@Cacheable("OpponentCountries")

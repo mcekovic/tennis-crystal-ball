@@ -33,8 +33,8 @@ public enum RankType {
 	SERVICE_GAME_ELO_RATING(ELO, SERVICE_GAME_ELO_RANK, true, "Service Game Elo Rating", "Service Game", null),
 	RETURN_GAME_ELO_RANK(ELO, null, false, "Return Game Elo Ranking", "Return Elo", null),
 	RETURN_GAME_ELO_RATING(ELO, RETURN_GAME_ELO_RANK, true, "Return Game Elo Rating", "Return Game", null),
-	TIE_BREAK_ELO_RANK(ELO, null, false, "Tie Break Elo Ranking", "Tie Break Elo", null),
-	TIE_BREAK_ELO_RATING(ELO, TIE_BREAK_ELO_RANK, true, "Tie Break Elo Rating", "Tie Break", null),
+	TIE_BREAK_ELO_RANK(ELO, null, false, "Tie-Break Elo Ranking", "Tie-Break Elo", null),
+	TIE_BREAK_ELO_RATING(ELO, TIE_BREAK_ELO_RANK, true, "Tie-Break Elo Rating", "Tie-Break", null),
 	// GOAT
 	GOAT_POINTS(GOAT, null, true, "GOAT Points", null, null),
 	HARD_GOAT_POINTS(GOAT, null, true, "Hard GOAT Points", null, HARD),

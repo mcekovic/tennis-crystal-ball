@@ -104,8 +104,11 @@ public class DominanceTimeline {
 		timeline.calculateDominanceEras();
 		for (DominanceSeason dominanceSeason : timeline.getDominanceSeasons()) {
 			DominanceSeason season = getDominanceSeason(dominanceSeason.getSeason());
-			if (season != null)
+			if (season != null) {
+				dominanceSeason.setPredictability(season.getPredictability());
+				dominanceSeason.setEloPredictability(season.getEloPredictability());
 				dominanceSeason.setAverageEloRatings(season.getAverageEloRatings());
+			}
 		}
 		return timeline;
 	}

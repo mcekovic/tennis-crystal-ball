@@ -13,6 +13,14 @@ public abstract class PriceUtil {
 		return probability > MIN_PROBABILITY ? BigDecimal.ONE.divide(BigDecimal.valueOf(probability), MATH_CONTEXT) : MAX_PRICE;
 	}
 
+	public static String toFormattedPrice(double probability, String format) {
+		return toFormattedPrice(probability, PriceFormat.valueOf(format));
+	}
+
+	public static String toFormattedPrice(double probability, PriceFormat format) {
+		return format.format(toPrice(probability));
+	}
+
 	public static boolean isPossible(BigDecimal price) {
 		return price.compareTo(MAX_PRICE) < 0;
 	}

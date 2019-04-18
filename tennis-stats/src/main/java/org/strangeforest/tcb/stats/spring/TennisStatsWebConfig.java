@@ -21,6 +21,11 @@ public class TennisStatsWebConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
+	public UTSThymeleafDialect utsDialect() {
+		return new UTSThymeleafDialect();
+	}
+
+	@Bean
 	public ErrorAttributes errorAttributes() {
 		return new TennisStatsErrorAttributes();
 	}

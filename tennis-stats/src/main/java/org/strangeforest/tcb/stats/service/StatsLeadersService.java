@@ -18,7 +18,7 @@ public class StatsLeadersService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private MinEntries minEntries;
 
-	private static final int MAX_PLAYER_COUNT =  1000;
+	private static final int MAX_PLAYER_COUNT = 1000;
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
@@ -82,22 +82,27 @@ public class StatsLeadersService {
 
 	@Cacheable("StatsLeaders.Count")
 	public int getPlayerCount(String category, PerfStatsFilter filter, Integer minEntries) {
-		return Math.min(MAX_PLAYER_COUNT, getPlayerCount(StatsCategory.get(category), filter, minEntries));
+		return Math.min(MAX_PLAYER_COUNT, getPlayerCount(StatsCategory.get(category), false, filter, minEntries));
 	}
 
-	private int getPlayerCount(StatsCategory statsCategory, PerfStatsFilter filter, Integer minEntries) {
+	@Cacheable("InProgressEventStatsLeaders.Count")
+	public int getInProgressEventPlayerCount(String category, PerfStatsFilter filter, Integer minEntries) {
+		return Math.min(MAX_PLAYER_COUNT, getPlayerCount(StatsCategory.get(category), true, filter, minEntries));
+	}
+
+	private int getPlayerCount(StatsCategory statsCategory, boolean inProgress, PerfStatsFilter filter, Integer minEntries) {
 		minEntries = getMinEntries(statsCategory, filter, minEntries);
 		filter.withPrefix("p.");
 		if (filter.isEmptyOrForSeasonOrSurface() && !filter.hasSurfaceGroup()) {
 			return jdbcTemplate.queryForObject(
-				format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria()),
+				format(STATS_LEADERS_COUNT_QUERY, statsTableName(inProgress, filter), minEntriesColumn(statsCategory), filter.getCriteria()),
 				filter.getParams().addValue("minEntries", minEntries),
 				Integer.class
 			);
 		}
 		else {
 			return jdbcTemplate.queryForObject(
-				format(SUMMED_STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsCategory), statsTableName(filter), getStatsLeadersJoin(filter), filter.getCriteria()),
+				format(SUMMED_STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsCategory), statsTableName(inProgress, filter), getStatsLeadersJoin(filter), filter.getCriteria()),
 				filter.getParams().addValue("minEntries", minEntries),
 				Integer.class
 			);
@@ -106,19 +111,28 @@ public class StatsLeadersService {
 
 	@Cacheable("StatsLeaders.Table")
 	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String category, int playerCount, PerfStatsFilter filter, Integer minEntries, String orderBy, int pageSize, int currentPage) {
+		return getStatsLeadersTable(category, false, playerCount, filter, minEntries, orderBy, pageSize, currentPage);
+	}
+
+	@Cacheable("InProgressEventStatsLeaders.Table")
+	public BootgridTable<StatsLeaderRow> getInProgressEventStatsLeadersTable(String category, int playerCount, PerfStatsFilter filter, Integer minEntries, String orderBy, int pageSize, int currentPage) {
+		return getStatsLeadersTable(category, true, playerCount, filter, minEntries, orderBy, pageSize, currentPage);
+	}
+
+	private BootgridTable<StatsLeaderRow> getStatsLeadersTable(String category, boolean inProgress, int playerCount, PerfStatsFilter filter, Integer minEntries, String orderBy, int pageSize, int currentPage) {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
 		filter.withPrefix("p.");
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			getTableSQL(statsCategory, filter, orderBy),
+			getTableSQL(statsCategory, inProgress, filter, orderBy),
 			filter.getParams().addValue("minEntries", getMinEntries(statsCategory, filter, minEntries)).addValue("offset", offset).addValue("limit", pageSize),
 			rs -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = getInternedString(rs, "country_id");
-				Boolean active = !filter.hasActive() && !filter.isTimeLocalized() ? rs.getBoolean("active") : null;
+				Boolean active = !filter.hasActive() && !filter.isTimeLocalized() && !inProgress ? rs.getBoolean("active") : null;
 				double value = rs.getDouble("value");
 				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, active, value, statsCategory.getType()));
 			}
@@ -131,11 +145,11 @@ public class StatsLeadersService {
 		return getMinEntries(statsCategory, filter, minEntries) + " " + (statsCategory.getItem().getText());
 	}
 
-	private String getTableSQL(StatsCategory statsCategory, PerfStatsFilter filter, String orderBy) {
+	private String getTableSQL(StatsCategory statsCategory, boolean inProgress, PerfStatsFilter filter, String orderBy) {
 		boolean summed = filter.isEmptyOrForSeasonOrSurface();
 		return summed && !filter.hasSurfaceGroup()
-	       ? format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy)
-	       : format(SUMMED_STATS_LEADERS_QUERY, summed ? statsCategory.getPartiallySummedExpression() : statsCategory.getSummedExpression(), statsTableName(filter), getStatsLeadersJoin(filter), filter.getBaseCriteria(), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy);
+	       ? format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(inProgress, filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy)
+	       : format(SUMMED_STATS_LEADERS_QUERY, summed ? statsCategory.getPartiallySummedExpression() : statsCategory.getSummedExpression(), statsTableName(inProgress, filter), getStatsLeadersJoin(filter), filter.getBaseCriteria(), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy);
 	}
 
 	private static String getStatsLeadersJoin(PerfStatsFilter filter) {
@@ -149,8 +163,10 @@ public class StatsLeadersService {
 		return sb.toString();
 	}
 
-	private static String statsTableName(PerfStatsFilter filter) {
-		if (filter.isEmptyOrForSeasonOrSurface())
+	private static String statsTableName(boolean inProgress, PerfStatsFilter filter) {
+		if (inProgress)
+			return "player_in_progress_match_stats_v";
+		else if (filter.isEmptyOrForSeasonOrSurface())
 			return format("player%1$s%2$s_stats", filter.hasSeason() ? "_season" : "", filter.hasSurface() ? "_surface" : "");
 		else
 			return "player_match_stats_v";

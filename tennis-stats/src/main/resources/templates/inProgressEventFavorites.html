@@ -32,7 +32,7 @@
 				<td class="text-right" th:text="${favorite.rank}">1</td>
 				<td class="text-right" th:text="${favorite.seedAndEntry()}">1</td>
 				<td>
-					<img th:src="@{/images/flags/{code}.png(code=${favorite.country.code})}" src="/images/flags/ch.png'" th:title="${favorite.country.id}" title="SUI" width="24" height="20"/>
+					<img th:src="@{/images/flags/{code}.png(code=${favorite.country.code})}" src="/images/flags/ch.png" th:title="${favorite.country.id}" title="SUI" width="24" height="20"/>
 					<a th:href="@{/playerProfile(playerId=${favorite.playerId})}" th:text="${favorite.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 					<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${favorite.playerId})|"><i class="fa fa-road"></i></a>
 				</td>

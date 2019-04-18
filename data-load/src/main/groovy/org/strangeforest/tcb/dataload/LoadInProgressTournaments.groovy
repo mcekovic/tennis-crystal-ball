@@ -6,7 +6,7 @@ System.exit(loadTournaments(new SqlPool()) ? 0 : 80)
 
 static loadTournaments(SqlPool sqlPool) {
 	sqlPool.withSql {sql ->
-		def atpInProgressTournamentLoader = new ATPWorldTourInProgressTournamentLoader(sql)
+		def atpInProgressTournamentLoader = new ATPTourInProgressTournamentLoader(sql)
 		def oldExtIds = atpInProgressTournamentLoader.findInProgressEventExtIds()
 		println "Old in-progress tournaments: $oldExtIds"
 		def result = findInProgressEvents()
@@ -40,7 +40,7 @@ static findInProgressEvents() {
 }
 
 static CrawlingResult<EventInfo> findInProgressEvents(String url, CascadingCrawler crawler) {
-	def fullUrl = 'http://www.atpworldtour.com' + url
+	def fullUrl = 'http://www.atptour.com' + url
 	def eventInfos = new TreeSet<>()
 	try {
 		def doc = retriedGetDoc(fullUrl)

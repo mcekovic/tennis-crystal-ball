@@ -50,7 +50,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 	@Override public MatchPrediction predictMatch() {
 		Period matchRecentPeriod = getMatchRecentPeriod();
 		Period setRecentPeriod = getSetRecentPeriod();
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight());
+		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
 		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));

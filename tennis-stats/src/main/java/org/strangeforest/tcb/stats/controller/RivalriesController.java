@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.controller;
 import java.time.*;
 import java.util.*;
 import java.util.stream.*;
+import javax.servlet.http.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
@@ -16,6 +17,7 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.model.price.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
@@ -26,6 +28,7 @@ import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Controller
@@ -59,7 +62,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "rankType", required = false) String rankType
@@ -206,7 +209,7 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "bestOf", required = false) Integer bestOf,
       @RequestParam(name = "surface", required = false) String surface,
       @RequestParam(name = "indoor", required = false) Boolean indoor,
-      @RequestParam(name = "speed", required = false) Integer speed,
+      @RequestParam(name = "speed", required = false) String speed,
       @RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
    ) {
@@ -267,7 +270,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -362,7 +365,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -491,17 +494,35 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "dateSelector1", required = false) String dateSelector1,
       @RequestParam(name = "dateSelector2", required = false) String dateSelector2,
       @CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat,
-		@RequestParam(name = "showDetails", defaultValue = F) boolean showDetails
+		@RequestParam(name = "showDetails", defaultValue = F) boolean showDetails,
+      @RequestParam(name = "sets1", defaultValue = "0") int sets1,
+      @RequestParam(name = "sets2", defaultValue = "0") int sets2,
+      @RequestParam(name = "games1", defaultValue = "0") int games1,
+      @RequestParam(name = "games2", defaultValue = "0") int games2,
+      @RequestParam(name = "points1", defaultValue = "0") int points1,
+      @RequestParam(name = "points2", defaultValue = "0") int points2,
+      @RequestParam(name = "serve", defaultValue = "1") int serve,
+      @RequestParam(name = "command", required = false) String command,
+		@RequestParam(name = "inMatch", defaultValue = F) boolean inMatch,
+      HttpServletRequest httpRequest
    ) {
+		rejectRobots(httpRequest);
+		if (sets1 > 10 || sets2 > 10 || games1 > 100 || games2 > 100 || points1 > 100 || points2 > 100)
+			throw new InvalidArgumentException("Invalid current score");
 		Player player1 = playerService.getPlayer(playerId1);
 		Player player2 = playerService.getPlayer(playerId2);
 		LocalDate aDate1 = dateForMatchup(dateSelector1, date1, date, player1);
 		LocalDate aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
+		TournamentLevel tournamentLevel = TournamentLevel.safeDecode(level);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
 			playerId1, playerId2, aDate1, aDate2,
-			Surface.safeDecode(surface), indoor, TournamentLevel.safeDecode(level), Round.safeDecode(round)
+			Surface.safeDecode(surface), indoor, tournamentLevel, Round.safeDecode(round)
       );
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, indoor, round));
+		PlayerPerformance perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2, level, surface, indoor, round));
+		short bestOf = MatchDataUtil.defaultBestOf(tournamentLevel, null);
+		MatchRules matchRules = bestOf == 3 ? MatchRules.BEST_OF_3_MATCH : MatchRules.BEST_OF_5_MATCH;
+		SetRules setRules = matchRules.getSet(sets1 + sets2 + 1);
+		boolean tieBreak = setRules.isTieBreak(games1, games2);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
@@ -521,7 +542,81 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("prediction", prediction);
 		modelMap.addAttribute("priceFormat", priceFormat);
 		modelMap.addAttribute("showDetails", showDetails);
-		modelMap.addAttribute("stats1", stats1);
+		modelMap.addAttribute("perf1", perf1);
+		modelMap.addAttribute("inMatch", inMatch);
+		modelMap.addAttribute("sets", IntStream.rangeClosed(0, matchRules.getSets()).toArray());
+		modelMap.addAttribute("games", IntStream.rangeClosed(0, setRules.hasTieBreak() ? setRules.getTieBreakAt() + 1 : 15).toArray());
+		if (tieBreak)
+			modelMap.addAttribute("tbPoints", IntStream.rangeClosed(0, setRules.getTieBreak().getPoints() + 5).toArray());
+		else
+			modelMap.addAttribute("points", GamePoint.values());
+		modelMap.addAttribute("isTieBreak", tieBreak);
+		modelMap.addAttribute("serve", serve);
+
+		if (inMatch) {
+			CurrentScore score = new CurrentScore(matchRules, sets1, sets2, games1, games2, points1, points2, serve);
+			if (!isNullOrEmpty(command)) {
+				switch (command) {
+					case "S1": score.incSets1(); break;
+					case "S2": score.incSets2(); break;
+					case "G1": score.incGames1(); break;
+					case "G2": score.incGames2(); break;
+					case "P1": score.incPoints1(); break;
+					case "P2": score.incPoints2(); break;
+				}
+				sets1 = score.getSets1();
+				sets2 = score.getSets2();
+				games1 = score.getGames1();
+				games2 = score.getGames2();
+				points1 = score.getPoints1();
+				points2 = score.getPoints2();
+				serve = score.getServe();
+			}
+			BaseProbabilities baseProbsH2H1 = toBaseProbabilities(statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2)));
+			BaseProbabilities baseProbsLast52w1 = toBaseProbabilities(statisticsService.getPlayerStats(playerId1, MatchFilter.forSeason(MatchFilter.LAST_52_WEEKS_SEASON)));
+			BaseProbabilities baseProbsLast52w2 = toBaseProbabilities(statisticsService.getPlayerStats(playerId2, MatchFilter.forSeason(MatchFilter.LAST_52_WEEKS_SEASON)));
+			BaseProbabilities baseProbs1 = baseProbsH2H1.combine(baseProbsLast52w1.combine(baseProbsLast52w2.swap())).defaultIfUnknown();
+			baseProbs1 = InMatchPredictor.normalize(prediction.getWinProbability1(), baseProbs1, matchRules);
+			BaseProbabilities baseProbs2 = baseProbs1.swap();
+			MatchOutcome matchOutcome = new MatchOutcome(baseProbs1.getPServe(), baseProbs1.getPReturn(), matchRules);
+			MatchProbabilities inMatchProbs = matchOutcome.pWin(sets1, sets2, games1, games2, points1, points2, serve == 1);
+			double pInMatch1 = inMatchProbs.getPMatch();
+			double pInMatch2 = 1.0 - pInMatch1;
+			double pInSet1 = inMatchProbs.getPSet();
+			double pInSet2 = 1.0 - pInSet1;
+			double pInGame1 = inMatchProbs.getPGame();
+			double pInGame2 = 1.0 - pInGame1;
+			double pSet1 = matchOutcome.getPSetWin();
+			SetOutcome setOutcome = matchOutcome.getSetOutcome();
+			double pSvcGame1 = setOutcome.getPServeWin();
+			double pRtnGame1 = setOutcome.getPReturnWin();
+
+			modelMap.addAttribute("sets1", sets1);
+			modelMap.addAttribute("sets2", sets2);
+			modelMap.addAttribute("games1", games1);
+			modelMap.addAttribute("games2", games2);
+			modelMap.addAttribute("points1", points1);
+			modelMap.addAttribute("points2", points2);
+			modelMap.addAttribute("serve", serve);
+			modelMap.addAttribute("pInMatch1", pInMatch1);
+			modelMap.addAttribute("pInMatch2", pInMatch2);
+			modelMap.addAttribute("pInMatchSwing1", pInMatch1 - prediction.getWinProbability1());
+			modelMap.addAttribute("pInMatchSwing2", pInMatch2 - prediction.getWinProbability2());
+			modelMap.addAttribute("pInSet1", pInSet1);
+			modelMap.addAttribute("pInSet2", pInSet2);
+			modelMap.addAttribute("pInGame1", pInGame1);
+			modelMap.addAttribute("pInGame2", pInGame2);
+			modelMap.addAttribute("pSet1", pSet1);
+			modelMap.addAttribute("pSet2", 1.0 - pSet1);
+			modelMap.addAttribute("pSvcGame1", pSvcGame1);
+			modelMap.addAttribute("pSvcGame2", 1.0 - pRtnGame1);
+			modelMap.addAttribute("pRtnGame1", pRtnGame1);
+			modelMap.addAttribute("pRtnGame2", 1.0 - pSvcGame1);
+			modelMap.addAttribute("pServe1", baseProbs1.getPServe());
+			modelMap.addAttribute("pServe2", baseProbs2.getPServe());
+			modelMap.addAttribute("pReturn1", baseProbs1.getPReturn());
+			modelMap.addAttribute("pReturn2", baseProbs2.getPReturn());
+		}
 		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
 	}
 
@@ -564,6 +659,11 @@ public class RivalriesController extends PageController {
 		}
 	}
 
+	private static BaseProbabilities toBaseProbabilities(PlayerStats stats) {
+		return stats.isEmpty() ? BaseProbabilities.UNKNOWN : new BaseProbabilities(stats.getServicePointsWonPct() / PCT, stats.getReturnPointsWonPct() / PCT);
+	}
+
+
 	@GetMapping("/headsToHeads")
 	public ModelAndView headsToHeads() {
 		ModelMap modelMap = new ModelMap();
@@ -587,7 +687,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "statsVsAll") boolean statsVsAll,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData

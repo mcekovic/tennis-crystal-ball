@@ -38,7 +38,7 @@
 				},
 				formatters: {
 					"rank": function(column, row) {
-						return row.rank <= row.bestRank ? row.rank + " <span class='career-high' title='Career high ranking'>CH</span>" : row.rank;
+						return row.rank <= row.bestRank ? row.rank + " <span class='career-high' title='Career-high ranking'>CH</span>" : row.rank;
 					},
 					"bestRank": function(column, row) {
 						var date = row.bestRankDate;
@@ -50,7 +50,7 @@
 					"pointsDiff": function(column, row) { return row.points > 0 ? formatDiff(row.pointsDiff) : ""; },
 					"points": function(column, row) {
 						var points = row.points;
-						return points > 0 ? (points >= row.bestPoints ? "<span class='career-high' title='Career high ranking'>CH</span> " + points : points) : "";
+						return points > 0 ? (points >= row.bestPoints ? "<span class='career-high' title='Career-high ranking'>CH</span> " + points : points) : "";
 					}
 				},
 				labels: {
@@ -153,6 +153,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3><i class="fa " th:classappend="${eloOnly ? 'fa-sort-amount-desc' : 'fa-list-ol'}"></i> <span id="tableTitle" th:text="${rankType.text + 's Table ' + #temporals.format(tableDate, 'dd-MM-yyyy')}">Rankings Table 01-11-2015</span></h3>
 	<div id="rankTypeDiv" class="btn-group pull-left no-margin-left margin-right">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">

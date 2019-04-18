@@ -2,215 +2,223 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <url>
-  <loc>http://www.ultimatetennisstatistics.com</loc>
+  <loc>https://www.ultimatetennisstatistics.com</loc>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/goatList</loc>
+  <loc>https://www.ultimatetennisstatistics.com/goatList</loc>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/dominanceTimeline</loc>
+  <loc>https://www.ultimatetennisstatistics.com/dominanceTimeline</loc>
   <priority>0.90</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/tournamentLevelTimeline?level=G</loc>
+  <loc>https://www.ultimatetennisstatistics.com/tournamentLevelTimeline?level=G</loc>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/tournamentLevelGroupTimeline?level=FL</loc>
+  <loc>https://www.ultimatetennisstatistics.com/tournamentLevelGroupTimeline?level=FL</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/tournamentLevelTimeline?level=M</loc>
+  <loc>https://www.ultimatetennisstatistics.com/tournamentLevelTimeline?level=M</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/tournamentLevelTimeline?level=O</loc>
+  <loc>https://www.ultimatetennisstatistics.com/tournamentLevelTimeline?level=O</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/teamTournamentLevelTimeline?level=D</loc>
+  <loc>https://www.ultimatetennisstatistics.com/teamTournamentLevelTimeline?level=D</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/teamTournamentLevelTimeline?level=T</loc>
+  <loc>https://www.ultimatetennisstatistics.com/teamTournamentLevelTimeline?level=T</loc>
   <priority>0.50</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/topRankingsTimeline</loc>
+  <loc>https://www.ultimatetennisstatistics.com/topRankingsTimeline</loc>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/surfaceTimeline</loc>
+  <loc>https://www.ultimatetennisstatistics.com/surfaceTimeline</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/statsTimeline</loc>
+  <loc>https://www.ultimatetennisstatistics.com/statsTimeline</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/headToHead</loc>
+  <loc>https://www.ultimatetennisstatistics.com/headToHead</loc>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/headsToHeads</loc>
+  <loc>https://www.ultimatetennisstatistics.com/headsToHeads</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/greatestRivalries</loc>
+  <loc>https://www.ultimatetennisstatistics.com/greatestRivalries</loc>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/greatestMatches</loc>
+  <loc>https://www.ultimatetennisstatistics.com/greatestMatches</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/rankingsTable</loc>
+  <loc>https://www.ultimatetennisstatistics.com/rankingsTable</loc>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/eloRatings</loc>
+  <loc>https://www.ultimatetennisstatistics.com/eloRatings</loc>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/rankingsChart</loc>
+  <loc>https://www.ultimatetennisstatistics.com/rankingsChart</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/peakEloRatings</loc>
+  <loc>https://www.ultimatetennisstatistics.com/peakEloRatings</loc>
   <priority>0.90</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/topPerformers</loc>
+  <loc>https://www.ultimatetennisstatistics.com/topPerformers</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/performanceChart</loc>
+  <loc>https://www.ultimatetennisstatistics.com/performanceChart</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/statsLeaders</loc>
+  <loc>https://www.ultimatetennisstatistics.com/statsLeaders</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/statsChart</loc>
+  <loc>https://www.ultimatetennisstatistics.com/topMatchStats</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/seasons</loc>
+  <loc>https://www.ultimatetennisstatistics.com/statsChart</loc>
+  <priority>0.60</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/seasons</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/bestSeasons</loc>
+  <loc>https://www.ultimatetennisstatistics.com/bestSeasons</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/tournaments</loc>
+  <loc>https://www.ultimatetennisstatistics.com/tournaments</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/tournamentEvents</loc>
+  <loc>https://www.ultimatetennisstatistics.com/tournamentEvents</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/inProgressEventsForecasts</loc>
+  <loc>https://www.ultimatetennisstatistics.com/inProgressEventsForecasts</loc>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/records</loc>
+  <loc>https://www.ultimatetennisstatistics.com/records</loc>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/liveScores</loc>
+  <loc>https://www.ultimatetennisstatistics.com/liveScores</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/about</loc>
+  <loc>https://www.ultimatetennisstatistics.com/about</loc>
   <priority>0.70</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/glossary</loc>
+  <loc>https://www.ultimatetennisstatistics.com/glossary</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/blog</loc>
+  <loc>https://www.ultimatetennisstatistics.com/blog</loc>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/contact</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Roger%20Federer</loc>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Novak%20Djokovic</loc>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Rafael%20Nadal</loc>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Andy%20Murray</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Rod%20Laver</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Ken%20Rosewall</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Jimmy%20Connors</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Bjorn%20Borg</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=John%20McEnroe</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Ivan%20Lendl</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Andre%20Agassi</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Pete%20Sampras</loc>
-  <priority>0.70</priority>
-</url>
-<url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Mats%20Wilander</loc>
+  <loc>https://www.ultimatetennisstatistics.com/tips</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Stefan%20Edberg</loc>
+  <loc>https://www.ultimatetennisstatistics.com/contact</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Roger%20Federer</loc>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Novak%20Djokovic</loc>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Rafael%20Nadal</loc>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Andy%20Murray</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Rod%20Laver</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Ken%20Rosewall</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Jimmy%20Connors</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Bjorn%20Borg</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=John%20McEnroe</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Ivan%20Lendl</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Andre%20Agassi</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Pete%20Sampras</loc>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Mats%20Wilander</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/playerProfile?name=Boris%20Becker</loc>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Stefan%20Edberg</loc>
   <priority>0.60</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/headToHead?name1=Novak%20Djokovic&amp;name2=Rafael%20Nadal</loc>
+  <loc>https://www.ultimatetennisstatistics.com/playerProfile?name=Boris%20Becker</loc>
+  <priority>0.60</priority>
+</url>
+<url>
+  <loc>https://www.ultimatetennisstatistics.com/headToHead?name1=Novak%20Djokovic&amp;name2=Rafael%20Nadal</loc>
   <priority>0.50</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/headToHead?name1=Roger%20Federer&amp;name2=Novak%20Djokovic</loc>
+  <loc>https://www.ultimatetennisstatistics.com/headToHead?name1=Roger%20Federer&amp;name2=Novak%20Djokovic</loc>
   <priority>0.50</priority>
 </url>
 <url>
-  <loc>http://www.ultimatetennisstatistics.com/headToHead?name1=Roger%20Federer&amp;name2=Rafael%20Nadal</loc>
+  <loc>https://www.ultimatetennisstatistics.com/headToHead?name1=Roger%20Federer&amp;name2=Rafael%20Nadal</loc>
   <priority>0.50</priority>
 </url>
 </urlset>

@@ -40,7 +40,7 @@
 	<br/>
 	<div id="pathPlayerDiv">
 	<h4 th:if="${playerPath.player}" th:with="player=${playerPath.player}">
-		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 		<a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" title="Show profile">Roger Federer</a>[(${player.formattedSeedAndEntry()})] <i class="fa fa-road"></i>
 	</h4>
 	<table th:with="completed=${playerPath.completedMatches}, probable=${playerPath.probableMatches}" th:unless="${playerPath.empty}" class="table table-condensed table-striped text-nowrap">
@@ -65,7 +65,7 @@
 			<td>
 				<th:block th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}">
 				<div th:if="${opponent}" class="opponent">
-					<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png'" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
+					<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
 					<a th:href="@{/playerProfile(playerId=${opponent.id})}" th:text="${opponent.name}" title="Show profile">Roger Federer</a>[(${opponent.formattedSeedAndEntry()})]
 					<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${opponent.id})|"><i class="fa fa-road"></i></a>
 				</div>
@@ -118,7 +118,7 @@
 			<td>
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent">
 					<th:block th:unless="${opponent.qualifier}">
-						<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png'" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
+						<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${opponent.id})}" th:text="${opponent.name}" title="Show profile">Roger Federer</a>[(${opponent.formattedSeedAndEntry()})]
 						<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${opponent.id})|"><i class="fa fa-road"></i></a>
 					</th:block>

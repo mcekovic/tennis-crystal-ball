@@ -35,7 +35,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public MatchPrediction predictMatch() {
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight());
+		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
 		addRankItemProbabilities(prediction, RANK, rankingData1.getRank(), rankingData2.getRank());
 		addRankPointsItemProbabilities(prediction, RANK_POINTS, rankingData1.getRankPoints(), rankingData2.getRankPoints());
 		addEloItemProbabilities(prediction, ELO, rankingData1.getEloRating(), rankingData2.getEloRating());
@@ -95,7 +95,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private double eloWinProbability(Integer eloRating1, Integer eloRating2) {
 		eloRating1 = defaultIfNull(eloRating1, (int)StartEloRatings.START_RATING);
 		eloRating2 = defaultIfNull(eloRating2, (int)StartEloRatings.START_RATING);
-		return 1 / (1 + pow(10.0, (eloRating2 - eloRating1) / 400.0));
+		return EloCalculator.eloWinProbability(eloRating1, eloRating2);
 	}
 
 

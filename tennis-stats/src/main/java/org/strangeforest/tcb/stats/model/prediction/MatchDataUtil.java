@@ -49,6 +49,14 @@ public abstract class MatchDataUtil {
 		return setProbability * setProbability * setProbability * (10 - 15 * setProbability + 6 * setProbability * setProbability);
 	}
 
+	public static double matchProbabilityFromMixedProbability(double mixedProbability, short bestOf) {
+		switch (bestOf) {
+			case 3: return bestOf3FromMixedProbability(mixedProbability);
+			case 5: return bestOf5FromMixedProbability(mixedProbability);
+			default: throw new IllegalArgumentException("Invalid bestOf: " + bestOf);
+		}
+	}
+
 	private static final double BO5_PCT = 0.24;
 
 	public static double bestOf3FromMixedProbability(double mixedProbability) {

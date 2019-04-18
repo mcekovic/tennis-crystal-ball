@@ -21,6 +21,7 @@ import org.strangeforest.tcb.util.*;
 
 import com.fasterxml.jackson.databind.*;
 
+import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.reverseOrder;
@@ -105,6 +106,17 @@ public class TournamentService {
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"WHERE tournament_id = :tournamentId";
 
+	private static final String TOURNAMENT_ID_QUERY = //language=SQL
+		"SELECT tournament_id FROM tournament%1$s\n" +
+		"WHERE name = :name%2$s\n" +
+		"ORDER BY level, tournament_id LIMIT 1";
+
+	private static final String TOURNAMENT_MAPPING_JOIN = //language=SQL
+		"\nLEFT JOIN tournament_mapping USING (tournament_id)";
+
+	private static final String EXT_ID_CONDITION = //language=SQL
+		" AND ext_tournament_id = :extId";
+
 	private static final String TOURNAMENT_SEASONS_QUERY = //language=SQL
 		"SELECT season FROM tournament_event\n" +
 		"WHERE tournament_id = :tournamentId\n" +
@@ -128,6 +140,9 @@ public class TournamentService {
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
 		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id%2$s\n";
 
+	private static final String TITLE_DIFFICULTY_COLUMNS = //language=SQL
+		", d.difficulty, d.avg_rank, d.avg_elo_rating";
+
 	private static final String TITLE_DIFFICULTY_JOIN = //language=SQL
 		"\nLEFT JOIN title_difficulty d ON d.tournament_event_id = e.tournament_event_id";
 
@@ -139,6 +154,11 @@ public class TournamentService {
 	private static final String TOURNAMENT_EVENT_QUERY = //language=SQL
 		TOURNAMENT_EVENT_SELECT +
 		"WHERE e.tournament_event_id = :tournamentEventId";
+
+	private static final String TOURNAMENT_EVENT_ID_QUERY = //language=SQL
+		"SELECT tournament_event_id FROM tournament_event%1$s\n" +
+		"WHERE name = :name AND season = :season%2$s\n" +
+		"ORDER BY level, tournament_event_id LIMIT 1";
 
 	private static final String TEAM_TOURNAMENT_EVENT_WINNER_QUERY =
 		"SELECT winner_id, runner_up_id, score\n" +
@@ -370,6 +390,20 @@ public class TournamentService {
 		}
 	}
 
+	@Cacheable("TournamentIdByName")
+	public int findTournamentId(String name, String extId) {
+		boolean hasExtId = !isNullOrEmpty(extId);
+		MapSqlParameterSource params = params("name", name);
+		if (hasExtId)
+			params.addValue("extId", extId);
+		return jdbcTemplate.query(format(TOURNAMENT_ID_QUERY, hasExtId ? TOURNAMENT_MAPPING_JOIN : "", hasExtId ? EXT_ID_CONDITION : ""), params, rs -> {
+			if (rs.next())
+				return rs.getInt("tournament_id");
+			else
+				throw new NotFoundException("Tournament", name + (hasExtId ? "-" + extId : ""));
+		});
+	}
+
 	@Cacheable("Tournament.Seasons")
 	public List<Integer> getTournamentSeasons(int tournamentId) {
 		return jdbcTemplate.queryForList(TOURNAMENT_SEASONS_QUERY, params("tournamentId", tournamentId), Integer.class);
@@ -402,13 +436,13 @@ public class TournamentService {
 
 	public TournamentEvent getTournamentEvent(int tournamentEventId) {
 		TournamentEvent event = jdbcTemplate.query(
-			format(TOURNAMENT_EVENT_QUERY, ", d.difficulty", TITLE_DIFFICULTY_JOIN),
+			format(TOURNAMENT_EVENT_QUERY, TITLE_DIFFICULTY_COLUMNS, TITLE_DIFFICULTY_JOIN),
 			params("tournamentEventId", tournamentEventId),
 			rs -> {
 				if (rs.next()) {
 					TournamentEvent tournamentEvent = mapTournamentEvent(rs);
 					tournamentEvent.setMapProperties(rs.getString("map_properties"));
-					tournamentEvent.setTitleDifficulty(getDouble(rs, "difficulty"));
+					tournamentEvent.setTitleDifficulty(getDouble(rs, "difficulty"), getDouble(rs, "avg_rank"), getInteger(rs, "avg_elo_rating"));
 					return tournamentEvent;
 				}
 				else
@@ -469,6 +503,21 @@ public class TournamentService {
 
 	private MatchPlayer countryParticipant(String countryId) {
 		return new MatchPlayer(0, new Country(countryId).getName(), null, null, countryId);
+	}
+
+	@Cacheable("TournamentEventIdByName")
+	public int findTournamentEventId(String name, String extId, Integer season) {
+		boolean hasExtId = !isNullOrEmpty(extId);
+		MapSqlParameterSource params = params("name", name)
+			.addValue("season", season);
+		if (hasExtId)
+			params.addValue("extId", extId);
+		return jdbcTemplate.query(format(TOURNAMENT_EVENT_ID_QUERY, hasExtId ? TOURNAMENT_MAPPING_JOIN : "", hasExtId ? EXT_ID_CONDITION : ""), params, rs -> {
+			if (rs.next())
+				return rs.getInt("tournament_event_id");
+			else
+				throw new NotFoundException("Tournament Event", name + (hasExtId ? "-" + extId : "") + "-" + season);
+		});
 	}
 
 

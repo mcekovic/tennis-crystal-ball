@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
+	<title>Tips</title>
+	<template>
+	<meta name="description" content="Ultimate Tennis Statistics Tips"/>
+	<style type="text/css">
+		body {
+			background: url("/images/home-bg.jpg") repeat;
+		}
+		.component-header {
+			margin: 0;
+		}
+	</style>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<div class="row">
+		<div class="col-lg-10 col-md-9">
+			<h1 style="margin-top: 0; margin-bottom: 20px"><a href="/" title="Home"><img src="/images/uts-logo.png" class="uts-logo" alt="UTS"/> <th:block th:include="fragments/promotion :: logo"/></a></h1>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-bullhorn"></i> Tips</h4>
+			<ul>
+				<li><th:block th:include="fragments/promotion :: logo"/> is a mobile-friendly web site, but to see it in its 'full glory', open it on the screen greater than 1440 pixels, in which case more data will show up and more columns with various details will be available in the data tables.</li>
+				<li>On most data tables, clicking on a data cell will open a page with the details. Examples:<br/>
+					<ul>
+						<li>On 'GOAT' List page, clicking on a number of Grand Slam tournaments for the player will open the page with actual GSs won by the player.</li>
+						<li>On Top Performers and Statistics Leaders pages, clicking on the statistics value will open the page with matches on which the value is based.</li>
+						<li>On Records and Record pages, clicking on the record value or details will open the page with data on which the record is based (i.e. clicking on Borg's 49 match winning streak record will reveal all Borg's 49 consecutive match wins as well as the loss that ended the streak).</li>
+					</ul>
+				</li>
+				<li>Sometimes there are hidden columns in data tables. To activate them, click on the columns box
+					<button class="btn btn-default btn-xs" type="button" disabled="disabled"><span class="icon glyphicon glyphicon-th-list"></span> <span class="caret"></span></button>
+					in the upper-right corner of the data table and check the hidden columns. Examples:
+					<ul>
+						<li>Individual GOAT Points areas like Tournament Grans Slam Points (GS P), Weeks at No. 1 Points (W@1 P), etc... in GOAT List</li>
+						<li>Player and opponent flag, rank and Elo rating (Match Details), Speed and Best-of (BO) in Player profile Matches tab</li>
+					</ul>
+				</li>
+				<li>Choosing the odds format: On In-Progress Tournament pages, along with probabilities, it is possible to show odds, in one of the odds formats. This is configured in the user settings, in the upper-right corner:
+					<i class="fa fa-cog fa-b text-muted"></i>
+				</li>
+				<li>On most pages with filter, there is a search box
+					<div class="input-group" style="display: inline-table; vertical-align: -40%; width: 115px"><span class="icon glyphicon glyphicon-search input-group-addon"></span><input class="search-field form-control" placeholder="Search" type="text" disabled="disabled" style="height: 28px; margin-top: 1px; margin-bottom: -1px"></div>
+					where players or tournaments can be quickly filtered by name. But if you type country code like USA, GBR, ESP, FRA, you can filter players by country too.
+				</li>
+				<li>On H2H page, when comparing player matches, H2H checkbox <div class="checkbox" style="display: inline-block; margin-left: 25px; margin-bottom: 0"><input type="checkbox" disabled="disabled"/>H2H</div> controls whether only H2H matches are displayed or comparison of last matches played by each player is displayed.
+					By unchecking the H2H checkbox, comparison of last matches is activated.
+				</li>
+			</ul>
+			<th:block th:include="fragments/ads :: inFeed"/>
+		</div>
+		<div class="col-lg-2 col-md-3">
+			<th:block th:include="fragments/goatTopN :: goatTopN"/>
+			<th:block th:include="fragments/promotion :: facebook"/>
+			<th:block th:include="fragments/promotion :: twitter('')"/>
+			<br/>
+			<th:block th:include="fragments/ads :: matchedContent"/>
+			<th:block th:include="fragments/promotion :: paypal"/>
+			<th:block th:include="fragments/promotion :: license"/>
+		</div>
+	</div>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

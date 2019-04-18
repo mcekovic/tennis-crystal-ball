@@ -42,6 +42,10 @@ public class SetRules {
 		return game;
 	}
 
+	public boolean hasTieBreak() {
+		return tieBreakAt != null;
+	}
+
 	public Integer getTieBreakAt() {
 		return tieBreakAt;
 	}
@@ -51,7 +55,7 @@ public class SetRules {
 	}
 
 	public boolean isTieBreak(int games1, int games2) {
-		return tieBreakAt != null && games1 == games2 && games1 == tieBreakAt;
+		return hasTieBreak() && games1 == games2 && games1 >= tieBreakAt;
 	}
 
 
@@ -62,7 +66,7 @@ public class SetRules {
 		if (!(o instanceof SetRules)) return false;
 		SetRules rules = (SetRules) o;
 		return games == rules.games && gamesDiff == rules.gamesDiff &&	Objects.equals(game, rules.game) &&
-				Objects.equals(tieBreakAt, rules.tieBreakAt) && Objects.equals(tieBreak, rules.tieBreak);
+			Objects.equals(tieBreakAt, rules.tieBreakAt) && Objects.equals(tieBreak, rules.tieBreak);
 	}
 
 	@Override public int hashCode() {

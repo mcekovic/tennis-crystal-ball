@@ -12,12 +12,13 @@
 <!--/*@thymesVar id="nextEvent" type="org.strangeforest.tcb.stats.model.forecast.InProgressEvent"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 <!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
-<head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::template})">
+<head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', true, ~{::template})">
 	<template>
 	<meta name="description" th:content="${forecast.event.name} + ' forecast by Tennis Crystal Ball'"/>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			decorateSurface("#eventSurface");
+			decorateSpeed("#eventSpeed");
 			$("#inProgressEventPills").find("a").click(tabClick);
 			[# th:if="${tab}" th:switch="${tab}"]
 				[# th:case="'probable'"]
@@ -107,6 +108,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3>
 		<a id="prevInProgressEvent" th:if="${prevEvent}" class="btn btn-info btn-xs" th:href="@{/inProgressEventForecast(inProgressEventId=${prevEvent.id})}"><i class="fa fa-chevron-left"></i></a>
 		[[${inProgressEvent.name}]] Forecast <a th:href="@{/inProgressEventForecast(name=${forecast.event.name})}" th:title="|Permalink to ${forecast.event.name} forecast|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
@@ -122,23 +124,30 @@
 				</tr>
 				<tr>
 					<th>Surface</th>
-					<td><span id="eventSurface" th:if="${inProgressEvent.surface}" class="label" th:data-surface="${inProgressEvent.surface}">[(${surfaces[inProgressEvent.surface]})]<span th:if="${inProgressEvent.indoor && inProgressEvent.surface != 'P'}" title="Indoor"> (i)</span></span></td>
+					<td>
+						<span id="eventSurface" th:if="${inProgressEvent.surface}" class="label" th:data-surface="${inProgressEvent.surface}">[(${surfaces[inProgressEvent.surface]})]<span th:if="${inProgressEvent.indoor && inProgressEvent.surface != 'P'}" title="Indoor"> (i)</span></span>
+						<span id="eventSpeed" th:if="${inProgressEvent.speed}" class="label" th:data-surface="${inProgressEvent.surface}" th:data-court-speed="${inProgressEvent.speed}" th:text="${inProgressEvent.speed}">50</span>
+					</td>
 				</tr>
 				<tr>
 					<th>Date</th>
 					<td th:text="${#temporals.format(inProgressEvent.date, 'dd-MM-yyyy')}">1-1-2017</td>
 				</tr>
 				<tr>
-					<th>Draw</th>
-					<td th:text="${inProgressEvent.draw}">KO 128</td>
+					<th></th>
+					<td>
+						<a role="button" th:href="@{/tournament(tournamentId=${inProgressEvent.tournamentId})}" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="top" title="Tournament history">
+							<i class="fa fa-calendar"></i>&nbsp;&nbsp;History
+						</a>
+					</td>
 				</tr>
 			</table>
 		</div>
 		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">
 				<tr>
-					<th>Players</th>
-					<td th:text="${inProgressEvent.playerCount}">128</td>
+					<th>Draw / Players</th>
+					<td th:text="${inProgressEvent.draw + ' / ' + inProgressEvent.playerCount}">KO 128 / 128</td>
 				</tr>
 				<tr th:title="#{event.participation.title}">
 					<th>Participation</th>
@@ -159,7 +168,7 @@
 				<tr th:if="${inProgressEvent.favorite1}">
 					<th title="1-st Favorite">1-st Fav.</th>
 					<td th:with="player=${inProgressEvent.favorite1}">
-						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 						<a href="#" style="vertical-align: bottom" title="Show path" th:onclick="|showPlayerPath(${player.playerId})|"><i class="fa fa-road"></i></a>
@@ -168,7 +177,7 @@
 				<tr th:if="${inProgressEvent.favorite2}">
 					<th title="2-nd Favorite">2-nd Fav.</th>
 					<td th:with="player=${inProgressEvent.favorite2}">
-						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 						<a href="#" style="vertical-align: bottom" title="Show path" th:onclick="|showPlayerPath(${player.playerId})|"><i class="fa fa-road"></i></a>
@@ -177,7 +186,7 @@
 				<tr th:if="${inProgressEvent.favorite3}">
 					<th title="3-rd Favorite">3-rd Fav.</th>
 					<td th:with="player=${inProgressEvent.favorite3}">
-						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 						<a href="#" style="vertical-align: bottom" title="Show path" th:onclick="|showPlayerPath(${player.playerId})|"><i class="fa fa-road"></i></a>
@@ -186,7 +195,7 @@
 				<tr th:if="${inProgressEvent.favorite4}">
 					<th title="4-th Favorite">4-th Fav.</th>
 					<td th:with="player=${inProgressEvent.favorite4}">
-						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 						<a href="#" style="vertical-align: bottom" title="Show path" th:onclick="|showPlayerPath(${player.playerId})|"><i class="fa fa-road"></i></a>
@@ -196,13 +205,6 @@
 		</div>
 		<div class="col-md-2">
 			<table class="table table-condensed text-nowrap">
-				<tr>
-					<th>
-						<a role="button" th:href="@{/tournament(tournamentId=${inProgressEvent.tournamentId})}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Tournament history">
-							<i class="fa fa-calendar"></i>&nbsp;&nbsp;History
-						</a>
-					</th>
-				</tr>
 				<tr>
 					<td>
 						<label for="eloType" title="Choose type of Elo rating to show in forecasts">Elo type</label>
@@ -224,6 +226,7 @@
 				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Probable Matchups</a></li>
 				<li><a id="playerPathPill" data-toggle="pill" href="#playerPath" th:data-url="'/inProgressEventPlayerPath?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Player Path</a></li>
 				<li><a id="favoritesPill" data-toggle="pill" href="#favorites" th:data-url="'/inProgressEventFavorites?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Favorites</a></li>
+				<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/inProgressEventStats?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Statistics<sup class="new-feature"></sup></a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="results" class="tab-pane fade"><div class="loading"></div></div>
@@ -266,7 +269,7 @@
 							<td class="text-right" th:text="${playerForecast.seedAndEntry()}">1</td>
 							<th:block th:if="${playerForecast.known}">
 							<td colspan="2">
-								<img th:src="@{/images/flags/{code}.png(code=${playerForecast.country.code})}" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
+								<img th:src="@{/images/flags/{code}.png(code=${playerForecast.country.code})}" src="/images/flags/ch.png" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
 								<a th:href="@{/playerProfile(playerId=${playerForecast.id})}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 								<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${playerForecast.id})|"><i class="fa fa-road"></i></a>
 							</td>
@@ -302,6 +305,7 @@
 				<div id="probable" class="tab-pane fade"><div class="loading"></div></div>
 				<div id="playerPath" class="tab-pane fade"><div class="loading"></div></div>
 				<div id="favorites" class="tab-pane fade"><div class="loading"></div></div>
+				<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
 			</div>
 			<br/>
 			<div th:include="fragments/aboutForecast :: aboutForecast(true)"></div>

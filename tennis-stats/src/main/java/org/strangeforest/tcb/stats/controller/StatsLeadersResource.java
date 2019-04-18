@@ -36,7 +36,7 @@ public class StatsLeadersResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -53,12 +53,34 @@ public class StatsLeadersResource {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter);
+		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, null);
 		int playerCount = statsLeadersService.getPlayerCount(category, filter, minEntries);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
 		return statsLeadersService.getStatsLeadersTable(category, playerCount, filter, minEntries, orderBy, pageSize, current);
+	}
+
+	@GetMapping("/inProgressStatsLeadersTable")
+	public BootgridTable<StatsLeaderRow> inProgressStatsLeadersTable(
+		@RequestParam(name = "category") String category,
+		@RequestParam(name = "inProgressEventId", required = false) Integer inProgressEventId,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "minEntries", required = false) Integer minEntries,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "15") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
+		@RequestParam Map<String, String> requestParams
+	) {
+		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		PerfStatsFilter filter = new PerfStatsFilter(null, searchPhrase, null, null, null, null, null, null, null, round, null, null, inProgressEventId, opponentFilter, null);
+		int playerCount = statsLeadersService.getInProgressEventPlayerCount(category, filter, minEntries);
+
+		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		int pageSize = rowCount > 0 ? rowCount : playerCount;
+		return statsLeadersService.getInProgressEventStatsLeadersTable(category, playerCount, filter, minEntries, orderBy, pageSize, current);
 	}
 
 	@GetMapping("/statsLeadersMinEntries")
@@ -71,7 +93,7 @@ public class StatsLeadersResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,

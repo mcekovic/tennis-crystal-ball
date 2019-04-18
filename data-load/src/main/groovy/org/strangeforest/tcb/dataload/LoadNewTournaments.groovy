@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.dataload
 
 import java.time.*
+import java.time.format.DateTimeFormatter
 
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
@@ -8,7 +9,7 @@ loadTournaments(new SqlPool())
 
 static loadTournaments(SqlPool sqlPool, Integer season = null) {
 	sqlPool.withSql {sql ->
-		def atpTournamentLoader = new ATPWorldTourTournamentLoader(sql)
+		def atpTournamentLoader = new ATPTourTournamentLoader(sql)
 		season = season ?: LocalDate.now().year
 		def eventInfos = findCompletedEvents(season)
 		def seasonExtIds = atpTournamentLoader.findSeasonEventExtIds(season)
@@ -25,13 +26,17 @@ static loadTournaments(SqlPool sqlPool, Integer season = null) {
 	}
 }
 
+
 static findCompletedEvents(int season) {
-	def doc = retriedGetDoc("http://www.atpworldtour.com/en/scores/results-archive?year=$season")
+	def doc = retriedGetDoc("http://www.atptour.com/en/scores/results-archive?year=$season")
 	Set eventInfos = new TreeSet()
+	def DATE_FORMATTER = DateTimeFormatter.ofPattern('yyyy.MM.dd')
 	doc.select('tr.tourney-result').each {result ->
 		def url = result.select('td.tourney-details > a.button-border').attr('href')
-		if (result.select('div.tourney-detail-winner > a'))
-			eventInfos << new EventInfo(url)
+		if (result.select('div.tourney-detail-winner > a')) {
+			def date = LocalDate.parse(result.select('td.title-content > span.tourney-dates').text(), DATE_FORMATTER)
+			eventInfos << new EventInfo(date, url)
+		}
 	}
 	eventInfos
 }

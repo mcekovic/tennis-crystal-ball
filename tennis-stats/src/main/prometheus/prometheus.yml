@@ -1,0 +1,6 @@
+scrape_configs:
+  - job_name: 'uts'
+    metrics_path: /actuator/prometheus
+    scheme: https
+    static_configs:
+    - targets: ['www.ultimatetennisstatistics.com']

@@ -38,4 +38,12 @@ class BestOf5No5thSetTBMatchOutcomeTest {
 		assertThat(bestOf5.pWin()).isEqualTo(0.7734624402, OFFSET);
 		assertThat(bestOf5NoTB.pWin()).isEqualTo(0.7792698753, OFFSET);
 	}
+
+	@Test
+	void testSymmetry() {
+		MatchOutcome match = new MatchOutcome(0.8, 0.4, BEST_OF_5_NO_5TH_SET_TB_MATCH);
+
+		assertThat(match.pWin(0, 0)).isEqualTo(match.pWin(0, 0, 0, 0, 0, 0, true).getPMatch(), OFFSET);
+		assertThat(match.pWin(0, 0, 0, 0, 0, 0, true).getPMatch()).isEqualTo(match.pWin(0, 0, 0, 0, 0, 0, false).getPMatch(), OFFSET);
+	}
 }

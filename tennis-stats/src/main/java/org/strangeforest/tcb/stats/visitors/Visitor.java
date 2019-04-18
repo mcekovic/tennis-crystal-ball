@@ -11,7 +11,7 @@ public class Visitor {
 	private final String agentType;
 	private int hits;
 	private Instant lastHit;
-	private boolean dirty;
+	private transient boolean dirty;
 
 	public Visitor(long id, String ipAddress, String countryId, String country, String agentType, int hits, Instant lastHit) {
 		this.id = id;

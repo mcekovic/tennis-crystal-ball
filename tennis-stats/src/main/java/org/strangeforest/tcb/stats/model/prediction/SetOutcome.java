@@ -38,6 +38,14 @@ public class SetOutcome extends DiffOutcome {
 		return getGameOutcome(pReturn).pWin();
 	}
 
+	public double getPServeWin() {
+		return pServeWin.get();
+	}
+
+	public double getPReturnWin() {
+		return pReturnWin.get();
+	}
+
 	@Override protected double pDeuce(double p1, double p2, int games1, int games2) {
 		if (rules.isTieBreak(games1, games2))
 			return new TieBreakOutcome(pServe, pReturn, rules.getTieBreak()).pWin();
@@ -45,17 +53,26 @@ public class SetOutcome extends DiffOutcome {
 			return super.pDeuce(p1, p2, games1, games2);
 	}
 
-	public double pWin(int games1, int games2, int points1, int points2) {
-		if (rules.isTieBreak(games1, games2))
-			return new TieBreakOutcome(pServe, pReturn, rules.getTieBreak()).pWin(points1, points2);
-		else {
-			int game = games1 + games2 + 1;
-			double pGameWin = getGameOutcome(game % 2 == 0 ? pServe : pReturn).pWin(points1, points2);
-			return pGameWin * pWin(games1 + 1, games2) + (1.0 - pGameWin) * pWin(games1, games2 + 1);
+	public SetProbabilities pWin(int games1, int games2, int points1, int points2, boolean serve) {
+		if (rules.isTieBreak(games1, games2)) {
+			double pTBWin = new TieBreakOutcome(pServe, pReturn, rules.getTieBreak()).pWin(points1, points2, serve);
+			return new SetProbabilities(pTBWin, pTBWin);
 		}
+		else {
+			double pGameWin = getGameOutcome(serve ? pServe : pReturn).pWin(points1, points2);
+			return new SetProbabilities(pGameWin, pGameWin * pWin(games1 + 1, games2, !serve) + (1.0 - pGameWin) * pWin(games1, games2 + 1, !serve));
+		}
+	}
+
+	public double pWin(int games1, int games2, boolean serve) {
+		return ((games1 + games2 + 1) % 2 == 0) == serve ? pWin(games1, games2) : 1.0 - invertedOutcome().pWin(games2, games1);
 	}
 
 	private GameOutcome getGameOutcome(double pGame) {
 		return new GameOutcome(pGame, rules.getGame());
+	}
+
+	public SetOutcome invertedOutcome() {
+		return new SetOutcome(1.0 - pReturn, 1.0 - pServe, rules);
 	}
 }

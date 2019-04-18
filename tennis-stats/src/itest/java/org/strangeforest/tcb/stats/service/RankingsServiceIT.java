@@ -21,9 +21,7 @@ class RankingsServiceIT {
 
 	@Test
 	void rankingsTopN() {
-		LocalDate currentRankingDate = rankingsService.getCurrentRankingDate(RANK);
-
-		List<PlayerRanking> playerRankings = rankingsService.getRankingsTopN(RANK, currentRankingDate, 10);
+		List<PlayerRanking> playerRankings = rankingsService.getRankingsTopN(RANK, 10);
 
 		assertThat(playerRankings).hasSize(10);
 	}

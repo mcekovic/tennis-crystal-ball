@@ -301,6 +301,7 @@ CREATE TABLE in_progress_event (
 	indoor BOOLEAN NOT NULL,
 	draw_type draw_type,
 	draw_size SMALLINT,
+	court_speed REAL,
 	completed BOOLEAN NOT NULL DEFAULT FALSE,
 	matches_hash TEXT,
 	UNIQUE (tournament_id)
@@ -648,6 +649,16 @@ CREATE TABLE saved_record (
 	active_players BOOLEAN NOT NULL,
 	infamous BOOLEAN NOT NULL,
 	PRIMARY KEY (record_id, active_players)
+);
+
+
+-- featured_content
+
+CREATE TABLE featured_content (
+	type TEXT NOT NULL,
+	value TEXT NULL,
+	description TEXT,
+	PRIMARY KEY (TYPE)
 );
 
 

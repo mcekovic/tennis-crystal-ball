@@ -59,6 +59,8 @@ abstract class BaseCSVLoader {
 		def rows = 0
 		def batches = new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker())
 		def paramsBatch = []
+		if (sqlPool.size() < 2)
+			throw new IllegalArgumentException("At least 2 DB connections are required for CVS data load, check ${SqlPool.DB_CONNECTIONS_PROPERTY}")
 		sqlPool.withSql { sql ->
 			def executor = Executors.newFixedThreadPool(Math.min(sqlPool.size(), threadCount()))
 			def paramsConn = sql.connection

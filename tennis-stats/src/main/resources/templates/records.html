@@ -67,6 +67,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<div class="text-nowrap" style="margin-bottom: 20px">
 		<h3 style="float: left; margin-top: 5px"><i class="fa fa-book"></i> Records Book</h3>
 		<h5 th:text="'&nbsp;' + ${recordCount} + ' Different Records!'"> <i>100 Different Records</i></h5>

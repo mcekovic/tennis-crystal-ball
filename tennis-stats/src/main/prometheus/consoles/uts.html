@@ -1,0 +1,210 @@
+{{ template "head" . }}
+
+{{ template "prom_right_table_head" }}
+<tr>
+	<th colspan="2">Process</th>
+</tr>
+<tr>
+	<td>Live Threads</td>
+	<td>{{ template "prom_query_drilldown" (args "jvm_threads_live_threads" "" "humanize") }}</td>
+</tr>
+<tr>
+	<td>Peak Threads</td>
+	<td>{{ template "prom_query_drilldown" (args "jvm_threads_peak_threads" "" "humanize") }}</td>
+</tr>
+<tr>
+	<td>DB Connections</td>
+	<td>{{ template "prom_query_drilldown" (args "hikaricp_connections{pool='TCB'}" "" "humanize") }}</td>
+</tr>
+<tr>
+	<th colspan="2">Free Memory</th>
+</tr>
+<tr>
+	<td>OS Free Memory</td>
+	<td>{{ template "prom_query_drilldown" (args "system_memory_mb{id='free',type='physical'}" "MB" "humanize") }}</td>
+</tr>
+<tr>
+	<td>JVM Free Heap Memory</td>
+	<td>{{ template "prom_query_drilldown" (args "sum(jvm_memory_max_bytes{area='heap'}) - sum(jvm_memory_used_bytes{area='heap'})" "B" "humanize1024") }}</td>
+</tr>
+<tr>
+	<th colspan="2">Used Memory</th>
+</tr>
+<tr>
+	<td>JVM Committed Memory</td>
+	<td>{{ template "prom_query_drilldown" (args "sum(jvm_memory_committed_bytes)" "B" "humanize1024") }}</td>
+</tr>
+<tr>
+	<td>JVM Used Memory</td>
+	<td>{{ template "prom_query_drilldown" (args "sum(jvm_memory_used_bytes)" "B" "humanize1024") }}</td>
+</tr>
+<tr>
+	<td>JVM Non-Heap Memory</td>
+	<td>{{ template "prom_query_drilldown" (args "sum(jvm_memory_used_bytes{area='nonheap'})" "B" "humanize1024") }}</td>
+</tr>
+<tr>
+	<td>JVM Heap Memory</td>
+	<td>{{ template "prom_query_drilldown" (args "sum(jvm_memory_used_bytes{area='heap'})" "B" "humanize1024") }}</td>
+</tr>
+<tr>
+	<td>JVM Old Gen</td>
+	<td>{{ template "prom_query_drilldown" (args "jvm_memory_used_bytes{area='heap', id='Tenured Gen'}" "B" "humanize1024") }}</td>
+</tr>
+<tr>
+	<td>JVM Live Memory</td>
+	<td>{{ template "prom_query_drilldown" (args "jvm_gc_live_data_size_bytes" "B" "humanize1024") }}</td>
+</tr>
+<tr>
+	<th colspan="2">Memory Allocation</th>
+</tr>
+<tr>
+	<td>Allocation Rate</td>
+	<td>{{ template "prom_query_drilldown" (args "rate(jvm_gc_memory_allocated_bytes_total[2m])" "B/s" "humanize1024") }}</td>
+</tr>
+<tr>
+	<td>Promotion Rate</td>
+	<td>{{ template "prom_query_drilldown" (args "rate(jvm_gc_memory_promoted_bytes_total[5m])" "B/s" "humanize1024") }}</td>
+</tr>
+{{ template "prom_right_table_tail" }}
+
+{{ template "prom_content_head" . }}
+<h1>UTS</h1>
+<h3>CPU Usage</h3>
+<div id="cpuUsageGraph"></div>
+<h3>System Load</h3>
+<div id="systemLoadGraph"></div>
+<h3>System Load</h3>
+<div id="systemLoadGraph"></div>
+<h3>HTTP Request Rate</h3>
+<div id="httpRequestRateGrpaph"></div>
+<h3>Tomcat Busy Threads</h3>
+<div id="tomcatBusyThreadsGrpaph"></div>
+<h3>DB Connections Acquire Rate</h3>
+<div id="dbConnectionAcquireRateGrpaph"></div>
+<script>
+	new PromConsole.Graph({
+		node: document.querySelector("#cpuUsageGraph"),
+		expr: ["100 * process_cpu_usage", "100 * (system_cpu_usage - process_cpu_usage)", ],
+		min: "0",
+		max: "100",
+		name: ["Process CPU %", "System CPU %"],
+		renderer: "area",
+		yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yTitle: "CPU %"
+	});
+	new PromConsole.Graph({
+		node: document.querySelector("#systemLoadGraph"),
+		expr: "system_load_average_1m",
+		min: "0",
+		name: "System Load 1m",
+		renderer: "area",
+		yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yTitle: "System Load"
+	});
+	new PromConsole.Graph({
+		node: document.querySelector("#httpRequestRateGrpaph"),
+		expr: "rate(tomcat_global_request_seconds_count{name='https-openssl-apr-443'}[1m])",
+		min: "0",
+		name: "HTTP Requests",
+		renderer: "area",
+		yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yTitle: "Req/s"
+	});
+	new PromConsole.Graph({
+		node: document.querySelector("#tomcatBusyThreadsGrpaph"),
+		expr: "tomcat_threads_busy_threads",
+		min: "0",
+		yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yTitle: "Threads"
+	});
+	new PromConsole.Graph({
+		node: document.querySelector("#dbConnectionAcquireRateGrpaph"),
+		expr: "rate(hikaricp_connections_acquire_seconds_count[1m])",
+		min: "0",
+		name: "DB Conn. Rate",
+		yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+		yTitle: "DBC/min"
+	});
+</script>
+
+<br/>
+<h3>Garbage Collection</h3>
+<table class="table table-condensed table-striped table-bordered table-nowrap" style="width: 0">
+	<tr>
+		<th>Cause</th>
+		<th>Action</th>
+		<th>Count</th>
+		<th>Rate [/m]</th>
+		<th>Avg [s]</th>
+		<th>Max [s]</th>
+	</tr>
+{{ range query "jvm_gc_pause_seconds_count" }}
+<tr>
+	<td>{{ .Labels.cause }}</td>
+	<td>{{ .Labels.action }} </td>
+	<td class="text-right">{{ template "prom_query_drilldown" (args (printf "jvm_gc_pause_seconds_count{cause='%s', action='%s'}" .Labels.cause .Labels.action ) "" "humanizeNoSmallPrefix") }}</td>
+	<td class="text-right">{{ template "prom_query_drilldown" (args (printf "60 * rate(jvm_gc_pause_seconds_count{cause='%s', action='%s'}[5m])" .Labels.cause .Labels.action ) "" "humanizeNoSmallPrefix") }}</td>
+	<td class="text-right">{{ template "prom_query_drilldown" (args (printf "jvm_gc_pause_seconds_sum{cause='%s', action='%s'} / jvm_gc_pause_seconds_count{cause='%s', action='%s'}" .Labels.cause .Labels.action .Labels.cause .Labels.action) "" "humanizeNoSmallPrefix") }}</td>
+	<td class="text-right">{{ template "prom_query_drilldown" (args (printf "jvm_gc_pause_seconds_max{cause='%s', action='%s'}" .Labels.cause .Labels.action ) "" "humanizeNoSmallPrefix") }}</td>
+</tr>
+{{ end }}
+</table>
+
+<br/>
+<h3>HTTP Requests by Duration</h3>
+<table class="table table-condensed table-striped table-bordered table-nowrap" style="width: 0">
+	<tr>
+		<th>Request</th>
+		<th>Method</th>
+		<th>Outcome</th>
+		<th>Status</th>
+		<th>Exception</th>
+		<th>Count</th>
+		<th>Avg [s]</th>
+		<th>Max [s]</th>
+	</tr>
+	{{ range query "sort_desc(http_server_requests_seconds_sum / http_server_requests_seconds_count)" }}
+	<tr>
+		<td><a href="/graph?g0.expr={{ printf "60 * rate(http_server_requests_seconds_count{uri='%s', method='%s', outcome='%s', status='%s', exception='%s'}[5m])" .Labels.uri .Labels.method .Labels.outcome .Labels.status .Labels.exception }}&g0.tab=0">{{ .Labels.uri }}</a></td>
+		<td>{{ .Labels.method }}</td>
+		<td>{{ .Labels.outcome }}</td>
+		<td>{{ .Labels.status }}</td>
+		<td>{{ .Labels.exception }}</td>
+		<td class="text-right">{{ template "prom_query_drilldown" (args (printf "http_server_requests_seconds_count{uri='%s', method='%s', outcome='%s', status='%s', exception='%s'}" .Labels.uri .Labels.method .Labels.outcome .Labels.status .Labels.exception) "" "humanizeNoSmallPrefix") }}</td>
+		<td class="text-right">{{ .Value | printf "%.3f" }}</td>
+		<td class="text-right">{{ template "prom_query_drilldown" (args (printf "http_server_requests_seconds_max{uri='%s', method='%s', outcome='%s', status='%s', exception='%s'}" .Labels.uri .Labels.method .Labels.outcome .Labels.status .Labels.exception) "" "humanizeNoSmallPrefix") }}</td>
+	</tr>
+	{{ else }}
+	<tr><td colspan="4">No requests found.</td></tr>
+	{{ end }}
+</table>
+
+<br/>
+<h3>Caches by Hit Ratio</h3>
+<table class="table table-condensed table-striped table-bordered table-nowrap" style="width: 0">
+	<tr>
+		<th>Cache</th>
+		<th>Hits</th>
+		<th>Misses</th>
+		<th>Hit Ratio [%]</th>
+	</tr>
+	{{ range query "sort_desc(100 * sum(cache_gets_total{result='hit', name!~'Prediction.*'}) by (name) / sum(cache_gets_total{name!~'Prediction.*'}) by (name))" }}
+	<tr>
+		<td><a href="/graph?g0.expr={{ printf "100 * sum(cache_gets_total{name='%s', result='hit'}) by (name) / sum(cache_gets_total{name='%s'}) by (name)" .Labels.name .Labels.name }}&g0.tab=0">{{ .Labels.name }}</a></td>
+		<td class="text-right">{{ template "prom_query_drilldown" (args (printf "cache_gets_total{name='%s', result='hit'}" .Labels.name) "" "humanizeNoSmallPrefix") }}</td>
+		<td class="text-right">{{ template "prom_query_drilldown" (args (printf "cache_gets_total{name='%s', result='miss'}" .Labels.name) "" "humanizeNoSmallPrefix") }}</td>
+		<td class="text-right">{{ .Value | printf "%.1f" }}</td>
+	</tr>
+	{{ else }}
+	<tr><td colspan="4">No caches found.</td></tr>
+	{{ end }}
+</table>
+
+{{ template "prom_content_tail" . }}
+
+{{ template "tail" }}

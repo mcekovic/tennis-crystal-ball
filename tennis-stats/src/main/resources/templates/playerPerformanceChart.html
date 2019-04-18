@@ -1,15 +1,12 @@
-<th:block  xmlns:th="http://www.thymeleaf.org">
+<th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="int[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.core.PerformanceCategory>>"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
 	var perfChartData, perfPointCount;
-	function loadGoogleChartsForPerf() {
-		google.load("visualization", "1.0", {packages:["corechart"], "language": "en", callback: function() {
-			drawPerformanceChart();
-		}});
-	}
+	google.charts.load("current", {packages: ["corechart"]});
+	google.charts.setOnLoadCallback(drawPerformanceChart);
 	function drawPerformanceChart() {
 		var category = $("#perfCategory").val();
 		var dataUrl = "[[@{/playerPerformanceTable(playerId=${playerId})}]]".replace("&amp;", "&") + "&category=" + category;
@@ -43,7 +40,6 @@
 		$("#perfByAgeDiv").css("display", $("#perfFromSeason").val() == "" && $("#perfToSeason").val() == "" ? "block" : "none");
 	}
 </script>
-<script async defer type="text/javascript" src="https://www.google.com/jsapi?callback=loadGoogleChartsForPerf"></script>
 <style scoped="scoped">
 	.checkbox {
 		margin-top: 7px;

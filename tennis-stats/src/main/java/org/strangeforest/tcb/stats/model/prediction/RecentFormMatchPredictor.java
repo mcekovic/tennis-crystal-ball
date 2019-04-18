@@ -26,13 +26,14 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 	private final Surface surface;
 	private final TournamentLevel level;
 	private final Round round;
+	private final short bestOf;
 	private final PredictionConfig config;
 
 	private static final int MATCH_RECENT_PERIOD_YEARS = 2;
 	private static final int LAST_MATCHES_COUNT = 30;
 
 	public RecentFormMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, RankingData rankingData1, RankingData rankingData2, PlayerData playerData1, PlayerData playerData2,
-	                                LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round, PredictionConfig config) {
+	                                LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round, short bestOf, PredictionConfig config) {
 		this.matchData1 = matchData1;
 		this.matchData2 = matchData2;
 		this.rankRange1 = rankRange(rankingData1.getRank());
@@ -44,6 +45,7 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 		this.surface = surface;
 		this.level = level;
 		this.round = round;
+		this.bestOf = bestOf;
 		this.config = config;
 	}
 
@@ -53,7 +55,7 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 
 	@Override public MatchPrediction predictMatch() {
 		Period matchRecentPeriod = getMatchRecentPeriod();
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight());
+		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
 		int recentFormMatches = getRecentFormMatches();
 		addItemProbabilities(prediction, OVERALL, isRecent(date1, matchRecentPeriod), isRecent(date2, matchRecentPeriod), recentFormMatches);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface).and(isRecent(date1, matchRecentPeriod)), isSurface(surface).and(isRecent(date2, matchRecentPeriod)), recentFormMatches);
@@ -102,8 +104,8 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 				double p2 = winProbability(form2, form1);
 				double p12 = p1 + p2;
 				if (p12 > 0.0) {
-					prediction.addItemProbability1(item, weight, p1 / p12);
-					prediction.addItemProbability2(item, weight, p2 / p12);
+					prediction.addItemProbability1(item, weight, matchProbabilityFromMixedProbability(p1 / p12, bestOf));
+					prediction.addItemProbability2(item, weight, matchProbabilityFromMixedProbability(p2 / p12, bestOf));
 				}
 			}
 		}

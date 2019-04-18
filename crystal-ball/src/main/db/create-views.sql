@@ -617,9 +617,48 @@ SELECT match_id, tournament_event_id, tournament_id, season, date, level, surfac
 	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
 	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,
 	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games,
-	0, CASE WHEN winner_rank > loser_rank THEN 1 ELSE 0 END, CASE WHEN winner_rank IS NOT NULL AND loser_rank IS NOT NULL THEN 1 ELSE 0 END matches_w_rank
+	0, CASE WHEN winner_rank > loser_rank THEN 1 ELSE 0 END, CASE WHEN winner_rank IS NOT NULL AND loser_rank IS NOT NULL THEN 1 ELSE 0 END
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
+WHERE set = 0 OR set IS NULL;
+
+
+-- in_progress_match_for_stats_v
+
+CREATE OR REPLACE VIEW in_progress_match_for_stats_v AS
+SELECT m.in_progress_match_id, m.player1_id, m.player2_id, m.in_progress_event_id, e.tournament_id, m.match_num, e.level, m.surface, m.indoor, m.round, m.best_of,
+	m.player1_rank, m.player2_rank, m.player1_elo_rating, m.player2_elo_rating, m.player1_seed, m.player2_seed, m.player1_entry, m.player2_entry, m.player1_country_id, m.player2_country_id,
+	age(p1.dob) player1_age, age(p2.dob) player2_age, p1.height player1_height, p2.height player2_height, m.p1_sets, m.p2_sets, m.p1_games, m.p2_games, m.p1_tbs, m.p2_tbs, m.outcome
+FROM in_progress_match m
+INNER JOIN in_progress_event e USING (in_progress_event_id)
+INNER JOIN player p1 ON p1.player_id = m.player1_id
+INNER JOIN player p2 ON p2.player_id = m.player2_id
+WHERE m.winner IS NOT NULL AND (m.outcome IS NULL OR m.outcome IN ('RET', 'DEF'));
+
+
+-- player_in_progress_match_stats_v
+
+CREATE OR REPLACE VIEW player_in_progress_match_stats_v AS
+SELECT in_progress_match_id match_id, in_progress_event_id tournament_event_id, tournament_id, level, surface, indoor, round, best_of, player1_id player_id, player1_rank player_rank, player1_elo_rating player_elo_rating, player1_age player_age, player1_height player_height,
+	player2_id opponent_id, player2_rank opponent_rank, player2_elo_rating opponent_elo_rating, player2_seed opponent_seed, player2_entry opponent_entry, player2_country_id opponent_country_id, player2_age opponent_age, player2_height opponent_height,
+	outcome, 1 p_matches, 0 o_matches, p1_sets p_sets, p2_sets o_sets, p1_games p_games, p2_games o_games, p1_tbs p_tbs, p2_tbs o_tbs,
+	p1_ace p_ace, p1_df p_df, p1_sv_pt p_sv_pt, p1_1st_in p_1st_in, p1_1st_won p_1st_won, p1_2nd_won p_2nd_won, p1_sv_gms p_sv_gms, p1_bp_sv p_bp_sv, p1_bp_fc p_bp_fc,
+	p2_ace o_ace, p2_df o_df, p2_sv_pt o_sv_pt, p2_1st_in o_1st_in, p2_1st_won o_1st_won, p2_2nd_won o_2nd_won, p2_sv_gms o_sv_gms, p2_bp_sv o_bp_sv, p2_bp_fc o_bp_fc,
+	minutes, (p1_sv_pt + p2_sv_pt - p1_sv_pt - p2_sv_pt) + 1 matches_w_stats, (p1_sv_pt + p2_sv_pt - p1_sv_pt - p2_sv_pt) + p1_sets + p2_sets sets_w_stats, (p1_sv_pt + p2_sv_pt - p1_sv_pt - p2_sv_pt) + p1_games + p2_games games_w_stats,
+	CASE WHEN player1_rank > player2_rank THEN 1 ELSE 0 END p_upsets, 0 o_upsets, CASE WHEN player1_rank IS NOT NULL AND player2_rank IS NOT NULL THEN 1 ELSE 0 END matches_w_rank
+FROM in_progress_match_for_stats_v
+LEFT JOIN in_progress_match_stats USING (in_progress_match_id)
+WHERE set = 0 OR set IS NULL
+UNION ALL
+SELECT in_progress_match_id, in_progress_event_id, tournament_id, level, surface, indoor, round, best_of, player2_id, player2_rank, player2_elo_rating, player2_age, player2_height,
+	player1_id, player1_rank, player1_elo_rating, player1_seed, player1_entry, player1_country_id, player1_age, player1_height,
+	outcome, 0, 1, p2_sets, p1_sets, p2_games, p1_games, p2_tbs, p1_tbs,
+	p2_ace, p2_df, p2_sv_pt, p2_1st_in, p2_1st_won, p2_2nd_won, p2_sv_gms, p2_bp_sv, p2_bp_fc,
+	p1_ace, p1_df, p1_sv_pt, p1_1st_in, p1_1st_won, p1_2nd_won, p1_sv_gms, p1_bp_sv, p1_bp_fc,
+	minutes, (p1_sv_pt + p2_sv_pt - p1_sv_pt - p2_sv_pt) + 1, (p1_sv_pt + p2_sv_pt - p1_sv_pt - p2_sv_pt) + p1_sets + p2_sets, (p1_sv_pt + p2_sv_pt - p1_sv_pt - p2_sv_pt) + p1_games + p2_games,
+	0, CASE WHEN player1_rank > player2_rank THEN 1 ELSE 0 END, CASE WHEN player1_rank IS NOT NULL AND player2_rank IS NOT NULL THEN 1 ELSE 0 END
+FROM in_progress_match_for_stats_v
+LEFT JOIN in_progress_match_stats USING (in_progress_match_id)
 WHERE set = 0 OR set IS NULL;
 
 
@@ -694,30 +733,60 @@ CREATE UNIQUE INDEX ON player_stats (player_id);
 
 CREATE OR REPLACE VIEW event_stats_v AS
 WITH season_stats AS (
-	SELECT season, sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0) AS ace_pct, sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct, sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) AS sv_gms_won_pct
-	FROM player_match_stats_v
-	GROUP BY season
-	HAVING sum(p_sv_pt) IS NOT NULL
+	SELECT s1.season, sum(s2.p_ace)::REAL / nullif(sum(s2.p_sv_pt), 0) AS ace_pct, sum(s2.p_1st_won + s2.p_2nd_won)::REAL / nullif(sum(s2.p_sv_pt), 0) AS sv_pts_won_pct, sum(s2.p_sv_gms - (s2.p_bp_fc - s2.p_bp_sv))::REAL / nullif(sum(s2.p_sv_gms), 0) AS sv_gms_won_pct
+	FROM player_season_stats s1
+	LEFT JOIN player_season_stats s2 ON s2.season IN (s1.season, s1.season - 1) AND s2.player_id = s1.player_id
+	GROUP BY s1.season
+	HAVING sum(s2.p_sv_pt) IS NOT NULL
 ), player_season_stats AS (
-	SELECT player_id, season, sum(p_ace)::REAL / nullif(sum(p_sv_pt), 0) AS ace_pct, sum(p_1st_won + p_2nd_won)::REAL / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct, sum(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(sum(p_sv_gms), 0) AS sv_gms_won_pct,
-		sum(o_ace)::REAL / nullif(sum(o_sv_pt), 0) AS ace_against_pct, sum(o_sv_pt - o_1st_won - o_2nd_won)::REAL / nullif(sum(o_sv_pt), 0) AS rt_pts_won_pct, sum(o_bp_fc - o_bp_sv)::REAL / nullif(sum(o_sv_gms), 0) AS rt_gms_won_pct
-	FROM player_match_stats_v
-	GROUP BY player_id, season
-	HAVING sum(p_sv_pt) IS NOT NULL
+	SELECT s1.player_id, s1.season, sum(s2.p_ace)::REAL / nullif(sum(s2.p_sv_pt), 0) AS ace_pct, sum(s2.p_1st_won + s2.p_2nd_won)::REAL / nullif(sum(s2.p_sv_pt), 0) AS sv_pts_won_pct, sum(s2.p_sv_gms - (s2.p_bp_fc - s2.p_bp_sv))::REAL / nullif(sum(s2.p_sv_gms), 0) AS sv_gms_won_pct,
+		sum(s2.o_ace)::REAL / nullif(sum(s2.o_sv_pt), 0) AS ace_against_pct, sum(s2.o_sv_pt - s2.o_1st_won - s2.o_2nd_won)::REAL / nullif(sum(s2.o_sv_pt), 0) AS rt_pts_won_pct, sum(s2.o_bp_fc - s2.o_bp_sv)::REAL / nullif(sum(s2.o_sv_gms), 0) AS rt_gms_won_pct
+	FROM player_season_stats s1
+   LEFT JOIN player_season_stats s2 ON s2.season IN (s1.season, s1.season - 1) AND s2.player_id = s1.player_id
+	GROUP BY s1.player_id, s1.season
+	HAVING sum(s2.p_sv_pt) IS NOT NULL
 ), tournament_event_stats AS (
-	SELECT tournament_event_id, sum(s.ace_pct / nullif(sqrt(p.ace_pct * o.ace_against_pct), 0) * p_ace) / nullif(sum(p_sv_pt), 0) AS ace_pct,
-	   sum(sqrt(s.sv_pts_won_pct * o.rt_pts_won_pct / nullif(p.sv_pts_won_pct * (1.0 - s.sv_pts_won_pct), 0)) * (p_1st_won + p_2nd_won)) / nullif(sum(p_sv_pt), 0) AS sv_pts_won_pct,
-	   sum(sqrt(s.sv_gms_won_pct * o.rt_gms_won_pct / nullif(p.sv_gms_won_pct * (1.0 - s.sv_gms_won_pct), 0)) * (p_sv_gms - (p_bp_fc - p_bp_sv))) / nullif(sum(p_sv_gms), 0) AS sv_gms_won_pct
+	SELECT m.tournament_event_id, sum(s.ace_pct / nullif(sqrt(p.ace_pct * o.ace_against_pct), 0) * m.p_ace) / nullif(sum(m.p_sv_pt), 0) AS ace_pct,
+		sum(sqrt(s.sv_pts_won_pct * o.rt_pts_won_pct / nullif(p.sv_pts_won_pct * (1.0 - s.sv_pts_won_pct), 0)) * (m.p_1st_won + m.p_2nd_won)) / nullif(sum(m.p_sv_pt), 0) AS sv_pts_won_pct,
+		sum(sqrt(s.sv_gms_won_pct * o.rt_gms_won_pct / nullif(p.sv_gms_won_pct * (1.0 - s.sv_gms_won_pct), 0)) * (m.p_sv_gms - (m.p_bp_fc - m.p_bp_sv))) / nullif(sum(m.p_sv_gms), 0) AS sv_gms_won_pct
 	FROM player_match_stats_v m
 	INNER JOIN season_stats s USING (season)
-	INNER JOIN player_season_stats p ON p.player_id = m.player_id AND p.season = m.season
-	INNER JOIN player_season_stats o ON o.player_id = m.opponent_id AND o.season = m.season
-	WHERE level <> 'D'
-	GROUP BY tournament_event_id
-	HAVING sum(p_sv_pt) IS NOT NULL
+	INNER JOIN player_season_stats p USING (player_id, season)
+	INNER JOIN player_season_stats o USING (player_id, season)
+	WHERE m.level <> 'D'
+	GROUP BY m.tournament_event_id
+	HAVING sum(m.p_sv_pt) IS NOT NULL
+), season_surface_stats AS (
+	SELECT s1.season, s1.surface, sum(s2.p_ace)::REAL / nullif(sum(s2.p_sv_pt), 0) AS ace_pct, sum(s2.p_1st_won + s2.p_2nd_won)::REAL / nullif(sum(s2.p_sv_pt), 0) AS sv_pts_won_pct, sum(s2.p_sv_gms - (s2.p_bp_fc - s2.p_bp_sv))::REAL / nullif(sum(s2.p_sv_gms), 0) AS sv_gms_won_pct
+	FROM player_season_surface_stats s1
+	LEFT JOIN player_season_surface_stats s2 ON s2.season IN (s1.season, s1.season - 1) AND s2.surface = s1.surface AND s2.player_id = s1.player_id
+	GROUP BY s1.season, s1.surface
+	HAVING sum(s2.p_sv_pt) IS NOT NULL
+), player_season_surface_stats AS (
+	SELECT s1.player_id, s1.season, s1.surface, sum(s2.p_ace)::REAL / nullif(sum(s2.p_sv_pt), 0) AS ace_pct, sum(s2.p_1st_won + s2.p_2nd_won)::REAL / nullif(sum(s2.p_sv_pt), 0) AS sv_pts_won_pct, sum(s2.p_sv_gms - (s2.p_bp_fc - s2.p_bp_sv))::REAL / nullif(sum(s2.p_sv_gms), 0) AS sv_gms_won_pct,
+		sum(s2.o_ace)::REAL / nullif(sum(s2.o_sv_pt), 0) AS ace_against_pct, sum(s2.o_sv_pt - s2.o_1st_won - s2.o_2nd_won)::REAL / nullif(sum(s2.o_sv_pt), 0) AS rt_pts_won_pct, sum(s2.o_bp_fc - s2.o_bp_sv)::REAL / nullif(sum(s2.o_sv_gms), 0) AS rt_gms_won_pct
+	FROM player_season_surface_stats s1
+   LEFT JOIN player_season_surface_stats s2 ON s2.season IN (s1.season, s1.season - 1) AND s2.surface = s1.surface AND s2.player_id = s1.player_id
+	GROUP BY s1.player_id, s1.season, s1.surface
+	HAVING sum(s2.p_sv_pt) IS NOT NULL
+), tournament_event_surface_stats AS (
+	SELECT m.tournament_event_id, sum(s.ace_pct / nullif(sqrt(p.ace_pct * o.ace_against_pct), 0) * m.p_ace) / nullif(sum(m.p_sv_pt), 0)                                                  AS s_ace_pct,
+	       sum(sqrt(s.sv_pts_won_pct * o.rt_pts_won_pct / nullif(p.sv_pts_won_pct * (1.0 - s.sv_pts_won_pct), 0)) * (m.p_1st_won + m.p_2nd_won)) / nullif(sum(m.p_sv_pt), 0)             AS s_sv_pts_won_pct,
+	       sum(sqrt(s.sv_gms_won_pct * o.rt_gms_won_pct / nullif(p.sv_gms_won_pct * (1.0 - s.sv_gms_won_pct), 0)) * (m.p_sv_gms - (m.p_bp_fc - m.p_bp_sv))) / nullif(sum(m.p_sv_gms), 0) AS s_sv_gms_won_pct
+	FROM player_match_stats_v m
+	INNER JOIN season_surface_stats s USING (season, surface)
+	INNER JOIN player_season_surface_stats p USING (player_id, season, surface)
+	INNER JOIN player_season_surface_stats o USING (player_id, season, surface)
+	WHERE m.level <> 'D'
+	GROUP BY m.tournament_event_id
+	HAVING sum(m.p_sv_pt) IS NOT NULL
+), tournament_event_stats_combined AS (
+	SELECT tournament_event_id, (ace_pct + s_ace_pct) / 2 AS ace_pct, (sv_pts_won_pct + s_sv_pts_won_pct) / 2 AS sv_pts_won_pct, (sv_gms_won_pct + s_sv_gms_won_pct) / 2 AS sv_gms_won_pct
+	FROM tournament_event_stats
+	INNER JOIN tournament_event_surface_stats USING (tournament_event_id)
 )
 SELECT tournament_event_id, ace_pct, sv_pts_won_pct, sv_gms_won_pct, court_speed(ace_pct, sv_pts_won_pct, sv_gms_won_pct) AS court_speed
-FROM tournament_event_stats;
+FROM tournament_event_stats_combined;
 
 CREATE MATERIALIZED VIEW event_stats AS SELECT * FROM event_stats_v;
 
@@ -794,14 +863,15 @@ WITH winner_avg_elo_rating AS (
 	WHERE r.result = 'W'
 	GROUP BY e.level
 ), raw_title_difficulty AS (
-	SELECT tournament_event_id, level, sum(1 + power(10, (coalesce(m.opponent_elo_rating, 1500) - e.avg_elo_rating)::REAL / 400)) AS difficulty
+	SELECT tournament_event_id, level, sum(1 + power(10, (coalesce(m.opponent_elo_rating, 1500) - e.avg_elo_rating)::REAL / 400)) AS difficulty,
+	   exp(sum(ln(coalesce(opponent_rank, 1500))) / count(*)) AS avg_rank, sum(coalesce(opponent_elo_rating, 1500))::REAL / count(*) AS avg_elo_rating
 	FROM player_tournament_event_result r
 	INNER JOIN player_match_for_stats_v m USING (player_id, tournament_event_id)
 	INNER JOIN winner_avg_elo_rating e USING (level)
 	WHERE r.result = 'W'
 	GROUP BY tournament_event_id, level
 )
-SELECT tournament_event_id, difficulty / avg(difficulty) OVER (PARTITION BY level) AS difficulty
+SELECT tournament_event_id, difficulty / avg(difficulty) OVER (PARTITION BY level) AS difficulty, avg_rank, avg_elo_rating
 FROM raw_title_difficulty;
 
 CREATE MATERIALIZED VIEW title_difficulty AS SELECT * FROM title_difficulty_v;
@@ -2326,6 +2396,15 @@ WITH goat_points AS (
 	INNER JOIN tournament_event e USING (tournament_event_id)
 	WHERE r.goat_points > 0 AND e.level <> 'D' AND e.surface IS NOT NULL
 	GROUP BY e.surface, r.player_id, e.season
+	UNION ALL
+	SELECT m.surface, m.winner_id, e.season, sum(p.goat_points), sum(p.goat_points), 0, 0,
+		sum(p.goat_points), 0, 0,
+      0, 0, 0, 0, 0, sum(p.goat_points),
+	   0, 0
+	FROM match m
+	INNER JOIN tournament_event e ON e.tournament_event_id = m.tournament_event_id AND e.level = 'D' AND e.name LIKE '%WG'
+	INNER JOIN tournament_rank_points p ON p.level = e.level AND p.draw_type = e.draw_type AND p.result = m.round::TEXT::tournament_event_result AND p.additive AND p.goat_points > 0
+	GROUP BY m.surface, m.winner_id, e.season
 	UNION ALL
 	SELECT surface, player_id, season, goat_points, 0, goat_points, 0,
 		0, 0, 0,

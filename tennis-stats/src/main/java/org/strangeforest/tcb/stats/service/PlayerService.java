@@ -45,6 +45,12 @@ public class PlayerService {
 		"WHERE name = :name\n" +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
 
+	private static final String SEARCH_PLAYER_ID_BY_NAME_QUERY =
+		"SELECT player_id FROM player_v\n" +
+		"WHERE lower(name) LIKE lower(:name)\n" +
+		"AND (:date >= dob + (INTERVAL '10 year') OR dob IS NULL)\n" +
+		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
+
 	private static final String PLAYER_NAME_QUERY =
 		"SELECT name FROM player_v\n" +
 		"WHERE player_id = :playerId";
@@ -115,6 +121,16 @@ public class PlayerService {
 	@Cacheable("PlayerIdByName")
 	public int getPlayerId(String name) {
 		return jdbcTemplate.query(PLAYER_ID_BY_NAME_QUERY, params("name", name), rs -> {
+			if (rs.next())
+				return rs.getInt("player_id");
+			else
+				throw new NotFoundException("Player", name);
+		});
+	}
+
+	@Cacheable("PlayerIdByNameSearch")
+	public int searchPlayerIdByName(String name) {
+		return jdbcTemplate.query(SEARCH_PLAYER_ID_BY_NAME_QUERY, params("name", name), rs -> {
 			if (rs.next())
 				return rs.getInt("player_id");
 			else
@@ -197,10 +213,10 @@ public class PlayerService {
 	public Map<String, String> getPlayerQuickPicks() {
 		Map<String, String> quickPicks = new LinkedHashMap<>();
 		quickPicks.put("Big Four", "Roger Federer, Novak Djokovic, Rafael Nadal, Andy Murray");
-		quickPicks.put("Second Tier", "David Ferrer, Stanislas Wawrinka, Juan Martin Del Potro, Tomas Berdych, Jo Wilfried Tsonga");
-		quickPicks.put("Lost Generation", "Kei Nishikori, Milos Raonic, Marin Cilic, Grigor Dimitrov");
-		quickPicks.put("Young Guns", "Dominic Thiem, Nick Kyrgios, Lucas Pouille, Jack Sock, Alexander Zverev, Borna Coric");
-		quickPicks.put("Week Era", "Lleyton Hewitt, Andy Roddick, Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero");
+		quickPicks.put("Second Tier", "David Ferrer, Juan Martin Del Potro, Stan Wawrinka, Tomas Berdych, Jo Wilfried Tsonga");
+		quickPicks.put("Young Guns", "Dominic Thiem, Nick Kyrgios, Lucas Pouille, Jack Sock, Hyeon Chung");
+		quickPicks.put("The Next Gen", "Alexander Zverev, Borna Coric, Karen Khachanov, Daniil Medvedev, Stefanos Tsitsipas, Denis Shapovalov, Alex De Minaur");
+		quickPicks.put("Weak Era", "Lleyton Hewitt, Andy Roddick, Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero");
 		quickPicks.put("Americans rule '90", "Pete Sampras, Andre Agassi, Jim Courier, Michael Chang");
 		quickPicks.put("Late '80 / Early '90", "Boris Becker, Stefan Edberg, Mats Wilander, Thomas Muster");
 		quickPicks.put("'70 / Early '80 dominance", "Ivan Lendl, Jimmy Connors, John McEnroe, Bjorn Borg, Guillermo Vilas");

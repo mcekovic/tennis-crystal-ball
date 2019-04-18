@@ -1,4 +1,4 @@
-rootProject.name = 'tennis-crystal-ball'
+rootProject.name = 'ultimate-tennis-statistics'
 
 include 'data-load'
 include 'tennis-stats'

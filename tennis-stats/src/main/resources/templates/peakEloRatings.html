@@ -65,6 +65,9 @@
 			$search.before($("#rankTypeDiv").remove());
 			$search.before($("#activeDiv").remove());
 			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
+			setBootgridTitles($rankingsTable, [
+				{id: "bestRank", title: "Best Elo rank"}
+			]);
 			$("[data-toggle='tooltip']").tooltip();
 			bindPopovers();
 		});
@@ -76,6 +79,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3 id="rankingsTable-title" class="grid-title"><i class="fa fa-tachometer"></i> Peak Elo Ratings</h3>
 	<div id="rankTypeDiv" class="btn-group margin-right">
 		<select id="rankType" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select Elo rating type">

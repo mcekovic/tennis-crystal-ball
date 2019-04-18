@@ -40,7 +40,7 @@ public class TournamentEventFilter {
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND e.tournament_event_id = :tournamentEventId";
 	private static final String SEARCH_CRITERION           = " AND e.name ILIKE '%' || :searchPhrase || '%'";
 
-	private static final int LAST_52_WEEKS_SEASON = -1;
+	public static final int LAST_52_WEEKS_SEASON = -1;
 
 	public TournamentEventFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, Range<Integer> speedRange, Integer tournamentId, Integer tournamentEventId, String searchPhrase) {
 		this.season = season != null && season != LAST_52_WEEKS_SEASON ? season : null;

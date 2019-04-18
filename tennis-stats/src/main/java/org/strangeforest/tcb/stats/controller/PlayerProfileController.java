@@ -49,7 +49,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "opponent", required = false) String opponent,
@@ -167,7 +167,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
@@ -205,7 +205,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "opponent", required = false) String opponent,
@@ -245,8 +245,13 @@ public class PlayerProfileController extends PageController {
 		if (!isNullOrEmpty(opponent)) {
 			modelMap.addAttribute("opponent", opponent);
 			if (opponent.startsWith(OpponentFilter.OPPONENT_PREFIX)) {
-				int opponentId = Integer.parseInt(opponent.substring(OpponentFilter.OPPONENT_PREFIX.length()));
-				modelMap.addAttribute("opponentName", playerService.getPlayerName(opponentId));
+				String opponentIdStr = opponent.substring(OpponentFilter.OPPONENT_PREFIX.length());
+				if (!isNullOrEmpty(opponentIdStr)) {
+					int opponentId = Integer.parseInt(opponentIdStr);
+					modelMap.addAttribute("opponentName", playerService.getPlayerName(opponentId));
+				}
+				else
+					throw new InvalidArgumentException("Invalid opponent filter: " + opponent);
 			}
 		}
 		modelMap.addAttribute("tournamentId", tournamentId);
@@ -338,7 +343,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
@@ -407,7 +412,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "speed", required = false) Integer speed,
+		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,

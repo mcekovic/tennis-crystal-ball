@@ -17,7 +17,7 @@ public class FavoritePlayer extends PlayerRow {
 
 	public FavoritePlayer(int favorite, int playerId, String name, String countryId, double probability, PriceFormat priceFormat) {
 		this(favorite, playerId, name, countryId, probability);
-		price = priceFormat != null ? priceFormat.format(toPrice(probability)) : null;
+		price = priceFormat != null ? toFormattedPrice(probability, priceFormat) : null;
 	}
 
 	public double getProbability() {
@@ -29,6 +29,6 @@ public class FavoritePlayer extends PlayerRow {
 	}
 
 	public String getPrice(String format) {
-		return PriceFormat.valueOf(format).format(toPrice(probability));
+		return toFormattedPrice(probability, format);
 	}
 }

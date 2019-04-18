@@ -214,6 +214,10 @@ public class RankingsService {
 		return jdbcTemplate.queryForList(sql, params("season", season), LocalDate.class);
 	}
 
+	public List<PlayerRanking> getRankingsTopN(RankType rankType, int playerCount) {
+		return getRankingsTopN(rankType, getCurrentRankingDate(rankType), playerCount);
+	}
+
 	@Cacheable("RankingsTable.TopN")
 	public List<PlayerRanking> getRankingsTopN(RankType rankType, LocalDate date, int playerCount) {
 		checkRankingTableRankType(rankType);

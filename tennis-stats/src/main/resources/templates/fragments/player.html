@@ -1,0 +1,12 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="player(player)">
+<!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.core.Player"*/-->
+<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+<a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
+<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: -10%"/>
+</th:block>
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="playerRow(player)">
+	<!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.core.Player"*/-->
+	<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+	<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
+	<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: -10%"/>
+</th:block>

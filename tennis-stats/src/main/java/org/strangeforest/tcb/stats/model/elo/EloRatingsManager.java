@@ -676,7 +676,7 @@ public class EloRatingsManager {
 				return;
 			double totalScore = winnerScore + loserScore;
 			if (totalScore > 0.0) {
-				double winnerProbability = 1.0 / (1.0 + pow(10.0, (loserRating - winnerRating) / 400.0));
+				double winnerProbability = eloWinProbability(winnerRating, loserRating);
 				double loserProbability = 1.0 - winnerProbability;
 				double probability;
 				if (winnerScore > loserScore) {

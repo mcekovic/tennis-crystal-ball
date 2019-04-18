@@ -11,11 +11,8 @@
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
 	var rankChartData, bySeason, rankPointCount, isRank, logScale;
-	function loadGoogleChartsForRanking() {
-		google.load("visualization", "1.0", {packages:["corechart"], "language": "en", callback: function() {
-			drawRankingChart();
-		}});
-	}
+	google.charts.load("current", {packages: ["corechart"]});
+	google.charts.setOnLoadCallback(drawRankingChart);
 	function drawRankingChart() {
 		bySeason = $("#rankingBySeason").prop("checked") && $("#rankingTimeSpan").val() != "1";
 		isRank = $("#rankType").val().endsWith("RANK");
@@ -90,7 +87,6 @@
 		bindPopovers();
 	});
 </script>
-<script async defer type="text/javascript" src="https://www.google.com/jsapi?callback=loadGoogleChartsForRanking"></script>
 <style scoped="scoped">
 	.checkbox {
 		margin-top: 7px;
@@ -110,7 +106,7 @@
 	</div>
 	<div class="col-md-2">
 		<div id="compensatePointsDiv" class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Compensate ranking points before 2009 to match new ATP ranking system">
+			<label data-toggle="tooltip" data-placement="top" title="Compensate ranking points before 2009 to match the current ATP ranking system">
 				<input id="compensatePoints" type="checkbox"/> Compensate points
 			</label>
 		</div>
@@ -391,7 +387,7 @@
 			</th:block>
 			<th:block th:with="elo=${highlights.tieBreakElo}">
 			<tr th:unless="${elo.empty}">
-				<th>Tie Break</th>
+				<th>Tie-Break</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
 				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
 				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>

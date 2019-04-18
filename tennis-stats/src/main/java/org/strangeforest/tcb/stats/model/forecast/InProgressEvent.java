@@ -18,6 +18,7 @@ public class InProgressEvent {
 	private double participation;
 	private int strength;
 	private int averageEloRating;
+	private Integer speed;
 	private List<FavoritePlayer> favorites;
 
 	public InProgressEvent(int id, int tournamentId, LocalDate date, String name, String level, String surface, boolean indoor) {
@@ -37,6 +38,10 @@ public class InProgressEvent {
 		this.participation = participation;
 		this.strength = strength;
 		this.averageEloRating = averageEloRating;
+	}
+
+	public void setSpeed(Integer speed) {
+		this.speed = speed;
 	}
 
 	public int getId() {
@@ -85,6 +90,10 @@ public class InProgressEvent {
 
 	public int getAverageEloRating() {
 		return averageEloRating;
+	}
+
+	public Integer getSpeed() {
+		return speed;
 	}
 
 	public FavoritePlayer getFavorite1() {

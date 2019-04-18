@@ -141,7 +141,7 @@ PERFORM set_tournament_event_surface(1980, 'Stuttgart Indoor', NULL, TRUE);
 PERFORM set_tournament_event_surface(1980, 'Tulsa', NULL, TRUE);
 PERFORM set_tournament_event_surface(1980, 'Basel', NULL, TRUE);
 PERFORM set_tournament_event_surface(1980, 'Sydney Indoor', NULL, TRUE);
-PERFORM set_tournament_event_surface(1980, 'Vienna', NULL, TRUE);
+PERFORM set_tournament_event_surface(1980, '337', NULL, TRUE); -- Vienna
 PERFORM set_tournament_event_surface(1980, 'Cologne', NULL, TRUE);
 
 -- 1981
@@ -801,8 +801,26 @@ PERFORM set_tournament_event_surface(2017, 'Stockholm', NULL, TRUE);
 PERFORM set_tournament_event_surface(2017, 'Basel', NULL, TRUE);
 PERFORM set_tournament_event_surface(2017, 'Vienna', NULL, TRUE);
 PERFORM set_tournament_event_surface(2017, 'Paris Masters', NULL, TRUE);
--- PERFORM set_tournament_event_surface(2017, 'Milan', NULL, TRUE);
--- PERFORM set_tournament_event_surface(2017, 'Tour Finals', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Next Gen Finals', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Tour Finals', NULL, TRUE);
+
+-- 2018
+PERFORM set_tournament_event_surface(2018, 'Montpellier', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Sofia', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Rotterdam', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'New York', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Marseille', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Metz', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'St. Petersburg', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Tokyo', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Antwerp', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Moscow', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Stockholm', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Basel', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Vienna', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Paris Masters', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Next Gen Finals', NULL, TRUE);
+PERFORM set_tournament_event_surface(2018, 'Tour Finals', NULL, TRUE);
 
 END $$;
 

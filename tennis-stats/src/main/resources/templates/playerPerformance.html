@@ -1,4 +1,4 @@
-<th:block  xmlns:th="http://www.thymeleaf.org">
+<th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
@@ -18,7 +18,7 @@
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="speed" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="speed" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
@@ -180,7 +180,7 @@
 		<div class="col-md-2">
 			<select id="perfSpeed" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
 				<option value="">All speeds</option>
-				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.speed == speed}">Medium</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}" th:selected="${aSpeed.code == speed}">Medium</option>
 			</select>
 		</div>
 		<div class="col-md-3">
@@ -311,11 +311,11 @@
 						</th>
 					</tr>
 					<tr>
-						<td>Tie Breaks</td>
+						<td>Tie-Breaks</td>
 						<th th:with="wl=${perf.tieBreaks}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score='*TB')}" title="Show matches with tie break">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score='*TB')}" title="Show matches with tie-break">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -324,11 +324,11 @@
 						</th>
 					</tr>
 					<tr>
-						<td width="40%">Deciding Set Tie Breaks</td>
+						<td width="40%">Deciding Set Tie-Breaks</td>
 						<th th:with="wl=${perf.decidingSetTieBreaks}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie break matches">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie-break matches">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>

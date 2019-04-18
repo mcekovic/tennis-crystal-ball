@@ -28,29 +28,35 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3><i class="fa fa-edit"></i> <th:block th:include="fragments/promotion :: logo"/> Blog</h3>
 	<div class="row">
-		<div class="col-lg-2 col-md-2">
-			<br/>
-			<ul id="blogPills" class="nav nav-pills nav-stacked">
-				<li><a id="newBlogSectionPill" data-toggle="pill" href="#newBlogSection" data-url="/blog/newBlogSection"><i class="fa fa-edit"></i> New Blog Section</a></li>
-				<li><a id="eloKfactorTweaksPill" data-toggle="pill" href="#eloKfactorTweaks" data-url="/blog/eloKfactorTweaks"><i class="fa fa-flask"></i> Elo K-Factor Tweaks</a></li>
-				<li><a id="gameEvolutionPill" data-toggle="pill" href="#gameEvolution" data-url="/blog/gameEvolution"><i class="fa fa-align-left"></i> Game Evolution</a></li>
-				<li><a id="mythBustersPill" data-toggle="pill" href="#mythBusters" data-url="/blog/mythBusters"><i class="fa fa-bomb"></i> Myth Busters Series</a></li>
-					<ul class="nav">
-						<li class="margin-left"><a id="big4CourtSpeedPill" data-toggle="pill" href="#big4CourtSpeed" data-url="/blog/big4CourtSpeed"><i class="fa fa-rocket"></i> Big 4 & Court Speed</a></li>
-						<li class="margin-left"><a id="h2hSkewPill" data-toggle="pill" href="#h2hSkew" data-url="/blog/h2hSkew"><i class="fa fa-user"></i><i class="fa fa-user-times" style="margin-left: -3px"></i> H2H Skew</a></li>
+		<div class="col-lg-10 col-md-9">
+			<h2 style="margin-top: 0; margin-bottom: 15px"><img src="/images/uts-logo.png" class="uts-logo" alt="UTS"/> <th:block th:include="fragments/promotion :: logo"/> Blog</h2>
+			<div class="row">
+				<div class="col-lg-3">
+					<ul id="blogPills" class="nav nav-pills nav-stacked">
+						<li><a id="newBlogSectionPill" data-toggle="pill" href="#newBlogSection" data-url="/blog/newBlogSection"><i class="fa fa-pencil-square"></i> New Blog Section</a></li>
+						<li><a id="eloKfactorTweaksPill" data-toggle="pill" href="#eloKfactorTweaks" data-url="/blog/eloKfactorTweaks"><i class="fa fa-flask"></i> Elo K-Factor Tweaks</a></li>
+						<li><a id="gameEvolutionPill" data-toggle="pill" href="#gameEvolution" data-url="/blog/gameEvolution"><i class="fa fa-align-left"></i> Game Evolution</a></li>
+						<li><a id="goatCalculatorPill" data-toggle="pill" href="#goatCalculator" data-url="/blog/goatCalculator"><i class="fa fa-flag"></i> 'GOAT' Calculator</a></li>
+						<li><a id="mythBustersPill" data-toggle="pill" href="#mythBusters" data-url="/blog/mythBusters"><i class="fa fa-bomb"></i> Myth Busters Series</a></li>
+						<ul class="nav">
+							<li class="margin-left"><a id="big4CourtSpeedPill" data-toggle="pill" href="#big4CourtSpeed" data-url="/blog/big4CourtSpeed"><i class="fa fa-rocket"></i> Big 4 & Court Speed</a></li>
+							<li class="margin-left"><a id="h2hSkewPill" data-toggle="pill" href="#h2hSkew" data-url="/blog/h2hSkew"><i class="fa fa-user"></i><i class="fa fa-user-times" style="margin-left: -3px"></i> H2H Skew</a></li>
+						</ul>
 					</ul>
-			</ul>
-		</div>
-		<div class="col-lg-8 col-md-7">
-			<div class="tab-content">
-				<div id="newBlogSection" class="tab-pane fade"><div class="loading"></div></div>
-				<div id="eloKfactorTweaks" class="tab-pane fade"><div class="loading"></div></div>
-				<div id="gameEvolution" class="tab-pane fade"><div class="loading"></div></div>
-				<div id="mythBusters" class="tab-pane fade"><div class="loading"></div></div>
-				<div id="big4CourtSpeed" class="tab-pane fade"><div class="loading"></div></div>
-				<div id="h2hSkew" class="tab-pane fade"><div class="loading"></div></div>
+				</div>
+				<div class="col-lg-9">
+					<th:block th:include="fragments/ads :: responsive"/>
+					<div class="tab-content">
+						<div id="newBlogSection" class="tab-pane fade"><div class="loading"></div></div>
+						<div id="eloKfactorTweaks" class="tab-pane fade"><div class="loading"></div></div>
+						<div id="gameEvolution" class="tab-pane fade"><div class="loading"></div></div>
+						<div id="goatCalculator" class="tab-pane fade"><div class="loading"></div></div>
+						<div id="mythBusters" class="tab-pane fade"><div class="loading"></div></div>
+						<div id="big4CourtSpeed" class="tab-pane fade"><div class="loading"></div></div>
+						<div id="h2hSkew" class="tab-pane fade"><div class="loading"></div></div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="col-lg-2 col-md-3">
@@ -67,6 +73,10 @@
 			</th:block>
 			<th:block th:include="fragments/promotion :: facebook"/>
 			<th:block th:include="fragments/promotion :: twitter('/blog?post=' + ${post})"/>
+			<br/>
+			<th:block th:include="fragments/ads :: responsiveLink"/>
+			<th:block th:include="fragments/promotion :: paypal"/>
+			<th:block th:include="fragments/promotion :: license"/>
 		</div>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>

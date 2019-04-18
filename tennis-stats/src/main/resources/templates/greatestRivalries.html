@@ -177,7 +177,8 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<div class="row">
+	<th:block th:include="fragments/ads :: responsive"/>
+	<div class="row margin-top">
 		<div class="col-md-8">
 			<h3 class="text-nowrap" style="display: inline"><i class="fa fa-handshake-o"></i> Greatest Rivalries</h3>
 		</div>
@@ -214,7 +215,7 @@
 		<div class="col-md-2">
 			<select id="speed" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
 				<option value="">All speeds</option>
-				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
 			</select>
 		</div>
 		<div class="col-md-2">

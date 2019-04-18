@@ -93,7 +93,7 @@
 						<span th:text="${winner.seedAndEntry()}"></span>
 					</td>
 					<td th:unless="${forecast && winner.qualifier}" class="player">
-						<img th:if="${winner.country.id}" th:src="@{/images/flags/{code}.png(code=${winner.country.code})}" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
+						<img th:if="${winner.country.id}" th:src="@{/images/flags/{code}.png(code=${winner.country.code})}" src="/images/flags/ch.png" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
 						<strong><a th:href="@{/playerProfile(playerId=${winner.id})}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
 					</td>
 					<td th:if="${forecast && winner.qualifier}" class="player">Qualifier</td>
@@ -111,7 +111,7 @@
 						<span th:text="${loser.seedAndEntry()}"></span>
 					</td>
 					<td th:unless="${forecast && loser.qualifier}"  class="player">
-						<img th:if="${loser.country.id}" th:src="@{/images/flags/{code}.png(code=${loser.country.code})}" src="/images/flags/ch.png'" th:title="${loser.country.id}" title="ESP" width="24" height="20"/>
+						<img th:if="${loser.country.id}" th:src="@{/images/flags/{code}.png(code=${loser.country.code})}" src="/images/flags/ch.png" th:title="${loser.country.id}" title="ESP" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${loser.id})}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
 					</td>
 					<td th:if="${forecast && loser.qualifier}" class="player">Qualifier</td>

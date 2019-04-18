@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
+<!--/*@thymesVar id="speeds" type="java.util.Set<org.strangeforest.tcb.stats.model.core.CourtSpeed>"*/-->
 <!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>About</title>
@@ -50,49 +50,51 @@
 	<header th:include="fragments/header :: title"></header>
 	<div class="row">
 		<div class="col-lg-10 col-md-9">
-			<div>
-				<h1 style="margin-top: 10px; margin-bottom: 20px"><a href="/" title="Home"><th:block th:include="fragments/promotion :: logo"/></a></h1>
-			</div>
+			<h1 style="margin-top: 0; margin-bottom: 20px"><a href="/" title="Home"><img src="/images/uts-logo.png" class="uts-logo" alt="UTS"/> <th:block th:include="fragments/promotion :: logo"/></a></h1>
 			<h4 class="text-nowrap"><i class="fa fa-home"></i> Introduction</h4>
 			<p>
 				<th:block th:include="fragments/promotion :: logo"/> aims to become the ultimate tennis statistics destination for the die-hard tennis fans.
 				It tries to provide all kind of tennis statistics in the <a href="https://en.wikipedia.org/wiki/History_of_tennis#Open_Era" target="_blank" class="external">Open Era</a> male tennis with simple yet effective web GUI.
 				If you have any suggestions for additional features or tweaks to the current features, please e-mail me at <a href="mailto:mcekovic@gmail.com" target="_blank">mcekovic@gmail.com</a> or log a <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank" class="external">GitHub issue</a>.
 			</p>
+			<th:block th:include="fragments/ads :: responsive"/>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-star"></i> Features</h4>
 			<ul>
 				<li><a href="/goatList"><i class="fa fa-flag"></i> 'GOAT' List</a> - A.k.a. 'GOATometer' - Best players of Open Era ranked by 'GOAT' points with customizable weights (overall and by surface)</li>
 				<li><i class="fa fa-id-card-o"></i> Player Profile - Player information, season summary, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics with charts, 'GOAT' points breakdown and records</li>
 				<li><i class="fa fa-history"></i> Timelines - <a href="/dominanceTimeline">Dominance</a><sup class="cool-feature"></sup> ('GOAT' points distribution among top players and seasons), <a href="/tournamentLevelTimeline?level=G">Grand Slam</a>, <a href="/tournamentLevelGroupTimeline?level=FL">Tour Finals</a>, <a href="/tournamentLevelTimeline?level=M">Masters</a>, <a href="/tournamentLevelTimeline?level=O">Olympics</a>, <a href="/teamTournamentLevelTimeline?level=D">Davis Cup</a>, <a href="/teamTournamentLevelTimeline?level=T">World Team Cup</a>, <a href="/topRankingsTimeline">Top Rankings</a>, <a href="/surfaceTimeline">Surface</a> and <a href="/statsTimeline">Statistics</a> timeline</li>
-				<li><a href="/headToHead"><i class="fa fa-user"></i><i class="fa fa-user" style="margin-left: -3px"></i> Head-to-Head</a> - Head-to-head between two players with H2H matches, season summary, performance and statistics comparision, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</a></li>
+				<li><a href="/headToHead"><i class="fa fa-user"></i><i class="fa fa-user" style="margin-left: -3px"></i> Head-to-Head</a> - Head-to-head between two players with H2H matches, season summary, performance and statistics comparison, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</a></li>
 				<li><a href="/headsToHeads"><i class="fa fa-users"></i> Heads-to-Heads</a> - Heads-to-heads clusters among several players (i.e. among 'Big 4')</li>
 				<li><a href="/greatestRivalries"><i class="fa fa-handshake-o"></i> Greatest Rivalries</a> - Explore greatest rivalries, overall or by season, tournament level, surface or round</li>
-				<li><a href="/greatestMatches"><i class="fa fa-signing"></i> Greatest Matches</a> - Explore greatest matches ranked by special Match Greatness Score formula</li>
+				<li><a href="/greatestMatches"><i class="fa fa-signing"></i> Greatest Matches</a><sup class="new-feature"></sup> - Explore greatest matches ranked by special Match Greatness Score formula</li>
 				<li><a href="/rankingsTable"><i class="fa fa-list-ol"></i> Ranking Tables</a> - Player weekly ranking tables</li>
 				<li><a href="/eloRatings"><i class="fa fa-sort-amount-desc"></i> Elo Ratings</a> - Player weekly <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" class="external">Elo rating</a> tables (overall, by surface, outdoor or indoor, set or game) using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">Elo rating formula</a></li>
 				<li><a href="/rankingsChart"><i class="fa fa-bar-chart"></i> Ranking Charts</a> - Player ranking and ranking point charts (including Elo rating), compare players by constructing custom charts</li>
-				<li><a href="/peakEloRatings"><i class="fa fa-tachometer"></i> Peak Elo Ratings</a><sup class="cool-feature"></sup> - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie break)</li>
+				<li><a href="/peakEloRatings"><i class="fa fa-tachometer"></i> Peak Elo Ratings</a><sup class="cool-feature"></sup> - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie-break)</li>
 				<li><a href="/topPerformers"><i class="fa fa-tasks"></i> Top Performers</a> - Find top performers in both performance and pressure situations categories</li>
 				<li><a href="/performanceChart"><i class="fa fa-bar-chart"></i> Performance Charts</a> - Performance charts for various performance categories, filtered by seasons</li>
-				<li><a href="/statsLeaders"><span class="glyphicon glyphicon-stats"></span> Statistics Leaders</a> - Find statistics leaders in various statistics categories (90+), including dominance and break points ratios</li>
-				<li><a href="/statsChart"><i class="fa fa-bar-chart"></i> Statistics Charts</a> - Statistics charts for various statistics categories, filtered by seasons and surface</li>
+				<li><a href="/statsLeaders"><span class="glyphicon glyphicon-stats"></span> Statistics Leaders</a> - Find statistics leaders in various statistical categories (90+), including dominance and break points ratios</li>
+				<li><a href="/topMatchStats"><i class="fa fa-thermometer"></i> Top Match Stats</a><sup class="new-feature"></sup> - Top single match statistics figures filtered by various filters</li>
+				<li><a href="/statsChart"><i class="fa fa-bar-chart"></i> Statistics Charts</a> - Statistics charts for various statistical categories, filtered by seasons and surface</li>
 				<li><a href="/seasons"><i class="fa fa-clone"></i> Seasons Browser</a> - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players</li>
 				<li><a href="/bestSeasons"><i class="fa fa-check-square-o"></i> Best Seasons</a> - Find which are the players' best seasons of the Open Era based on 'GOAT' points (overall and by surface)</li>
 				<li><a href="/tournaments"><i class="fa fa-calendar-o"></i> Tournaments</a> - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation.</li>
 				<li><a href="/tournamentEvents"><i class="fa fa-calendar"></i> Tournament Events</a> - Browse all Open Era tournament events, see tournament event draw, performance, statistics, historical winners and records</li>
 				<li><a href="/inProgressEventsForecasts"><i class="fa fa-eye"></i> Tournament Forecasts</a><sup class="cool-feature"></sup> - <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#tournamentForecastPopover">Tournament Event Forecasts</a> for in-progress tournaments driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</a></li>
-				<li><a href="/records"><i class="fa fa-book"></i> Records</a><sup class="cool-feature"></sup> - Various match, tournament result and ranking records, famous and infamous (best player that never...)</li>
+				<li><a href="/records"><i class="fa fa-book"></i> Records</a><sup class="cool-feature"></sup> - Various match, tournament result and ranking records, famous and infamous (the best player that never...)</li>
 				<li><a href="/liveScores"><img src="/images/active.png" title="Live" width="12" height="12" style="vertical-align: 0"/> Live Scores</a> - Live Scores via <a href="https://www.livescore.in" title="Livescore.in" target="_blank" class="external">Livescore.in</a></li>
-				<li><a href="/blog"><i class="fa fa-edit"></i> Blog Section</a> - A blog section</li>
+				<li><a href="/blog"><i class="fa fa-pencil-square"></i> Blog Section</a> - A blog section</li>
 			</ul>
-			<p>More info about feature details can be found at <a href="/glossary">Glossary</a> page</p>
+			<p>More info about feature details can be found at <a href="/glossary"><i class="fa fa-book"></i> Glossary</a> page.</p>
+			<p>Some useful tips can be found at <a href="/tips"><i class="fa fa-bullhorn"></i> Tips</a> page.</p>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-database"></i> Tennis Data</h4>
 			<p>
-				Data on which the statistics is based is from open source tennis data <a href="https://github.com/JeffSackmann/tennis_atp" target="_blank" class="external">repository</a> by <a href="https://github.com/JeffSackmann" target="_blank" class="external">Jeff Sackmann</a>, with some corrections and additions where data is wrong or lacking.
+				Data on which the statistics are based is from open source tennis data <a href="https://github.com/JeffSackmann/tennis_atp" target="_blank" class="external">repository</a> by <a href="https://github.com/JeffSackmann" target="_blank" class="external">Jeff Sackmann</a>, with some corrections and additions where data is wrong or lacking.
 				Even with these corrections and additions, there are still small errors and data missing.
 				Most notably for many tournaments between 1968 and 1972, as well as full rankings between 1981 and 1983.
 				Rankings before official ATP rankings started in 1973 season are estimated and as well still not complete.<br/>
 				In-Match statistics data (Aces, DFs, Serve %...) started to be recorded from 1991 onward, and thus this data is available on UTS also only for seasons 1991 onward.<br/>
+				Data is updated every Monday morning with new rankings and newly completed tournaments, followed by re-computation of aggregated data and records. In-progress tournament forecasts are updated every 15 minutes.<br/>
 				Please provide feedback on data as well at <a href="mailto:mcekovic@gmail.com" target="_blank">mcekovic@gmail.com</a> or <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank" class="external">GitHub</a>.
 			</p>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-trophy"></i> Tournament Classification</h4>
@@ -115,7 +117,7 @@
 					</li>
 					<li>
 						Separation of ATP 500/Championship Series vs ATP 250/World Series for seasons 1990 and onwards is as per ATP.
-						For seasons before 1990, 11 tournaments per season with strongest participation based on player ranks are considered ATP 500 tournaments.
+						For seasons before 1990, 11 tournaments per season with the strongest participation based on player ranks are considered ATP 500 tournaments.
 						For seasons 1968 and 1969, in order to compensate lack of Tour Finals and Masters tournaments, 25 strongest tournaments per season are considered ATP 500 tournaments.
 						In addition, <a href="https://en.wikipedia.org/wiki/Pepsi_Grand_Slam" target="_blank" class="external">Pepsi Grand Slam</a> (1976-1981), <a href="https://en.wikipedia.org/wiki/WCT_Challenge_Cup" target="_blank" class="external">WCT Challenge Cup</a> (1976-1980) and <a href="https://en.wikipedia.org/wiki/WCT_Finals#Seasonal_finals_events" target="_blank" class="external">Seasonal WCT Finals</a> (1972, 1982) are also considered as ATP 500.
 					</li>
@@ -135,7 +137,7 @@
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-rocket"></i> Court Speeds</h4>
 			<p>
 				<th:block th:each="speed : ${speeds}">
-				<a th:href="@{/tournamentEvents(speed=${speed.speed})}" th:class="|label points-${speed.speed}|" style="color: white" th:text="${speed.text}" th:title="|Show ${speed.text} ${speed.speedRange} tournament events|">Very Fast</a>
+				<a th:href="@{/tournamentEvents(speed=${speed.code})}" th:class="|label points-${speed.speed}|" style="color: white" th:text="${speed.text}" th:title="|Show ${speed.text} ${speed.speedRange} tournament events|">Very Fast</a>
 				</th:block>
 				<br/>
 				<p>Court Speed Index tries to estimate tournament event's court speed based on overall Ace %, Service Points Won % and Service Games Won %, averaged in a way to eliminate dependency on participating players dominant playing style (for more details see <a href="/glossary">Glossary</a> page).</p>
@@ -144,7 +146,7 @@
 			<p>
 				A lot of content on this site is based on 'GOAT' Points formula, which is a formula to quantify tennis player achievements throughout their careers and to compare players from different eras.
 				'GOAT' Points formula is based on assigning 'GOAT' points to players for tournament results, ATP and Elo rankings and various important achievements.
-				For visual description of the 'GOAT' Points formula please click:
+				For a visual description of the 'GOAT' Points formula please click:
 			</p>
 			<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 			<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
@@ -164,23 +166,25 @@
 					<td><a href="https://spring.io/projects/spring-boot" target="_blank" class="external">Spring Boot</a></td>
 				</tr>
 			</table>
+			<p><th:block th:include="fragments/promotion :: logo"/> logo <img src="/images/uts-logo.png" width="50" height="15"/> is courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank">crazysesirdzija@gmail.com</a>.</p>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-legal"></i> License</h4>
 			<p>
-				<th:block th:include="fragments/promotion :: logo"/> and <th:block th:include="fragments/promotion :: tcb"/> source code is licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" class="external">Apache 2.0 License</a>.
+				<th:block th:include="fragments/promotion :: logo"/> and <th:block th:include="fragments/promotion :: tcb"/> source code is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" class="external">Apache 2.0 License</a>.
 			</p>
 			<p>
-				<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width: 0; margin-bottom: 5px" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a>
-				<br/>
-				'GOAT' Points formula, customizations of Elo Ratings for tennis, <th:block th:include="fragments/promotion :: tcb"/> Match Prediction, Tournament Forecast and other algorithms by <th:block th:include="fragments/promotion :: logo"/> are licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="external">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
-				<br/>
+				<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width: 0; margin-bottom: 5px" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a><br/>
+				'GOAT' Points formula, customizations of Elo Ratings for tennis, <th:block th:include="fragments/promotion :: tcb"/> Match Prediction, Tournament Forecast and other algorithms by <th:block th:include="fragments/promotion :: logo"/> are licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="external">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br/>
 				In short: Attribution is required. Non-commercial use only.
 			</p>
+			<th:block th:include="fragments/ads :: responsive"/>
 		</div>
 		<div class="col-lg-2 col-md-3">
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>
 			<div id="rankingTopN"></div>
 			<th:block th:include="fragments/promotion :: facebook"/>
 			<th:block th:include="fragments/promotion :: twitter('')"/>
+			<br/>
+			<th:block th:include="fragments/ads :: matchedContent"/>
 			<th:block th:include="fragments/promotion :: paypal"/>
 			<th:block th:include="fragments/promotion :: license"/>
 		</div>

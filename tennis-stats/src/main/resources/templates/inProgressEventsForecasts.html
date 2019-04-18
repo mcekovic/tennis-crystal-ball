@@ -8,6 +8,7 @@
 		$(function() {
 			var $inProgressEventsTable = $("#inProgressEventsTable");
 			var device = detectDevice();
+			setBootgridColumnsVisible($inProgressEventsTable, ["speed"], deviceGreaterOrEqual(device, "xl"));
 			setBootgridColumnsVisible($inProgressEventsTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($inProgressEventsTable, ["participation", "favorite2"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($inProgressEventsTable, ["draw"], deviceGreaterOrEqual(device, "sm"));
@@ -29,6 +30,7 @@
 					},
 					"surface": surfaceFormatter,
 					"participation": participationFormatter,
+					"speed": speedFormatter,
 					"favorite1":  function(column, row) {
 						return formatFavorite(column, row.favorite1);
 					},
@@ -63,6 +65,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
 	<h3 id="inProgressEventsTable-title" class="grid-title">
 		<i class="fa fa-eye"></i> Tournament Event Forecasts
 		<footer style="margin-top: -10px"><i class="text-muted" style="font-size: x-small">Powered by <th:block th:include="fragments/promotion :: tcb"/></i></footer>
@@ -73,6 +76,7 @@
 			<th data-column-id="date" data-formatter="date" data-order="desc" data-visible="false" data-width="85">Date</th>
 			<th data-column-id="name" data-formatter="event" data-width="200">Tournament</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+			<th data-column-id="speed" data-formatter="speed" data-width="70" data-align="center" data-header-align="center">Speed</th>
 			<th data-column-id="draw" data-width="65">Draw</th>
 			<th data-column-id="playerCount" data-type="numeric" data-width="55" data-align="right" data-header-align="right">Pls.</th>
 			<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>

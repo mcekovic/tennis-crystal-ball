@@ -186,4 +186,8 @@ public abstract class EloCalculator {
 			default: return null;
 		}
 	}
+
+	public static double eloWinProbability(double eloRating1, double eloRating2) {
+		return 1.0 / (1.0 + pow(10.0, (eloRating2 - eloRating1) / 400.0));
+	}
 }

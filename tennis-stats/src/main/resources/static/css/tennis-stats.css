@@ -9,6 +9,16 @@
 		display: none !important;
 	}
 }
+@media (max-width: 1429px) {
+	.visible-xl {
+		display: none !important;
+	}
+}
+img.uts-logo {
+	width: 100px;
+	height: 30px;
+	margin-top: -9px;
+}
 .fa-b {
 	font-size: 120%;
 }
@@ -430,4 +440,7 @@ a.black:focus {
 .progress-bar-perf-l {
 	background-color: #dd7777;
 	font-size: 14px;
+}
+.empty-ad {
+	background-color: thistle;
 }

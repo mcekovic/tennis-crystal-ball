@@ -1,4 +1,4 @@
-DELETE FROM team_tournament_event_winner WHERE TRUE;
+DELETE FROM team_tournament_event_winner;
 INSERT INTO team_tournament_event_winner
 (season, level, winner_id, runner_up_id, score)
 VALUES

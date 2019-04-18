@@ -1,0 +1,66 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+<h3 class="text-nowrap"><i class="fa fa-flag"></i> 'GOAT' Calculator Explained</h3>
+<p>
+	Although <a href="/goatList">'GOAT' List</a> (a.k.a. 'GOATometer') is the flagship and the most visited page at <th:block th:include="fragments/promotion :: logo"/>, many people are not aware that it is not a simple static 'GOAT' List, but a full 'GOAT' Calculator that you can customize to your preference.<br/>
+	In this blog post, these customizations will be explained in detail.
+</p>
+<h4>'GOAT' Lists for Each of the Surfaces</h4>
+<p>
+	The first thing that you can do is to choose between overall 'GOAT' List and 'GOAT' List by each of the surfaces: <a href="/goatList?surface=H">Hard</a>, <a href="/goatList?surface=C">Clay</a>, <a href="/goatList?surface=G">Grass</a> and <a href="/goatList?surface=P">Carpet</a>.<br/>
+	As expected, a list by surface limits the achievements to the selected surface.
+</p>
+<h4>'GOAT' Points Legend</h4>
+<p>
+	Next thing you will notice, at the very bottom of the page, is a detailed visual description of the 'GOAT' Points Formula, where actual points awarded for tournament results, rankings and various achievements and records are presented.<br/>
+	The points are dominated by tournament results, where more points are assigned for more important tournaments and where titles are valued the most, but some points are also awarded for getting into final rounds.<br/>
+	Then come the ranking points, where points are assigned for each season's year-end ranking, the career-high ranking, weeks at no. 1, weeks at Elo top 5 and placement on different Peak Elo rating lists.<br/>
+	Finally, there are achievement points to award various important tennis achievements, like different Grand Slam achievements (calendar year GS, career GS...), 'Big wins' points (wins in important matches over high-ranked players), head-to-head points (to quantify how players fare against rivals in their own generation), points for various important records (most titles - overall and by tournament level, winning percentages, in-match statistics records...), best seasons and greatest rivalries.<br/>
+	Clicking on the 'GOAT' Points category title will open the list of players that were awarded the points from that category, sorted by the number of points awarded.
+</p>
+<h4>'GOAT' Points Columns</h4>
+<p>
+	Depending on your screen resolution, different 'GOAT' points columns are shown in the grid by default. You may see only the total number (on mobile devices), or you may also see the decomposition into top categories: Tournament, Ranking and Achievements points (on tablet and desktop devices).<br/>
+	However, clicking the <button class="btn btn-default btn-xs" type="button" disabled="disabled"><span class="icon glyphicon glyphicon-th-list"></span> <span class="caret"></span></button> button in the upper-right corner of the grid will open the column chooser where each of the individual 'GOAT' points' categories columns can be shown, regardless of the device or screen resolution.<br/>
+	To find out 'GOAT' points distribution over seasons for the particular player, just click on the number of points in the grid. The link leads to the player 'GOAT' points distribution page where you can see how, why and when each point is awarded. Some points are awarded for achievements in the particular season, but there are points awarded only for the whole career, like career Grand Slam points.
+</p>
+<h4>Adjusting Weights</h4>
+<p>
+	Now comes the funny part: weights of all of the 'GOAT' Points categories can be customized to your liking by clicking on the <button href="#" class="btn btn-primary btn-xs" disabled="disabled"><i class="fa fa-calculator"></i> Config <i class="fa fa-chevron-down"></i></button></button> button!<br>
+	Say you think Grand Slams should be valued more than default <abbr title="Ultimate Tennis Statistics">UTS</abbr> weights. No problem, click <button href="#" class="btn btn-info btn-xs" disabled="disabled"><i class="fa fa-cogs"></i> Adv. <i class="fa fa-chevron-down"></i></button> (...anced) button near the Tournament points row to open the form for weights by tournament level and round. Select 'Grand Slam Pts.' factor 'x 5'. The 'GOAT' List above will be refreshed immediately!<br/>
+	Say you think titles should not only be valued twice the reaching the final but 4 times more. No problem, choose the factor 'x 2' for the 'Title Pts.' (2 x 2 = 4)<br/>
+	OK, 'GOAT' Points are recalculated again, but after some time spent tweaking you would probably want to see how much points are now actually assigned for the particular achievement (say for winning the Masters 1000 title)? Again, no problem, just take a look at the 'GOAT' Points Legend below and check it out. 'GOAT' Points Legend is also updated and reflects the weights multiplied by your selected factors!<br/>
+	Say you do not like the head-to-head points for some reason. No problem, just select 'x 0' for the weight factor to remove them from the 'GOAT' List!
+</p>
+<h4>Quick Picks = Predefined Weights</h4>
+<p>
+	There are several sets of predefined weighs available by clicking the <button href="#" class="btn btn-primary btn-xs" disabled="disabled">Quick Picks <i class="fa fa-chevron-down"></i></button> button:
+	<ul>
+		<li><b>Default</b> - Default UTS weights: all 'GOAT' Points categories are included with weight x 1</li>
+		<li><b>GS, titles and No. 1 focus</b> - Grand Slam tournament titles are emphasized with x 4 the default weight, other GS tournament points (F, SF, QF) x 2, other titles x 2 (resulting in 1 GS = 4 Masters, 1 title = 4 finals), Grand Slam achievement points x 4 and weeks at No. 1 points x 4</li>
+		<li><b>Minimalist</b> - Grand Slam titles and achievement points and weeks at No. 1 points are the only ones included</li>
+		<li><b>Peak emphasis</b> - Peak achievements (Career-High Ranking, Peak Elo Ratings, and Best Seasons) are emphasized x 4 the default weight</li>
+		<li><b>Minimalist peak</b> - Peak achievements (Career-High Ranking, Peak Elo Ratings and Best Seasons) are the only ones selected</li>
+		<li><b>Era difficulty tweak</b> - Big Wins points are emphasized x 4, Peak Elo Rating points x 2</li>
+	</ul>
+</p>
+<h4>Some More Tweaks</h4>
+<p>
+	There are also some miscellaneous tweaks:
+	<ul>
+		<li>Want to see only active players? Check 'Active Players' above the grid.</li>
+		<li>Wondering who are the best players in the Open Era coming from France? In the 'Config' section choose France as the country.</li>
+		<li>Annoyed that Laver and Rosewall are on the Open Era list, which severely handicaps them? In the 'Config' section uncheck 'Old Legends'.</li>
+		<li>Annoyed that Laver and Rosewall achievements are only for the Open Era, or wondering how Zverev would hypothetically fare on the list at the end of his career? In the 'Config' section check 'Extrapolate Career' (click question mark for the detailed explanation on how this works).</li>
+	</ul>
+</p>
+<h4>Share Your Favorite 'GOAT' List</h4>
+<p>
+	Finally found your ideal set of 'GOAT' Points weight factors? Why not share your 'GOAT' List with others?
+	<ul>
+		<li>In the 'Config' section click <button href="#" class="btn btn-xs btn-info" disabled="disabled"><i class="fa fa-twitter fa-b"></i>&nbsp;&nbsp;Tweet</button> button to make a tweet with a link to your customized 'GOAT' List!</li>
+		<li>In the 'Config' section click <button href="#" class="btn btn-xs btn-info" disabled="disabled"><i class="glyphicon glyphicon-link"></i>&nbsp;&nbsp;Permalink</button> button to go to the permalink with your customized 'GOAT' List. Then copy the URL from the browser address bar into your favorite forum post or into your blog entry!</li>
+	</ul>
+</p>
+<footer class="text-right"><i class="fa fa-calendar"></i> 15-01-2019</footer>
+<th:block th:include="blog/blogComments :: comments('goatCalculator')"/>
+</th:block>

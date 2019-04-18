@@ -36,7 +36,7 @@ public class TournamentForecastService {
 	private static final String BYE = "BYE";
 
 	private static final String IN_PROGRESS_EVENTS_QUERY = //language=SQL
-		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
+		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating, e.court_speed\n" +
 		"FROM in_progress_event e\n" +
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE NOT completed\n" +
@@ -47,7 +47,7 @@ public class TournamentForecastService {
 		"SELECT in_progress_event_id FROM in_progress_event WHERE name = :name";
 
 	private static final String IN_PROGRESS_EVENT_QUERY =
-		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
+		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating, e.court_speed\n" +
 		"FROM in_progress_event e\n" +
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE in_progress_event_id = :inProgressEventId";
@@ -144,6 +144,7 @@ public class TournamentForecastService {
 			rs.getInt("strength"),
 			rs.getInt("average_elo_rating")
 		);
+		inProgressEvent.setSpeed(getInteger(rs, "court_speed"));
 		return inProgressEvent;
 	}
 

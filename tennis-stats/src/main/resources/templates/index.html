@@ -2,6 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="hasInProgressEvents" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="currentSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="playerOfTheWeek" type="org.strangeforest.tcb.stats.model.PlayerOfTheWeek"*/-->
+<!--/*@thymesVar id="recordOfTheDay" type="org.strangeforest.tcb.stats.model.records.RecordOfTheDay"*/-->
+<!--/*@thymesVar id="featuredBlogPost" type="org.strangeforest.tcb.stats.model.FeaturedContent"*/-->
+<!--/*@thymesVar id="featuredPage" type="org.strangeforest.tcb.stats.model.FeaturedContent"*/-->
+<!--/*@thymesVar id="levels" type="java.util.Map<String, String>"*/-->
+<!--/*@thymesVar id="surfaces" type="java.util.Map<String, String>"*/-->
 <!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
 <head th:replace="fragments/head :: commonHead(null, true, ~{::template})">
 	<template>
@@ -18,6 +24,7 @@
 			setBootgridColumnsVisible($inProgressEventsTable, ["surface", "draw"], sm);
 			setBootgridColumnsVisible($inProgressEventsTable, ["favorite2"], lg);
 			if (!md)	setBootgridColumnsWidths($inProgressEventsTable, ["name"], [175]);
+			if (xl) setBootgridColumnsWidths($inProgressEventsTable, ["surface"], [100]);
 			$inProgressEventsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -32,7 +39,9 @@
 					"event": function(column, row) {
 						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-" + row.level + "' title='Show full forecast'>" + row.name + "</a>";
 					},
-					"surface": surfaceFormatter,
+					"surface": function(column, row) {
+						return formatSurface(row.surface, row.indoor) + (xl ? " " + formatSpeed(row.speed, row.surface) : "");
+					},
 					"favorite1":  function(column, row) {
 						return formatFavorite(column, row.favorite1);
 					},
@@ -87,6 +96,7 @@
 			setBootgridTitles($latestEvents, [
 				{id: "participation", title: "[(#{event.participation.title})]"}
 			]);
+			decorateSurface("#titleSurface");
 			bindPopovers();
 			loadRankingTopN("RANK");
 		});
@@ -95,6 +105,14 @@
 		body {
 			background: url("/images/home-bg.jpg") repeat;
 		}
+		.carousel-indicators {
+			left: 75%;
+			bottom: -10px;
+			width: 25%;
+			margin-left: 0;
+			padding-right: 10px !important;
+			text-align: right;
+		}
 		.component-header {
 			margin: 0;
 		}
@@ -102,31 +120,23 @@
 	<script type="application/ld+json">{
 		"@context": "http://schema.org",
 		"@type": "WebSite",
-		"url": "http://www.ultimatetennisstatistics.com",
+		"url": "https://www.ultimatetennisstatistics.com",
 		"name": "Ultimate Tennis Statistics",
 		"description": "Welcome to Ultimate Tennis Statistics, the ultimate tennis statistics destination for the die-hard tennis fans!",
 		"genre": "Sports"
 	}</script>
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-		<script>
-			(adsbygoogle = window.adsbygoogle || []).push({
-				google_ad_client: "ca-pub-1900145493503169",
-				enable_page_level_ads: true
-			});
-		</script>
 	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<div class="row">
 		<div class="col-lg-10 col-md-9">
-			<div>
-				<h1 style="margin-top: 10px; margin-bottom: 20px"><th:block th:include="fragments/promotion :: logo"/></h1>
-			</div>
+			<h1 style="margin-top: 0; margin-bottom: 20px"><img src="/images/uts-logo.png" class="uts-logo" alt="UTS"/> <th:block th:include="fragments/promotion :: logo"/></h1>
 			<p>
 				Welcome to <th:block th:include="fragments/promotion :: logo"/>, the ultimate tennis statistics destination for the die-hard tennis fans!<br/>
 				Be it latest or historical results, in-match statistics, records or all-time greats comparisons, Elo ratings or tournament forecasts, you will find it here. More details at <a href="/about" class="text-nowrap"><i class="fa fa-question-circle"></i> About</a> page.
 			</p>
+			<th:block th:include="fragments/ads :: responsive"/>
 			<th:block th:if="${hasInProgressEvents}">
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-eye"></i> Latest Forecasts <sup style="font-size: 60%"><i class="text-muted">Powered by <th:block th:include="fragments/promotion :: tcb"/></i></sup></h4>
 			<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
@@ -161,13 +171,56 @@
 				</tr>
 				</thead>
 			</table>
-			<div class="pull-right">
+			<div class="pull-right" style="margin: 5px 10px">
 				<a href="/tournamentEvents" class="label label-default" title="Show more tournament results">More Results</a>
 				<a th:href="@{/season(season=${currentSeason})}" class="label label-B" th:title="|Show season ${currentSeason} figures|">Season [(${currentSeason})]</a>
 			</div>
-			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature"></sup></h4>
+			<br/>
+			<div id="featuredCarousel" class="carousel slide" data-ride="carousel" style="height: 80px; margin-top: 15px">
+				<ol class="carousel-indicators">
+					<li data-target="#featuredCarousel" data-slide-to="0" class="carousel-indicator active"></li>
+					<li data-target="#featuredCarousel" data-slide-to="1" class="carousel-indicator"></li>
+					<li data-target="#featuredCarousel" data-slide-to="2" class="carousel-indicator"></li>
+					<li data-target="#featuredCarousel" data-slide-to="3" class="carousel-indicator"></li>
+				</ol>
+				<div class="carousel-inner">
+					<div class="item text-center active">
+						<p><i class="fa fa-user"></i> Player of the Week</p>
+						<p>
+							<th:block th:include="fragments/player :: player(${playerOfTheWeek.player})"/>
+							<th:block th:if="${playerOfTheWeek.title}" th:with="player=${playerOfTheWeek.player}, title=${playerOfTheWeek.title}"><br/>
+								<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, tournamentEventId=${title.id})}" title="Show matches" style="vertical-align: middle"><i class="fa fa-trophy fa-b"></i></a>
+								<a th:href="@{/tournamentEvent(tournamentEventId=${title.id})}" class="label label-" th:attrappend="class=${title.level}" th:text="${title.name}" th:title="${levels[title.level]}">Wimbledon</a>
+								<span th:if="${title.surface}" id="titleSurface" class="label" th:data-surface="${title.surface}">[(${surfaces[title.surface]})]<span th:if="${title.indoor && title.surface != 'P'}" title="Indoor"> (i)</span></span>
+							</th:block>
+						</p>
+					</div>
+					<div class="item text-center">
+						<p><i class="fa fa-book"></i> Record of the Day</p>
+						<p th:with="record=${recordOfTheDay.record}, recordDetail=${recordOfTheDay.recordDetail}">
+							<a th:href="@{/record(recordId=${record.id})}" title="Show record" th:text="${record.name}">Most Titles</a><br/>
+							<th:block th:include="fragments/player :: playerRow(${recordDetail})"/><i class="fa fa-angle-double-right"></i>
+							<a th:if="${recordDetail.detailUrl}" th:href="${recordDetail.detailUrl}" th:text="${recordDetail.detail.valueString}" title="Record details">109</a>
+							<th:block th:unless="${recordDetail.detailUrl}" th:text="${recordDetail.detail.valueString}">109</th:block>
+						</p>
+					</div>
+					<div class="item text-center">
+						<p><i class="fa fa-pencil-square"></i> Featured Blog Post</p>
+						<p><a th:href="@{/blog(post=${featuredBlogPost.value})}" th:utext="${featuredBlogPost.content}">New Blog Section</a></p>
+					</div>
+					<div class="item text-center">
+						<p><i class="fa fa-anchor"></i> Featured Page</p>
+						<p><a th:href="${featuredPage.value}" th:utext="${featuredPage.content}">GOAT List</a></p>
+					</div>
+				</div>
+			</div>
+			<h4 class="text-nowrap" style="margin-top: 10px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature"></sup></h4>
 			<ul>
-				<li><a href="/eloRatings">Elo Ratings</a> inactivity penalty redesigned to use logistic function with tuned parameters for maximum predictability after comebacks from longer injury breaks</li>
+				<li>In-progress tournament Court Speed and Statistics Leaders - Find out the ongoing tournaments' court speeds and explore who has the most aces, the greatest serve % or the greatest service or return points won % so far</li>
+				<li>New website logo - <img src="/images/uts-logo.png" width="50" height="15"/> Courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank">crazysesirdzija@gmail.com</a></li>
+				<li><a href="/topMatchStats">Top Match Stats</a> - Top match statistics figures, like who and when had most aces, service or return points won in a single match</li>
+				<li>In-match winning probabilities for a match, current set, current game, next set, service or return game and service or return point at Head-to-Head Hypothetical Matchup</li>
+				<li><a href="/eloRatings">Elo Ratings</a> inactivity penalty redesigned to use a logistic function with tuned parameters for maximum predictability after comebacks from long injury breaks</li>
 				<li>Adjusted H2H takes into account surface and importance skew in H2H matches and normalizes it (Federer vs Nadal <a href="/headToHead?name1=Roger%20Federer&name2=Rafael%20Nadal">Adjusted H2H</a>, details about formula at <a href="/glossary">Glossary</a> page and in the <a href="/blog?post=h2hSkew">Blog Post</a>)</li>
 				<li>Court Speed Index in filters across the site as well as player performance breakdown by court speed (i.e. <a href="/playerProfile?name=Roger%20Federer&tab=performance" title="Federer performance breakdown">Federer</a>, <a href="/playerProfile?name=Novak%20Djokovic&tab=performance" title="Djokovic performance breakdown">Djokovic</a>, <a href="/playerProfile?name=Rafael%20Nadal&tab=performance" title="Nadal performance breakdown">Nadal</a>, more info in the <a href="/blog?post=big4CourtSpeed">Blog Post</a>)</li>
 				<li>New Records for Different Masters Slot <a href="/record?recordId=DifferentMastersSlotTitles">Titles</a> (+2 'GOAT' Points) / <a href="/record?recordId=DifferentMastersSlotFinals">Finals</a> (Masters Slot is an order number (1-9) by date of the Masters event within the season) and <a href="/record?recordId=YoungestEndOfSeasonATPNo1">Youngest</a> / <a href="/record?recordId=OldestEndOfSeasonATPNo1">Oldest</a> year-end No. 1</li>
@@ -176,48 +229,20 @@
 				<li>Player nicknames - Players are searchable by nicknames too: Maestro, Bull, Joker...</li>
 				<li><a href="/greatestMatches">Greatest Matches</a> - Greatest matches of Open Era ranked by special <span th:title="#{match.greatnessScore.title}">Match Greatness Score</span> formula</li>
 				<li>New Tournament Event Title Difficulty factor, representing how difficult was to win the title based on the strength of the opponents a winner has faced on the path to the title (more details about Title Difficulty algorithm at <a href="/glossary">Glossary</a> page), as well as new records: <a href="/records?category=MostTitlesAdjustedbyDifficulty">Most Titles Adjusted by Difficulty</a>, <a href="/records?category=HardestTitles">Hardest Titles</a> and <a href="/records?category=EasiestTitles">Easiest Titles</a></li>
-				<li><a href="/eloRatings?rankType=RECENT_ELO_RANK">Recent Elo Rating</a> - New Recent Elo rating with double the normal Elo K-Factor values more recent form than standard Elo Rating</li>
-				<li><a href="/statsTimeline">Statistics Timeline</a> - How tennis game evolved through time, more info at new <a href="/blog?post=gameEvolution">Game Evolution</a> blog post</li>
 			</ul>
-			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-bullhorn"></i> Tips<sup class="cool-feature"></sup></h4>
-			<ul>
-				<li><th:block th:include="fragments/promotion :: logo"/> is a mobile-friendly web site, but to see it in its 'full glory', open it on the screen greater than 1440 pixels, in which case more data will show up and more columns with various details will be available in the data tables.</li>
-				<li>On most data tables, clicking on a data cell will open a page with the details. Examples:<br/>
-					<ul>
-						<li>On 'GOAT' List page, clicking on a number of Grand Slam tournaments for the player will open the page with actual GSs won by the player.</li>
-						<li>On Top Performers and Statistics Leaders pages, clicking on the statistics value will open the page with matches on which the value is based.</li>
-						<li>On Records and Record pages, clicking on the record value or details will open the page with data on which the record is based (i.e. clicking on Borg's 49 match winning streak record will reveal all Borg's 49 consecutive match wins as well as the loss that ended the streak).</li>
-					</ul>
-				</li>
-				<li>Sometimes there are hidden columns in data tables. To activate them, click on the columns box
-					<button class="btn btn-default" type="button" disabled="disabled" style="vertical-align: 20%"><span class="icon glyphicon glyphicon-th-list"></span> <span class="caret"></span></button>
-					in the upper-right corner of the data table and check the hidden columns. Examples:
-					<ul>
-						<li>Individual GOAT Points areas like Tournament Grans Slam Points (GS P), Weeks at No. 1 Points (W@1 P), etc... in GOAT List</li>
-						<li>Player and opponent flag, rank and Elo rating (Match Details), Speed and Best-of (BO) in Player profile Matches tab</li>
-					</ul>
-				</li>
-				<li>Choosing the odds format: On In-Progress Tournament pages, along with probabilities, it is possible to show odds, in one of the odds formats. This is configured in the user settings, in the upper-right corner:
-					<i class="fa fa-cog fa-b text-muted"></i>
-				</li>
-				<li>On most pages with filter, there is a search box
-					<div class="input-group" style="display: inline-table; vertical-align: -40%; width: 120px"><span class="icon glyphicon glyphicon-search input-group-addon"></span><input class="search-field form-control" placeholder="Search" type="text" disabled="disabled" style="margin-top: 1px; margin-bottom: -1px"></div>
-					where players or tournaments can be quickly filtered by name. But if you type country code like USA, GBR, ESP, FRA, you can filter players by country too.
-				</li>
-				<li>On H2H page, when comparing player matches, H2H checkbox <div class="checkbox" style="display: inline-block; margin-left: 25px; margin-bottom: 0"><input type="checkbox" disabled="disabled"/>H2H</div> controls whether only H2H matches are displayed or comparision of last matches played by each player is displayed.
-					By unchecking the H2H checkbox, comparision of last matches is activated.
-				</li>
-			</ul>
+			<th:block th:include="fragments/ads :: responsive"/>
 		</div>
 		<div class="col-lg-2 col-md-3">
 			<div id="rankingTopN"></div>
 			<div class="panel panel-default component text-center text-nowrap">
 				<a href="/liveScores" title="Live scores"><strong>Live Scores</strong> <img src="/images/active.png" style="vertical-align: -5%" width="12" height="12"/></a> via<br/>
-				<a href="https://www.livescore.in" title="Livescore.in" target="_blank">Livescore.in</a>
+				<a href="http://www.livescore.in/" title="Livescore.in" target="_blank">Livescore.in</a>
 			</div>
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>
 			<th:block th:include="fragments/promotion :: facebook"/>
 			<th:block th:include="fragments/promotion :: twitter('')"/>
+			<br/>
+			<th:block th:include="fragments/ads :: responsiveLink"/>
 			<th:block th:include="fragments/promotion :: paypal"/>
 			<th:block th:include="fragments/promotion :: license"/>
 		</div>

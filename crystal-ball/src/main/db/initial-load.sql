@@ -470,8 +470,8 @@ VALUES
 ('vsTop10',              'Vs Top 10',                20, 16),
 ('afterWinningFirstSet', 'After Winning First Set', 100, 17),
 ('afterLosingFirstSet',  'After Losing First Set',  100, 18),
-('tieBreaks',            'Tie Breaks',              100, 19),
-('decidingSetTBs',       'Deciding Set Tie Breaks',  10, 20);
+('tieBreaks',            'Tie-Breaks',              100, 19),
+('decidingSetTBs',       'Deciding Set Tie-Breaks',  10, 20);
 
 DELETE FROM performance_goat_points;
 INSERT INTO performance_goat_points
@@ -589,5 +589,16 @@ VALUES
 ('totalGamesWonPct', 2, 1),
 ('setsWonPct', 1, 2),
 ('setsWonPct', 2, 1);
+
+
+DELETE FROM featured_content;
+INSERT INTO featured_content
+(type, value, description)
+VALUES
+-- Grand Slam
+('PLAYER', NULL, NULL),
+('RECORD', NULL, NULL),
+('BLOG', 'goatCalculator', '<i class="fa fa-flag"></i> ''GOAT'' Calculator Explained'),
+('PAGE', 'topMatchStats', '<i class="fa fa-thermometer"></i> Top Match Stats');
 
 COMMIT;

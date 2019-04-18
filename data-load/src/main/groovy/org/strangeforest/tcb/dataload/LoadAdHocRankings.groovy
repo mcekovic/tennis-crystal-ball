@@ -8,6 +8,6 @@ sqlPool.withSql { Sql sql ->
 }
 
 static loadRankings(Sql sql) {
-	def rankingsLoader = new ATPWorldTourRankingsLoader(sql)
+	def rankingsLoader = new ATPTourRankingsLoader(sql)
 	rankingsLoader.load('1994-12-26', 500)
 }

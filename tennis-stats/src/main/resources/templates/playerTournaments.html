@@ -188,7 +188,7 @@
 	<div class="col-md-2">
 		<select id="tournamentsSpeed" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
 			<option value="">All speeds</option>
-			<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.speed}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+			<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
 		</select>
 	</div>
 	<div class="col-md-2">

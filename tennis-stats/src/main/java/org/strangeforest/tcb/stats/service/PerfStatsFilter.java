@@ -98,6 +98,10 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return new PerfStatsFilter(null, null, null, null, null, null, null, null, null, tournamentId, OpponentFilter.forStats(opponent, null));
 	}
 
+	public static PerfStatsFilter forOpponent(int opponentId, String level, String surface, Boolean indoor, String round) {
+		return new PerfStatsFilter(null, null, level, null, surface, indoor, null, round, null, null, OpponentFilter.forStats(opponentId));
+	}
+
 
 	// Instance
 
@@ -114,6 +118,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 	private final Integer tournamentId;
 	private final Integer tournamentEventId;
 	private final OpponentFilter opponentFilter;
+	private final OutcomeFilter outcomeFilter;
 
 	private static final String SEASON_CRITERION           = " AND season = :season";
 	private static final String LAST_52_WEEKS_CRITERION    = " AND date >= current_date - INTERVAL '1 year'";
@@ -132,14 +137,14 @@ public class PerfStatsFilter extends PlayerListFilter {
 	private static final int LAST_52_WEEKS_SEASON = -1;
 
 	public PerfStatsFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, Range<Integer> speedRange, String round, String result, Integer tournamentId, OpponentFilter opponentFilter) {
-		this(null, null, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, null, opponentFilter);
+		this(null, null, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, null, opponentFilter, null);
 	}
 
 	public PerfStatsFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, Range<Integer> speedRange, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
-		this(null, null, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter);
+		this(null, null, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, null);
 	}
 
-	public PerfStatsFilter(Boolean active, String searchPhrase, Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, Range<Integer> speedRange, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
+	public PerfStatsFilter(Boolean active, String searchPhrase, Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, Range<Integer> speedRange, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter) {
 		super(active, searchPhrase);
 		this.season = season != null && season != LAST_52_WEEKS_SEASON ? season : null;
 		last52Weeks = season != null && season == LAST_52_WEEKS_SEASON;
@@ -154,6 +159,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 		this.tournamentId = tournamentId;
 		this.tournamentEventId = tournamentEventId;
 		this.opponentFilter = opponentFilter != null ? opponentFilter : OpponentFilter.ALL;
+		this.outcomeFilter = outcomeFilter != null ? outcomeFilter : OutcomeFilter.ALL;
 	}
 
 	public String getBaseCriteria() {
@@ -197,6 +203,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 		if (tournamentEventId != null)
 			criteria.append(TOURNAMENT_EVENT_CRITERION);
 		opponentFilter.appendCriteria(criteria);
+		outcomeFilter.appendCriteria(criteria);
 	}
 
 	@Override protected void addParams(MapSqlParameterSource params) {
@@ -230,6 +237,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 		if (tournamentEventId != null)
 			params.addValue("tournamentEventId", tournamentEventId);
 		opponentFilter.addParams(params);
+		outcomeFilter.addParams(params);
 	}
 
 	public Integer getSeason() {
@@ -411,13 +419,13 @@ public class PerfStatsFilter extends PlayerListFilter {
 	public boolean isEmpty() {
 		return season == null && !last52Weeks && dateRange.equals(Range.all()) &&
 			isNullOrEmpty(level) && bestOf == null && isNullOrEmpty(surface) && indoor == null && isNullOrEmpty(round) && speedRange.equals(Range.all()) &&
-			isNullOrEmpty(result) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
+			isNullOrEmpty(result) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty() && outcomeFilter.isEmpty();
 	}
 
 	public boolean isEmptyOrForSeasonOrSurface() {
 		return !last52Weeks && dateRange.equals(Range.all()) &&
 		   isNullOrEmpty(level) && bestOf == null && indoor == null && speedRange.equals(Range.all()) && isNullOrEmpty(round) && isNullOrEmpty(result) &&
-			tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
+			tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty() && outcomeFilter.isEmpty();
 	}
 
 
@@ -430,11 +438,11 @@ public class PerfStatsFilter extends PlayerListFilter {
 		PerfStatsFilter filter = (PerfStatsFilter)o;
 		return Objects.equals(season, filter.season) &&	last52Weeks == filter.last52Weeks && dateRange.equals(filter.dateRange) &&
 			stringsEqual(level, filter.level) && Objects.equals(bestOf, filter.bestOf) && stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) && speedRange.equals(filter.speedRange) &&
-			stringsEqual(round, filter.round) && stringsEqual(result, filter.result) && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && opponentFilter.equals(filter.opponentFilter);
+			stringsEqual(round, filter.round) && stringsEqual(result, filter.result) && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && opponentFilter.equals(filter.opponentFilter) && outcomeFilter.equals(filter.outcomeFilter);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), season, last52Weeks, dateRange, emptyToNull(level), bestOf, emptyToNull(surface), indoor, speedRange, emptyToNull(round), emptyToNull(result), tournamentId, tournamentEventId, opponentFilter);
+		return Objects.hash(super.hashCode(), season, last52Weeks, dateRange, emptyToNull(level), bestOf, emptyToNull(surface), indoor, speedRange, emptyToNull(round), emptyToNull(result), tournamentId, tournamentEventId, opponentFilter, outcomeFilter);
 	}
 
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {
@@ -451,6 +459,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 			.add("result", emptyToNull(result))
 			.add("tournamentId", tournamentId)
 			.add("tournamentEventId", tournamentEventId)
-			.add("opponentFilter", opponentFilter);
+			.add("opponentFilter", opponentFilter)
+			.add("outcomeFilter", outcomeFilter);
 	}
 }

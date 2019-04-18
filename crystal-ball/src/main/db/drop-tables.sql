@@ -1,5 +1,6 @@
 DROP TABLE visitor CASCADE;
 DROP TABLE visitor_summary CASCADE;
+DROP TABLE featured_content CASCADE;
 
 DROP TABLE player_record CASCADE;
 DROP TABLE active_player_record CASCADE;

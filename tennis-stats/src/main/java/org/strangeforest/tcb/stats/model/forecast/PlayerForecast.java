@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.model.forecast;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.*;
-import org.strangeforest.tcb.stats.model.price.*;
 
 import static org.strangeforest.tcb.stats.model.price.PriceUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
@@ -67,7 +66,7 @@ public class PlayerForecast extends MatchPlayerEx {
 
 	public String getPrice(String result, String format) {
 		Double probability = rawProbability(result);
-		return probability != null ? PriceFormat.valueOf(format).format(toPrice(probability)) : null;
+		return probability != null ? toFormattedPrice(probability, format) : null;
 	}
 
 	public Double getDrawLuck() {

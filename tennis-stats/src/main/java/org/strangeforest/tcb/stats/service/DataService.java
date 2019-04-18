@@ -4,7 +4,6 @@ import java.time.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.regex.*;
-
 import javax.annotation.*;
 
 import org.postgresql.core.*;
@@ -13,6 +12,7 @@ import org.springframework.boot.actuate.metrics.cache.*;
 import org.springframework.cache.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.cache.caffeine.*;
+import org.springframework.context.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.util.*;
@@ -22,6 +22,7 @@ import static java.lang.String.*;
 @Service
 public class DataService {
 
+	@Autowired private ApplicationContext appContext;
 	@Autowired private JdbcTemplate jdbcTemplate;
 	@Autowired private CacheManager cacheManager;
 	@Autowired(required = false)  private CacheMetricsRegistrar cacheMetricsRegistrar;
@@ -108,7 +109,10 @@ public class DataService {
 				cacheCount++;
 			}
 		}
-		matchPredictionService.clearCaches();
+		for (HasCache hasCache : appContext.getBeansOfType(HasCache.class).values()) {
+			hasCache.clearCache();
+			cacheCount++;
+		}
 		return cacheCount;
 	}
 

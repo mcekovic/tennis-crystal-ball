@@ -7,16 +7,19 @@ import org.strangeforest.tcb.stats.model.price.*;
 
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 import static org.strangeforest.tcb.stats.model.price.PriceUtil.*;
 
 public final class MatchPrediction {
 
 	// Factory
 
-	public static final MatchPrediction TIE = prediction(0.5);
+	public static MatchPrediction tie(short bestOf) {
+		return prediction(0.5, bestOf);
+	}
 
-	private static MatchPrediction prediction(double winProbability1) {
-		MatchPrediction prediction = new MatchPrediction(1.0);
+	private static MatchPrediction prediction(double winProbability1, short bestOf) {
+		MatchPrediction prediction = new MatchPrediction(1.0, bestOf);
 		prediction.addItemProbability1(RankingPredictionItem.RANK, 1.0, winProbability1);
 		prediction.addItemProbability2(RankingPredictionItem.RANK, 1.0, 1.0 - winProbability1);
 		return prediction;
@@ -26,6 +29,7 @@ public final class MatchPrediction {
 	// Instance
 
 	private final double totalAreaWeight;
+	private final short bestOf;
 	private List<WeightedProbability> itemProbabilities1 = new ArrayList<>();
 	private List<WeightedProbability> itemProbabilities2 = new ArrayList<>();
 	private Double winProbability1 = 0.5;
@@ -33,8 +37,9 @@ public final class MatchPrediction {
 	private RankingData rankingData1;
 	private RankingData rankingData2;
 
-	public MatchPrediction(double totalAreaWeight) {
+	public MatchPrediction(double totalAreaWeight, short bestOf) {
 		this.totalAreaWeight = totalAreaWeight;
+		this.bestOf = bestOf;
 	}
 
 	public double getWinProbability1() {
@@ -58,7 +63,7 @@ public final class MatchPrediction {
 	}
 
 	private Map<PriceFormat, String> getPriceMap(double probability) {
-		return Stream.of(PriceFormat.values()).collect(toMap(identity(), format -> format.format(toPrice(probability))));
+		return Stream.of(PriceFormat.values()).collect(toMap(identity(), format -> toFormattedPrice(probability, format)));
 	}
 
 	private double weightAverage(List<WeightedProbability> weightedProbabilities) {
@@ -109,11 +114,11 @@ public final class MatchPrediction {
 	}
 
 	public double getPredictability1() {
-		return getItemProbabilitiesWeight1() / totalAreaWeight;
+		return matchProbabilityFromMixedProbability(getItemProbabilitiesWeight1() / totalAreaWeight, bestOf);
 	}
 
 	public double getPredictability2() {
-		return getItemProbabilitiesWeight2() / totalAreaWeight;
+		return matchProbabilityFromMixedProbability(getItemProbabilitiesWeight2() / totalAreaWeight, bestOf);
 	}
 
 	public boolean isEmpty() {
@@ -172,7 +177,7 @@ public final class MatchPrediction {
 	}
 
 	public MatchPrediction swap() {
-		MatchPrediction swapped = new MatchPrediction(totalAreaWeight);
+		MatchPrediction swapped = new MatchPrediction(totalAreaWeight, bestOf);
 		swapped.itemProbabilities1 = new ArrayList<>(itemProbabilities2);
 		swapped.itemProbabilities2 = new ArrayList<>(itemProbabilities1);
 		swapped.winProbability1 = winProbability2;
