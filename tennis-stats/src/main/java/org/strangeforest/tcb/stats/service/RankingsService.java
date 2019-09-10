@@ -5,6 +5,7 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
+import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -192,7 +193,7 @@ public class RankingsService {
 			if (season != null)
 				date = getSeasonEndRankingDate(rankType, season);
 			if (date == null)
-				date = getCurrentRankingDate(rankType);
+				date = getAOPProxy().getCurrentRankingDate(rankType);
 		}
 		return date;
 	}
@@ -215,7 +216,7 @@ public class RankingsService {
 	}
 
 	public List<PlayerRanking> getRankingsTopN(RankType rankType, int playerCount) {
-		return getRankingsTopN(rankType, getCurrentRankingDate(rankType), playerCount);
+		return getAOPProxy().getRankingsTopN(rankType, getAOPProxy().getCurrentRankingDate(rankType), playerCount);
 	}
 
 	@Cacheable("RankingsTable.TopN")
@@ -614,5 +615,9 @@ public class RankingsService {
 			case CARPET_GOAT_POINTS: return "player_season_goat_rank";
 			default: throw unknownEnum(rankType);
 		}
+	}
+
+	private RankingsService getAOPProxy() {
+		return (RankingsService)AopContext.currentProxy();
 	}
 }

@@ -34,10 +34,11 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =     "120";
 
 	public LongestCareerResultSpanCategory() {
-		super("Longest Career Title / Final Span");
+		super("Longest Career Title / Final / Match Span");
 		registerResultCareerSpans(TITLE);
 		registerResultCareerSpans(FINAL);
-		registerWinCareerSpans();
+		registerMatchCareerSpans(true);
+		registerMatchCareerSpans(false);
 		registerConsecutiveSeasons(TITLE);
 		registerConsecutiveSeasons(FINAL);
 	}
@@ -46,17 +47,17 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 		register(resultCareerSpan(type, ALL_WO_TEAM));
 		register(resultCareerSpan(type, GRAND_SLAM));
 		register(resultCareerSpan(type, TOUR_FINALS));
-		register(resultCareerSpan(type, ALT_FINALS));
+		register(resultCareerSpan(type, ALL_FINALS));
 		register(resultCareerSpan(type, MASTERS));
 	}
 
-	private void registerWinCareerSpans() {
-		register(winCareerSpan(ALL_WO_TEAM));
-		register(winCareerSpan(GRAND_SLAM));
-		register(winCareerSpan(TOUR_FINALS));
-		register(winCareerSpan(ALT_FINALS));
-		register(winCareerSpan(MASTERS));
-		register(winCareerSpan(OLYMPICS));
+	private void registerMatchCareerSpans(boolean win) {
+		register(matchCareerSpan(ALL, win));
+		register(matchCareerSpan(GRAND_SLAM, win));
+		register(matchCareerSpan(TOUR_FINALS, win));
+		register(matchCareerSpan(ALL_FINALS, win));
+		register(matchCareerSpan(MASTERS, win));
+		register(matchCareerSpan(OLYMPICS, win));
 	}
 
 	private void registerConsecutiveSeasons(ResultType type) {
@@ -92,14 +93,17 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 		);
 	}
 
-	private static Record winCareerSpan(RecordDomain domain) {
+	private static Record matchCareerSpan(RecordDomain domain, boolean win) {
+		String match = win ? "Win" : "Match";
+		String column = win ? "winner_id" : "player_id";
+		String table = win ? "match_for_stats_v" : "player_match_for_stats_v";
 		return new Record<>(
-			"Longest" + domain.id + "WinSpan", "Longest " + suffix(domain.name, " ") + "First Win to Last Win",
+			"Longest" + domain.id + match + "Span", "Longest " + suffix(domain.name, " ") + "First " + match + " to Last " + match,
 			/* language=SQL */
 			"WITH match_win_span AS (\n" +
-			"  SELECT winner_id AS player_id, first_value(match_id) OVER (PARTITION BY winner_id ORDER BY date) AS first_match_id,\n" +
-			"    last_value(match_id) OVER (PARTITION BY winner_id ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id\n" +
-			"  FROM match_for_stats_v" + prefix(domain.condition, " WHERE ") + "\n" +
+			"  SELECT " + column + " AS player_id, first_value(match_id) OVER (PARTITION BY " + column + " ORDER BY date) AS first_match_id,\n" +
+			"    last_value(match_id) OVER (PARTITION BY " + column + " ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id\n" +
+			"  FROM " + table + prefix(domain.condition, " WHERE ") + "\n" +
 			"), win_span AS (\n" +
 			"  SELECT player_id, first_match_id, last_match_id\n" +
 			"  FROM match_win_span\n" +
@@ -112,7 +116,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN match fm ON fm.match_id = w.first_match_id INNER JOIN tournament_event fe ON fe.tournament_event_id = fm.tournament_event_id\n" +
 			"INNER JOIN match lm ON lm.match_id = w.last_match_id INNER JOIN tournament_event le ON le.tournament_event_id = lm.tournament_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'\n" +
-			"AND p.name NOT IN ('Fred Hemmes', 'Miloslav Mecir')", // TODO Remove after data is fixed
+			"AND p.name NOT IN ('Fred Hemmes', 'Miloslav Mecir', 'Jan Hajek', 'Harutyun Sofyan', 'Francisco Rodriguez', 'Massimo Cierro')", // TODO Remove after data is fixed
 			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date",
 			TournamentCareerSpanRecordDetail.class,  (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=wonplayed&fromDate=%3$td-%3$tm-%3$tY&toDate=%4$td-%4$tm-%4$tY", playerId, domain.urlParam, recordDetail.getStartDate(), recordDetail.getEndDate()),
 			SPAN_RECORD_COLUMNS

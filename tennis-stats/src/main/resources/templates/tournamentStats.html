@@ -69,10 +69,10 @@
 		var $search = $statsLeadersTableHeader.find("div.search");
 		$search.before($("#statsSeasonDiv").remove());
 		$search.before($("#statsRoundDiv").remove());
-		$search.before($("#statsOpponentDiv").remove());
 		$search.before($("#statsActiveDiv").remove());
 		$search.after($("#statsClearDiv").remove());
 		$statsLeadersTableHeader.find("div.actions").after($("#statsAdvancedFilterDiv").remove());
+		addBootgridCsvDownload("statsLeadersTable", "StatisticsLeaders.csv", ["playerId", "country_code"]);
 		statsCategoryChanged();
 		$("[data-toggle='tooltip']").tooltip();
 	});
@@ -210,6 +210,14 @@
 				<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}">Win</option>
 			</select>
 		</div>
+		<div class="col-md-2">
+			<select id="statsOpponent" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+				<option value="">Vs all</option>
+				<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+					<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
+				</optgroup>
+			</select>
+		</div>
 		<div class="col-md-4">
 			<div class="input-group">
 				<label for="statsFromSeason" class="input-group-addon">From:</label>
@@ -236,14 +244,6 @@
 	<select id="statsRound" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by round">
 		<option value="">All rounds</option>
 		<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
-	</select>
-</div>
-<div id="statsOpponentDiv" class="btn-group pull-left margin-right">
-	<select id="statsOpponent" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
-		<option value="">Vs all</option>
-		<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
-			<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
-		</optgroup>
 	</select>
 </div>
 <div id="statsActiveDiv" class="btn-group margin-right">

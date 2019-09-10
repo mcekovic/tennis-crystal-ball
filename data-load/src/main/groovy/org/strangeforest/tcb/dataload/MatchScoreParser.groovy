@@ -74,7 +74,8 @@ class MatchScoreParser {
 					case 'unfinished':
 					case 'Unfinished': outcome = 'ABD'; break
 					case 'Default':
-					case 'DEF': outcome = 'DEF'; break
+					case 'DEF':
+					case '(DEF)': outcome = 'DEF'; break
 					case 'NA': return null
 					case 'In':
 					case 'Progress':
@@ -93,12 +94,16 @@ class MatchScoreParser {
 
 	private static short parseGames(String s) {
 		switch (s) {
+			case 'Feb': return 2
+			case 'Mar': return 3
+			case 'Apr': return 4
 			case 'Jun': return 6
+			case 'Jul': return 7
 			default: s.toInteger()
 		}
 	}
 
 	private static boolean isWin(int w_games, int l_games) {
-		(w_games >= 6 && w_games >= l_games + 2) || (w_games == 7 && l_games == 6) || (w_games == 9 && l_games == 8) || (w_games == 6 && l_games == 5)
+		(w_games >= 6 && w_games > l_games)
 	}
 }

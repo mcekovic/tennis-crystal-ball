@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.service;
 import java.time.*;
 import java.util.*;
 
-import org.postgresql.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
@@ -221,7 +220,7 @@ public class RankingChartService {
 					LocalDate date = getLocalDate(rs, "date");
 					if (compensate)
 						y = compensateRankingPoints(date, y);
-					x = byAge ? toDouble((PGInterval)rs.getObject("age")) : date;
+					x = byAge ? getYears(rs, "age") : date;
 				}
 				rowCursor.next(x, playerId, y);
 			}
@@ -271,7 +270,8 @@ public class RankingChartService {
 			else {
 				return format(PLAYER_RANKINGS_QUERY,
 					byAge ? ", age(r.rank_date, p.dob) AS age" : "",
-					rankColumn(rankType), rankingTable(rankType), playerJoin, rangeFilter(dateRange, "r.rank_date", "date"), orderBy);
+					rankColumn(rankType), rankingTable(rankType), playerJoin, rangeFilter(dateRange, "r.rank_date", "date"), orderBy
+				);
 			}
 		}
 	}
@@ -377,12 +377,5 @@ public class RankingChartService {
 
 	private int compensateRankingPoints(Integer season, int rank) {
 		return season < START_SEASON_OF_NEW_RANKING_SYSTEM ? (int)(rank * RANKING_POINTS_COMPENSATION_FACTOR) : rank;
-	}
-
-	private static final double MONTH_FACTOR = 1.0 / 12.0;
-	private static final double DAY_FACTOR = 1.0 / 365.25;
-
-	private static Double toDouble(PGInterval interval) {
-		return interval.getYears() + MONTH_FACTOR * interval.getMonths() + DAY_FACTOR * interval.getDays();
 	}
 }

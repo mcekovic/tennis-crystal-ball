@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.slf4j.*;
+import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -27,6 +28,7 @@ import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 public class PlayerService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+	private final boolean useProxy;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PlayerService.class);
 
@@ -43,12 +45,6 @@ public class PlayerService {
 	private static final String PLAYER_ID_BY_NAME_QUERY =
 		"SELECT player_id FROM player_v\n" +
 		"WHERE name = :name\n" +
-		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
-
-	private static final String SEARCH_PLAYER_ID_BY_NAME_QUERY =
-		"SELECT player_id FROM player_v\n" +
-		"WHERE lower(name) LIKE lower(:name)\n" +
-		"AND (:date >= dob + (INTERVAL '10 year') OR dob IS NULL)\n" +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
 
 	private static final String PLAYER_NAME_QUERY =
@@ -98,10 +94,13 @@ public class PlayerService {
 	private static final int AUTOCOMPLETE_COUNT = 20;
 	private static final int AUTOCOMPLETE_EX_THRESHOLD = 5;
 
-	public PlayerService() {}
+	public PlayerService() {
+		useProxy = true;
+	}
 
-	public PlayerService(NamedParameterJdbcTemplate jdbcTemplate) {
+	public PlayerService(NamedParameterJdbcTemplate jdbcTemplate, boolean useProxy) {
 		this.jdbcTemplate = jdbcTemplate;
+		this.useProxy = useProxy;
 	}
 
 	@Cacheable("Player")
@@ -115,22 +114,12 @@ public class PlayerService {
 	}
 
 	public Player getPlayer(String name) {
-		return getPlayer(getPlayerId(name));
+		return getAOPProxy().getPlayer(getAOPProxy().getPlayerId(name));
 	}
 
 	@Cacheable("PlayerIdByName")
 	public int getPlayerId(String name) {
 		return jdbcTemplate.query(PLAYER_ID_BY_NAME_QUERY, params("name", name), rs -> {
-			if (rs.next())
-				return rs.getInt("player_id");
-			else
-				throw new NotFoundException("Player", name);
-		});
-	}
-
-	@Cacheable("PlayerIdByNameSearch")
-	public int searchPlayerIdByName(String name) {
-		return jdbcTemplate.query(SEARCH_PLAYER_ID_BY_NAME_QUERY, params("name", name), rs -> {
 			if (rs.next())
 				return rs.getInt("player_id");
 			else
@@ -170,7 +159,7 @@ public class PlayerService {
 	}
 
 	public List<Integer> findPlayerIds(List<String> players) {
-		return players.stream().filter(player -> !isNullOrEmpty(player)).map(this::findPlayerId).filter(Optional::isPresent).map(Optional::get).collect(toList());
+		return players.stream().filter(player -> !isNullOrEmpty(player)).map(this::findAOPProxyPlayerId).filter(Optional::isPresent).map(Optional::get).collect(toList());
 	}
 
 	@Cacheable("PlayerSeasons")
@@ -178,8 +167,12 @@ public class PlayerService {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, params("playerId", playerId), Integer.class);
 	}
 
+	private List<Integer> getAOPProxyPlayerSeasons(int playerId) {
+		return getAOPProxy().getPlayerSeasons(playerId);
+	}
+
 	public List<Integer> getPlayersSeasons(int[] playerIds) {
-		return IntStream.of(playerIds).mapToObj(this::getPlayerSeasons).flatMap(List::stream).distinct().collect(toList());
+		return IntStream.of(playerIds).mapToObj(this::getAOPProxyPlayerSeasons).flatMap(List::stream).distinct().collect(toList());
 	}
 
 	@Cacheable("PlayerBestSeason")
@@ -191,7 +184,7 @@ public class PlayerService {
 		IndexedPlayers indexedPlayers = new IndexedPlayers();
 		for (int index = 0; index < playerIds.length; index++) {
 			int playerId = playerIds[index];
-			indexedPlayers.addPlayer(playerId, getPlayerName(playerId), index);
+			indexedPlayers.addPlayer(playerId, getAOPProxy().getPlayerName(playerId), index);
 		}
 		return indexedPlayers;
 	}
@@ -202,11 +195,15 @@ public class PlayerService {
 		for (String player : inputPlayers) {
 			if (isNullOrEmpty(player))
 				continue;
-			Optional<Integer> playerId = findPlayerId(player);
+			Optional<Integer> playerId = findAOPProxyPlayerId(player);
 			if (playerId.isPresent())
 				indexedPlayers.addPlayer(playerId.get(), player, index++);
 		}
 		return indexedPlayers;
+	}
+
+	private Optional<Integer> findAOPProxyPlayerId(String player) {
+		return getAOPProxy().findPlayerId(player);
 	}
 
 	@Cacheable("PlayerQuickPicks")
@@ -245,7 +242,7 @@ public class PlayerService {
 	private static final String WIKIPEDIA_SEARCH_URL = "https://en.wikipedia.org/w?search=%1$s";
 
 	public String getPlayerWikipediaUrl(int playerId) {
-		String name = getPlayerName(playerId).replace(' ', '_');
+		String name = getAOPProxy().getPlayerName(playerId).replace(' ', '_');
 		for (String wikipediaUrlTemplate : WIKIPEDIA_URLS) {
 			String wikipediaUrl = format(wikipediaUrlTemplate, name);
 			try {
@@ -314,5 +311,9 @@ public class PlayerService {
 		String name = rs.getString("name");
 		String countryId = getInternedString(rs, "country_id");
 		return new AutocompleteOption(id, name, name + " (" + countryId + ')');
+	}
+
+	private PlayerService getAOPProxy() {
+		return useProxy ? (PlayerService)AopContext.currentProxy() : this;
 	}
 }

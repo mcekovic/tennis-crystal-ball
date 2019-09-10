@@ -36,8 +36,8 @@ public class PlayerTournamentsResource {
 			return compareLists(speeds1, speeds2);
 		})
 		.put("eventCount", comparing(PlayerTournament::getEventCount))
-		.put("bestResult", comparing(PlayerTournament::bestResult))
-		.put("lastResult", comparing(PlayerTournament::lastResult))
+		.put("bestResult", comparing(PlayerTournament::bestResultOrder))
+		.put("lastResult", comparing(PlayerTournament::lastResultOrder))
 		.put("wonPct", comparing(PlayerTournament::wonLost))
 		.put("titles", comparing(PlayerTournament::getTitles))
 	.build();

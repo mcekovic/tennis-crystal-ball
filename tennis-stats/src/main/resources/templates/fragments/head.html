@@ -1,6 +1,8 @@
 <head xmlns:th="http://www.thymeleaf.org" th:fragment="commonHead(title, bootgrid, template)">
 	<!--/*@thymesVar id="versions" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 	<!--/*@thymesVar id="digitalOcean" type="java.lang.Boolean"*/-->
+	<!--/*@thymesVar id="googleAnalyticsPropertyId" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="googleAdSenseClientId" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="skipAds" type="java.lang.Boolean"*/-->
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -15,14 +17,15 @@
 	<script th:src="@{/webjars/jquery-ui/{version}/jquery-ui.min.js(version=${versions['jquery-ui']})}"></script>
 	<script th:src="@{/webjars/bootstrap/{version}/js/bootstrap.min.js(version=${versions['bootstrap']})}"></script>
 	<script th:if="${bootgrid}" th:src="@{/webjars/jquery-bootgrid/{version}/dist/jquery.bootgrid.min.js(version=${versions['bootgrid']})}"></script>
+	<script async th:if="${bootgrid}" th:src="@{/js/download.min.js}"></script>
 	<script th:src="@{/js/tennis-stats.js}"></script>
 	<th:block th:include="${template}"/>
 	<!--/* Google AdSense & Analytics */-->
 	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 	<script th:if="${digitalOcean}" th:inline="javascript">
-		[# th:unless="${skipAds}"](adsbygoogle = window.adsbygoogle || []).push({google_ad_client: "ca-pub-1900145493503169", enable_page_level_ads: true});[/]
+		[# th:unless="${skipAds}"](adsbygoogle = window.adsbygoogle || []).push({google_ad_client: [[${googleAdSenseClientId}]], enable_page_level_ads: true});[/]
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-		ga('create', 'UA-102974953-1', 'auto');
+		ga('create', [[${googleAnalyticsPropertyId}]], 'auto');
 		ga('send', 'pageview');
 	</script>
 </head>

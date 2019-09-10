@@ -51,6 +51,7 @@
 			$recordTableHeader.find("div.row").after($("ol.tsbreadcrumb").remove());
 			$recordTableHeader.find("div.search").before($("#activeDiv").remove()).remove();
 			setBootgridTitle($recordTableHeader, $("#recordTable-title"));
+			addBootgridCsvDownload("recordTable", "[[${record.id}]].csv", ["playerId", "country_code", "valueString", "detailUrl", "tournamentId", "tournamentEventId", "player2_rank"]);
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadRecordTable() {

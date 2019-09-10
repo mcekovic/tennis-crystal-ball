@@ -5,6 +5,7 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
+import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -36,18 +37,17 @@ public class TournamentForecastService {
 	private static final String BYE = "BYE";
 
 	private static final String IN_PROGRESS_EVENTS_QUERY = //language=SQL
-		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating, e.court_speed\n" +
+		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating, e.court_speed, e.completed\n" +
 		"FROM in_progress_event e\n" +
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
-		"WHERE NOT completed\n" +
-		"AND NOT exists(SELECT te.tournament_event_id FROM tournament_event te WHERE te.tournament_id = e.tournament_id AND te.season = extract(YEAR FROM tournament_end(e.date, e.level, e.draw_size)))\n" +
-		"ORDER BY %1$s";
+		"WHERE TRUE %1$s\n" +
+		"ORDER BY %2$s OFFSET :offset";
 
 	private static final String IN_PROGRESS_EVENT_ID_QUERY =
 		"SELECT in_progress_event_id FROM in_progress_event WHERE name = :name";
 
 	private static final String IN_PROGRESS_EVENT_QUERY =
-		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating, e.court_speed\n" +
+		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating, e.court_speed, e.completed\n" +
 		"FROM in_progress_event e\n" +
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE in_progress_event_id = :inProgressEventId";
@@ -113,14 +113,19 @@ public class TournamentForecastService {
 
 
 	@Cacheable("InProgressEvents")
-	public BootgridTable<InProgressEvent> getInProgressEventsTable(String orderBy, PriceFormat priceFormat) {
-		BootgridTable<InProgressEvent> table = new BootgridTable<>();
+	public BootgridTable<InProgressEvent> getInProgressEventsTable(InProgressEventFilter filter, PriceFormat priceFormat, String orderBy, int pageSize, int currentPage) {
+		BootgridTable<InProgressEvent> table = new BootgridTable<>(currentPage);
+		AtomicInteger inProgressEvents = new AtomicInteger();
+		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(IN_PROGRESS_EVENTS_QUERY, orderBy),
+			format(IN_PROGRESS_EVENTS_QUERY, filter.getCriteria(), orderBy),
+			filter.getParams().addValue("offset", offset),
 			rs -> {
-				table.addRow(mapInProgressEvent(rs));
+				if (inProgressEvents.incrementAndGet() <= pageSize)
+					table.addRow(mapInProgressEvent(rs));
 			}
 		);
+		table.setTotal(offset + inProgressEvents.get());
 		for (InProgressEvent inProgressEvent : table.getRows())
 			inProgressEvent.setFavorites(findFavoritePlayers(inProgressEvent.getId(), 2, priceFormat));
 		return table;
@@ -145,6 +150,7 @@ public class TournamentForecastService {
 			rs.getInt("average_elo_rating")
 		);
 		inProgressEvent.setSpeed(getInteger(rs, "court_speed"));
+		inProgressEvent.setCompleted(rs.getBoolean("completed"));
 		return inProgressEvent;
 	}
 
@@ -366,12 +372,12 @@ public class TournamentForecastService {
 	@Cacheable("InProgressEventPlayerPath")
 	public PlayerPath getInProgressEventPlayerPath(int inProgressEventId, Integer playerId) {
 		PlayerForecast player = null;
-		InProgressEventForecast forecast = getInProgressEventForecast(inProgressEventId);
+		InProgressEventForecast forecast = getAOPProxy().getInProgressEventForecast(inProgressEventId);
 		TournamentEventResults completed = new TournamentEventResults();
 		PlayerPathMatches probable = new PlayerPathMatches();
 		if (playerId != null) {
 			// Completed matches
-			TournamentEventResults matches = getInProgressEventCompletedMatches(inProgressEventId);
+			TournamentEventResults matches = getAOPProxy().getInProgressEventCompletedMatches(inProgressEventId);
 			for (TournamentEventMatch match : matches.getMatches()) {
 				MatchPlayer winner = match.getWinner();
 				MatchPlayer loser = match.getLoser();
@@ -493,5 +499,9 @@ public class TournamentForecastService {
 			rs.getDouble("probability"),
 			priceFormat
 		);
+	}
+
+	private TournamentForecastService getAOPProxy() {
+		return (TournamentForecastService)AopContext.currentProxy();
 	}
 }

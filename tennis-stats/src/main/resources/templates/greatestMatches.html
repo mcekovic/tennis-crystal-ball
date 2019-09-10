@@ -75,6 +75,7 @@
 			$search.before($("#roundDiv").remove());
 			$search.before($("#clearDiv").remove());
 			$search.after($("#advFilterDiv").remove());
+			addBootgridCsvDownload("greatestMatchesTable", "GreatestMatches.csv", ["^id$", "tournamentEventId", "winner_id", "loser_id", "country_code", "hasStats"]);
 			$("[data-toggle='tooltip']").tooltip();
 			setBootgridTitles($matchesTable, [
 				{id: "rank", title: "Match greatness rank"},
@@ -188,13 +189,13 @@
 	</div>
 	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearGreatestMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
+			<i class="fa fa-eraser"></i>
 		</button>
 	</div>
 	<div id="advFilterDiv" class="btn-group pull-right margin-left no-margin-right">
 		<div data-toggle="tooltip" data-placement="auto" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
-				<i class="fa fa-folder-open"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-up"></i>
+				Adv.&nbsp;&nbsp;<i class="fa fa-chevron-up"></i>
 			</button>
 		</div>
 	</div>

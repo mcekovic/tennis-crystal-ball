@@ -60,8 +60,20 @@ public class WonLost implements Comparable<WonLost> {
 		return getWonPctStr(1);
 	}
 
+	public String pctWL() {
+		return getWonPctStr(1) + " - " + getLostPctStr(1);
+	}
+
 	public String getWonPctStr(int decimals) {
-		return total > 0 ? format(format("%%%1$d.%2$df%%%%", 4 + decimals, decimals), wonPct) : "";
+		return total > 0 ? formatPct(wonPct, decimals) : "";
+	}
+
+	public String getLostPctStr(int decimals) {
+		return total > 0 ? formatPct(PCT - wonPct, decimals) : "";
+	}
+
+	private static String formatPct(double pct, int decimals) {
+		return format("%." + decimals + "f%%", pct);
 	}
 
 	public boolean isEmpty() {

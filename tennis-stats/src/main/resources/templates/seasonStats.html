@@ -74,6 +74,7 @@
 		$search.before($("#statsRoundDiv").remove());
 		$search.after($("#statsClearDiv").remove());
 		$statsLeadersTableHeader.find("div.actions").after($("#statsAdvancedFilterDiv").remove());
+		addBootgridCsvDownload("statsLeadersTable", "StatisticsLeaders.csv", ["playerId", "country_code"]);
 		statsCategoryChanged();
 		dateRangePicker("statsFromDate", "statsToDate", "[(${season})]");
 		$("[data-toggle='tooltip']").tooltip();
@@ -150,7 +151,7 @@
 		</div>
 	</div>
 </div>
-<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${bestOf != null || indoor != null || speed != null || tournamentId != null ? ' in' : _}">
+<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${bestOf != null || indoor != null || !#strings.isEmpty(speed) || tournamentId != null ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-2">
 			<select id="statsOpponent" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">

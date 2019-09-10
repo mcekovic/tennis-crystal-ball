@@ -65,6 +65,7 @@
 			$search.before($("#rankTypeDiv").remove());
 			$search.before($("#activeDiv").remove());
 			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
+			addBootgridCsvDownload("rankingsTable", "PeakEloRatings.csv", ["playerId", "country_code", "tournamentEvent_id"]);
 			setBootgridTitles($rankingsTable, [
 				{id: "bestRank", title: "Best Elo rank"}
 			]);

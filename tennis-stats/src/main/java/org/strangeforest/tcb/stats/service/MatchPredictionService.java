@@ -15,6 +15,7 @@ import org.strangeforest.tcb.util.*;
 
 import com.github.benmanes.caffeine.cache.*;
 
+import static java.lang.Math.*;
 import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
@@ -31,6 +32,7 @@ public class MatchPredictionService implements HasCache {
 	private final boolean includeInProgressEventData;
 	private final LoadingCache<Integer, PlayerData> players;
 	private final LoadingCache<RankingKey, RankingData> playersRankings;
+	private final LoadingCache<InProgressRankingKey, RankingData> inProgressPlayersRankings;
 	private final LoadingCache<Integer, List<MatchData>> playersMatches;
 
 	private static final String PLAYER_QUERY =
@@ -43,20 +45,20 @@ public class MatchPredictionService implements HasCache {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_ELO_RATINGS_QUERY = //language=SQL
-		"SELECT rank_date, elo_rating, recent_elo_rating, %1$selo_rating, %2$selo_rating, set_elo_rating FROM player_elo_ranking\n" +
+		"SELECT rank_date, elo_rating, recent_elo_rating, %1$selo_rating, %2$selo_rating, set_elo_rating\n" +
+		"FROM player_elo_ranking\n" +
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
-		"%3$sORDER BY rank_date DESC LIMIT 1";
+		"ORDER BY rank_date DESC LIMIT 1";
 
-	private static final String PLAYER_IN_PROGRESS_ELO_RATINGS_UNION = //language=SQL
+	private static final String PLAYER_IN_PROGRESS_ELO_RATINGS_QUERY = //language=SQL
+		"SELECT date, round, match_num, player1_next_elo_rating elo_rating, player1_next_recent_elo_rating recent_elo_rating, player1_next_surface_elo_rating surface_elo_rating, player1_next_in_out_elo_rating in_out_elo_rating, player1_next_set_elo_rating set_elo_rating, surface, indoor\n" +
+		"FROM in_progress_match\n" +
+		"WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '15 days') AND round < :round::match_round AND player1_id = :playerId AND player2_id > 0\n" +
 		"UNION\n" +
-		"SELECT date + (INTERVAL '1 day') rank_date, elo_rating, recent_elo_rating, surface_elo_rating, in_out_elo_rating, set_elo_rating FROM (\n" +
-		"  SELECT date, round, match_num, player1_next_elo_rating elo_rating, player1_next_recent_elo_rating recent_elo_rating, player1_next_surface_elo_rating surface_elo_rating, player1_next_in_out_elo_rating in_out_elo_rating, player1_next_set_elo_rating set_elo_rating FROM in_progress_match\n" +
-		"  WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '15 days') AND player1_id = :playerId AND player2_id > 0\n" +
-		"  UNION\n" +
-		"  SELECT date, round, match_num, player2_next_elo_rating, player2_next_recent_elo_rating, player2_next_surface_elo_rating, player2_next_in_out_elo_rating, player2_next_set_elo_rating FROM in_progress_match\n" +
-		"  WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '15 days') AND player2_id = :playerId AND player1_id > 0\n" +
-		"  ORDER BY date DESC, round DESC, match_num LIMIT 1\n" +
-		") AS elo_ranking_data\n";
+		"SELECT date, round, match_num, player2_next_elo_rating, player2_next_recent_elo_rating, player2_next_surface_elo_rating, player2_next_in_out_elo_rating, player2_next_set_elo_rating, surface, indoor\n" +
+		"FROM in_progress_match\n" +
+		"WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '15 days') AND round < :round::match_round AND player2_id = :playerId AND player1_id > 0\n" +
+		"ORDER BY date DESC, round DESC, match_num LIMIT 1";
 
 	private static final String QUALIFIER_RANKING_DATA_QUERY = //language=SQL
 		"WITH qualifier_match AS (\n" +
@@ -105,6 +107,7 @@ public class MatchPredictionService implements HasCache {
 			.expireAfterAccess(1, TimeUnit.HOURS);
 		players = builder.build(this::fetchPlayerData);
 		playersRankings = builder.build(this::fetchRankingData);
+		inProgressPlayersRankings =  builder.build(this::fetchInProgressRankingData);
 		playersMatches = builder.build(this::fetchMatchData);
 	}
 
@@ -152,8 +155,8 @@ public class MatchPredictionService implements HasCache {
 	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, short bestOf, Round round, PredictionConfig config) {
 		PlayerData playerData1 = getPlayerData(playerId1);
 		PlayerData playerData2 = getPlayerData(playerId2);
-		RankingData rankingData1 = getRankingData(playerId1, date1, surface, indoor);
-		RankingData rankingData2 = getRankingData(playerId2, date2, surface, indoor);
+		RankingData rankingData1 = getRankingData(playerId1, date1, surface, indoor, inProgress ? round : null);
+		RankingData rankingData2 = getRankingData(playerId2, date2, surface, indoor, inProgress ? round : null);
 		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
 		MatchPrediction prediction = predictMatch(asList(
@@ -168,7 +171,7 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, short bestOf, Round round, PredictionConfig config) {
-		RankingData rankingData = getRankingData(playerId, date, surface, indoor);
+		RankingData rankingData = getRankingData(playerId, date, surface, indoor, inProgress ? round : null);
 		List<MatchData> matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
 		return predictMatch(asList(
 			new RankingMatchPredictor(rankingData, getQualifierRankingData(), bestOf, config),
@@ -215,8 +218,11 @@ public class MatchPredictionService implements HasCache {
 
 	// Ranking Data
 
-	private RankingData getRankingData(int playerId, LocalDate date, Surface surface, Boolean indoor) {
-		return playersRankings.get(new RankingKey(playerId, date, surface, indoor));
+	private RankingData getRankingData(int playerId, LocalDate date, Surface surface, Boolean indoor, Round round) {
+		if (includeInProgressEventData && round != null)
+			return inProgressPlayersRankings.get(new InProgressRankingKey(playerId, date, surface, indoor, round));
+		else
+			return playersRankings.get(new RankingKey(playerId, date, surface, indoor));
 	}
 
 	private RankingData getQualifierRankingData() {
@@ -233,12 +239,12 @@ public class MatchPredictionService implements HasCache {
 			});
 			String surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
 			String inOutPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
-			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, inOutPrefix, includeInProgressEventData ? PLAYER_IN_PROGRESS_ELO_RATINGS_UNION : ""), params, rs -> {
+			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, inOutPrefix), params, rs -> {
 				rankingData.setEloRating(getInteger(rs, "elo_rating"));
 				rankingData.setRecentEloRating(getInteger(rs, "recent_elo_rating"));
-				if (!surfacePrefix.isEmpty())
+				if (key.surface != null)
 					rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
-				if (!inOutPrefix.isEmpty())
+				if (key.indoor != null)
 					rankingData.setInOutEloRating(getInteger(rs, inOutPrefix + "elo_rating"));
 				rankingData.setSetEloRating(getInteger(rs, "set_elo_rating"));
 				rankingData.setEloDate(getLocalDate(rs, "rank_date"));
@@ -255,6 +261,28 @@ public class MatchPredictionService implements HasCache {
 		return rankingData;
 	}
 
+	private RankingData fetchInProgressRankingData(InProgressRankingKey key) {
+		RankingData rankingData = getRankingData(key.playerId, key.date, key.surface, key.indoor, null);
+		if (!includeInProgressEventData || key.round == null)
+			return rankingData;
+		RankingData inProgressData = rankingData.copy();
+		MapSqlParameterSource params = params("playerId", key.playerId).addValue("date", key.date).addValue("round", key.round.getCode());
+		jdbcTemplate.query(PLAYER_IN_PROGRESS_ELO_RATINGS_QUERY, params, rs -> {
+			LocalDate rankDate = rs.getObject("date", LocalDate.class).plusDays(1);
+			if (inProgressData.getEloDate() == null || rankDate.isAfter(inProgressData.getEloDate())) {
+				inProgressData.setEloRating(getInteger(rs, "elo_rating"));
+				inProgressData.setRecentEloRating(getInteger(rs, "recent_elo_rating"));
+				if (key.surface != null && key.surface.getCode().equals(rs.getString("surface")))
+					inProgressData.setSurfaceEloRating(getInteger(rs, "surface_elo_rating"));
+				if (key.indoor != null && key.indoor.equals(getBoolean(rs, "indoor")))
+					inProgressData.setInOutEloRating(getInteger(rs, "in_out_elo_rating"));
+				inProgressData.setSetEloRating(getInteger(rs, "set_elo_rating"));
+				inProgressData.setEloDate(rankDate);
+			}
+		});
+		return inProgressData;
+	}
+
 
 	// Match Data
 
@@ -262,10 +290,19 @@ public class MatchPredictionService implements HasCache {
 		List<MatchData> matchData = playersMatches.get(playerId);
 		return matchData.stream().filter(match -> {
 			LocalDate matchDate = match.getDate();
-			if (matchDate.isBefore(date))
-				return true;
-			else if (matchDate.equals(date) && Objects.equals(match.getTournamentEventId(), tournamentEventId) && match.isInProgress() == inProgress)
+			if (!match.isInProgress())
+				return matchDate.isBefore(date);
+			else if (inProgress) {
+				if (tournamentEventId != null) {
+					if (match.getTournamentEventId() != tournamentEventId)
+						return false;
+				}
+				else {
+					if (abs(Duration.between(matchDate.atStartOfDay(), date.atStartOfDay()).toDays()) > 14)
+						return false;
+				}
 				return round != null && match.getRound().compareTo(round) > 0;
+			}
 			else
 				return false;
 		}).collect(toList());
@@ -309,19 +346,25 @@ public class MatchPredictionService implements HasCache {
 		return playersRankings;
 	}
 
+	Cache getInProgressPlayersRankingsCache() {
+		return inProgressPlayersRankings;
+	}
+
 	Cache getPlayersMatchesCache() {
 		return playersMatches;
 	}
 
-	@Override public void clearCache() {
+	@Override public int clearCache() {
 		players.invalidateAll();
 		playersRankings.invalidateAll();
+		inProgressPlayersRankings.invalidateAll();
 		playersMatches.invalidateAll();
+		return 4;
 	}
 
 	private static final RankingKey QUALIFIER_RANKING_KEY = new RankingKey(-1, null, null, null);
 
-	private static final class RankingKey {
+	private static class RankingKey {
 
 		public final int playerId;
 		public final LocalDate date;
@@ -343,11 +386,33 @@ public class MatchPredictionService implements HasCache {
 			if (this == o) return true;
 			if (!(o instanceof RankingKey)) return false;
 			RankingKey key = (RankingKey)o;
-			return playerId == key.playerId && Objects.equals(date, key.date) && Objects.equals(surface, key.surface)  && Objects.equals(indoor, key.indoor);
+			return playerId == key.playerId && Objects.equals(date, key.date) && Objects.equals(surface, key.surface) && Objects.equals(indoor, key.indoor);
 		}
 
 		@Override public int hashCode() {
 			return Objects.hash(playerId, date, surface, indoor);
+		}
+	}
+
+	private static final class InProgressRankingKey extends RankingKey {
+
+		public final Round round;
+
+		InProgressRankingKey(int playerId, LocalDate date, Surface surface, Boolean indoor, Round round) {
+			super(playerId, date, surface, indoor);
+			this.round = round;
+		}
+
+		@Override public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof InProgressRankingKey)) return false;
+			if (!super.equals(o)) return false;
+			InProgressRankingKey key = (InProgressRankingKey)o;
+			return round == key.round;
+		}
+
+		@Override public int hashCode() {
+			return Objects.hash(super.hashCode(), round);
 		}
 	}
 }

@@ -214,7 +214,7 @@ public class TournamentController extends PageController {
 				throw new NotFoundException("In-Progress Event", null);
 		}
 		InProgressEventForecast forecast = forecastService.getInProgressEventForecast(inProgressEventId);
-		List<InProgressEvent> events = forecastService.getInProgressEventsTable(InProgressEventsResource.defaultOrderBy(), priceFormat).getRows();
+		List<InProgressEvent> events = forecastService.getInProgressEventsTable(InProgressEventFilter.ALL_IN_PROGRESS, priceFormat, InProgressEventsResource.defaultOrderBy(), 20, 1).getRows();
 		int eventCount = events.size();
 		int currentEventIndex = findEventIndex(events, inProgressEventId);
 

@@ -139,7 +139,7 @@
 		</div>
 	</div>
 </div>
-<div id="perfAdvancedFilter" class="collapse" th:attrappend="class=${advFilter || fromDate != null || toDate != null || bestOf != null || indoor != null || speed != null || (countryId != null && countryId != '') || (result != null && result != '') || tournamentId != null ? ' in' : _}">
+<div id="perfAdvancedFilter" class="collapse" th:attrappend="class=${advFilter || fromDate != null || toDate != null || bestOf != null || indoor != null || !#strings.isEmpty(speed) || !#strings.isEmpty(countryId) || !#strings.isEmpty(result) || tournamentId != null ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-4">
 			<div id="perfDateRange" class="input-group">
@@ -408,7 +408,7 @@
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level != null && level != '' ? level : 'GFLMOAB'}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round.code}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${!#strings.isEmpty(level) ? level : 'GFLMOAB'}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, speed=${speed}, round=${round.code}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>

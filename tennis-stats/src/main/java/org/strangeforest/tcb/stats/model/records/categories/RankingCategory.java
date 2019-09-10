@@ -161,7 +161,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
 			"r.value", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.last_date",
-			IntegerRecordDetail.class, null,
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=ranking&rankType=%2$s", playerId, rankType),
 			asList(new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks At " + name))
 		);
 	}
@@ -192,7 +192,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"WHERE prev_rank " + condition + "\n" +
 			"GROUP BY player_id, name, start_date, end_date",
 			"r.value, r.start_date, r.end_date", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.end_date",
-			DateRangeIntegerRecordDetail.class, null,
+			DateRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=ranking&rankType=%2$s", playerId, rankType),
 			asList(
 				new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks at " + name),
 				new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
@@ -210,7 +210,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"WHERE year_end_rank " + condition + seasonCondition + "\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_season",
-			IntegerRecordDetail.class, null,
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=ranking&rankType=%2$s&bySeason=true", playerId, rankType),
 			asList(new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons at " + name))
 		);
 	}
@@ -235,7 +235,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"GROUP BY player_id, grouping_season\n" +
 			"HAVING max(consecutive_seasons) > 1",
 			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
-			SeasonRangeIntegerRecordDetail.class, null,
+			SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=ranking&rankType=%2$s&bySeason=true", playerId, rankType),
 			asList(
 				new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons at " + name),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
@@ -259,7 +259,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"WHERE rank " + condition + " AND (NOT prev_rank " + condition + " OR prev_rank IS NULL)\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
-			IntegerRecordDetail.class, null,
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=ranking&rankType=%2$s", playerId, rankType),
 			asList(new RecordColumn("value", "numeric", null, TIMES_WIDTH, "right", "Times at " + name))
 		);
 	}

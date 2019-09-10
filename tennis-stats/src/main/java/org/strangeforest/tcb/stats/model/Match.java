@@ -113,8 +113,12 @@ public class Match {
 		this.bigWinPoints = bigWinsPoints;
 	}
 
-	public WonLost getH2h() {
-		return h2h;
+	public String getH2hWL() {
+		return h2h != null ? h2h.getWL() : null;
+	}
+
+	public String getH2hWLPct() {
+		return h2h != null ? h2h.pctWL() : null;
 	}
 
 	public void setH2h(WonLost h2h) {

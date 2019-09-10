@@ -101,10 +101,10 @@ public class TopMatchStatsRow extends PlayerRow {
 	public String getValue() {
 		switch (categoryType) {
 			case COUNT: return valueOf((int)value);
-			case PERCENTAGE: return format("%5.1f%%", PCT * value);
-			case RATIO1: return format("%7.0f", value);
-			case RATIO2: return format("%7.1f", value);
-			case RATIO3: return format("%7.2f", value);
+			case PERCENTAGE: return format("%.1f%%", PCT * value);
+			case RATIO1: return format("%.0f", value);
+			case RATIO2: return format("%.1f", value);
+			case RATIO3: return format("%.2f", value);
 			case TIME: return formatTime((int)value);
 			default: throw unknownEnum(categoryType);
 		}

@@ -99,6 +99,7 @@
 			var $search = $tournamentsTableHeader.find("div.search");
 			$search.before($("#seasonRangeDiv").remove());
 			$search.after($("#clearDiv").remove());
+			addBootgridCsvDownload("tournamentsTable", "Tournaments.csv", ["^id$", "^extId", "levels", "surfaces", "speeds", "topPlayers"]);
 			setBootgridTitles($tournamentsTable, [
 				{id: "speeds", title: "[[#{event.courtSpeed.title}]]"},
 				{id: "playerCount", title: "Average players"},
@@ -204,7 +205,7 @@
 	</div>
 	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearTournamentsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
+			<i class="fa fa-eraser"></i>
 		</button>
 	</div>
 	<table id="tournamentsTable" class="table table-condensed table-hover table-striped">

@@ -80,6 +80,7 @@
 			var $search = $bestSeasonsTableHeader.find("div.search");
 			$search.before($("#surfaceDiv").remove());
 			setBootgridTitle($bestSeasonsTableHeader, $("#bestSeasonsTable-title"));
+			addBootgridCsvDownload("bestSeasonsTable", "BestSeasons.csv", ["playerId", "country_code"]);
 			setBootgridTitles($bestSeasonsTable, [
 				{id: "rank", title: "Season rank"},
 				{id: "goatPoints", title: "GOAT points"},

@@ -599,6 +599,6 @@ VALUES
 ('PLAYER', NULL, NULL),
 ('RECORD', NULL, NULL),
 ('BLOG', 'goatCalculator', '<i class="fa fa-flag"></i> ''GOAT'' Calculator Explained'),
-('PAGE', 'topMatchStats', '<i class="fa fa-thermometer"></i> Top Match Stats');
+('PAGE', 'inProgressEventsForecasts', '<i class="fa fa-eye"></i> Tournament Event Forecasts');
 
 COMMIT;

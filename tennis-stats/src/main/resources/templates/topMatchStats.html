@@ -86,6 +86,7 @@
 			var $search = $("#topMatchStatsTable-header").find("div.search");
 			$search.before($("#activeDiv").remove());
 			$search.after($("#clearDiv").remove());
+			addBootgridCsvDownload("topMatchStatsTable", "TopMatchStats.csv", ["playerId", "country_code", "opponent_rank", "tournamentEventId"]);
 			categoryChanged();
 			dateRangePicker("fromDate", "toDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 			$("[data-toggle='tooltip']").tooltip();
@@ -184,7 +185,7 @@
 		<div class="col-md-2">
 			<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
 				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
-					<i class="fa fa-folder-open"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
+					Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
 				</button>
 			</div>
 		</div>
@@ -271,7 +272,7 @@
 	</div>
 	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearTopMatchStatsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
+			<i class="fa fa-eraser"></i>
 		</button>
 	</div>
 	<table id="topMatchStatsTable" class="table table-condensed table-hover table-striped">

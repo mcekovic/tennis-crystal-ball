@@ -88,7 +88,7 @@ class KOTournamentForecasterTest {
 
 	def makePredictor() {
 		def predictor = mock(TournamentMatchPredictor.class)
-		when(predictor.getWinProbability(anyInt(), anyInt(), any(Round.class))).thenAnswer(new Answer<Object>() {
+		when(predictor.getWinProbability(anyInt(), anyInt(), any(Round.class), anyBoolean())).thenAnswer(new Answer<Object>() {
 			@Override
 			Object answer(InvocationOnMock invocation) throws Throwable {
 				int playerId1 = invocation.arguments[0]

@@ -80,11 +80,19 @@ public final class StatsCategory {
 	private static final String TOTAL_GAMES = "p_games + o_games";
 	private static final String TOTAL_SETS = "p_sets + o_sets";
 	private static final String TOTAL_MATCHES = "p_matches + o_matches";
+	private static final String ACE_PCT = "p_ace::REAL / nullif(p_sv_pt, 0)";
+	private static final String DOUBLE_FAULT_PCT = "p_df::REAL / nullif(p_sv_pt, 0)";
+	private static final String FIRST_SERVE_PCT = "p_1st_in::REAL / nullif(p_sv_pt, 0)";
+	private static final String FIRST_SERVE_WON_PCT = "p_1st_won::REAL / nullif(p_1st_in, 0)";
+	private static final String SECOND_SERVE_WON_PCT = "p_2nd_won::REAL / nullif(p_sv_pt - p_1st_in, 0)";
 	private static final String BREAK_POINTS_SAVED_PCT = "p_bp_sv::REAL / nullif(p_bp_fc, 0)";
 	private static final String BREAK_POINTS_PCT = "(o_bp_fc - o_bp_sv)::REAL / nullif(o_bp_fc, 0)";
 	private static final String SERVICE_POINTS_WON_PCT = "(p_1st_won + p_2nd_won)::REAL / nullif(p_sv_pt, 0)";
 	private static final String SERVICE_GAMES_WON_PCT = "(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(p_sv_gms, 0)";
+	private static final String FIRST_SERVE_RETURN_POINTS_WON_PCT = "(o_1st_in - o_1st_won)::REAL / nullif(o_1st_in, 0)";
+	private static final String SECOND_SERVE_RETURN_POINTS_WON_PCT = "(o_sv_pt - o_1st_in - o_2nd_won)::REAL / nullif(o_sv_pt - o_1st_in, 0)";
 	private static final String RETURN_POINTS_WON_PCT = "(o_sv_pt - o_1st_won - o_2nd_won)::REAL / nullif(o_sv_pt, 0)";
+	private static final String IP_RETURN_POINTS_WON_PCT = "(o_sv_pt - o_1st_won - o_2nd_won - o_df)::REAL / nullif(o_sv_pt - o_ace - o_df, 0)";
 	private static final String RETURN_GAMES_WON_PCT = "(o_bp_fc - o_bp_sv)::REAL / nullif(o_sv_gms, 0)";
 	private static final String TOTAL_POINTS_WON = "p_1st_won + p_2nd_won + o_sv_pt - o_1st_won - o_2nd_won";
 	private static final String TOTAL_POINTS_WON_PCT = "(" + TOTAL_POINTS_WON + ")::REAL / nullif(" + TOTAL_POINTS + ", 0)";
@@ -109,12 +117,12 @@ public final class StatsCategory {
 	static {
 		// Aces & DFs
 		addCategory(ACES_AND_DFS, "aces", "p_ace", PlayerStats::getAces, SERVICE_POINT, COUNT, false, true, "Aces");
-		addCategory(ACES_AND_DFS, "acePct", "p_ace::REAL / nullif(p_sv_pt, 0)", PlayerStats::getAcePct, PlayerStats::getAces, PlayerStats::getServicePoints, SERVICE_POINT, PERCENTAGE, false, true, "Ace %");
+		addCategory(ACES_AND_DFS, "acePct", ACE_PCT, PlayerStats::getAcePct, PlayerStats::getAces, PlayerStats::getServicePoints, SERVICE_POINT, PERCENTAGE, false, true, "Ace %");
 		addCategory(ACES_AND_DFS, "acesPerSvcGame", "p_ace::REAL / nullif(p_sv_gms, 0)", PlayerStats::getAcesPerServiceGame, PlayerStats::getAces, PlayerStats::getServiceGames, SERVICE_GAME, RATIO3, false, true, "Aces per Svc. Game");
 		addCategory(ACES_AND_DFS, "acesPerSet", "p_ace::REAL / nullif(sets_w_stats, 0)", PlayerStats::getAcesPerSet, PlayerStats::getAces, PlayerStats::getSets, SET_W_STATS, RATIO3, false, true, "Aces per Set");
 		addCategory(ACES_AND_DFS, "acesPerMatch", "p_ace::REAL / nullif(matches_w_stats, 0)", PlayerStats::getAcesPerMatch, PlayerStats::getAces, PlayerStats::getMatches, MATCH_W_STATS, RATIO2, false, false, "Aces per Match");
 		addCategory(ACES_AND_DFS, "doubleFault", "p_df", PlayerStats::getDoubleFaults, SERVICE_POINT, COUNT, true, true, "Double Faults");
-		addCategory(ACES_AND_DFS, "doubleFaultPct", "p_df::REAL / nullif(p_sv_pt, 0)", PlayerStats::getDoubleFaultPct, PlayerStats::getDoubleFaults, PlayerStats::getServicePoints, SERVICE_POINT, PERCENTAGE, true, true, "Double Fault %");
+		addCategory(ACES_AND_DFS, "doubleFaultPct", DOUBLE_FAULT_PCT, PlayerStats::getDoubleFaultPct, PlayerStats::getDoubleFaults, PlayerStats::getServicePoints, SERVICE_POINT, PERCENTAGE, true, true, "Double Fault %");
 		addCategory(ACES_AND_DFS, "doubleFaultPerSecondServePct", "p_df::REAL / nullif(p_sv_pt - p_1st_in, 0)", PlayerStats::getDoubleFaultPerSecondServePct, PlayerStats::getDoubleFaults, PlayerStats::getSecondServes, SERVICE_POINT, PERCENTAGE, true, true, "DFs per 2nd Serve %");
 		addCategory(ACES_AND_DFS, "dfsPerSvcGame", "p_df::REAL / nullif(p_sv_gms, 0)", PlayerStats::getDoubleFaultsPerServiceGame, PlayerStats::getDoubleFaults, PlayerStats::getServiceGames, SERVICE_GAME, RATIO3, true, true, "DFs per Svc. Game");
 		addCategory(ACES_AND_DFS, "dfsPerSet", "p_df::REAL / nullif(sets_w_stats, 0)", PlayerStats::getDoubleFaultsPerSet, PlayerStats::getDoubleFaults, PlayerStats::getSets, SET_W_STATS, RATIO3, true, true, "DFs per Set");
@@ -125,38 +133,42 @@ public final class StatsCategory {
 		addCategory(ACES_AND_DFS, "doubleFaultAgainst", "o_df", PlayerStats::getDoubleFaultsAgainst, RETURN_POINT, COUNT, false, false, "Double Faults Against");
 		addCategory(ACES_AND_DFS, "doubleFaultAgainstPct", "o_df::REAL / nullif(o_sv_pt, 0)", PlayerStats::getDoubleFaultAgainstPct, PlayerStats::getDoubleFaultsAgainst, PlayerStats::getReturnPoints, RETURN_POINT, PERCENTAGE, false, false, "Double Fault Against %");
 		// Serve
-		addCategory(SERVE, "firstServePct", "p_1st_in::REAL / nullif(p_sv_pt, 0)", PlayerStats::getFirstServePct, PlayerStats::getFirstServesIn, PlayerStats::getServicePoints, SERVICE_POINT, PERCENTAGE, false, true, "1st Serve %");
-		addCategory(SERVE, "firstServeWonPct", "p_1st_won::REAL / nullif(p_1st_in, 0)", PlayerStats::getFirstServeWonPct, PlayerStats::getFirstServesWon, PlayerStats::getFirstServesIn, SERVICE_POINT, PERCENTAGE, false, true, "1st Serve Won %");
-		addCategory(SERVE, "secondServeWonPct", "p_2nd_won::REAL / nullif(p_sv_pt - p_1st_in, 0)", PlayerStats::getSecondServeWonPct, PlayerStats::getSecondServesWon, PlayerStats::getSecondServes, SERVICE_POINT, PERCENTAGE, false, true, "2nd Serve Won %");
-		addCategory(SERVE, "breakPointsSavedPct", BREAK_POINTS_SAVED_PCT, PlayerStats::getBreakPointsSavedPct, PlayerStats::getBreakPointsSaved, PlayerStats::getBreakPointsFaced, SERVICE_POINT, PERCENTAGE, false, true, "Break Points Saved %");
-		addCategory(SERVE, "bpsPerSvcGame", "p_bp_fc::REAL / nullif(p_sv_gms, 0)", PlayerStats::getBreakPointsPerServiceGame, PlayerStats::getBreakPointsFaced, PlayerStats::getServiceGames, SERVICE_GAME, RATIO3, true, true, "BPs per Svc. Game");
-		addCategory(SERVE, "bpsFacedPerSet", "p_bp_fc::REAL / nullif(sets_w_stats, 0)", PlayerStats::getBreakPointsFacedPerSet, PlayerStats::getBreakPointsFaced, PlayerStats::getSets, SET_W_STATS, RATIO3, true, true, "BPs Faced per Set");
-		addCategory(SERVE, "bpsFacedPerMatch", "p_bp_fc::REAL / nullif(matches_w_stats, 0)", PlayerStats::getBreakPointsFacedPerMatch, PlayerStats::getBreakPointsFaced, PlayerStats::getMatches, MATCH_W_STATS, RATIO2, true, false, "BPs Faced per Match");
+		addCategory(SERVE, "firstServePct", FIRST_SERVE_PCT, PlayerStats::getFirstServePct, PlayerStats::getFirstServesIn, PlayerStats::getServicePoints, SERVICE_POINT, PERCENTAGE, false, true, "1st Serve %");
+		addCategory(SERVE, "firstServeWonPct", FIRST_SERVE_WON_PCT, PlayerStats::getFirstServeWonPct, PlayerStats::getFirstServesWon, PlayerStats::getFirstServesIn, SERVICE_POINT, PERCENTAGE, false, true, "1st Serve Won %");
+		addCategory(SERVE, "secondServeWonPct", SECOND_SERVE_WON_PCT, PlayerStats::getSecondServeWonPct, PlayerStats::getSecondServesWon, PlayerStats::getSecondServes, SERVICE_POINT, PERCENTAGE, false, true, "2nd Serve Won %");
+		addCategory(SERVE, "firstServeEff", FIRST_SERVE_WON_PCT + " / nullif(p_2nd_won, 0)::REAL * nullif(p_sv_pt - p_1st_in, 0)", PlayerStats::getFirstServeEffectiveness, SERVICE_POINT, RATIO3, false, true, "1st Serve Effectiveness", "stats.firstServeEff.title");
 		addCategory(SERVE, "servicePointsWonPct", SERVICE_POINTS_WON_PCT, PlayerStats::getServicePointsWonPct, PlayerStats::getServicePointsWon, PlayerStats::getServicePoints, SERVICE_POINT, PERCENTAGE, false, true, "Service Points Won %");
 		addCategory(SERVE, "serviceIPPointsWonPct", "(p_1st_won + p_2nd_won - p_ace)::REAL / nullif(p_sv_pt - p_ace - p_df, 0)", PlayerStats::getServiceInPlayPointsWonPct, PlayerStats::getServiceInPlayPointsWon, PlayerStats::getServiceInPlayPoints, SERVICE_POINT, PERCENTAGE, false, true, "Svc. In-play Pts. Won %", "stats.serviceIPPointsWonPct.title");
 		addCategory(SERVE, "pointsPerSvcGame", "p_sv_pt::REAL / nullif(p_sv_gms, 0)", PlayerStats::getPointsPerServiceGame, PlayerStats::getServicePoints, PlayerStats::getServiceGames, SERVICE_GAME, RATIO3, true, true, "Points per Service Game");
 		addCategory(SERVE, "pointsLostPerSvcGame", "(p_sv_pt - p_1st_won - p_2nd_won)::REAL / nullif(p_sv_gms, 0)", PlayerStats::getPointsLostPerServiceGame, PlayerStats::getServicePointsLost, PlayerStats::getServiceGames, SERVICE_GAME, RATIO3, true, true, "Pts. Lost per Svc. Game");
+		addCategory(SERVE, "breakPointsSavedPct", BREAK_POINTS_SAVED_PCT, PlayerStats::getBreakPointsSavedPct, PlayerStats::getBreakPointsSaved, PlayerStats::getBreakPointsFaced, SERVICE_POINT, PERCENTAGE, false, true, "Break Points Saved %");
+		addCategory(SERVE, "bpsPerSvcGame", "p_bp_fc::REAL / nullif(p_sv_gms, 0)", PlayerStats::getBreakPointsPerServiceGame, PlayerStats::getBreakPointsFaced, PlayerStats::getServiceGames, SERVICE_GAME, RATIO3, true, true, "BPs per Svc. Game");
+		addCategory(SERVE, "bpsFacedPerSet", "p_bp_fc::REAL / nullif(sets_w_stats, 0)", PlayerStats::getBreakPointsFacedPerSet, PlayerStats::getBreakPointsFaced, PlayerStats::getSets, SET_W_STATS, RATIO3, true, true, "BPs Faced per Set");
+		addCategory(SERVE, "bpsFacedPerMatch", "p_bp_fc::REAL / nullif(matches_w_stats, 0)", PlayerStats::getBreakPointsFacedPerMatch, PlayerStats::getBreakPointsFaced, PlayerStats::getMatches, MATCH_W_STATS, RATIO2, true, false, "BPs Faced per Match");
 		addCategory(SERVE, "serviceGamesWonPct", SERVICE_GAMES_WON_PCT, PlayerStats::getServiceGamesWonPct, PlayerStats::getServiceGamesWon, PlayerStats::getServiceGames, SERVICE_GAME, PERCENTAGE, false, true, "Service Games Won %");
 		addCategory(SERVE, "svcGamesLostPerSet", "(p_bp_fc - p_bp_sv)::REAL / nullif(sets_w_stats, 0)", PlayerStats::getServiceGamesLostPerSet, PlayerStats::getBreakPointsLost, PlayerStats::getSets, SET_W_STATS, RATIO3, true, true, "Svc. Gms. Lost per Set");
 		addCategory(SERVE, "svcGamesLostPerMarch", "(p_bp_fc - p_bp_sv)::REAL / nullif(matches_w_stats, 0)", PlayerStats::getServiceGamesLostPerMatch, PlayerStats::getBreakPointsLost, PlayerStats::getMatches, MATCH_W_STATS, RATIO2, true, false, "Svc. Gms. Lost per Match");
+		addCategory(SERVE, "serveRating", "100 * (" + ACE_PCT + " - " + DOUBLE_FAULT_PCT + " + " + FIRST_SERVE_PCT + " + " + FIRST_SERVE_WON_PCT + " + " + SECOND_SERVE_WON_PCT + " + " + BREAK_POINTS_SAVED_PCT + " + " + SERVICE_GAMES_WON_PCT + ")", PlayerStats::getServeRating, SERVICE_POINT, RATIO1, false, true, "Serve Rating", "stats.serveRating.title");
 		// Return
-		addCategory(RETURN, "firstServeReturnWonPct", "(o_1st_in - o_1st_won)::REAL / nullif(o_1st_in, 0)", PlayerStats::getFirstServeReturnPointsWonPct, PlayerStats::getFirstServeReturnPointsWon, PlayerStats::getFirstServeReturnPointsIn, RETURN_POINT, PERCENTAGE, false, true, "1st Srv. Return Won %");
-		addCategory(RETURN, "secondServeReturnWonPct", "(o_sv_pt - o_1st_in - o_2nd_won)::REAL / nullif(o_sv_pt - o_1st_in, 0)", PlayerStats::getSecondServeReturnPointsWonPct, PlayerStats::getSecondServeReturnPointsWon, PlayerStats::getSecondServeReturnPoints, RETURN_POINT, PERCENTAGE, false, true, "2nd Srv. Return Won %");
+		addCategory(RETURN, "firstServeReturnWonPct", FIRST_SERVE_RETURN_POINTS_WON_PCT, PlayerStats::getFirstServeReturnPointsWonPct, PlayerStats::getFirstServeReturnPointsWon, PlayerStats::getFirstServeReturnPointsIn, RETURN_POINT, PERCENTAGE, false, true, "1st Srv. Return Won %");
+		addCategory(RETURN, "secondServeReturnWonPct", SECOND_SERVE_RETURN_POINTS_WON_PCT, PlayerStats::getSecondServeReturnPointsWonPct, PlayerStats::getSecondServeReturnPointsWon, PlayerStats::getSecondServeReturnPoints, RETURN_POINT, PERCENTAGE, false, true, "2nd Srv. Return Won %");
+		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PlayerStats::getReturnPointsWonPct, PlayerStats::getReturnPointsWon, PlayerStats::getReturnPoints, RETURN_POINT, PERCENTAGE, false, true, "Return Points Won %");
+		addCategory(RETURN, "returnIPPointsWonPct", IP_RETURN_POINTS_WON_PCT, PlayerStats::getReturnInPlayPointsWonPct, PlayerStats::getReturnInPlayPointsWon, PlayerStats::getReturnInPlayPoints, RETURN_POINT, PERCENTAGE, false, true, "Rtn. In-play Pts. Won %", "stats.returnIPPointsWonPct.title");
+		addCategory(RETURN, "pointsPerRtnGame", "o_sv_pt::REAL / nullif(o_sv_gms, 0)", PlayerStats::getPointsPerReturnGame, PlayerStats::getReturnPoints, PlayerStats::getReturnGames, RETURN_GAME, RATIO3, false, true, "Points per Return Game");
+		addCategory(RETURN, "pointsWonPerRtnGame", "(o_sv_pt - o_1st_won - o_2nd_won)::REAL / nullif(o_sv_gms, 0)", PlayerStats::getPointsWonPerReturnGame, PlayerStats::getReturnPointsWon, PlayerStats::getReturnGames, RETURN_GAME, RATIO3, false, true, "Pts. Won per Rtn. Game");
 		addCategory(RETURN, "breakPointsPct", BREAK_POINTS_PCT, PlayerStats::getBreakPointsWonPct, PlayerStats::getBreakPointsWon, PlayerStats::getBreakPoints, RETURN_POINT, PERCENTAGE, false, true, "Break Points Won %");
 		addCategory(RETURN, "bpsPerRtnGame", "o_bp_fc::REAL / nullif(o_sv_gms, 0)", PlayerStats::getBreakPointsPerReturnGame, PlayerStats::getBreakPoints, PlayerStats::getReturnGames, RETURN_GAME, RATIO3, false, true, "BPs per Return Game");
 		addCategory(RETURN, "bpsPerSet", "o_bp_fc::REAL / nullif(sets_w_stats, 0)", PlayerStats::getBreakPointsPerSet, PlayerStats::getBreakPoints, PlayerStats::getSets, SET_W_STATS, RATIO3, false, true, "BPs per Set");
 		addCategory(RETURN, "bpsPerMatch", "o_bp_fc::REAL / nullif(matches_w_stats, 0)", PlayerStats::getBreakPointsPerMatch, PlayerStats::getBreakPoints, PlayerStats::getMatches, MATCH_W_STATS, RATIO2, false, false, "BPs per Match");
-		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PlayerStats::getReturnPointsWonPct, PlayerStats::getReturnPointsWon, PlayerStats::getReturnPoints, RETURN_POINT, PERCENTAGE, false, true, "Return Points Won %");
-		addCategory(RETURN, "returnIPPointsWonPct", "(o_sv_pt - o_1st_won - o_2nd_won - o_df)::REAL / nullif(o_sv_pt - o_ace - o_df, 0)", PlayerStats::getReturnInPlayPointsWonPct, PlayerStats::getReturnInPlayPointsWon, PlayerStats::getReturnInPlayPoints, RETURN_POINT, PERCENTAGE, false, true, "Rtn. In-play Pts. Won %", "stats.returnIPPointsWonPct.title");
-		addCategory(RETURN, "pointsPerRtnGame", "o_sv_pt::REAL / nullif(o_sv_gms, 0)", PlayerStats::getPointsPerReturnGame, PlayerStats::getReturnPoints, PlayerStats::getReturnGames, RETURN_GAME, RATIO3, false, true, "Points per Return Game");
-		addCategory(RETURN, "pointsWonPerRtnGame", "(o_sv_pt - o_1st_won - o_2nd_won)::REAL / nullif(o_sv_gms, 0)", PlayerStats::getPointsWonPerReturnGame, PlayerStats::getReturnPointsWon, PlayerStats::getReturnGames, RETURN_GAME, RATIO3, false, true, "Pts. Won per Rtn. Game");
 		addCategory(RETURN, "returnGamesWonPct", RETURN_GAMES_WON_PCT, PlayerStats::getReturnGamesWonPct, PlayerStats::getReturnGamesWon, PlayerStats::getReturnGames, RETURN_GAME, PERCENTAGE, false, true, "Return Games Won %");
 		addCategory(RETURN, "rtnGamesWonPerSet", "(o_bp_fc - o_bp_sv)::REAL / nullif(sets_w_stats, 0)", PlayerStats::getReturnGamesWonPerSet, PlayerStats::getReturnGamesWon, PlayerStats::getSets, SET_W_STATS, RATIO3, false, true, "Rtn. Gms. Won per Set");
 		addCategory(RETURN, "rtnGamesWonPerMarch", "(o_bp_fc - o_bp_sv)::REAL / nullif(matches_w_stats, 0)", PlayerStats::getReturnGamesWonPerMatch, PlayerStats::getReturnGamesWon, PlayerStats::getMatches, MATCH_W_STATS, RATIO2, false, false, "Rtn. Gms. Won per Match");
+		addCategory(RETURN, "returnRating", "100 * (" + FIRST_SERVE_RETURN_POINTS_WON_PCT + " + " + SECOND_SERVE_RETURN_POINTS_WON_PCT + " + " + BREAK_POINTS_PCT + " + " + RETURN_GAMES_WON_PCT + ")", PlayerStats::getReturnRating, RETURN_POINT, RATIO1, false, true, "Return Rating", "stats.returnRating.title");
 		// Points
 		addCategory(POINTS, "totalPoints", TOTAL_POINTS, PlayerStats::getTotalPoints, POINT, COUNT, false, true, "Total Points Played");
 		addCategory(POINTS, "totalPointsWon", TOTAL_POINTS_WON, PlayerStats::getTotalPointsWon, POINT, COUNT, false, true, "Total Points Won");
 		addCategory(POINTS, "totalPointsWonPct", TOTAL_POINTS_WON_PCT, PlayerStats::getTotalPointsWonPct, PlayerStats::getTotalPointsWon, PlayerStats::getTotalPoints, POINT, PERCENTAGE, false, true, "Total Points Won %");
+		addCategory(POINTS, "totalSSIPPointsWonPct", "(p_2nd_won + o_sv_pt - o_1st_in - o_2nd_won - o_df)::REAL / nullif(p_sv_pt - p_1st_in - p_df + o_sv_pt - o_1st_in - o_df, 0)", PlayerStats::getTotalSecondServeInPlayPointsWonPct, PlayerStats::getTotalSecondServeInPlayPointsWon, PlayerStats::getTotalSecondServeInPlayPoints, POINT, PERCENTAGE, false, true, "Tot. 2nd Srv. In-pl. Pts. W. %", "stats.totalSSIPPointsWonPct.title");
 		addCategory(POINTS, "rtnToSvcPointsRatio", "o_sv_pt::REAL / nullif(p_sv_pt, 0)", PlayerStats::getReturnToServicePointsRatio, PlayerStats::getReturnPoints, PlayerStats::getServicePoints, POINT, RATIO3, false, true, "Rtn. to Svc. Points Ratio", "stats.rtnToSvcPointsRatio.title");
 		addCategory(POINTS, "pointsPerGame", "(" + TOTAL_POINTS + ")::REAL / nullif(games_w_stats, 0)", PlayerStats::getPointsPerGame, PlayerStats::getTotalPoints, PlayerStats::getGamesWithStats, GAME_W_STATS, RATIO3, false, true, "Points per Game");
 		addCategory(POINTS, "pointsPerSet", "(" + TOTAL_POINTS + ")::REAL / nullif(sets_w_stats, 0)", PlayerStats::getPointsPerSet, PlayerStats::getTotalPoints, PlayerStats::getSetsWithStats, SET_W_STATS, RATIO2, false, true, "Points per Set");
@@ -184,6 +196,8 @@ public final class StatsCategory {
 		addCategory(MATCHES, "matchesWonPct", MATCHES_WON_PCT, PlayerStats::getMatchesWonPct, PlayerStats::getMatchesWon, PlayerStats::getMatches, MATCH, PERCENTAGE, false, false, "Matches Won %");
 		// Performance
 		addCategory(PERFORMANCE, "pointsDominanceRatio", "(" + RETURN_POINTS_WON_PCT + ") / nullif(p_sv_pt - p_1st_won - p_2nd_won, 0)::REAL * nullif(p_sv_pt, 0)", PlayerStats::getPointsDominanceRatio, POINT, RATIO3, false, true, "Points Dominance", "stats.pointsDominanceRatio.title");
+		addCategory(PERFORMANCE, "ipPointsDominanceRatio", "(" + RETURN_POINTS_WON_PCT + ") / nullif(p_sv_pt - p_1st_won - p_2nd_won - p_df, 0)::REAL * nullif(p_sv_pt - p_ace - p_df, 0)", PlayerStats::getInPlayPointsDominanceRatio, POINT, RATIO3, false, true, "In-play Points Dominance", "stats.ipPointsDominanceRatio.title");
+		addCategory(PERFORMANCE, "ssIPPointsDominanceRatio", "((o_sv_pt - o_1st_in - o_2nd_won - o_df)::REAL / nullif(o_sv_pt - o_1st_in - o_df, 0)) / nullif(p_sv_pt - p_1st_in - p_df - p_2nd_won, 0)::REAL * nullif(p_sv_pt - p_1st_in - p_df, 0)", PlayerStats::getSecondServeInPlayPointsDominanceRatio, POINT, RATIO3, false, true, "2nd Srv. In-play Pts. Dom.", "stats.ssIPPointsDominanceRatio.title");
 		addCategory(PERFORMANCE, "gamesDominanceRatio", "(" + RETURN_GAMES_WON_PCT + ") / nullif(p_bp_fc - p_bp_sv, 0)::REAL * nullif(p_sv_gms, 0)", PlayerStats::getGamesDominanceRatio, GAME_W_STATS, RATIO3, false, true, "Games Dominance", "stats.gamesDominanceRatio.title");
 		addCategory(PERFORMANCE, "breakPointsRatio", "(" + BREAK_POINTS_PCT + ") / nullif(p_bp_fc - p_bp_sv, 0)::REAL * nullif(p_bp_fc, 0)", PlayerStats::getBreakPointsRatio, POINT, RATIO3, false, true, "Break Points Ratio", "stats.breakPointsRatio.title");
 		addCategory(PERFORMANCE, "overPerformingRatio", "(" + MATCHES_WON_PCT + ") / nullif(" + TOTAL_POINTS_WON_PCT + ", 0)", PlayerStats::getOverPerformingRatio, POINT, RATIO3, false, false, "Pts. to Matches Over-Perf.", "stats.overPerformingRatio.title");
@@ -226,17 +240,17 @@ public final class StatsCategory {
 			new CategorySubGroup("Other", "acesDfsRatio", "aceAgainst", "aceAgainstPct", "doubleFaultAgainst", "doubleFaultAgainstPct")
 		);
 		addGroup("Serve", SERVE, false,
-			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet", "bpsFacedPerMatch"),
-			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame"),
+			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "firstServeEff", "serveRating"),
+			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet", "bpsFacedPerMatch"),
 			new CategorySubGroup("Games", "serviceGamesWonPct", "svcGamesLostPerSet", "svcGamesLostPerMarch")
 		);
 		addGroup("Return", RETURN, false,
-			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet", "bpsPerMatch"),
-			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame"),
+			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "returnRating"),
+			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet", "bpsPerMatch"),
 			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet", "rtnGamesWonPerMarch")
 		);
 		addGroup("Total", "Total", false,
-			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "rtnToSvcPointsRatio", "pointsPerGame", "pointsPerSet", "pointsPerMatch"),
+			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "totalSSIPPointsWonPct", "rtnToSvcPointsRatio", "pointsPerGame", "pointsPerSet", "pointsPerMatch"),
 			new CategorySubGroup("Games", "totalGames", "totalGamesWon", "totalGamesWonPct", "gamesPerSet", "gamesPerMatch"),
 			new CategorySubGroup("Tie-Breaks", "tieBreaks", "tieBreaksWon", "tieBreaksWonPct", "tieBreaksPerSet", "tieBreaksPerMatch")
 		);
@@ -245,7 +259,7 @@ public final class StatsCategory {
 			new CategorySubGroup("Matches", "matches", "matchesWon", "matchesWonPct")
 		);
 		addGroup("Performance", PERFORMANCE, false,
-			new CategorySubGroup("Dominance", "pointsDominanceRatio", "gamesDominanceRatio", "breakPointsRatio"),
+			new CategorySubGroup("Dominance", "pointsDominanceRatio", "ipPointsDominanceRatio", "ssIPPointsDominanceRatio", "gamesDominanceRatio", "breakPointsRatio"),
 			new CategorySubGroup("Over-Performing", "overPerformingRatio", "ptsToSetsOverPerfRatio", "ptsToGamesOverPerfRatio", "svcPtsToSvcGamesOverPerfRatio", "rtnPtsToRtnGamesOverPerfRatio", "ptsToTBsOverPerfRatio"),
 			new CategorySubGroup("Over-Performing Ex", "gmsToMatchesOverPerfRatio", "gmsToSetsOverPerfRatio", "setsToMatchesOverPerfRatio", "bpsOverPerfRatio", "bpsSavedOverPerfRatio", "bpsConvOverPerfRatio")
 		);
@@ -267,13 +281,13 @@ public final class StatsCategory {
 			new CategorySubGroup("Other", "acesDfsRatio")
 		);
 		addMatchGroup("Serve", SERVE, false,
-			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet"),
-			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame"),
+			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "firstServeEff", "serveRating"),
+			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet"),
 			new CategorySubGroup("Games", "serviceGamesWonPct", "svcGamesLostPerSet")
 		);
 		addMatchGroup("Return", RETURN, false,
-			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet"),
-			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame"),
+			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "returnRating"),
+			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet"),
 			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet")
 		);
 		addMatchGroup("Total", "Total", false,
@@ -294,13 +308,13 @@ public final class StatsCategory {
 			new CategorySubGroup("Other", "acesDfsRatio")
 		);
 		addSeasonGroup("Serve", SERVE, false,
-			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet", "bpsFacedPerMatch"),
-			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame"),
+			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "firstServeEff"),
+			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet", "bpsFacedPerMatch"),
 			new CategorySubGroup("Games", "serviceGamesWonPct", "svcGamesLostPerSet", "svcGamesLostPerMarch")
 		);
 		addSeasonGroup("Return", RETURN, false,
-			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet", "bpsPerMatch"),
-			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame"),
+			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct"),
+			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet", "bpsPerMatch"),
 			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet", "rtnGamesWonPerMarch")
 		);
 		addSeasonGroup("Total", "Total", false,

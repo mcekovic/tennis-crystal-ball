@@ -595,14 +595,16 @@ public class TournamentService {
 				Map<String, List<Integer>> speeds = new HashMap<>();
 				List<Integer> seasons = new ArrayList<>();
 				EventResult bestResult = null;
+				String bestLevel = null;
 				LocalDate lastDate = null;
-				String lastResult = null;
+				String lastResult = null, lastLevel = null;
 				int lastTournamentEventId = 0;
 				int titles = 0;
 				try {
 					JsonNode events = READER.readTree(rs.getString("events"));
 					for (JsonNode event : events) {
-						levels.compute(event.get("level").asText(), TournamentService::increment);
+						String level = event.get("level").asText();
+						levels.compute(level, TournamentService::increment);
 						String surface = event.get("surface").asText();
 						surfaces.compute(surface, TournamentService::increment);
 						JsonNode speedNode = event.get("court_speed");
@@ -610,12 +612,15 @@ public class TournamentService {
 							speeds.computeIfAbsent(surface, aSurface -> new ArrayList<>()).add(speedNode.asInt());
 						seasons.add(event.get("season").asInt());
 						EventResult result = EventResult.decode(event.get("result").asText());
-						if (nullsLastCompare(result, bestResult) < 0)
+						if (nullsLastCompare(result.getOrder(), bestResult != null ? bestResult.getOrder() : null) < 0) {
 							bestResult = result;
+							bestLevel = level;
+						}
 						LocalDate date = parseJSONDate(event.get("date").asText());
 						if (nullsFirstCompare(date, lastDate) > 0) {
 							lastDate = date;
 							lastResult = result.getCode();
+							lastLevel = level;
 							lastTournamentEventId = event.get("tournament_event_id").asInt();
 						}
 						if (result == EventResult.W)
@@ -637,7 +642,9 @@ public class TournamentService {
 					seasons.size(),
 					formatSeasons(seasons),
 					bestResult != null ? bestResult.getCode() : null,
+					bestLevel,
 					lastResult,
+					lastLevel,
 					lastTournamentEventId,
 					new WonLost(rs.getInt("p_matches"), rs.getInt("o_matches")),
 					titles

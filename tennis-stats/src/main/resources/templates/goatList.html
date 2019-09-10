@@ -171,8 +171,9 @@
 			$search.before($("#activeDiv").remove());
 			$search.before($("#goatListQuickPicks").remove());
 			setBootgridTitle($goatListTableHeader, $("#goatListTable-title"));
+			addBootgridCsvDownload("goatListTable", "GOATList.csv", ["playerId", "country_code"]);
 			setBootgridTitles($goatListTable, [
-				{id: "goatRank", title: "GOAT rank"},
+				{id: "rank", title: "GOAT rank"},
 				{id: "totalPoints", title: "GOAT points"},
 				{id: "tournamentPoints", title: "Tournament GOAT points"},
 				{id: "rankingPoints", title: "Ranking GOAT points"},
@@ -398,7 +399,7 @@
 	<table id="goatListTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
+			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
 			<th data-column-id="name" data-formatter="player" data-width="200" data-sortable="false">Name</th>
 			<th data-column-id="totalPoints" data-formatter="totalPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right">Pts</th>
 			<th data-column-id="tournamentPoints" data-formatter="tournamentPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Tourn P</th>

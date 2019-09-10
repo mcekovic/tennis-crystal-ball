@@ -12,7 +12,7 @@ import org.strangeforest.tcb.stats.controller.*;
 @EnableConfigurationProperties(ServerSSLProperties.class)
 public class TennisStatsWebConfig implements WebMvcConfigurer {
 
-	@Autowired(required = false) DownForMaintenanceInterceptor downForMaintenanceInterceptor;
+	@Autowired(required = false) private DownForMaintenanceInterceptor downForMaintenanceInterceptor;
 
 	@Override public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new RequestURLLoggingHandlerInterceptor());

@@ -1,11 +1,12 @@
 package org.strangeforest.tcb.dataload
 
-
+import org.jsoup.nodes.*
 import org.jsoup.select.*
 
 import com.google.common.base.*
 import groovy.sql.*
 
+import static com.google.common.base.Strings.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
 import static org.strangeforest.tcb.dataload.SqlPool.*
@@ -19,19 +20,24 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		'WHERE season = :season\n' +
 		'ORDER BY ext_tournament_id'
 
+	static final String DELETE_TOURNAMENT_EVENT_SQL = //language=SQL
+		'DELETE FROM tournament_event\n' +
+		'WHERE tournament_id = (SELECT tournament_id FROM tournament_mapping WHERE ext_tournament_id = :extId)\n' +
+		'AND season = :season'
+
 
 	ATPTourTournamentLoader(Sql sql) {
 		super(sql)
 	}
 
-	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null, boolean scrapeDraws = false, boolean forceReloadStats = false) {
+	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, String date = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null, boolean scrapeDraws = false, boolean forceReloadStats = false) {
 		def url = tournamentUrl(current, season, urlId, extId, scrapeDraws)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
 		def doc = retriedGetDoc(url)
 		List<Object> matches = scrapeDraws
-			? scrapeDraws(doc, level, urlId, name, season, surface, skipRounds, overrideExtId, extId)
-			: scrapeResults(doc, level, urlId, name, season, surface, skipRounds, overrideExtId, extId)
+			? scrapeDraws(doc, level, urlId, name, season, surface, date, skipRounds, overrideExtId, extId)
+			: scrapeResults(doc, level, urlId, name, season, surface, date, skipRounds, overrideExtId, extId)
 
 		loadStats(matches, 'w_', 'l_', 'winner_name', 'loser_name')
 		if (forceReloadStats)
@@ -47,7 +53,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		println "$matches.size matches loaded in $stopwatch"
 	}
 
-	def scrapeResults(doc, String level, String urlId, String name, int season, String surface, Collection<String> skipRounds, overrideExtId, extId) {
+	def scrapeResults(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, Collection<String> skipRounds, overrideExtId, extId) {
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1), '', '.')
 		level = level ?: mapLevel(atpLevel, urlId)
@@ -60,7 +66,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 
 		def matches = []
 		def matchNum = 0
-		def startDate = date extractStartDate(dates)
+		def startDate = date(tournamentDate ?: extractStartDate(dates))
 
 		Elements rounds = doc.select('#scoresResultsContent div table')
 		if (rounds.toString().contains('Round Robin'))
@@ -132,7 +138,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		matches
 	}
 
-	def scrapeDraws(doc, String level, String urlId, String name, int season, String surface, Collection<String> skipRounds, overrideExtId, extId, verbose) {
+	def scrapeDraws(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, Collection<String> skipRounds, overrideExtId, extId, verbose) {
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1), '', '.')
 		level = level ?: mapLevel(atpLevel, urlId)
@@ -145,7 +151,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 
 		def matches = [:]
 		short matchNum = 0
-		def startDate = date extractStartDate(dates)
+		def startDate = date(tournamentDate ?: extractStartDate(dates))
 		def seedEntries = [:]
 
 		def drawTable = doc.select('#scoresDrawTable')
@@ -294,6 +300,17 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		}
 	}
 
+	static extractEntryPlayer(Element entryMatch, int index) {
+		def playerBox = entryMatch.select("tbody > tr:nth-child($index) > td:nth-child(3)")
+		def name = playerBox.select("*.scores-draw-entry-box-players-item").text()
+		if (!name) {
+			name = playerBox.text()
+			if (isBye(name))
+				return null
+		}
+		emptyToNull(player(name))
+	}
+
 	def setScoreParams(Map params, MatchScore matchScore) {
 		params.outcome = matchScore.outcome
 		if (matchScore) {
@@ -316,8 +333,8 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 	static tournamentUrl(boolean current, int season, String urlId, extId, boolean scrapeDraws) {
 		def type = current ? 'current' : 'archive'
 		def seasonUrl = current ? '' : '/' + season
-		def resultsUrl = scrapeDraws ? '/draws' : '/results'
-		"http://www.atptour.com/en/scores/$type/$urlId/$extId$seasonUrl/$resultsUrl"
+		def resultsUrl = scrapeDraws ? 'draws' : 'results'
+		"https://www.atptour.com/en/scores/$type/$urlId/$extId$seasonUrl/$resultsUrl"
 	}
 
 	static isUnknownOrQualifier(String name) {
@@ -329,5 +346,9 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 
 	def findSeasonEventExtIds(int season) {
 		sql.rows([season: season], SELECT_SEASON_EVENT_EXT_IDS_SQL).collect { row -> row.ext_tournament_id }
+	}
+
+	def deleteTournament(int season, extId) {
+		sql.execute([season: season, extId: string(extId)], DELETE_TOURNAMENT_EVENT_SQL)
 	}
 }

@@ -127,8 +127,28 @@ public class TournamentEventFilter {
 		return season;
 	}
 
+	public String getLevel() {
+		return level;
+	}
+
 	public String getSurface() {
 		return surface;
+	}
+
+	public Boolean getIndoor() {
+		return indoor;
+	}
+
+	public boolean hasLevel() {
+		return !isNullOrEmpty(level);
+	}
+
+	public boolean hasSurface() {
+		return !isNullOrEmpty(surface);
+	}
+
+	public boolean hasIndoor() {
+		return indoor != null;
 	}
 
 	public boolean hasSpeedRange() {

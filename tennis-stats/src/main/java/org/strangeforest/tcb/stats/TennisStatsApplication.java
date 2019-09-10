@@ -4,11 +4,13 @@ import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.context.*;
+import org.springframework.context.annotation.*;
 import org.springframework.scheduling.annotation.*;
 
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
+@EnableAspectJAutoProxy(exposeProxy = true)
 public class TennisStatsApplication {
 
 	private static ConfigurableApplicationContext context;

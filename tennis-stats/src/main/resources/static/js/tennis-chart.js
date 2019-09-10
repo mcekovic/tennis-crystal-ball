@@ -1,16 +1,20 @@
 function showRankingChart(chartData, elementId, width, bySeason, pointCount, isRank, useLogScale, legendPosition) {
-	showChart(chartData, elementId, width, bySeason, pointCount, isRank ? -1 : 1, isRank ? 1 : undefined, useLogScale, false, !bySeason, legendPosition);
+	showChart(chartData, elementId, width, bySeason, pointCount, isRank ? -1 : 1, isRank ? 1 : undefined, useLogScale, false, !bySeason, 0, legendPosition);
 }
 
 function showPerformanceChart(chartData, elementId, width, pointCount, legendPosition) {
-	showChart(chartData, elementId, width, true, pointCount, 1, 0, false, true, false, legendPosition);
+	showChart(chartData, elementId, width, true, pointCount, 1, 0, false, true, false, 0, legendPosition);
 }
 
 function showStatsChart(chartData, elementId, width, pointCount, isPct, legendPosition) {
-	showChart(chartData, elementId, width, true, pointCount, 1, 0, false, isPct, false, legendPosition);
+	showChart(chartData, elementId, width, true, pointCount, 1, 0, false, isPct, false, 0, legendPosition);
 }
 
-function showChart(chartData, elementId, width, bySeason, pointCount, vDir, vMin, useLogScale, isPct, interpolate, legendPosition) {
+function showResultsChart(chartData, elementId, width, bySeason, pointCount, legendPosition) {
+	showChart(chartData, elementId, width, bySeason, pointCount, 1, 0, false, false, !bySeason, 5, legendPosition);
+}
+
+function showChart(chartData, elementId, width, bySeason, pointCount, vDir, vMin, useLogScale, isPct, interpolate, pointSize, legendPosition) {
 	if (chartData !== undefined) {
 		var options = {
 			width: width,
@@ -19,6 +23,7 @@ function showChart(chartData, elementId, width, bySeason, pointCount, vDir, vMin
 			hAxis: {format: bySeason ? "####" : null, gridlines: pointCount < 5 ? { count: pointCount} : null},
 			vAxis: {direction: vDir, viewWindow: {min: vMin}, logScale: useLogScale, format: isPct ? "percent" : null},
 			interpolateNulls: interpolate,
+			pointSize: pointSize,
 			legend: {position: legendPosition}
 		};
 		var chart = new google.visualization.LineChart(document.getElementById(elementId));

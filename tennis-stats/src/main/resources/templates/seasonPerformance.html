@@ -74,6 +74,7 @@
 		$search.before($("#perfRoundDiv").remove());
 		$search.after($("#perfClearDiv").remove());
 		$topPerformersTableHeader.find("div.actions").after($("#perfAdvancedFilterDiv").remove());
+		addBootgridCsvDownload("topPerformersTable", "TopPerformers.csv", ["playerId", "country_code"]);
 		perfCategoryChanged();
 		dateRangePicker("perfFromDate", "perfToDate", "[(${season})]");
 		$("[data-toggle='tooltip']").tooltip();

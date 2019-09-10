@@ -52,6 +52,7 @@
 		$search.before($("#statsOpponentDiv").remove());
 		$search.after($("#statsClearDiv").remove());
 		$statsLeadersTableHeader.find("div.actions").after($("#statsAdvancedFilterDiv").remove());
+		addBootgridCsvDownload("statsLeadersTable", "StatisticsLeaders.csv", ["playerId", "country_code"]);
 		statsCategoryChanged();
 		$("[data-toggle='tooltip']").tooltip();
 	});

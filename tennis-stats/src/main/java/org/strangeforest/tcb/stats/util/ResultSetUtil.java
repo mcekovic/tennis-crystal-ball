@@ -6,6 +6,8 @@ import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 
+import org.postgresql.util.*;
+
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -37,6 +39,11 @@ public abstract class ResultSetUtil {
 		return rs.wasNull() ? null : d;
 	}
 
+	public static Boolean getBoolean(ResultSet rs, String column) throws SQLException {
+		boolean b = rs.getBoolean(column);
+		return rs.wasNull() ? null : b;
+	}
+
 	public static String getInternedString(ResultSet rs, String column) throws SQLException {
 		String s = rs.getString(column);
 		return s != null ? s.intern() : null;
@@ -45,6 +52,14 @@ public abstract class ResultSetUtil {
 	public static LocalDate getLocalDate(ResultSet rs, String column) throws SQLException {
 		LocalDate date = rs.getObject(column, LocalDate.class);
 		return rs.wasNull() ? null : date;
+	}
+
+	private static final double MONTH_FACTOR = 1.0 / 12.0;
+	private static final double DAY_FACTOR = 1.0 / 365.25;
+
+	public static Double getYears(ResultSet rs, String column) throws SQLException {
+		PGInterval i = rs.getObject(column, PGInterval.class);
+		return rs.wasNull() ? null : i.getYears() + MONTH_FACTOR * i.getMonths() + DAY_FACTOR * i.getDays();
 	}
 
 

@@ -48,6 +48,7 @@
 			var $search = $recordsTableHeader.find("div.search");
 			$search.before($("#categoryDiv").remove());
 			$search.before($("#infamousDiv").remove());
+			addBootgridCsvDownload("recordsTable", "Records.csv", ["playerId", "country_code", "detailUrl", "_rank$"]);
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function showRecordCategories() {

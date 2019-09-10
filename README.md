@@ -21,7 +21,8 @@ Ultimate Tennis Statistics and Tennis Crystal Ball Big Data Analysis with nice w
 - Peak Elo Ratings - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie-break)
 - Top Performers - Find top performers in both performance and pressure situations categories
 - Performance Charts - Performance charts for various performance categories, filtered by seasons
-- Statistics Leaders - Find statistics leaders in different statistical categories (90+), including dominance and break points ratios
+- Titles and Results Charts - Titles and results charts, filtered by level, surface and seasons
+- Statistics Leaders - Find statistics leaders in different statistical categories (100+), including dominance and break points ratios
 - Top Match Stats - Top single match statistics figures filtered by various filters
 - Statistics Charts - Statistics charts for various statistical categories, including dominance and break points ratios
 - Seasons - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players

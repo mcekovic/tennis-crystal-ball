@@ -90,7 +90,6 @@ abstract class BaseATPTourTournamentLoader {
 					name.startsWith('Sofia') ||
 					name.startsWith('Memphis') ||
 					name.startsWith('Rotterdam') ||
-					name.startsWith('New York') ||
 					name.startsWith('Marseille') ||
 					name.startsWith('Metz') ||
 					name.startsWith('St. Petersburg') ||
@@ -104,6 +103,7 @@ abstract class BaseATPTourTournamentLoader {
 					name.startsWith('Tour Finals')
 				)) ||
 				(season >= 2018 && (
+					name.startsWith('New York') ||
 					name.startsWith('Tokyo')
 				))
 			case 'C': return (season >= 2018 && (
@@ -315,11 +315,11 @@ abstract class BaseATPTourTournamentLoader {
 	}
 
 	static matchStatsUrl(String url) {
-		url ? "http://www.atptour.com" + url : null
+		url ? "https://www.atptour.com" + url : null
 	}
 
 	static matchStatsUrl(int season, extId, String matchNum) {
-		"http://www.atptour.com/en/scores/$season/$extId/MS$matchNum/match-stats"
+		"https://www.atptour.com/en/scores/$season/$extId/MS$matchNum/match-stats"
 	}
 
 	static setMatchStatsParams(Map match, statsDoc, String prefix1, String prefix2, String nameProperty1, String nameProperty2, ProgressTicker progress) {

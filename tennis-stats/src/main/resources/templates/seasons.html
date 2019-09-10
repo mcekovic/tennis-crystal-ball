@@ -69,6 +69,7 @@
 			var $seasonsTableHeader = $("#seasonsTable-header");
 			$seasonsTableHeader.find("div.search").remove();
 			setBootgridTitle($seasonsTableHeader, $("#seasonsTable-title"));
+			addBootgridCsvDownload("seasonsTable", "Seasons.csv", ["bestPlayer_rank", "bestPlayer_playerId", "bestPlayer_country_code"]);
 			setBootgridTitles($seasonsTable, [
 				{id: "tournamentCount", title: "Tournaments"},
 				{id: "grandSlamCount", title: "Grand Slam tournaments"},

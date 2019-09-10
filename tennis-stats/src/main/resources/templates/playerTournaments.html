@@ -98,6 +98,7 @@
 		$search.before($("#tournamentsEvents").remove());
 		$search.before($("#tournamentsStats").remove());
 		$search.after($("#tournamentsClear").remove());
+		addBootgridCsvDownload("tournamentsTable", "PlayerTournaments.csv", ["^id$", "levels", "surfaces", "speeds", "lastTournamentEventId"]);
 		setBootgridTitles($tournamentsTable, [
 			{id: "speeds", title: "[[#{event.courtSpeed.title}]]"},
 			{id: "bestResult", title: "Best result"},
@@ -205,7 +206,7 @@
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats
 </button>
 <button id="tournamentsClear" type="button" class="btn btn-default grid-control margin-right" onclick="clearTournamentsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-	<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
+	<i class="fa fa-eraser"></i>
 </button>
 <table id="tournamentsTable" class="table table-condensed table-hover table-striped">
 	<thead>

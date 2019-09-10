@@ -29,7 +29,7 @@ function initCookiesNotification() {
 }
 
 function agreeToUseCookies() {
-	$("#cookiesNotification").hide()
+	$("#cookiesNotification").hide();
 	localStorage.setItem("cookiesNotification", "true");
 }
 
@@ -90,10 +90,9 @@ function extractLast(term) {
 }
 
 function getPlayerCount(players) {
-	var a = split(players);
-	var count = 0;
+	var count = 0, a = split(players);
 	for (var i = 0; i < a.length; i++) {
-		if ($.trim(a[i]) != "")
+		if ($.trim(a[i]) !== "")
 			count++;
 	}
 	return count;
@@ -171,9 +170,8 @@ function formatDate(date) {
 }
 
 function getDate(id, title) {
-	var $date = $("#" + id);
-	var date = $date.val();
-	if (date == "") {
+	var $date = $("#" + id), date = $date.val();
+	if (date === "") {
 		$date.tooltip("destroy");
 		return date;
 	}
@@ -206,8 +204,7 @@ function dateRangePicker(fromId, toId, yearRange) {
 		var season = yearRange;
 		yearRange = season + ":" + season;
 	}
-	var $from = $("#" + fromId);
-	var $to = $("#" + toId);
+	var $from = $("#" + fromId), $to = $("#" + toId);
 	$from.datepicker({
 		defaultDate: singleSeason ? "01-01-" + season : "-1y", maxDate: "0", changeMonth: true, changeYear: !singleSeason, yearRange: yearRange, showWeek: true, firstDay: 1, dateFormat: date_format,
 		onClose: function (selectedDate) {
@@ -258,6 +255,54 @@ function setBootgridTitles($gridTable, titles) {
 			$gridTable.find("th[data-column-id='" + title.id + "'] > a > span[class='text']").attr("title", title.title);
 		}
 	});
+}
+function addBootgridCsvDownload(gridTableId, fileName, skipColumns) {
+	$("#" + gridTableId + "-header").find("div.actions").append("<button type='button' class='btn btn-default' onclick='downloadCsv(\"" + gridTableId + "\", \"" + fileName + "\", " + JSON.stringify(skipColumns) + ")' title='Download CSV'><i class='fa fa-file-excel-o'></i></button>");
+}
+function downloadCsv(gridTableId, fileName, skipColumns) {
+	var data = $("#" + gridTableId).bootgrid("getCurrentRows");
+	if (!Array.isArray(data) || data.length === 0) return;
+	var schema = [], csv = "", rows = [], DEL = ',', BRK = '\r\n';
+	for (var d = 0; d < data.length; d++)
+		collectSchema(schema, data[d]);
+	if (skipColumns) {
+		for (var s = 0; s < schema.length; s++) {
+			for (var sc = 0; sc < skipColumns.length; sc++) {
+				if (schema[s].match(skipColumns[sc])) {
+					schema.splice(s--, 1);
+					break;
+				}
+			}
+		}
+	}
+	csv += schema.join(DEL) + BRK;
+	for (var i = 0; i < data.length; i++) {
+		var line = [];
+		for (var j = 0; j < schema.length; j++) {
+			var item = data[i], path = schema[j].split("_");
+			for (var k = 0; k < path.length; k++)
+				item = typeof item !== "undefined" ? item[path[k]] : item;
+			if (item && item.toString().indexOf(",") >= 0)
+				item = '"' + item + '"';
+			line.push(item);
+		}
+		rows.push(line.join(DEL));
+	}
+	csv += rows.join(BRK);
+	download(csv, fileName, "application/csv");
+}
+function collectSchema(schema, obj, prefix) {
+	var keys = Object.keys(obj);
+	for (var j = 0; j < keys.length; j++) {
+		var key = keys[j], pKey = prefix ? prefix + key : key, value = obj[key];
+		if (typeof value !== "object") {
+			if (schema.indexOf(pKey) < 0)
+				schema.push(pKey);
+		}
+		else
+			collectSchema(schema, value, pKey + "_");
+	}
+	return schema;
 }
 var bootgridTemplateLoading = "Loading... <img src='/images/ui-anim_basic_16x16.gif' width='16' height='16'/>";
 /* Fixes Bootgrid Issue with no link cursors on pagination buttons */
@@ -382,9 +427,7 @@ function formatSpeed(speed, surface, surfaceInTitle) {
 }
 
 function speedsFormatter(column, row) {
-	var surfaces = row.surfaces;
-	var speeds = row.speeds;
-	var s = "";
+	var s = "", surfaces = row.surfaces, speeds = row.speeds;
 	for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
 		if (s !== "") s += " ";
 		var surface = surfaces[i];
@@ -417,7 +460,7 @@ function decorateSpeed(selector) {
 	$(selector).each(function() {
 		var $this = $(this);
 		var speed = $this.data("court-speed");
-		$this.addClass("points-" + speedClassSuffix(speed) + " points-" + $this.data("surface")).attr("title", speedTitle(speed));;
+		$this.addClass("points-" + speedClassSuffix(speed) + " points-" + $this.data("surface")).attr("title", speedTitle(speed));
 	});
 }
 
@@ -539,9 +582,7 @@ function recordValueFormatter(column, row) {
 }
 
 function recordHoldersFormatter(column, row) {
-	var recordHolders = row.recordHolders;
-	var len = recordHolders.length;
-	var s = "";
+	var s = "", recordHolders = row.recordHolders, len = recordHolders.length;
 	for (var i = 0; i < len; i++) {
 		var recordHolder = recordHolders[i];
 		s = s ? s + ", " : "";
@@ -635,11 +676,10 @@ function compareMatchStats(matchId, close) {
 function StatsFilter($category, $from, $to) {
 	var category = $category.val();
 	var type = $category.find(":selected").data("type");
-	var from = $from.val();
-	var to = $to.val();
+	var from = $from.val(), to = $to.val();
 	if (category && (from || to)) {
 		this.category = category;
-		if (type == "PERCENTAGE") {
+		if (type === "PERCENTAGE") {
 			if (from) from /= 100.0;
 			if (to) to /= 100.0;
 		}
@@ -697,18 +737,18 @@ function performancePlayerMatchesUrl(playerId, outcome, prefix) {
 	var toDate = paramValue("toDate", prefix);
 	if (toDate) url += "&toDate=" + toDate;
 	var level = paramValue("level", prefix);
-	if (category == "grandSlamMatches") url += "&level=G";
-	else if (category == "altFinalsMatches") url += "&level=L";
-	else if (category == "tourFinalsMatches") url += "&level=F";
-	else if (category == "mastersMatches") url += "&level=M";
-	else if (category == "olympicsMatches") url += "&level=O";
+	if (category === "grandSlamMatches") url += "&level=G";
+	else if (category === "altFinalsMatches") url += "&level=L";
+	else if (category === "tourFinalsMatches") url += "&level=F";
+	else if (category === "mastersMatches") url += "&level=M";
+	else if (category === "olympicsMatches") url += "&level=O";
 	else if (level) url += "&level=" + level;
 	var bestOf = paramValue("bestOf", prefix);
 	if (bestOf) url += "&bestOf=" + bestOf;
-	if (category == "hardMatches") url += "&surface=H";
-	else if (category == "clayMatches") url += "&surface=C";
-	else if (category == "grassMatches") url += "&surface=G";
-	else if (category == "carpetMatches") url += "&surface=P";
+	if (category === "hardMatches") url += "&surface=H";
+	else if (category === "clayMatches") url += "&surface=C";
+	else if (category === "grassMatches") url += "&surface=G";
+	else if (category === "carpetMatches") url += "&surface=P";
 	else {
 		var surface = paramValue("surface", prefix);
 		if (surface) url += "&surface=" + surface;
@@ -717,7 +757,7 @@ function performancePlayerMatchesUrl(playerId, outcome, prefix) {
 	if (indoor) url += "&indoor=" + indoor;
 	var speed = paramValue("speed", prefix);
 	if (speed) url += "&speed=" + speed;
-	if (category == "finals") {
+	if (category === "finals") {
 		url += "&round=F";
 		if (!level) url += "&level=GFLMOAB";
 	}
@@ -735,24 +775,24 @@ function performancePlayerMatchesUrl(playerId, outcome, prefix) {
 	}
 	var tournament = paramValue("tournament", prefix);
 	if (tournament) url += "&tournamentId=" + tournament;
-	if (category == "vsNo1") url += "&opponent=NO_1";
-	else if (category == "vsTop5") url += "&opponent=TOP_5";
-	else if (category == "vsTop10") url += "&opponent=TOP_10";
+	if (category === "vsNo1") url += "&opponent=NO_1";
+	else if (category === "vsTop5") url += "&opponent=TOP_5";
+	else if (category === "vsTop10") url += "&opponent=TOP_10";
 	else {
 		var opponent = paramValue("opponent", prefix);
 		if (opponent) url += "&opponent=" + opponent;
 	}
 	var country = paramValue("country", prefix);
 	if (country) url += "&countryId=" + country;
-	if (category == "decidingSets") url += "&score=*DS";
-	else if (category == "fifthSets") url += "&score=" + encodeURIComponent("2:2+");
-	else if (category == "afterWinningFirstSet") url += "&score=" + encodeURIComponent("1:0+");
-	else if (category == "afterLosingFirstSet") url += "&score=" + encodeURIComponent("0:1+");
-	else if (category == "tieBreaks") url += "&score=*TB" + outcome;
-	else if (category == "decidingSetTBs") url += "&score=*DSTB";
-	if (category != "tieBreaks") {
-		if (outcome == "W") url += "&outcome=wonplayed";
-		else if (outcome == "L") url += "&outcome=lostplayed";
+	if (category === "decidingSets") url += "&score=*DS";
+	else if (category === "fifthSets") url += "&score=" + encodeURIComponent("2:2+");
+	else if (category === "afterWinningFirstSet") url += "&score=" + encodeURIComponent("1:0+");
+	else if (category === "afterLosingFirstSet") url += "&score=" + encodeURIComponent("0:1+");
+	else if (category === "tieBreaks") url += "&score=*TB" + outcome;
+	else if (category === "decidingSetTBs") url += "&score=*DSTB";
+	if (category !== "tieBreaks") {
+		if (outcome === "W") url += "&outcome=wonplayed";
+		else if (outcome === "L") url += "&outcome=lostplayed";
 		else url += "&outcome=played";
 	}
 	return url;

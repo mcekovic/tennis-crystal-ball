@@ -1,11 +1,3 @@
--- Correct invalid rankings
-
-UPDATE player_ranking
-SET rank_points = 14
-WHERE player_id = (SELECT player_id FROM player_v WHERE name = 'Pat Cash') AND rank_date = DATE '1990-04-16';
-
-COMMIT;
-
 -- Correct player names
 
 UPDATE player SET last_name = 'McEnroe'

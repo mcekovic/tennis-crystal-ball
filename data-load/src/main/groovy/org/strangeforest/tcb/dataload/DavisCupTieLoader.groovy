@@ -201,7 +201,7 @@ class DavisCupTieLoader extends BaseATPTourTournamentLoader {
 	}
 
 	static matchStatsUrl(String url) {
-		url ? "http://www.atptour.com" + url : null
+		url ? "https://www.atptour.com" + url : null
 	}
 
 	static isUnknownOrQualifier(String name) {

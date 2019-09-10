@@ -31,7 +31,7 @@ abstract class BaseCSVLoader {
 		println "Loading file '$file'"
 		def stopwatch = Stopwatch.createStarted()
 		List columnNames = columnNames()
-		def csvParams = columnNames ? [columnNames: columnNames, readFirstLine: true] : [:]
+		def csvParams = columnNames ? [columnNames: columnNames] : [:]
 		def data = CsvParser.parseCsv(csvParams, new FileReader(file))
 		int rows = load(data)
 		printLoadInfo(stopwatch, rows)
@@ -67,13 +67,18 @@ abstract class BaseCSVLoader {
 			for (record in data) {
 				if (record.values.size() <= 1)
 					continue
-				def params = params(record, paramsConn)
-				if (params) {
-					paramsBatch << params
-					if (++rows % batchSize == 0) {
-						execute(executor, loadSql, paramsBatch, batches)
-						paramsBatch = []
+				try {
+					def params = params(record, paramsConn)
+					if (params) {
+						paramsBatch << params
+						if (++rows % batchSize == 0) {
+							execute(executor, loadSql, paramsBatch, batches)
+							paramsBatch = []
+						}
 					}
+				}
+				catch (Exception ex) {
+					throw new Exception("Error processing record $record", ex)
 				}
 			}
 			if (paramsBatch)

@@ -35,7 +35,7 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/")
 	public ModelAndView index() {
-		boolean hasInProgressEvents = forecastService.getInProgressEventsTable(FORECAST_ORDER_BY, null).getTotal() > 0;
+		boolean hasInProgressEvents = forecastService.getInProgressEventsTable(InProgressEventFilter.ALL_IN_PROGRESS, null, FORECAST_ORDER_BY, 20, 1).getTotal() > 0;
 		PlayerOfTheWeek playerOfTheWeek = contentService.getPlayerOfTheWeek();
 		RecordOfTheDay recordOfTheDay = contentService.getRecordOfTheDay();
 		FeaturedContent featuredBlogPost = contentService.getFeaturedBlogPost();

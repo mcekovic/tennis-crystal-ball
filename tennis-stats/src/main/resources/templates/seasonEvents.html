@@ -54,12 +54,14 @@
 				paginationItem: bootgridTemplatePaginationItem
 			}
 		});
-		var $search = $("#seasonEventsTable-header").find("div.search");
+		var $seasonEventsTableHeader = $("#seasonEventsTable-header");
+		var $search = $seasonEventsTableHeader.find("div.search");
 		$search.before($("#eventsLevelDiv").remove());
 		$search.before($("#eventsSurfaceDiv").remove());
 		$search.before($("#eventsIndoorDiv").remove());
-		$search.before($("#eventsSpeedDiv").remove());
 		$search.after($("#eventsClearDiv").remove());
+		$seasonEventsTableHeader.find("div.actions").after($("#eventsAdvancedFilterDiv").remove());
+		addBootgridCsvDownload("seasonEventsTable", "SeasonEvents.csv", ["^id$", "tournamentId", "tournamentExtId", "winner_id", "runnerUp_id", "country_code", "^draw$"]);
 		setBootgridTitles($seasonEventsTable, [
 			{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
 			{id: "playerCount", title: "Players"},
@@ -82,6 +84,16 @@
 	}
 </script>
 <h3 th:text="|Season ${season} Events|">Season 2000 Events</h3>
+<div id="eventsAdvancedFilter" class="collapse">
+	<div class="row margin-top">
+		<div class="col-md-2">
+			<select id="eventsSpeed" class="form-control" onchange="reloadSeasonEvents()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+				<option value="">All speeds</option>
+				<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+			</select>
+		</div>
+	</div>
+</div>
 <div id="eventsLevelDiv" class="btn-group pull-left margin-right no-margin-left">
 	<select id="eventsLevel" class="form-control" onchange="reloadSeasonEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 		<option value="">All levels</option>
@@ -103,11 +115,12 @@
 		<option value="true" th:selected="${indoor}">Indoor</option>
 	</select>
 </div>
-<div id="eventsSpeedDiv" class="btn-group pull-left margin-right">
-	<select id="eventsSpeed" class="form-control" onchange="reloadSeasonEvents()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
-		<option value="">All speeds</option>
-		<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
-	</select>
+<div id="eventsAdvancedFilterDiv" class="btn-group margin-left no-margin-right">
+	<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+		<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#eventsAdvancedFilter">
+			Adv.&nbsp;&nbsp;<i class="fa fa-chevron-up"></i>
+		</button>
+	</div>
 </div>
 <div id="eventsClearDiv" class="btn-group margin-right">
 	<button type="button" class="btn btn-default" onclick="clearSeasonEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">

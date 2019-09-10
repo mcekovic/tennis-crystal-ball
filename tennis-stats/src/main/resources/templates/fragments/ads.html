@@ -1,32 +1,33 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="digitalOcean" type="java.lang.Boolean>"*/-->
+<!--/*@thymesVar id="googleAdSenseClientId" type="java.lang.String"*/-->
 
 <th:block th:fragment="responsive">
-<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1900145493503169" data-ad-slot="6720182176" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block" th:data-ad-client="${googleAdSenseClientId}" data-ad-slot="6720182176" data-ad-format="auto" data-full-width-responsive="true"></ins>
 <ins th:unless="${digitalOcean}" class="adsbygoogle empty-ad" style="display:block" data-ad-client="ca-pub-0000000000000000" data-ad-slot="0000000000" data-ad-format="auto" data-full-width-responsive="true" data-ad-test="on"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </th:block>
 
 <th:block th:fragment="responsiveLink">
-<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1900145493503169" data-ad-slot="3521327285" data-ad-format="link" data-full-width-responsive="true"></ins>
+<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block" th:data-ad-client="${googleAdSenseClientId}" data-ad-slot="3521327285" data-ad-format="link" data-full-width-responsive="true"></ins>
 <ins th:unless="${digitalOcean}" class="adsbygoogle empty-ad" style="display:block" data-ad-client="ca-pub-0000000000000000" data-ad-slot="0000000000" data-ad-format="link" data-full-width-responsive="true" data-ad-test="on"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </th:block>
 
 <th:block th:fragment="inArticle">
-<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block; text-align:center;" data-ad-client="ca-pub-1900145493503169" data-ad-slot="4132336808" data-ad-layout="in-article" data-ad-format="fluid"></ins>
+<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block; text-align:center" th:data-ad-client="${googleAdSenseClientId}" data-ad-slot="4132336808" data-ad-layout="in-article" data-ad-format="fluid"></ins>
 <ins th:unless="${digitalOcean}" class="adsbygoogle empty-ad" style="display:block" data-ad-client="ca-pub-0000000000000000" data-ad-slot="0000000000" data-ad-layout="in-article" data-ad-format="fluid" data-ad-test="on"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </th:block>
 
 <th:block th:fragment="inFeed">
-<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1900145493503169" data-ad-slot="3525778244" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-format="fluid"></ins>
+<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block" th:data-ad-client="${googleAdSenseClientId}" data-ad-slot="3525778244" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-format="fluid"></ins>
 <ins th:unless="${digitalOcean}" class="adsbygoogle empty-ad" style="display:block" data-ad-client="ca-pub-0000000000000000" data-ad-slot="0000000000" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-format="fluid" data-ad-test="on"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </th:block>
 
 <th:block th:fragment="matchedContent">
-<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1900145493503169" data-ad-slot="6622714877" data-ad-format="autorelaxed"></ins>
+<ins th:if="${digitalOcean}" class="adsbygoogle" style="display:block" th:data-ad-client="${googleAdSenseClientId}" data-ad-slot="6622714877" data-ad-format="autorelaxed"></ins>
 <ins th:unless="${digitalOcean}" class="adsbygoogle empty-ad" style="display:block" data-ad-client="ca-pub-0000000000000000" data-ad-slot="0000000000" data-ad-format="autorelaxed" data-ad-test="on"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </th:block>

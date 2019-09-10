@@ -50,6 +50,7 @@
 		var $search = $playerRecordsTableHeader.find("div.search");
 		$search.before($("#categoryDiv").remove());
 		$search.before($("#infamousDiv").remove());
+		addBootgridCsvDownload("playerRecordsTable", "PlayerRecords.csv", ["detailUrl", "recordHolders", "tournamentId", "tournamentEventId"]);
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function showRecordCategories() {

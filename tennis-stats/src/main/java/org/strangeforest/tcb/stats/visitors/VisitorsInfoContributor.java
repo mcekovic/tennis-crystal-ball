@@ -20,7 +20,7 @@ public class VisitorsInfoContributor implements InfoContributor {
 			"lastDayVisits", repository.getVisitors(VISITS, DAY, false),
 			"lastDayHits", repository.getVisitors(HITS, DAY, false),
 			"activeByCountry", repository.getVisitorsByCountry(ACTIVE_VISITORS, HOUR, false),
-			"lastDayHitsByAgentType", repository.getVisitorsByAgentType(HITS, DAY, false)
+			"lastDayVisitsByAgentType", repository.getVisitorsByAgentType(VISITS, DAY, false)
 		));
 	}
 }

@@ -19,6 +19,7 @@ public class InProgressEvent {
 	private int strength;
 	private int averageEloRating;
 	private Integer speed;
+	private boolean completed;
 	private List<FavoritePlayer> favorites;
 
 	public InProgressEvent(int id, int tournamentId, LocalDate date, String name, String level, String surface, boolean indoor) {
@@ -29,19 +30,6 @@ public class InProgressEvent {
 		this.level = level;
 		this.surface = surface;
 		this.indoor = indoor;
-	}
-
-	public void setDraw(String drawType, Integer drawSize, int playerCount, double participation, int strength, int averageEloRating) {
-		this.drawType = drawType;
-		this.drawSize = drawSize;
-		this.playerCount = playerCount;
-		this.participation = participation;
-		this.strength = strength;
-		this.averageEloRating = averageEloRating;
-	}
-
-	public void setSpeed(Integer speed) {
-		this.speed = speed;
 	}
 
 	public int getId() {
@@ -92,8 +80,29 @@ public class InProgressEvent {
 		return averageEloRating;
 	}
 
+	public void setDraw(String drawType, Integer drawSize, int playerCount, double participation, int strength, int averageEloRating) {
+		this.drawType = drawType;
+		this.drawSize = drawSize;
+		this.playerCount = playerCount;
+		this.participation = participation;
+		this.strength = strength;
+		this.averageEloRating = averageEloRating;
+	}
+
 	public Integer getSpeed() {
 		return speed;
+	}
+
+	public void setSpeed(Integer speed) {
+		this.speed = speed;
+	}
+
+	public boolean isCompleted() {
+		return completed;
+	}
+
+	public void setCompleted(boolean completed) {
+		this.completed = completed;
 	}
 
 	public FavoritePlayer getFavorite1() {

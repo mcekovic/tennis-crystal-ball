@@ -144,9 +144,9 @@ public class MatchesService {
 		"SELECT DISTINCT player2_country_id FROM in_progress_match INNER JOIN in_progress_event USING (in_progress_event_id) WHERE in_progress_event_id = :inProgressEventId AND player2_country_id IS NOT NULL";
 
 	private static final String OPPONENT_COUNTRIES_QUERY = //language=SQL
-		"SELECT DISTINCT winner_country_id FROM match WHERE winner_id = :playerId\n" +
+		"SELECT DISTINCT winner_country_id FROM match WHERE loser_id = :playerId\n" +
 		"UNION\n" +
-		"SELECT DISTINCT loser_country_id FROM match WHERE loser_id = :playerId";
+		"SELECT DISTINCT loser_country_id FROM match WHERE winner_id = :playerId";
 
 
 	public TournamentEventResults getTournamentEventResults(int tournamentEventId) {

@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.util.*;
+
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayerStats {
@@ -237,6 +239,22 @@ public class PlayerStats {
 		return secondServeWonPct;
 	}
 
+	public int getInPlaySecondServes() {
+		return secondServes - doubleFaults;
+	}
+
+	public double getSecondServeInPlayPointsWonPct() {
+		return pct(secondServesWon, getInPlaySecondServes());
+	}
+
+	public double getSecondServeInPlayPointsLostPct() {
+		return PCT - getSecondServeInPlayPointsWonPct();
+	}
+
+	public double getFirstServeEffectiveness() {
+		return ratio(getFirstServeWonPct(), getSecondServeWonPct());
+	}
+
 	public int getServicePointsWon() {
 		return servicePointsWon;
 	}
@@ -259,6 +277,10 @@ public class PlayerStats {
 
 	public double getServiceInPlayPointsWonPct() {
 		return pct(getServiceInPlayPointsWon(), getServiceInPlayPoints());
+	}
+
+	public double getServiceInPlayPointsLostPct() {
+		return PCT - getServiceInPlayPointsWonPct();
 	}
 
 	public double getPointsPerServiceGame() {
@@ -319,6 +341,10 @@ public class PlayerStats {
 
 	public double getServiceGamesLostPerMatch() {
 		return ratio(breakPointsLost, matchesWithStats);
+	}
+
+	public double getServeRating() {
+		return getAcePct() - getDoubleFaultPct() + getFirstServePct() + getFirstServeWonPct() + getSecondServeWonPct() + Optional.ofNullable(getBreakPointsSavedPct()).orElse(PCT) + getServiceGamesWonPct();
 	}
 
 
@@ -385,7 +411,15 @@ public class PlayerStats {
 	}
 
 	public double getReturnInPlayPointsWonPct() {
-		return PCT - opponentStats.getServiceInPlayPointsWonPct();
+		return opponentStats.getServiceInPlayPointsLostPct();
+	}
+
+	public int getSecondServeInPlayPointsLost() {
+		return secondServesLost - doubleFaults;
+	}
+
+	public double getSecondServeReturnInPlayPointsWonPct() {
+		return opponentStats.getSecondServeInPlayPointsLostPct();
 	}
 
 	public double getPointsPerReturnGame() {
@@ -438,6 +472,10 @@ public class PlayerStats {
 
 	public double getReturnGamesWonPerMatch() {
 		return opponentStats.getServiceGamesLostPerMatch();
+	}
+
+	public double getReturnRating() {
+		return getFirstServeReturnPointsWonPct() + getSecondServeReturnPointsWonPct() + Optional.ofNullable(getBreakPointsWonPct()).orElse(0.0) + getReturnGamesWonPct();
 	}
 
 
@@ -494,8 +532,23 @@ public class PlayerStats {
 		return points;
 	}
 
+	public int getTotalSecondServeInPlayPoints() {
+		int points = getInPlaySecondServes() + opponentStats.getInPlaySecondServes();
+		if (total)
+			points /= 2;
+		return points;
+	}
+
 	public int getTotalPointsWon() {
 		return servicePointsWon + getReturnPointsWon();
+	}
+
+	public int getTotalSecondServeInPlayPointsWon() {
+		return secondServesWon + opponentStats.getSecondServeInPlayPointsLost();
+	}
+
+	public double getTotalSecondServeInPlayPointsWonPct() {
+		return pct(getTotalSecondServeInPlayPointsWon(), getTotalSecondServeInPlayPoints());
 	}
 
 	public double getTotalPointsWonPct() {
@@ -543,6 +596,14 @@ public class PlayerStats {
 
 	public double getPointsDominanceRatio() {
 		return ratio(getReturnPointsWonPct(), servicePointsLostPct);
+	}
+
+	public double getInPlayPointsDominanceRatio() {
+		return ratio(getReturnInPlayPointsWonPct(), getServiceInPlayPointsLostPct());
+	}
+
+	public double getSecondServeInPlayPointsDominanceRatio() {
+		return ratio(getSecondServeReturnInPlayPointsWonPct(), getSecondServeInPlayPointsLostPct());
 	}
 
 	public double getGamesDominanceRatio() {

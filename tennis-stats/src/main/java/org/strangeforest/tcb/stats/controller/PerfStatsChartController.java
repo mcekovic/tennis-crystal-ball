@@ -13,9 +13,10 @@ import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 @Controller
 public class PerfStatsChartController extends PageController {
 
-	@Autowired private TopPerformersService topPerformersService;
 	@Autowired private PlayerService playerService;
+	@Autowired private TopPerformersService topPerformersService;
 	@Autowired private StatisticsService statisticsService;
+	@Autowired private DataService dataService;
 
 	@GetMapping("/performanceChart")
 	public ModelAndView performanceChart(
@@ -60,5 +61,37 @@ public class PerfStatsChartController extends PageController {
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("seasons", statisticsService.getSeasons());
 		return new ModelAndView("statsChart", modelMap);
+	}
+
+	@GetMapping("/resultsChart")
+	public ModelAndView resultsChart(
+		@RequestParam(name = "players", required = false) String players,
+		@RequestParam(name = "result", defaultValue = "W") String result,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
+		@RequestParam(name = "bySeason", defaultValue = F) boolean bySeason,
+		@RequestParam(name = "byAge", defaultValue = F) Boolean byAge
+	) {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("players", players);
+		modelMap.addAttribute("result", result);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("fromSeason", fromSeason);
+		modelMap.addAttribute("toSeason", toSeason);
+		modelMap.addAttribute("bySeason", bySeason);
+		modelMap.addAttribute("byAge", byAge);
+		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
+		modelMap.addAttribute("results", EventResult.values());
+		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("seasons", dataService.getSeasons());
+		return new ModelAndView("resultsChart", modelMap);
 	}
 }

@@ -73,14 +73,12 @@
 <div id="cpuUsageGraph"></div>
 <h3>System Load</h3>
 <div id="systemLoadGraph"></div>
-<h3>System Load</h3>
-<div id="systemLoadGraph"></div>
 <h3>HTTP Request Rate</h3>
-<div id="httpRequestRateGrpaph"></div>
+<div id="httpRequestRateGraph"></div>
 <h3>Tomcat Busy Threads</h3>
-<div id="tomcatBusyThreadsGrpaph"></div>
+<div id="tomcatBusyThreadsGraph"></div>
 <h3>DB Connections Acquire Rate</h3>
-<div id="dbConnectionAcquireRateGrpaph"></div>
+<div id="dbConnectionAcquireRateGraph"></div>
 <script>
 	new PromConsole.Graph({
 		node: document.querySelector("#cpuUsageGraph"),
@@ -104,7 +102,7 @@
 		yTitle: "System Load"
 	});
 	new PromConsole.Graph({
-		node: document.querySelector("#httpRequestRateGrpaph"),
+		node: document.querySelector("#httpRequestRateGraph"),
 		expr: "rate(tomcat_global_request_seconds_count{name='https-openssl-apr-443'}[1m])",
 		min: "0",
 		name: "HTTP Requests",
@@ -114,7 +112,7 @@
 		yTitle: "Req/s"
 	});
 	new PromConsole.Graph({
-		node: document.querySelector("#tomcatBusyThreadsGrpaph"),
+		node: document.querySelector("#tomcatBusyThreadsGraph"),
 		expr: "tomcat_threads_busy_threads",
 		min: "0",
 		yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
@@ -122,7 +120,7 @@
 		yTitle: "Threads"
 	});
 	new PromConsole.Graph({
-		node: document.querySelector("#dbConnectionAcquireRateGrpaph"),
+		node: document.querySelector("#dbConnectionAcquireRateGraph"),
 		expr: "rate(hikaricp_connections_acquire_seconds_count[1m])",
 		min: "0",
 		name: "DB Conn. Rate",

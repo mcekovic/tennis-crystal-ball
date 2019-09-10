@@ -76,4 +76,17 @@ public final class RankingData {
 	public void setEloDate(LocalDate eloDate) {
 		this.eloDate = eloDate;
 	}
+
+	public RankingData copy() {
+		RankingData copy = new RankingData();
+		copy.rank = rank;
+		copy.rankPoints = rankPoints;
+		copy.eloRating = eloRating;
+		copy.recentEloRating = recentEloRating;
+		copy.surfaceEloRating = surfaceEloRating;
+		copy.inOutEloRating = inOutEloRating;
+		copy.setEloRating = setEloRating;
+		copy.eloDate = eloDate;
+		return copy;
+	}
 }

@@ -7,6 +7,7 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 
 import org.slf4j.*;
+import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -16,8 +17,6 @@ import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
-
-import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.stream.Collectors.*;
@@ -139,7 +138,7 @@ public class ContentService implements HasCache {
 			else
 				break;
 		}
-		return new RecordOfTheDay(record, rows.get(rnd.nextInt(holders)));
+		return holders > 0 ? new RecordOfTheDay(record, rows.get(rnd.nextInt(holders))) : null;
 	}
 
 	public FeaturedContent getFeaturedBlogPost() {
@@ -151,11 +150,16 @@ public class ContentService implements HasCache {
 	}
 
 	private FeaturedContent getFeaturedContent(Type type) {
-		return getFeaturedContent().stream().filter(c -> c.isOfType(type)).findAny().orElse(type.empty());
+		return getAOPProxy().getFeaturedContent().stream().filter(c -> c.isOfType(type)).findAny().orElse(type.empty());
 	}
 
-	@Override public void clearCache() {
+	private ContentService getAOPProxy() {
+		return (ContentService)AopContext.currentProxy();
+	}
+
+	@Override public int clearCache() {
 		playerOfTheWeek.clear();
 		recordOfTheDay.clear();
+		return 2;
 	}
 }

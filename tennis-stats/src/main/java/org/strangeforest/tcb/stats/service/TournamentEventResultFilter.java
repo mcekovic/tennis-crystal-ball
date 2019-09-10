@@ -49,6 +49,10 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 		statsFilter.addParams(params);
 	}
 
+	public String getResult() {
+		return result;
+	}
+
 	public boolean hasResult() {
 		return !isNullOrEmpty(result);
 	}

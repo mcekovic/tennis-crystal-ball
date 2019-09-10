@@ -1,5 +1,7 @@
 import org.apache.tools.ant.filters.*
 
+import groovy.json.*
+
 buildscript {
 	repositories {
 		maven {
@@ -164,15 +166,14 @@ task fullDeployToDigitalOcean {
 
 task productionHealthCheck {
 	doLast {
-		def health = new groovy.json.JsonSlurper().parse(new URL('https://www.ultimatetennisstatistics.com/actuator/health'))
+		def health = new JsonSlurper().parse(new URL('https://www.ultimatetennisstatistics.com/actuator/health'))
 		println "Ultimate Tennis Statistics is ${health.status}"
-		println "Disk usage: ${health.quota.blocks.pctUsed}"
 	}
 }
 
 task productionInfo {
 	doLast {
-		def info = new groovy.json.JsonSlurper().parse(new URL('https://www.ultimatetennisstatistics.com/actuator/info'))
+		def info = new JsonSlurper().parse(new URL('https://www.ultimatetennisstatistics.com/actuator/info'))
 		println "Ultimate Tennis Statistics: ${info.app.version}"
 		println "DB size: ${info.db.size}"
 		println "Visitors: ${info.visitors}"

@@ -4,6 +4,8 @@ import java.util.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
 
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
+
 public class PlayerTournament {
 
 	private final int id;
@@ -13,13 +15,13 @@ public class PlayerTournament {
 	private final Map<String, Integer> speeds;
 	private final int eventCount;
 	private final String seasons;
-	private final String bestResult;
-	private final String lastResult;
+	private final String bestResult, bestLevel;
+	private final String lastResult, lastLevel;
 	private final int lastTournamentEventId;
 	private final WonLost wonLost;
 	private final int titles;
 
-	public PlayerTournament(int id, String name, List<String> levels, List<String> surfaces, Map<String, Integer> speeds, int eventCount, String seasons, String bestResult, String lastResult, int lastTournamentEventId, WonLost wonLost, int titles) {
+	public PlayerTournament(int id, String name, List<String> levels, List<String> surfaces, Map<String, Integer> speeds, int eventCount, String seasons, String bestResult, String bestLevel, String lastResult, String lastLevel, int lastTournamentEventId, WonLost wonLost, int titles) {
 		this.id = id;
 		this.name = name;
 		this.levels = levels;
@@ -28,7 +30,9 @@ public class PlayerTournament {
 		this.eventCount = eventCount;
 		this.seasons = seasons;
 		this.bestResult = bestResult;
+		this.bestLevel = bestLevel;
 		this.lastResult = lastResult;
+		this.lastLevel = lastLevel;
 		this.lastTournamentEventId = lastTournamentEventId;
 		this.wonLost = wonLost;
 		this.titles = titles;
@@ -63,19 +67,19 @@ public class PlayerTournament {
 	}
 
 	public String getBestResult() {
-		return bestResult;
+		return mapResult(bestLevel, bestResult);
 	}
 
-	public EventResult bestResult() {
-		return EventResult.valueOf(bestResult);
+	public int bestResultOrder() {
+		return EventResult.valueOf(bestResult).getOrder();
 	}
 
 	public String getLastResult() {
-		return lastResult;
+		return mapResult(lastLevel, lastResult);
 	}
 
-	public EventResult lastResult() {
-		return EventResult.valueOf(lastResult);
+	public int lastResultOrder() {
+		return EventResult.valueOf(lastResult).getOrder();
 	}
 
 	public int getLastTournamentEventId() {

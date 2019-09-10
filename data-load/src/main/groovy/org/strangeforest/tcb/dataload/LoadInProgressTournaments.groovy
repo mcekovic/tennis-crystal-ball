@@ -40,7 +40,7 @@ static findInProgressEvents() {
 }
 
 static CrawlingResult<EventInfo> findInProgressEvents(String url, CascadingCrawler crawler) {
-	def fullUrl = 'http://www.atptour.com' + url
+	def fullUrl = 'https://www.atptour.com' + url
 	def eventInfos = new TreeSet<>()
 	try {
 		def doc = retriedGetDoc(fullUrl)

@@ -87,6 +87,7 @@
 		$search.before($("#eventsMatches").remove());
 		$search.before($("#eventsStats").remove());
 		$search.after($("#eventsClear").remove());
+		addBootgridCsvDownload("eventsTable", "PlayerEvents.csv", ["tournamentEventId", "^draw$"]);
 		dateRangePicker("eventsFromDate", "eventsToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		setBootgridTitles($eventsTable, [
 			{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
@@ -241,12 +242,12 @@
 	<div class="col-md-2">
 		<div data-toggle="tooltip" data-placement="auto" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#eventsAdvancedFilter">
-				<i class="fa fa-folder-open"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
+				Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
 			</button>
 		</div>
 	</div>
 </div>
-<div id="eventsAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || speed != null ? ' in' : _}">
+<div id="eventsAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || !#strings.isEmpty(speed) ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-4">
 			<div id="eventsDateRange" class="input-group">
@@ -296,7 +297,7 @@
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats
 </button>
 <button id="eventsClear" type="button" class="btn btn-default grid-control margin-right" onclick="clearEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-	<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
+	<i class="fa fa-eraser"></i>
 </button>
 <table id="eventsTable" class="table table-condensed table-hover table-striped">
 	<thead>

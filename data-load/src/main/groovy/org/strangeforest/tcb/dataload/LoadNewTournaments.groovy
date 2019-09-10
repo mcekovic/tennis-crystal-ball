@@ -28,7 +28,7 @@ static loadTournaments(SqlPool sqlPool, Integer season = null) {
 
 
 static findCompletedEvents(int season) {
-	def doc = retriedGetDoc("http://www.atptour.com/en/scores/results-archive?year=$season")
+	def doc = retriedGetDoc("https://www.atptour.com/en/scores/results-archive?year=$season")
 	Set eventInfos = new TreeSet()
 	def DATE_FORMATTER = DateTimeFormatter.ofPattern('yyyy.MM.dd')
 	doc.select('tr.tourney-result').each {result ->

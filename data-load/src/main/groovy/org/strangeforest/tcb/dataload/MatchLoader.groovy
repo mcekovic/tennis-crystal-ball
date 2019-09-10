@@ -190,10 +190,16 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static mapLevel(String level, short drawSize, String name, int season, String extTournamentId) {
+	static mapLevel(String level, Short drawSize, String name, int season, String extTournamentId) {
 		switch (level) {
 			case 'G': return 'G'
-			case 'F': return name.contains("WCT") ? 'A' : 'F'
+			case 'F':
+				if (name.contains("WCT"))
+					return 'A'
+				else if (name.startsWith('Next Gen'))
+					return 'H'
+				else
+					return 'F'
 			case 'M':
 				if (name.startsWith('Masters') && drawSize <= 16)
 					return 'F'
@@ -252,11 +258,12 @@ class MatchLoader extends BaseCSVLoader {
 					(name.equals('Hamburg') && season >= 2009) ||
 					(name.equals('Indianapolis') && season in 1990..2002) ||
 					(name.equals('Kitzbuhel') && season in 1999..2008) ||
-					(name.equals('London') && (season in 1998..2000 || season >= 2015)) ||
+					(name.equals('London') && (season in 1998..2000 || season >= 2018)) ||
 					(name.equals('Memphis') && (season in 1990..1992 || season in 1994..2013)) ||
 					(name.equals('Mexico City') && season == 2000) ||
 					(name.equals('Milan') && season in 1991..1997) ||
 					(name.equals('New Haven') && season in 1990..1998) ||
+					(name.equals('Queen\'s Club') && (season in 2015..2017)) ||
 					(name.equals('Philadelphia') && season in 1990..1998) ||
 					(name.equalsIgnoreCase('Rio de Janeiro') && season >= 2014) ||
 					(name.equals('Rotterdam') && season >= 1999) ||
@@ -306,35 +313,7 @@ class MatchLoader extends BaseCSVLoader {
 	}
 
 	static mapIndoor(String surface, String name, int season) {
-		if (name.toLowerCase().contains('indoor'))
-			return true
-		switch (surface) {
-			case 'Carpet': return true
-			case 'Hard': return (season >= 2017 && (
-					name.startsWith('Montpellier') ||
-					name.startsWith('Sofia') ||
-					name.startsWith('Memphis') ||
-					name.startsWith('Rotterdam') ||
-					name.startsWith('Marseille') ||
-					name.startsWith('Metz') ||
-					name.startsWith('St. Petersburg') ||
-					name.startsWith('Antwerp') ||
-					name.startsWith('Moscow') ||
-					name.startsWith('Stockholm') ||
-					name.startsWith('Basel') ||
-					name.startsWith('Vienna') ||
-					name.startsWith('Paris Masters') ||
-					name.startsWith('Next Gen Finals') ||
-					name.startsWith('Tour Finals')
-				)) ||
-				(season >= 2018 && (
-					name.startsWith('Tokyo')
-				))
-			case 'C': return (season >= 2018 && (
-					name.startsWith('Sao Paulo')
-				))
-			default: return false
-		}
+		BaseATPTourTournamentLoader.mapIndoor(mapSurface(surface), name, season)
 	}
 
 	static mapDrawType(String level, int season) {
@@ -344,7 +323,7 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static short mapDrawSize(short drawSize, String level, int season) {
+	static Short mapDrawSize(Short drawSize, String level, int season) {
 		switch (level) {
 			case 'F': return season >= 1987 ? 8 : drawSize
 			default: return drawSize
@@ -367,7 +346,8 @@ class MatchLoader extends BaseCSVLoader {
 		if (entry) {
 			switch (entry) {
 				case 'S': return 'SE'
-				case 'Alt': return 'AL'
+				case 'Alt':
+				case 'ALT': return 'AL'
 			}
 		}
 		entry

@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -20,6 +21,7 @@ public class PerfStatsChartResource {
 
 	@Autowired private PerformanceChartService perfChartService;
 	@Autowired private StatisticsChartService statsChartService;
+	@Autowired private ResultsChartService resultsChartService;
 
 	@GetMapping("/playerPerformanceTable")
 	public DataTable playerPerformanceTable(
@@ -61,6 +63,29 @@ public class PerfStatsChartResource {
 		else {
 			List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 			return statsChartService.getStatisticsDataTable(players, statsCategory, surface, seasonRange, byAge);
+		}
+	}
+
+	@GetMapping("/playerResultsTable")
+	public DataTable playerRankingsTable(
+		@RequestParam(name = "playerId", required = false) int[] playerId,
+		@RequestParam(name = "players", defaultValue = "") String playersCSV,
+		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
+		@RequestParam(name = "bySeason", defaultValue = F) boolean bySeason,
+		@RequestParam(name = "byAge", defaultValue = F) boolean byAge
+	) {
+		Range<LocalDate> dateRange = DateUtil.toDateRange(fromSeason, toSeason);
+		TournamentEventResultFilter filter = new TournamentEventResultFilter(null, dateRange, level, surface, indoor, null, result, null, null, null);
+		if (playerId != null && playerId.length > 0)
+			return resultsChartService.getResultsDataTable(playerId, filter, bySeason, byAge);
+		else {
+			List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+			return resultsChartService.getResultsDataTable(inputPlayers, filter, bySeason, byAge);
 		}
 	}
 }

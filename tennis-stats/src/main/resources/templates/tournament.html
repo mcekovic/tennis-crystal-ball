@@ -49,6 +49,7 @@
 			var $tournamentHistoryTableHeader = $("#tournamentHistoryTable-header");
 			$tournamentHistoryTableHeader.find("div.search").remove();
 			setBootgridTitle($tournamentHistoryTableHeader, $("#tournamentHistoryTable-title"));
+			addBootgridCsvDownload("tournamentHistoryTable", "TournamentEvents.csv", ["^id$", "tournamentId", "tournamentExtId", "winner_id", "runnerUp_id", "country_code", "^draw$"]);
 			setBootgridTitles($tournamentHistoryTable, [
 				{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
 				{id: "playerCount", title: "Players"},

@@ -3,7 +3,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Tournament Event Forecasts</title>
 	<template>
-	<meta name="description" content="Accurate tennis tournament forecasts based on Tennis Crystal Ball machine learning match prediction algorithm"/>
+	<meta name="description" content="Accurate tennis match predictions and tournament forecasts based on Tennis Crystal Ball machine learning match prediction algorithm"/>
 	<script type="text/javascript">
 		$(function() {
 			var $inProgressEventsTable = $("#inProgressEventsTable");
@@ -21,16 +21,26 @@
 					cache: false
 				},
 				url: "/inProgressEventsTable",
-				rowCount: [-1],
-				navigation: 1,
+				requestHandler: function(request) {
+					request.completed = $("#completed").prop("checked");
+					return request;
+				},
+				rowCount: [20, 50, 100, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
 				formatters: {
 					"date": dateFormatter,
 					"event": function(column, row) {
-						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-" + row.level + "' title='Show full forecast'>" + row.name + "</a>";
+						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + (row.completed ? "&tab=results" : "") + "' class='label label-" + row.level + "' title='Show full forecast'>" + row.name + "</a>";
 					},
 					"surface": surfaceFormatter,
 					"participation": participationFormatter,
 					"speed": speedFormatter,
+					"completed": function(column, row) {
+						return "<input type='checkbox' disabled='disabled'" + (row.completed ? " checked='checked'" : "") + "/>"
+					},
 					"favorite1":  function(column, row) {
 						return formatFavorite(column, row.favorite1);
 					},
@@ -38,7 +48,7 @@
 						return formatFavorite(column, row.favorite2);
 					},
 					"forecast": function(column, row) {
-						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><i class='fa fa-eye'></i>&nbsp;&nbsp;Forecast</a>";
+						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + (row.completed ? "&tab=results" : "") +"' class='label label-primary label-btn' title='Show full forecast'><i class='fa fa-eye'></i>&nbsp;&nbsp;Forecast</a>";
 					}
 				},
 				labels: {
@@ -50,16 +60,21 @@
 				}
 			});
 			var $inProgressEventsTableHeader = $("#inProgressEventsTable-header");
-			$inProgressEventsTableHeader.find("div.search").remove();
+			$inProgressEventsTableHeader.find("div.search").before($("#completedDiv").remove());
 			setBootgridTitle($inProgressEventsTableHeader, $("#inProgressEventsTable-title"));
+			addBootgridCsvDownload("inProgressEventsTable", "InProgressEvents.csv", ["^id$", "tournamentId", "playerId", "country_code", "_rank$"]);
 			setBootgridTitles($inProgressEventsTable, [
 				{id: "playerCount", title: "Players"},
 				{id: "participation", title: "[[#{event.participation.title}]]"},
 				{id: "strength", title: "[[#{event.strength.title}]]"},
-				{id: "averageEloRating", title: "[[#{event.averageEloRating.title}]]"}
+				{id: "averageEloRating", title: "[[#{event.averageEloRating.title}]]"},
+				{id: "completed", title: "Completed"}
 			]);
 			bindPopovers();
 		});
+		function completedChanged() {
+			$("#inProgressEventsTable").bootgrid("reload");
+		}
 	</script>
 	</template>
 </head>
@@ -70,6 +85,13 @@
 		<i class="fa fa-eye"></i> Tournament Event Forecasts
 		<footer style="margin-top: -10px"><i class="text-muted" style="font-size: x-small">Powered by <th:block th:include="fragments/promotion :: tcb"/></i></footer>
 	</h3>
+	<div id="completedDiv" class="btn-group margin-right">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Include forecasts for completed tournament events">
+				<input id="completed" type="checkbox" onchange="completedChanged()"/> Completed
+			</label>
+		</div>
+	</div>
 	<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
@@ -82,6 +104,7 @@
 			<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
 			<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>
 			<th data-column-id="averageEloRating" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Elo</th>
+			<th data-column-id="completed" data-formatter="completed" data-width="50" data-align="center" data-header-align="center" data-visible="false">Cm.</th>
 			<th data-column-id="favorite1" data-formatter="favorite1" data-sortable="false" data-width="220">1-st Favorite</th>
 			<th data-column-id="favorite2" data-formatter="favorite2" data-sortable="false" data-width="220">2-nd Favorite</th>
 			<th data-column-id="forecast" data-formatter="forecast" data-sortable="false" data-width="95">Forecast</th>

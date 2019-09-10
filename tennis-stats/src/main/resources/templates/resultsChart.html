@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="players" type="java.lang.String"*/-->
+<!--/*@thymesVar id="result" type="java.lang.String"*/-->
+<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="bySeason" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="byAge" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
+	<title>Titles and Results Chart</title>
+	<template>
+	<meta name="description" content="Compare tennis titles and tournament results via title and result charts"/>
+	<script th:src="@{/js/tennis-chart.js}"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+		google.charts.load("current", {packages: ["corechart"]});
+		[# th:if="${players}"]google.charts.setOnLoadCallback(drawChart);[/]
+		var urlParams, chartData, bySeasonNotByAge, pointCount, legendPosition;
+		function drawChart() {
+			var players = $.trim($("#players").val());
+			if (getPlayerCount(players) >= 1)
+				doDrawChart();
+			else
+				$("#resultChart").html("<br/><div class='row'><div class='col-md-11'><div class='alert alert-warning'>No player selected!</div></div></div>");
+		}
+		function doDrawChart() {
+			bySeasonNotByAge = $("#bySeason").prop("checked") && !$("#byAge").prop("checked");
+			urlParams = resultsChartUrlParams();
+			if (urlParams == null) return;
+			var $loading = $("#loading");
+			$loading.show();
+			$.ajax("/playerResultsTable" + urlParams).done(function(json) {
+				chartData = new google.visualization.DataTable(JSON.stringify(json));
+				pointCount = json.rows.length;
+				legendPosition = json.cols.length < 5 ? "bottom" : "right";
+				var width = $("#resultChartSize").slider("value");
+				showResultsChart(chartData, "resultChart", width, bySeasonNotByAge, pointCount, legendPosition);
+			}).always(function() {
+				$loading.hide().css("position", "absolute").css("z-index", "100");
+			});
+		}
+		function resultsChartUrlParams() {
+			var players = $("#players").val();
+			var params = "?players=" + players;
+			var result = $("#result").val();
+			if (result) params += "&result=" + encodeURIComponent(result);
+			var level = $("#level").val();
+			if (level) params += "&level=" + level;
+			var surface = $("#surface").val();
+			if (surface) params += "&surface=" + surface;
+			var indoor = $("#indoor").val();
+			if (indoor) params += "&indoor=" + indoor;
+			var tournamentId = $("#tournament").val();
+			if (tournamentId) params += "&tournamentId=" + tournamentId;
+			var fromSeason = $("#fromSeason").val();
+			if (fromSeason) params += "&fromSeason=" + fromSeason;
+			var toSeason = $("#toSeason").val();
+			if (toSeason) params += "&toSeason=" + toSeason;
+			var byAge = $("#byAge").prop("checked");
+			if (byAge) params += "&byAge=" + byAge;
+			var bySeason = $("#bySeason").prop("checked");
+			if (bySeason) params += "&bySeason=" + bySeason;
+			return params;
+		}
+		function resultsChartPermalink() {
+			var url = "/resultsChart";
+			if (urlParams) url += urlParams;
+			window.location.href = url;
+		}
+		$(function() {
+			autocompletePlayers("players", drawChart);
+			$("#resultChartSize").slider({
+				min: 500,
+				max: 1500,
+				value: defaultChartSize(detectDevice()),
+				step: 50,
+				slide: function(event, ui) {
+					showResultsChart(chartData, "resultChart", ui.value, bySeasonNotByAge, pointCount, legendPosition);
+				}
+			});
+			$("[data-toggle='tooltip']").tooltip();
+		});
+	</script>
+	<style type="text/css">
+		.checkbox {
+			margin-top: 7px;
+			margin-bottom: 7px;
+		}
+	</style>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
+	<h3><i class="fa fa-trophy"></i> Titles and Results Chart <a href="javascript:resultsChartPermalink()" title="Permalink to this chart"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
+	<div class="row">
+		<div class="col-md-11">
+			<div class="input-group">
+				<label for="players" class="input-group-addon">Players:</label>
+				<input id="players" type="text" class="ui-widget search-field form-control" th:value="${players}" placeholder="Search Players"/>
+				<div class="input-group-btn" th:include="fragments/playerQuickPicks :: quickPicks"></div>
+			</div>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 5px">
+		<div class="col-md-2">
+			<select id="result" class="form-control" data-toggle="tooltip" data-placement="top" title="Select tournament result type">
+				<option value="W" class="bg-result-W" th:selected="${result == 'W'}">Titles</option>
+				<option value="F+" class="bg-result-F" th:selected="${result == 'F+'}">Finals</option>
+				<option value="SF+" class="bg-result-SF" th:selected="${result == 'SF+'}">Semi-Finals</option>
+				<option value="QF+" class="bg-result-QF" th:selected="${result == 'QF+'}">Quarter-Finals</option>
+				<option value="R16+" class="bg-result-R16" th:selected="${result == 'R16+'}">Rounds of 16</option>
+				<option value="">Entries</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="level" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="indoor" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false" th:selected="${indoor == false}">Outdoor</option>
+				<option value="true" th:selected="${indoor}">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<div id="resultChartSize" style="margin-top: 6px"></div>
+			<div style="text-align: center; opacity: 0.5; height: 15px">Chart size</div>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 5px">
+		<div class="col-md-4">
+			<div id="seasonRange" class="input-group">
+				<label for="fromSeason" class="input-group-addon">From:</label>
+				<select id="fromSeason" class="form-control">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}" th:selected="${season == fromSeason}">2005</option>
+				</select>
+				<label for="toSeason" class="input-group-addon">To:</label>
+				<select id="toSeason" class="form-control">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}" th:selected="${season == toSeason}">2005</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div id="bySeasonDiv" class="checkbox">
+				<label data-toggle="tooltip" data-placement="top" title="Show chart by season">
+					<input id="bySeason" type="checkbox" onchange="onTimeSpanChange()" th:checked="${bySeason}"/> By season
+				</label>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div id="byAgeDiv" class="checkbox">
+				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
+					<input id="byAge" type="checkbox" th:checked="${byAge}"/> By age
+				</label>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
+				<i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Draw Chart
+			</a>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 5px">
+		<div class="row col-md-11 text-center">
+			<div id="loading" style="width: 100%; display: none">
+				<br/>
+				<img src="/images/loading-chart.gif" width="128" height="128" alt="Loading chart..."/>
+				<br/>
+			</div>
+		</div>
+	</div>
+	<div id="resultChart"></div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

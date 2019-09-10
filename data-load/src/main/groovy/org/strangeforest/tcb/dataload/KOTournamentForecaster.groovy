@@ -263,7 +263,7 @@ class KOTournamentForecaster {
 			if (opponent.weight > 0.0d) {
 				if (opponent.playerId) {
 					def opponentBaseProbability = findProbability(opponent.playerId, result, type)
-					def opponentMatchProbability = predictor.getWinProbability(playerId, opponent.playerId, Round.valueOf(result.name()))
+					def opponentMatchProbability = predictor.getWinProbability(playerId, opponent.playerId, Round.valueOf(result.name()), type == ProbabilityType.DEFAULT)
 					opponentProbability = opponentBaseProbability * opponentMatchProbability
 				}
 				else // Bye

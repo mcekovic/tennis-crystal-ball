@@ -7,6 +7,7 @@ import java.util.regex.*;
 import javax.annotation.*;
 
 import org.postgresql.core.*;
+import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.metrics.cache.*;
 import org.springframework.cache.*;
@@ -47,6 +48,7 @@ public class DataService {
 		if (cacheMetricsRegistrar != null) {
 			cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.Players", matchPredictionService.getPlayersCache()));
 			cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersRankings", matchPredictionService.getPlayersRankingsCache()));
+			cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.InProgressPlayersRankings", matchPredictionService.getInProgressPlayersRankingsCache()));
 			cacheMetricsRegistrar.bindCacheToRegistry(new CaffeineCache("Prediction.PlayersMatches", matchPredictionService.getPlayersMatchesCache()));
 		}
 	}
@@ -91,13 +93,17 @@ public class DataService {
 	}
 
 	public Integer getFirstSeason() {
-		List<Integer> seasons = getSeasons();
+		List<Integer> seasons = getAOPProxy().getSeasons();
 		return !seasons.isEmpty() ? seasons.get(seasons.size() - 1) : null;
 	}
 
 	public Integer getLastSeason() {
-		List<Integer> seasons = getSeasons();
+		List<Integer> seasons = getAOPProxy().getSeasons();
 		return !seasons.isEmpty() ? seasons.get(0) : null;
+	}
+
+	private DataService getAOPProxy() {
+		return (DataService)AopContext.currentProxy();
 	}
 
 	public int clearCaches(String nameRegEx) {
@@ -109,10 +115,8 @@ public class DataService {
 				cacheCount++;
 			}
 		}
-		for (HasCache hasCache : appContext.getBeansOfType(HasCache.class).values()) {
-			hasCache.clearCache();
-			cacheCount++;
-		}
+		for (HasCache hasCache : appContext.getBeansOfType(HasCache.class).values())
+			cacheCount += hasCache.clearCache();
 		return cacheCount;
 	}
 

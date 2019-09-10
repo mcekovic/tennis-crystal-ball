@@ -16,6 +16,8 @@ import eu.bitwalker.useragentutils.*;
 public abstract class BaseController {
 
 	@Autowired private Environment environment;
+	private String googleAnalyticsPropertyId;
+	private String googleAdSenseClientId;
 	private boolean digitalOcean;
 
 	public static final Map<String, String> VERSIONS = ImmutableMap.of(
@@ -29,6 +31,8 @@ public abstract class BaseController {
 	@PostConstruct
 	public void init() {
 		digitalOcean = environment.acceptsProfiles(Profiles.of("digitalocean"));
+		googleAnalyticsPropertyId = environment.getProperty("google.analytics.property-id");
+		googleAdSenseClientId = environment.getProperty("google.adsense.client-id");
 	}
 
 	@ModelAttribute("versions")
@@ -39,6 +43,16 @@ public abstract class BaseController {
 	@ModelAttribute("digitalOcean")
 	public boolean isDigitalOcean() {
 		return digitalOcean;
+	}
+
+	@ModelAttribute("googleAnalyticsPropertyId")
+	public String getGoogleAnalyticsPropertyId() {
+		return googleAnalyticsPropertyId;
+	}
+
+	@ModelAttribute("googleAdSenseClientId")
+	public String getGoogleAdSenseClientId() {
+		return googleAdSenseClientId;
 	}
 
 	protected static void rejectRobots(HttpServletRequest httpRequest) {

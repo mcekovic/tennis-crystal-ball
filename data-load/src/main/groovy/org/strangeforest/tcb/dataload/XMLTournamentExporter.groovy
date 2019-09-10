@@ -58,7 +58,7 @@ class XMLTournamentExporter {
 		xml.omitNullAttributes = true
 		xml.omitEmptyAttributes = true
 		xml.mkp.xmlDeclaration(version: '1.0', encoding: 'UTF-8')
-		xml.'tournament-data'(xmlns: 'http://www.strangeforest.org/schema/tcb') {
+		xml.'tournament-data'(xmlns: 'https://www.strangeforest.org/schema/tcb') {
 			def date = formatDate(event.date)
 			tournament(season: season, 'tournament-name': event.tournament_name, name: event.name, date: date, 'ext-id': extId) {
 				level(event.level)

@@ -55,6 +55,7 @@
 		var $search = $rankingsTableHeader.find("div.search");
 		$search.before($("#rankTypeDiv").remove());
 		$search.before($("#rankDateDiv").remove());
+		addBootgridCsvDownload("rankingsTable", "Rankings.csv", ["playerId", "country_code"]);
 		rankTypeChanged();
 		$("[data-toggle='tooltip']").tooltip();
 		bindPopovers();

@@ -26,7 +26,7 @@ class WikipediaPlayerDataLoader {
 
 	WikipediaPlayerDataLoader(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
-		playerService = new PlayerService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
+		playerService = new PlayerService(new NamedParameterJdbcTemplate(SqlPool.dataSource()), false)
 	}
 
 	def updatePlayerData() {
