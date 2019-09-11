@@ -1,10 +1,11 @@
-# Ultimate Tennis Statistics
+# Ultimate Tennis Statistics and Tennis Crystal Ball
 
 [![Build Status](https://travis-ci.org/mcekovic/tennis-crystal-ball.svg?branch=master)](https://travis-ci.org/mcekovic/tennis-crystal-ball)
 [![Web Site](https://img.shields.io/website/https/www.ultimatetennisstatistics.com.svg)](https://www.ultimatetennisstatistics.com)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
 
-Ultimate Tennis Statistics and Tennis Crystal Ball Big Data Analysis with nice web GUI.
+Ultimate Tennis Statistics is a Tennis Big Data Analysis tool with a nice web GUI.
+Tennis Crystal Ball is a set of Match Prediction and Tournament Forecasts algorithms powered by AI and machine learning.
 
 ## Features
 
@@ -32,12 +33,6 @@ Ultimate Tennis Statistics and Tennis Crystal Ball Big Data Analysis with nice w
 - Tournament Forecasts - Tournament Event Forecasts for in-progress tournaments driven by Neural Network Match Prediction Algorithm
 - Records Book - Various match, tournament result and ranking records, famous and infamous (the best player that never...)
 - Live Scores - Live Scores via [Livescore.in](https://www.livescore.in)
-
-## Roadmap
-
-- [In-progress Game, Set and Match Forecasts](https://github.com/mcekovic/tennis-crystal-ball/issues/154) - In-progress game, set and match forecast with probabilities for in-progress matches
-- [Glicko Ratings](https://github.com/mcekovic/tennis-crystal-ball/issues/77) - Improve Elo Rating computation with [Glicko 2](https://en.wikipedia.org/wiki/Glicko_rating_system) variant, to better reflect periods when player is out of competition
-- [Round Robin Tournament Forecast](https://github.com/mcekovic/tennis-crystal-ball/issues/97) - Round Robin Tournament forecasting for Tour Finals, in addition to ordinary knock-out tournament forecasting
 
 ### Technology
 
@@ -113,6 +108,6 @@ Tennis Crystal Ball and Ultimate Tennis Statistics source code is licensed under
 
 [![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-'GOAT' Formula, customizations of Elo Ratings for tennis, Match Prediction, Tournament Forecast and other algorithms by Ultimate Tennis Statistics are licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+'GOAT' Formula, customizations of Elo Ratings for tennis, Match Prediction, Tournament Forecasts and other algorithms by Ultimate Tennis Statistics are licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 In short: Attribution is required. Non-commercial use only.
