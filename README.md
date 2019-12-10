@@ -1,6 +1,7 @@
 # Ultimate Tennis Statistics and Tennis Crystal Ball
 
 [![Build Status](https://travis-ci.org/mcekovic/tennis-crystal-ball.svg?branch=master)](https://travis-ci.org/mcekovic/tennis-crystal-ball)
+[![Build Status](https://github.com/mcekovic/tennis-crystal-ball/workflows/build/badge.svg)](https://github.com/mcekovic/tennis-crystal-ball/actions?query=workflow%3Abuild)
 [![Web Site](https://img.shields.io/website/https/www.ultimatetennisstatistics.com.svg)](https://www.ultimatetennisstatistics.com)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mcekovic_tennis-crystal-ball&metric=alert_status)](https://sonarcloud.io/dashboard?id=mcekovic_tennis-crystal-ball)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
