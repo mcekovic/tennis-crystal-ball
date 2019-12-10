@@ -7,8 +7,8 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
 
 ![Logo](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/tennis-stats/src/main/resources/static/images/uts-logo.png)
-Ultimate Tennis Statistics is a Tennis Big Data Analysis tool with a nice web GUI.
-Tennis Crystal Ball is a set of Match Prediction and Tournament Forecasts algorithms powered by AI and machine learning.
+**Ultimate Tennis Statistics** is a Tennis Big Data Analysis tool with a nice web GUI.
+**Tennis Crystal Ball** is a set of Match Prediction and Tournament Forecasts algorithms powered by AI and machine learning.
 
 ## Features
 
