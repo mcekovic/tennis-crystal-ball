@@ -5,6 +5,7 @@
 [![Web Site](https://img.shields.io/website/https/www.ultimatetennisstatistics.com.svg)](https://www.ultimatetennisstatistics.com)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mcekovic_tennis-crystal-ball&metric=alert_status)](https://sonarcloud.io/dashboard?id=mcekovic_tennis-crystal-ball)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Top Language](https://img.shields.io/github/languages/top/mcekovic/tennis-crystal-ball)](https://github.com/mcekovic/tennis-crystal-ball/search?l=java)
 
 ![Logo](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/tennis-stats/src/main/resources/static/images/uts-logo.png)
 **Ultimate Tennis Statistics** is a Tennis Big Data Analysis tool with a nice web GUI.
