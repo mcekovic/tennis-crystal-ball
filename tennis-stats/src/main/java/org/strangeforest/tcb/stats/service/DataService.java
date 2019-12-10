@@ -7,7 +7,6 @@ import java.util.regex.*;
 import javax.annotation.*;
 
 import org.postgresql.core.*;
-import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.metrics.cache.*;
 import org.springframework.cache.*;
@@ -23,6 +22,7 @@ import static java.lang.String.*;
 @Service
 public class DataService {
 
+	@Autowired private DataService self;
 	@Autowired private ApplicationContext appContext;
 	@Autowired private JdbcTemplate jdbcTemplate;
 	@Autowired private CacheManager cacheManager;
@@ -93,17 +93,13 @@ public class DataService {
 	}
 
 	public Integer getFirstSeason() {
-		List<Integer> seasons = getAOPProxy().getSeasons();
+		List<Integer> seasons = self.getSeasons();
 		return !seasons.isEmpty() ? seasons.get(seasons.size() - 1) : null;
 	}
 
 	public Integer getLastSeason() {
-		List<Integer> seasons = getAOPProxy().getSeasons();
+		List<Integer> seasons = self.getSeasons();
 		return !seasons.isEmpty() ? seasons.get(0) : null;
-	}
-
-	private DataService getAOPProxy() {
-		return (DataService)AopContext.currentProxy();
 	}
 
 	public int clearCaches(String nameRegEx) {

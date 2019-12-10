@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.YoungestOldestTournamentResultCategory.ResultType.*;
 
@@ -76,7 +77,7 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 			"WHERE p.dob IS NOT NULL AND r." + resultType.condition + prefix(condition, " AND e."),
 			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", type.order, type.order + ", r.date",
 			TournamentEventAgeRecordDetail.class, (playerId, recordDetail) -> format("/tournamentEvent?tournamentEventId=%1$d", recordDetail.getTournamentEventId()),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", AGE_WIDTH, "left", "Age"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")

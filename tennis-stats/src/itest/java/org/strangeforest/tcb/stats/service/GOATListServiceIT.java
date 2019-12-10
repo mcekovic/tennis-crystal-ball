@@ -8,8 +8,6 @@ import org.strangeforest.tcb.stats.boot.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
-import com.google.common.collect.*;
-
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -75,7 +73,7 @@ class GOATListServiceIT {
 
 	@Test
 	void goatListGrandSlamTournamentX2() {
-		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, null, new PlayerListFilter(""), new GOATListConfig(true, false, 1, 1, 1, ImmutableMap.of("G", 2), emptyMap(), 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "goat_points", 20, 1);
+		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, null, new PlayerListFilter(""), new GOATListConfig(true, false, 1, 1, 1, Map.of("G", 2), emptyMap(), 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "goat_points", 20, 1);
 
 		assertThat(goatList.getRowCount()).isEqualTo(20);
 		assertThat(goatList.getTotal()).isGreaterThanOrEqualTo(500);
@@ -91,7 +89,7 @@ class GOATListServiceIT {
 
 	@Test
 	void goatListWeeksGSAndNo1FocusExtrapolate() {
-		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, null, new PlayerListFilter(""), new GOATListConfig(true, true, 1, 1, 1, ImmutableMap.of("G", 2), ImmutableMap.of("W", 2), 1, 1, 4, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1), "goat_points", 20, 1);
+		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, null, new PlayerListFilter(""), new GOATListConfig(true, true, 1, 1, 1, Map.of("G", 2), Map.of("W", 2), 1, 1, 4, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1), "goat_points", 20, 1);
 
 		assertThat(goatList.getRowCount()).isEqualTo(20);
 		assertThat(goatList.getTotal()).isGreaterThanOrEqualTo(500);

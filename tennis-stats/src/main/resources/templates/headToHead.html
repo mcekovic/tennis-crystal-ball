@@ -8,6 +8,7 @@
 <!--/*@thymesVar id="season2" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
@@ -80,7 +81,7 @@
 				[/]
 				[# th:case="'hypotheticalMatchup'"]
 				var $pill = $("#hypotheticalMatchupPill");
-				var url = $pill.data("url") + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('round', round)})];
+				var url = $pill.data("url") + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('round', round)})] + [(${params.param('tournamentId', tournamentId)})] + [(${params.param('date', date)})];
 				loadTab($pill, url);
 				[/]
 				[# th:case="*"]

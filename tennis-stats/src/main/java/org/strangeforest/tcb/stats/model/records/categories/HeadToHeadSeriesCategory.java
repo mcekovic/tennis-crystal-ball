@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadSeriesCategory.MostLeast.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadSeriesCategory.PctRecordType.*;
@@ -108,7 +109,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"WHERE " + HTH_TOTAL + " >= " + minSeries,
 			"r.value", mostLeast.order, mostLeast.order,
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3%2$s", playerId, type.urlParam),
-			asList(new RecordColumn("value", null, "valueUrl", H2H_WIDTH, "right", "H2H Series " + type.name)),
+			List.of(new RecordColumn("value", null, "valueUrl", H2H_WIDTH, "right", "H2H Series " + type.name)),
 			notes(minSeries)
 		);
 	}
@@ -123,7 +124,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"WHERE " + HTH_TOTAL + " >= " + minSeries,
 			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3", playerId),
-			asList(
+			List.of(
 				new RecordColumn("value",  null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				type.value1RecordColumn,
 				new RecordColumn("draw", "numeric", null, H2H_SMALL_WIDTH, "right", "Draw"),
@@ -145,7 +146,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"WHERE " + HTH_TOTAL + " >= " + minSeries,
 			"r.value", mostLeast.order, mostLeast.order,
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3%2$s%3$s", playerId, type.urlParam, urlParam),
-			asList(new RecordColumn("value", null, "valueUrl", H2H_WIDTH, "right", "H2H Series " + type.name)),
+			List.of(new RecordColumn("value", null, "valueUrl", H2H_WIDTH, "right", "H2H Series " + type.name)),
          notes(minSeries)
 		);
 	}
@@ -162,7 +163,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"WHERE best_rank " + domain.condition + " AND " + HTH_TOTAL + " >= " + minSeries,
 			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3%2$s", playerId, urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				type.value1RecordColumn,
 				new RecordColumn("draw", "numeric", null, H2H_SMALL_WIDTH, "right", "Draw"),

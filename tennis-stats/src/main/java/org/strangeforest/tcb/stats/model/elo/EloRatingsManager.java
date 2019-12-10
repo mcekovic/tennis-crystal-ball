@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.model.elo;
 import java.sql.*;
 import java.time.*;
 import java.time.temporal.*;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.*;
 import java.util.concurrent.*;
@@ -17,12 +16,11 @@ import org.springframework.transaction.support.*;
 import org.strangeforest.tcb.util.*;
 
 import com.google.common.base.*;
-import com.google.common.collect.*;
 
 import static java.lang.Math.*;
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static java.util.Comparator.*;
+import static java.util.Map.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.elo.EloCalculator.*;
 import static org.strangeforest.tcb.stats.model.elo.StartEloRatings.*;
@@ -46,18 +44,18 @@ public class EloRatingsManager {
 	private ProgressTicker matchTicker, saveTicker;
 
 	// Factors and tennis constants
-	private static final List<String> RATING_TYPES = asList("E", "R", "H", "C", "G", "P", "O", "I", "s", "g", "sg", "rg", "tb");
+	private static final List<String> RATING_TYPES = List.of("E", "R", "H", "C", "G", "P", "O", "I", "s", "g", "sg", "rg", "tb");
 	private static final LocalDate CARPET_END = LocalDate.of(2008, 1, 1);
 	private static final LocalDate STATS_START = LocalDate.of(1991, 1, 1);
 	private static final LocalDate TIE_BREAK_START = LocalDate.of(1970, 1, 1);
 	private static final LocalDate PREDICTION_START_DATE = LocalDate.of(2005, 1, 1);
 	private static final int DEFAULT_MIN_MATCHES = 10;
-	private static final Map<String, Integer> MIN_MATCHES = ImmutableMap.<String, Integer>builder()
-		.put("R", 5).put("H", 5).put("C", 5).put("G", 5).put("P", 5).put("O", 5).put("I", 5)
-		.put("s", 5).put("g", 2).put("sg", 3).put("rg", 3)
-	.build();
+	private static final Map<String, Integer> MIN_MATCHES = Map.ofEntries(
+		entry("R", 5), entry("H", 5), entry("C", 5), entry("G", 5), entry("P", 5), entry("O", 5), entry("I", 5),
+		entry("s", 5), entry("g", 2), entry("sg", 3), entry("rg", 3)
+	);
 	private static final int DEFAULT_MIN_MATCHES_PERIOD = 365;
-	private static final Map<String, Integer> MIN_MATCHES_PERIOD = ImmutableMap.<String, Integer>builder().put("R", 122).build();
+	private static final Map<String, Integer> MIN_MATCHES_PERIOD = Map.of("R", 122);
 	private static final int MIN_MATCHES_IN_PERIOD = 3;
 
 	// Player counts
@@ -165,6 +163,7 @@ public class EloRatingsManager {
 						processMatch(match, "rg");
 					}
 					processMatch(match, "tb");
+//					processMatch(match, "X");
 					lastDateRef.set(match.endDate);
 					matchTicker.tick();
 				});
@@ -182,7 +181,7 @@ public class EloRatingsManager {
 
 		if (save && fullSave && !dates.isEmpty()) {
 			System.out.printf("Deleting remaining dates: %1$d\n", dates.size());
-			for (LocalDate date : new ArrayList<>(dates)) {
+			for (LocalDate date : List.copyOf(dates)) {
 				deleteForDate(date);
 				System.out.println(date);
 			}
@@ -600,9 +599,10 @@ public class EloRatingsManager {
 
 	public static final class PredictionResult {
 
+		private int matches;
 		private int total;
 		private int predicted;
-		private double p;
+		private double prediction;
 		private double pDelta2;
 		private double pLog;
 
@@ -676,30 +676,14 @@ public class EloRatingsManager {
 				return;
 			double totalScore = winnerScore + loserScore;
 			if (totalScore > 0.0) {
+				matches++;
+				total += totalScore;
 				double winnerProbability = eloWinProbability(winnerRating, loserRating);
 				double loserProbability = 1.0 - winnerProbability;
-				double probability;
-				if (winnerScore > loserScore) {
-					++total;
-					if (winnerProbability > 0.5) {
-						++predicted;
-						probability = winnerProbability;
-					}
-					else
-						probability = loserProbability;
-				}
-				else {
-					++total;
-					if (winnerProbability < 0.5) {
-						++predicted;
-						probability = loserProbability;
-					}
-					else
-						probability = winnerProbability;
-				}
-				p += probability;
-				pLog += log(winnerProbability);
-				double pDelta = winnerScore / totalScore - winnerProbability;
+				predicted += winnerProbability > 0.5 ? winnerScore : loserScore;
+				prediction += (winnerProbability > 0.5 ? winnerProbability : loserProbability) * totalScore;
+				pLog += log(winnerScore > loserScore ? winnerProbability : loserProbability) * totalScore;
+				double pDelta = winnerScore - winnerProbability * totalScore;
 				pDelta2 += pDelta * pDelta;
 			}
 		}
@@ -707,7 +691,7 @@ public class EloRatingsManager {
 		private PredictionResult add(PredictionResult result) {
 			total += result.total;
 			predicted += result.predicted;
-			p += result.p;
+			prediction += result.prediction;
 			pDelta2 += result.pDelta2;
 			pLog += result.pLog;
 			return this;
@@ -718,11 +702,11 @@ public class EloRatingsManager {
 			brier = pDelta2 / total;
 			logLoss = -pLog / total;
 			score = predicted / (total * logLoss); // = Prediction Rate / Log-Loss
-			calibration = p / predicted;
+			calibration = prediction / predicted;
 		}
 
 		@Override public String toString() {
-			return format("Rate=%1$.3f%%, Brier=%2$.5f, LogLoss=%3$.5f, Score=%4$.5f, Calibration=%5$.5f, Matches=%6$d", predictionRate, brier, logLoss, score, calibration, total);
+			return format("Rate=%1$.3f%%, Brier=%2$.5f, LogLoss=%3$.5f, Score=%4$.5f, Calibration=%5$.5f, Items=%6$d, Matches=%7$d", predictionRate, brier, logLoss, score, calibration, total, matches);
 		}
 	}
 }

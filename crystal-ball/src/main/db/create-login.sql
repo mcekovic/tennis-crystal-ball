@@ -8,3 +8,7 @@ CREATE USER tcb WITH
 	CONNECTION LIMIT -1
 	PASSWORD 'tcb';
 COMMENT ON ROLE tcb IS 'Tennis Crystal Ball';
+
+CREATE SCHEMA tcb AUTHORIZATION tcb;
+
+COMMENT ON SCHEMA tcb IS 'Tennis Crystal Ball';

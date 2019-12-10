@@ -21,6 +21,7 @@ import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.controller.RankingsController.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
@@ -328,8 +329,9 @@ public class PlayerProfileController extends PageController {
 		}
 		modelMap.addAttribute("bySeason", bySeason);
 		modelMap.addAttribute("highlights", rankingHighlights);
-		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("rankCategories", RankCategory.values());
+		modelMap.addAttribute("referenceRanks", REFERENCE_RANKS);
+		modelMap.addAttribute("seasons", seasons);
 		return new ModelAndView("playerRankings", modelMap);
 	}
 
@@ -399,6 +401,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
+		modelMap.addAttribute("chartTypes", PerformanceChartService.PerformanceChartType.values());
 		return new ModelAndView("playerPerformanceChart", modelMap);
 	}
 

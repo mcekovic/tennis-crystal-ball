@@ -10,13 +10,11 @@ import org.springframework.stereotype.*;
 
 import io.micrometer.core.instrument.*;
 
-import static java.util.Arrays.*;
-
 @Component
 @Profile("!dev")
 public class SystemMemoryMetrics {
 
-	private static final List<SystemMemoryGauge> SYSTEM_MEMORY_GAUGES = asList(
+	private static final List<SystemMemoryGauge> SYSTEM_MEMORY_GAUGES = List.of(
 		new SystemMemoryGauge("physical", "total", "getTotalPhysicalMemorySize"),
 		new SystemMemoryGauge("physical", "free", "getFreePhysicalMemorySize"),
 		new SystemMemoryGauge("virtual", "committed", "getCommittedVirtualMemorySize"),
@@ -32,7 +30,7 @@ public class SystemMemoryMetrics {
 
 	public SystemMemoryMetrics(MeterRegistry meterRegistry) {
 		for (SystemMemoryGauge gauge : SYSTEM_MEMORY_GAUGES)
-			meterRegistry.gauge(SYSTEM_MEMORY, asList(Tag.of(TYPE, gauge.type), Tag.of(ID, gauge.id)), gauge, SystemMemoryGauge::getMemoryValue);
+			meterRegistry.gauge(SYSTEM_MEMORY, List.of(Tag.of(TYPE, gauge.type), Tag.of(ID, gauge.id)), gauge, SystemMemoryGauge::getMemoryValue);
 	}
 
 	private static class SystemMemoryGauge {

@@ -1,6 +1,5 @@
 package org.strangeforest.tcb.stats.model.core;
 
-import java.util.ArrayList;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -10,7 +9,6 @@ import java.util.stream.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.util.*;
 
-import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.stats.model.core.StatsCategory.Item.*;
@@ -584,7 +582,7 @@ public final class StatsCategory {
 			this.id = id;
 			this.name = name;
 			this.def = def;
-			this.subGroups = asList(subGroups);
+			this.subGroups = List.of(subGroups);
 			needsStats = Stream.of(subGroups).allMatch(CategorySubGroup::isNeedsStats);
 		}
 

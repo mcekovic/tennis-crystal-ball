@@ -7,7 +7,6 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 
 import org.slf4j.*;
-import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -25,6 +24,7 @@ import static org.strangeforest.tcb.stats.model.FeaturedContent.*;
 @Service
 public class ContentService implements HasCache {
 
+	@Autowired private ContentService self;
 	@Autowired private PlayerService playerService;
 	@Autowired private RankingsService rankingsService;
 	@Autowired private TournamentService tournamentService;
@@ -150,11 +150,7 @@ public class ContentService implements HasCache {
 	}
 
 	private FeaturedContent getFeaturedContent(Type type) {
-		return getAOPProxy().getFeaturedContent().stream().filter(c -> c.isOfType(type)).findAny().orElse(type.empty());
-	}
-
-	private ContentService getAOPProxy() {
-		return (ContentService)AopContext.currentProxy();
+		return self.getFeaturedContent().stream().filter(c -> c.isOfType(type)).findAny().orElse(type.empty());
 	}
 
 	@Override public int clearCache() {

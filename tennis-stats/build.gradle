@@ -2,38 +2,30 @@ import org.apache.tools.ant.filters.*
 
 import groovy.json.*
 
-buildscript {
-	repositories {
-		maven {
-			url "https://plugins.gradle.org/m2"
-		}
-	}
-	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-		classpath "io.spring.gradle:dependency-management-plugin:$springDependencyManagementVersion"
-		classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitPropertiesVersion"
-	}
+plugins {
+	id 'java'
+	id 'org.springframework.boot'
+	id 'io.spring.dependency-management'
+	id 'application'
+	id 'com.gorylenko.gradle-git-properties'
 }
-
-apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'application'
-apply plugin: "com.gorylenko.gradle-git-properties"
 
 mainClassName = 'org.strangeforest.tcb.stats.TennisStatsApplication'
 applicationDefaultJvmArgs = [
+	'-Dspring.profiles.active=digitalocean,jobs,ssl',
 	'-Xms256m',
 	'-Xmx256m',
-	'-Dspring.profiles.active=digitalocean,jobs,ssl',
 	'-Dcom.sun.management.jmxremote',
 	'-Dcom.sun.management.jmxremote.port=9999',
+	'-Dcom.sun.management.jmxremote.rmi.port=9999',
 	'-Dcom.sun.management.jmxremote.authenticate=false',
-	'-Dcom.sun.management.jmxremote.ssl=false'
+	'-Dcom.sun.management.jmxremote.ssl=false',
+	'--add-opens=java.base/java.time=ALL-UNNAMED',
+	'--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED',
+	'-Xlog:gc=info:file=/tcb/tennis-stats/logs/gc.log:time,tags:filecount=10,filesize=10m',
+	'-XX:+ExplicitGCInvokesConcurrent',
+	'-XX:+HeapDumpOnOutOfMemoryError'
 ]
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 sourceSets {
 	itest {
@@ -43,9 +35,7 @@ sourceSets {
 }
 
 configurations {
-	itestCompile.extendsFrom testCompile
 	itestImplementation.extendsFrom testImplementation
-	itestRuntime.extendsFrom testRuntime
 	itestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
@@ -58,54 +48,57 @@ processResources {
 }
 
 dependencies {
-	compile ('org.springframework.boot:spring-boot-starter-aop') {
+	implementation ('org.springframework.boot:spring-boot-starter-aop') {
 		exclude group: 'org.apache.logging.log4j'
 	}
-	compile ('org.springframework.boot:spring-boot-starter-jdbc') {
+	implementation ('org.springframework.boot:spring-boot-starter-jdbc') {
 		exclude group: 'org.apache.logging.log4j'
 	}
-	compile ('org.springframework.boot:spring-boot-starter-cache') {
+	implementation ('org.springframework.boot:spring-boot-starter-cache') {
 		exclude group: 'org.apache.logging.log4j'
 	}
-	compile ('org.springframework.boot:spring-boot-starter-web') {
+	implementation ('org.springframework.boot:spring-boot-starter-web') {
 		exclude group: 'org.apache.logging.log4j'
 		exclude group: 'org.hibernate.validator'
 		exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-jdk8'
 		exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-parameter-names'
 	}
-	compile ('org.springframework.boot:spring-boot-starter-thymeleaf') {
+	implementation ('org.springframework.boot:spring-boot-starter-thymeleaf') {
 		exclude group: 'org.apache.logging.log4j'
 	}
-	compile ('org.springframework.boot:spring-boot-starter-actuator') {
+	implementation ('org.springframework.boot:spring-boot-starter-actuator') {
 		exclude group: 'org.apache.logging.log4j'
 	}
 	compileOnly ('org.springframework.boot:spring-boot-configuration-processor')
 	annotationProcessor ("org.springframework:spring-context-indexer:$springVersion")
-	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
-	compile ("com.zaxxer:HikariCP:$hikariCPVersion")
-	compile ("com.neovisionaries:nv-i18n:$nvi18nVersion")
-	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
-	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-	runtime ("org.webjars:bootstrap:$bootstrapVersion")
-	runtime ("org.webjars:jquery:$jQueryVersion")
-	runtime ("org.webjars:jquery-ui:$jQueryUIVersion")
-	runtime ("org.webjars:jquery-ui-themes:$jQueryUIVersion")
-	runtime ("org.webjars.bower:jquery-bootgrid:$jQueryBootgridVersion") {
+	implementation ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion") {
+		exclude group: 'com.google.errorprone'
+		exclude group: 'org.checkerframework'
+	}
+	implementation ("com.zaxxer:HikariCP:$hikariCPVersion")
+	implementation ("com.neovisionaries:nv-i18n:$nvi18nVersion")
+	implementation ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+	implementation ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+	implementation ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+	runtimeOnly ("org.webjars:bootstrap:$bootstrapVersion")
+	runtimeOnly ("org.webjars:jquery:$jQueryVersion")
+	runtimeOnly ("org.webjars:jquery-ui:$jQueryUIVersion")
+	runtimeOnly ("org.webjars:jquery-ui-themes:$jQueryUIVersion")
+	runtimeOnly ("org.webjars.bower:jquery-bootgrid:$jQueryBootgridVersion") {
 		exclude group: 'org.webjars.bower'
 	}
-	runtime ("org.webjars:font-awesome:$fontAwesomeVersion")
-	compile ("com.maxmind.geoip2:geoip2:$geoip2Version") {
+	runtimeOnly ("org.webjars:font-awesome:$fontAwesomeVersion")
+	implementation ("com.maxmind.geoip2:geoip2:$geoip2Version") {
 		exclude group: 'org.apache.httpcomponents'
 	}
-	runtime files ('lib/GeoLite2-Country.zip')
-	compile ("eu.bitwalker:UserAgentUtils:$userAgentUtilsVersion")
-	runtime ("io.micrometer:micrometer-registry-prometheus:$micrometerPrometeusVersion")
-	
-	testCompile ('org.springframework.boot:spring-boot-starter-test') {
+	runtimeOnly files ('lib/GeoLite2-Country.zip')
+	implementation ("eu.bitwalker:UserAgentUtils:$userAgentUtilsVersion")
+	runtimeOnly ("io.micrometer:micrometer-registry-prometheus:$micrometerPrometeusVersion")
+
+	testImplementation ('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.apache.logging.log4j'
 	}
-	testCompile ("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+	testImplementation ("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 }
 
 jar {
@@ -128,11 +121,10 @@ task quickDeployToDigitalOcean {
 	doLast {
 		def version = project.property('version')
 		def tennisStatsJar = "tennis-stats-${version}.jar"
-		def srcPath = 'build/libs'
 		def destPath = '/tcb/tennis-stats/lib'
 		ssh.run {
 			session(remotes.digitalOcean) {
-				put from: "${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
+				put from: "${buildDir}/libs/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
 				execute 'systemctl stop tennis-stats.service'
 				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
 				execute 'systemctl start tennis-stats.service'
@@ -146,11 +138,10 @@ task fullDeployToDigitalOcean {
 		def version = project.property('version')
 		def tennisStats = "tennis-stats-${version}"
 		def tennisStatsDist = "${tennisStats}.tar"
-		def srcPath = 'build/distributions'
 		def destPath = '/tcb'
 		ssh.run {
 			session(remotes.digitalOcean) {
-				put from: "${srcPath}/${tennisStatsDist}", into: destPath
+				put from: "${buildDir}/distributions/${tennisStatsDist}", into: destPath
 				execute "cd ${destPath}; tar -xvf ${tennisStatsDist}; rm ${tennisStatsDist}"
 				execute 'systemctl stop tennis-stats.service'
 				execute "rm -rf ${destPath}/tennis-stats/bin"

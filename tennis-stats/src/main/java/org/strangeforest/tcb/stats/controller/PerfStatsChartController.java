@@ -22,6 +22,7 @@ public class PerfStatsChartController extends PageController {
 	public ModelAndView performanceChart(
 		@RequestParam(name = "players", required = false) String players,
 		@RequestParam(name = "category", required = false) String category,
+		@RequestParam(name = "chartType", required = false) String chartType,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "byAge", defaultValue = F) Boolean byAge
@@ -29,11 +30,13 @@ public class PerfStatsChartController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("players", players);
 		modelMap.addAttribute("category", category);
+		modelMap.addAttribute("chartType", chartType);
 		modelMap.addAttribute("fromSeason", fromSeason);
 		modelMap.addAttribute("toSeason", toSeason);
 		modelMap.addAttribute("byAge", byAge);
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
+		modelMap.addAttribute("chartTypes", PerformanceChartService.PerformanceChartType.values());
 		modelMap.addAttribute("seasons", topPerformersService.getSeasons());
 		return new ModelAndView("performanceChart", modelMap);
 	}

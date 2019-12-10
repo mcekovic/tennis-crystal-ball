@@ -11,7 +11,7 @@
 			var $rankingsTable = $("#rankingsTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($rankingsTable, ["tournamentEvent"], deviceGreaterOrEqual(device, "lg"));
-			setBootgridColumnsVisible($rankingsTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($rankingsTable, ["bestRank", "bestRatingAge"], deviceGreaterOrEqual(device, "sm"));
 			setBootgridColumnsWidths($rankingsTable, ["name"], [device === "xs" ? 150 : (device === "sm" ? 200 : (device === "md" ? 300 : 400))]);
 			$rankingsTable.bootgrid({
 				ajax: true,
@@ -42,7 +42,11 @@
 					"country": countryFormatter,
 					"player": playerFormatter,
 					"date": function(column, row) {
-						return formatDate(row.pointsDate);
+						var date = formatDate(row.bestRatingDate);
+						return "<a href='/eloRatings?rankType=" + $("#rankType").val().replace("RATING", "RANK") + "&date=" + date + "' title='Show Elo Rankings table'>" + date + "</a>";
+					},
+					"age": function(column, row) {
+						return row.bestRatingAge ? row.bestRatingAge : "";
 					},
 					"tournamentEvent": function(column, row) {
 						var event = row.tournamentEvent;
@@ -101,7 +105,8 @@
 			<th data-column-id="bestRank" data-formatter="bestRank" data-width="100">Best Rank</th>
 			<th data-column-id="country" data-formatter="country" data-width="85">Country</th>
 			<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
-			<th data-column-id="pointsDate" data-formatter="date" data-width="85">Date</th>
+			<th data-column-id="bestRatingDate" data-formatter="date" data-width="85">Date</th>
+			<th data-column-id="bestRatingAge" data-formatter="age" data-width="55" data-align="right" data-header-align="right">Age</th>
 			<th data-column-id="tournamentEvent" data-formatter="tournamentEvent" data-width="200">Tournament</th>
 			<th data-column-id="points" data-formatter="points" data-width="100" data-align="right" data-header-align="right">Elo Rating</th>
 		</tr>

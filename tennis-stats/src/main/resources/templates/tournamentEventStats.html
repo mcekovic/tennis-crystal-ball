@@ -9,7 +9,7 @@
 	$(function() {
 		var $statsLeadersTable = $("#statsLeadersTable");
 		var device = detectDevice();
-		setBootgridColumnsWidths($statsLeadersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
+		setBootgridColumnsWidths($statsLeadersTable, ["name"], [device === "xs" ? 200 : (device === "sm" ? 250 : (device === "md" ? 300 : 400))]);
 		$statsLeadersTable.bootgrid({
 			ajax: true,
 			ajaxSettings: {
@@ -154,6 +154,7 @@
 		</button>
 	</div>
 </div>
+<input id="statsTournamentEvent" type="hidden" th:value="${tournamentEventId}"/>
 <table id="statsLeadersTable" class="table table-condensed table-hover table-striped">
 	<thead>
 	<tr>

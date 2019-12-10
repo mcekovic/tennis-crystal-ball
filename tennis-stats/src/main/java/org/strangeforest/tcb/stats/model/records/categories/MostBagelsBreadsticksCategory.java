@@ -1,11 +1,12 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.MostBagelsBreadsticksCategory.ItemType.*;
 import static org.strangeforest.tcb.stats.model.records.categories.MostBagelsBreadsticksCategory.RecordType.*;
@@ -127,7 +128,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&score=*%3$s", playerId, domain.urlParam, type.urlParam(itemType)),
-			asList(new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
+			List.of(new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
 		);
 	}
 
@@ -151,7 +152,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&score=*%3$s", playerId, domain.urlParam, type.urlParam(itemType)),
-			asList(new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
+			List.of(new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
 		);
 	}
 
@@ -175,7 +176,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"GROUP BY player_id, season",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season, r.last_date",
 			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d&score=*%3$s", playerId, recordDetail.getSeason(), type.urlParam(itemType)),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			)
@@ -205,7 +206,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"HAVING sum(items) > 0 AND sum(total) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.last_date",
 			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s", playerId, domain.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
 				new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", type.name),
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
@@ -239,7 +240,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"HAVING sum(items) > 0 AND sum(total) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.last_date",
 			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s", playerId, domain.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
 				new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", type.name),
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
@@ -271,7 +272,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"HAVING sum(items) > 0 AND sum(total) >= " + minEntries,
 			"r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.season, r.last_date",
 			SeasonWinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d", playerId, recordDetail.getSeason()),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
 				new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", type.name),
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),

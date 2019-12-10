@@ -33,13 +33,13 @@ public class RankingsResource {
 
 	private static final int MAX_PLAYERS = 1000;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("rank", "rank")
-		.put("bestRank", "best_rank")
-		.put("points", "points NULLS LAST")
-		.put("rankDiff", "rank_diff NULLS LAST")
-		.put("pointsDiff", "points_diff NULLS LAST")
-		.build();
+	private static Map<String, String> ORDER_MAP = Map.of(
+		"rank", "rank",
+		"bestRank", "best_rank",
+		"points", "points NULLS LAST",
+		"rankDiff", "rank_diff NULLS LAST",
+		"pointsDiff", "points_diff NULLS LAST"
+	);
 	private static final OrderBy DEFAULT_ORDER = asc("rank");
 
 	@GetMapping("/rankingsDate")
@@ -89,6 +89,7 @@ public class RankingsResource {
 	public DataTable playerRankingsTable(
 		@RequestParam(name = "playerId", required = false) int[] playerId,
 		@RequestParam(name = "players", defaultValue = "") String playersCSV,
+		@RequestParam(name = "refRank", defaultValue = "") int[] refRank,
 		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(name = "timeSpan", defaultValue = CAREER) String timeSpan,
 		@RequestParam(name = "bySeason", defaultValue = F) boolean bySeason,
@@ -102,10 +103,10 @@ public class RankingsResource {
 		Range<LocalDate> dateRange = !bySeason ? toDateRange(timeSpan, fromDate, toDate) : null;
 		Range<Integer> seasonRange = bySeason ? toSeasonRange(timeSpan, fromSeason, toSeason) : null;
 		if (playerId != null && playerId.length > 0)
-			return rankingChartService.getRankingDataTable(playerId, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+			return rankingChartService.getRankingDataTable(playerId, refRank, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		else {
 			List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
-			return rankingChartService.getRankingsDataTable(inputPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+			return rankingChartService.getRankingsDataTable(inputPlayers, refRank, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		}
 	}
 

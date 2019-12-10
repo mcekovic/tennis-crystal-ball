@@ -19,12 +19,17 @@ class EloRatingsManagerIT {
 
 	@Autowired private DataSource dataSource;
 
+	@Test
+	void computeEloRatings() throws InterruptedException {
+		new EloRatingsManager(dataSource).compute(false, false, null, 0);
+	}
+
 	@Test @Disabled
 	void tuneEloRatingsManager() throws InterruptedException {
 		EloRatingsManager eloRatingsManager = new EloRatingsManager(dataSource);
 		double maxValue = 0.0;
 		PredictionResult maxResult = null;
-		for (double tuningValue = 500.0; tuningValue <= 600.0; tuningValue += 10.0) {
+		for (double tuningValue = 0.0; tuningValue <= 1.0; tuningValue += 0.1) {
 //			EloCalculator.tuningValue = tuningValue;
 			System.out.println("\nTuning value: " + tuningValue);
 			Map<String, PredictionResult> results = eloRatingsManager.compute(false, false, null, 0);

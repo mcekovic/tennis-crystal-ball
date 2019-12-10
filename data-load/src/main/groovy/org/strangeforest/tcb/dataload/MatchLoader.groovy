@@ -40,7 +40,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.date = date
 
 		def drawSize = smallint record.draw_size
-		def mappedLevel = mapLevel(level, drawSize, name, season, extTourneyId)
+		def mappedLevel = mapLevel(level, name, season, extTourneyId)
 		if (mappedLevel == 'C' || mappedLevel == 'U')
 			return null
 		def dcInfo = level == 'D' ? extractDCTournamentInfo(record, season) : null
@@ -190,7 +190,7 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static mapLevel(String level, Short drawSize, String name, int season, String extTournamentId) {
+	static mapLevel(String level, String name, int season, String extTournamentId) {
 		switch (level) {
 			case 'G': return 'G'
 			case 'F':
@@ -201,7 +201,7 @@ class MatchLoader extends BaseCSVLoader {
 				else
 					return 'F'
 			case 'M':
-				if (name.startsWith('Masters') && drawSize <= 16)
+				if (name.startsWith('Masters'))
 					return 'F'
 				else if (
 					(name.equals('Cincinnati') && season in 1968..1980) ||
@@ -230,8 +230,8 @@ class MatchLoader extends BaseCSVLoader {
 					(name.equals('Indianapolis') && season in 1974..1977) ||
 					(name.startsWith('Johannesburg') && extTournamentId == '426' && season in 1972..1973)||
 					(name.startsWith('Johannesburg') && extTournamentId == '254' && season == 1974)||
-					(name.startsWith('Las Vegas') && season in 1972..1981 && drawSize >= 32) ||
-					(name.startsWith('Los Angeles') && season in 1970..1973 && drawSize >= 64) ||
+					(name.startsWith('Las Vegas') && season in 1972..1981 && extTournamentId == '413') ||
+					(name.startsWith('Los Angeles') && season in 1970..1973 && extTournamentId == '423') ||
 					(name.startsWith('Monte Carlo') && season in 1970..1989) ||
 					(name.startsWith('Paris') && season == 1989) ||
 					(name.startsWith('Philadelphia') && season in 1970..1986) ||

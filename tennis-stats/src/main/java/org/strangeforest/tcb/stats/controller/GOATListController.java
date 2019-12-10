@@ -13,8 +13,6 @@ import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import com.google.common.collect.*;
-
 import static com.google.common.base.Strings.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
@@ -26,17 +24,17 @@ public class GOATListController extends PageController {
 	@Autowired private GOATListService goatListService;
 	@Autowired private GOATLegendService goatLegendService;
 
-	private static Map<Integer, String> FACTOR_MAP = ImmutableMap.<Integer, String>builder()
-		.put(0, "x 0")
-		.put(1, "x 1")
-		.put(2, "x 2")
-		.put(3, "x 3")
-		.put(4, "x 4")
-		.put(5, "x 5")
-		.put(6, "x 6")
-		.put(8, "x 8")
-		.put(10, "x 10")
-	.build();
+	private static Map<Integer, String> FACTOR_MAP = Map.of(
+		0, "x 0",
+		1, "x 1",
+		2, "x 2",
+		3, "x 3",
+		4, "x 4",
+		5, "x 5",
+		6, "x 6",
+		8, "x 8",
+		10, "x 10"
+	);
 
 	@GetMapping("/goatList")
 	public ModelAndView goatList(

@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
 
 public abstract class TournamentResultsCategory extends RecordCategory {
@@ -33,7 +34,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s%3$s", playerId, domain.urlParam, resultURLParam(result)),
-			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
+			List.of(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}
 
@@ -47,7 +48,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s%3$s%4$s", playerId, domain1.urlParam, domain2.urlParam, resultURLParam(result)),
-			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
+			List.of(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}
 
@@ -61,7 +62,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"GROUP BY player_id, season",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
 			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&season=%2$d%3$s%4$s", playerId, recordDetail.getSeason(), domain.urlParam, resultURLParam(result)),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			)
@@ -78,7 +79,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"GROUP BY player_id, tournament_id, t.name, t.level",
 			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.last_date",
 			TournamentIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&tournamentId=%2$d%3$s%4$s", playerId, recordDetail.getTournamentId(), domain.urlParam, resultURLParam(result)),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			)
@@ -100,7 +101,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.first_date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s%3$s", playerId, domain.urlParam, resultURLParam(result)),
-			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
+			List.of(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}
 
@@ -123,7 +124,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.first_date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=timeline", playerId),
-			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name)),
+			List.of(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name)),
 			"Tournament Slot is an order number by date of the same tournament level within the season"
 		);
 	}

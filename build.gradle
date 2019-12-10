@@ -1,25 +1,12 @@
-buildscript {
-	repositories {
-		jcenter()
-	}
-	dependencies {
-		classpath "com.github.ben-manes:gradle-versions-plugin:$gradleVersionsVersion"
-		classpath "org.hidetake:gradle-ssh-plugin:$gradleSshVersion"
-		classpath "org.standardout:gradle-versioneye-plugin:$gradleVersionEyeVersion"
-	}
+plugins {
+	id 'org.hidetake.ssh'
+	id 'com.github.ben-manes.versions'
+	id 'org.standardout.versioneye'
+	id 'org.sonarqube'
 }
-
-apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'org.standardout.versioneye'
 
 allprojects {
 	version = "$projectVersion"
-
-	buildscript {
-		repositories {
-			mavenCentral()
-		}
-	}
 
 	repositories {
 		mavenCentral()
@@ -29,7 +16,9 @@ allprojects {
 subprojects {
 
 	apply plugin: 'java'
-	apply plugin: 'org.hidetake.ssh'
+
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
 
 	remotes {
 		def home = System.properties['user.home']
@@ -46,17 +35,19 @@ subprojects {
 	}
 
 	dependencies {
-		compile ("com.google.guava:guava:$guavaVersion") {
-			exclude group: 'org.codehaus.mojo'
+		implementation ("com.google.guava:guava:$guavaVersion") {
+			exclude group: 'com.google.guava', module: 'listenablefuture'
+			exclude group: 'com.google.guava', module: 'failureaccess'
+			exclude group: 'com.google.j2objc'
 			exclude group: 'com.google.code.findbugs'
 			exclude group: 'com.google.errorprone'
-			exclude group: 'com.google.j2objc'
+			exclude group: 'org.codehaus.mojo'
 			exclude group: 'org.checkerframework'
 		}
-		compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
+		implementation ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 		testImplementation ("org.junit.jupiter:junit-jupiter-api:$junitVersion")
 		testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-		testCompile ("org.assertj:assertj-core:$assertjVersion")
+		testImplementation ("org.assertj:assertj-core:$assertjVersion")
 	}
 	
 	test {

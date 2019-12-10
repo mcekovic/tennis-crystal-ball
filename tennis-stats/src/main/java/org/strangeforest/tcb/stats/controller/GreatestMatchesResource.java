@@ -21,15 +21,15 @@ public class GreatestMatchesResource {
 
 	private static final int MAX_MATCHES = 1000;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("date", "date")
-		.put("tournament", "tournament")
-		.put("surface", "surface")
-		.put("speed", "court_speed NULLS LAST")
-		.put("round", "round")
-		.put("bestOf", "best_of")
-		.put("matchScore", "match_score")
-	.build();
+	private static Map<String, String> ORDER_MAP = Map.of(
+		"date", "date",
+		"tournament", "tournament",
+		"surface", "surface",
+		"speed", "court_speed NULLS LAST",
+		"round", "round",
+		"bestOf", "best_of",
+		"matchScore", "match_score"
+	);
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("match_score");
 
 	@GetMapping("/greatestMatchesTable")

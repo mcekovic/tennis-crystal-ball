@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HardestTitleCategory.*;
 
@@ -47,7 +48,7 @@ public class MostTitlesAdjustedCategory extends RecordCategory {
 			"GROUP BY r.player_id",
 			"r.value, r.int_value", "r.unrounded_value DESC", "r.unrounded_value DESC, r.int_value DESC, r.last_date",
 			IntegerDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s&result=W", playerId, domain.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "factor2", ADJ_TITLES_WIDTH, "right", "Adjusted " + suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("intValue", "numeric", null, TITLES_WIDTH, "right", suffix(domain.name, " ") + "Titles")
 			),
@@ -66,7 +67,7 @@ public class MostTitlesAdjustedCategory extends RecordCategory {
 			"GROUP BY r.player_id",
 			"r.value, r.int_value", "r.unrounded_value DESC", "r.unrounded_value DESC, r.int_value DESC, r.last_date",
 			IntegerDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s%3$s&result=W", playerId, domain1.urlParam, domain2.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "factor2", ADJ_TITLES_WIDTH, "right", "Adjusted " + suffix(domain1.name, " ") + suffix(domain2.name, " ") + "Titles"),
 				new RecordColumn("intValue", "numeric", null, TITLES_WIDTH, "right", suffix(domain1.name, " ") + suffix(domain2.name, " ") + "Titles")
 			),
@@ -85,7 +86,7 @@ public class MostTitlesAdjustedCategory extends RecordCategory {
 			"GROUP BY r.player_id, e.season",
 			"r.value, r.int_value, r.season", "r.unrounded_value DESC", "r.unrounded_value DESC, r.int_value DESC, r.season",
 			SeasonIntegerDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s&result=W", playerId, domain.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "factor2", ADJ_TITLES_WIDTH, "right", "Adjusted " + suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("intValue", "numeric", null, TITLES_WIDTH, "right", suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -105,7 +106,7 @@ public class MostTitlesAdjustedCategory extends RecordCategory {
 			"GROUP BY r.player_id, tournament_id, t.name, t.level",
 			"r.value, r.int_value, r.tournament_id, r.tournament, r.level", "r.unrounded_value DESC", "r.unrounded_value DESC, r.int_value DESC, r.last_date",
 			TournamentIntegerDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&tournamentId=%2$d%3$s&result=W", playerId, recordDetail.getTournamentId(), domain.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "factor2", ADJ_TITLES_WIDTH, "right", "Adjusted " + suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("intValue", "numeric", null, TITLES_WIDTH, "right", suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")

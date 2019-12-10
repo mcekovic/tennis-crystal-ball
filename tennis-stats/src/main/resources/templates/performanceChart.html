@@ -2,10 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="players" type="java.lang.String"*/-->
 <!--/*@thymesVar id="category" type="java.lang.String"*/-->
+<!--/*@thymesVar id="chartType" type="java.lang.String"*/-->
 <!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="byAge" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.core.PerformanceCategory>>"*/-->
+<!--/*@thymesVar id="chartTypes" type="org.strangeforest.tcb.stats.service.PerformanceChartService.PerformanceChartType[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Performance Chart</title>
@@ -16,7 +18,7 @@
 	<script type="text/javascript" th:inline="javascript">
 		google.charts.load("current", {packages: ["corechart"]});
 		[# th:if="${players}"]google.charts.setOnLoadCallback(drawChart);[/]
-		var urlParams, chartData, pointCount, legendPosition;
+		var urlParams, chartData, pointCount, isPct, legendPosition;
 		function drawChart() {
 			var players = $.trim($("#players").val());
 			if (getPlayerCount(players) >= 1)
@@ -31,9 +33,10 @@
 			$.ajax("/playerPerformanceTable" + urlParams).done(function(json) {
 				chartData = new google.visualization.DataTable(JSON.stringify(json));
 				pointCount = json.rows.length;
+				isPct = $("#chartType").val() === "WON_LOST_PCT";
 				legendPosition = json.cols.length < 4 ? "bottom" : "right";
 				var width = $("#perfChartSize").slider("value");
-				showPerformanceChart(chartData, "perfChart", width, pointCount, legendPosition);
+				showPerformanceChart(chartData, "perfChart", width, pointCount, isPct, legendPosition);
 			}).always(function() {
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
@@ -41,7 +44,8 @@
 		function chartUrlParams() {
 			var players = $("#players").val();
 			var category = $("#category").val();
-			var params = "?players=" + players + "&category=" + category;
+			var chartType = $("#chartType").val();
+			var params = "?players=" + players + "&category=" + category + "&chartType=" + chartType;
 			var fromSeason = $("#fromSeason").val();
 			if (fromSeason) params += "&fromSeason=" + fromSeason;
 			var toSeason = $("#toSeason").val();
@@ -66,7 +70,7 @@
 				value: defaultChartSize(detectDevice()),
 				step: 50,
 				slide: function(event, ui) {
-					showPerformanceChart(chartData, "perfChart", ui.value, pointCount, legendPosition);
+					showPerformanceChart(chartData, "perfChart", ui.value, pointCount, isPct, legendPosition);
 				}
 			});
 			onSeasonRangeChange();
@@ -105,6 +109,14 @@
 				</select>
 			</div>
 		</div>
+		<div class="col-md-3">
+			<div class="input-group">
+				<label for="chartType" class="input-group-addon">Type:</label>
+				<select id="chartType" class="form-control">
+					<option th:each="aChartType : ${chartTypes}" th:value="${aChartType}" value="WON_LOST_PCT" th:text="${aChartType.text}" th:selected="${aChartType.name() == chartType}">Winning %</option>
+				</select>
+			</div>
+		</div>
 	</div>
 	<div class="row" style="margin-top: 5px">
 		<div class="col-md-4">
@@ -121,9 +133,9 @@
 				</select>
 			</div>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-1">
 			<div id="byAgeDiv" class="checkbox">
-				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
+				<label class="text-nowrap" data-toggle="tooltip" data-placement="top" title="Show chart by age">
 					<input id="byAge" type="checkbox" th:checked="${byAge}"/> By age
 				</label>
 			</div>
@@ -132,7 +144,7 @@
 			<div id="perfChartSize" style="margin-top: 6px"></div>
 			<div style="text-align: center; opacity: 0.5; height: 15px">Chart size</div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
 				<i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Draw Chart
 			</a>

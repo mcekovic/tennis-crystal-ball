@@ -35,3 +35,5 @@ DROP FUNCTION fix_rank_points(DATE, DATE);
 DROP FUNCTION set_tournament_map_properties(TEXT, INTEGER, INTEGER, INTEGER[], JSON) CASCADE;
 DROP FUNCTION set_tournament_event_surface(INTEGER, TEXT, TEXT, BOOLEAN) CASCADE;
 DROP FUNCTION link_tournament(TEXT, TEXT) CASCADE;
+DROP FUNCTION set_player_matches_country(TEXT, TEXT, DATE) CASCADE;
+DROP FUNCTION split_careers(TEXT, TEXT, DATE) CASCADE;

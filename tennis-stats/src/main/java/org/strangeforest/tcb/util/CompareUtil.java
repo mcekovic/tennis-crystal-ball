@@ -38,12 +38,12 @@ public abstract class CompareUtil {
 		return 0;
 	}
 
-	public static <T, R> List<R> mapList(List<T> items, Function<? super T, ? extends R> mapper) {
+	public static <T, R> List<? extends R> mapList(List<T> items, Function<? super T, ? extends R> mapper) {
 		return items.stream().map(mapper).collect(toList());
 	}
 
-	public static <T, R extends Comparable> List<R> mapSortList(List<T> items, Function<? super T, ? extends R> mapper) {
-		List<R> list = mapList(items, mapper);
+	public static <T, R extends Comparable> List<? extends R> mapSortList(List<T> items, Function<? super T, ? extends R> mapper) {
+		List<? extends R> list = mapList(items, mapper);
 		sort(list);
 		return list;
 	}

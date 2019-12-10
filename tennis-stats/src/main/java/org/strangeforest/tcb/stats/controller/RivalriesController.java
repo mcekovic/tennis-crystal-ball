@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.time.*;
+import java.time.temporal.*;
 import java.util.*;
 import java.util.stream.*;
 import javax.servlet.http.*;
@@ -24,9 +25,11 @@ import com.google.common.collect.*;
 import com.neovisionaries.i18n.*;
 
 import static com.google.common.base.Strings.*;
+import static java.lang.Math.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.controller.RankingsController.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
@@ -56,6 +59,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "season1", required = false) Integer season1,
 		@RequestParam(name = "season2", required = false) Integer season2,
+		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date,
 		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
 		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "level", required = false) String level,
@@ -77,6 +81,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("season1", season1);
 		modelMap.addAttribute("season2", season2);
+		modelMap.addAttribute("date", date);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
 		modelMap.addAttribute("level", level);
@@ -254,8 +259,9 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("rankType", rankType);
-		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("rankCategories", RankCategory.values());
+		modelMap.addAttribute("referenceRanks", REFERENCE_RANKS);
+		modelMap.addAttribute("seasons", seasons);
 		return new ModelAndView("playerRankings", modelMap);
 	}
 
@@ -480,6 +486,8 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("h2hGOATPoints", modelMap);
 	}
 
+	private  static final int IN_PROGRESS_DAYS_THRESHOLD = 14;
+
 	@GetMapping("/h2hHypotheticalMatchup")
 	public ModelAndView h2hHypotheticalMatchup(
       @RequestParam(name = "playerId1") int playerId1,
@@ -488,6 +496,7 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "indoor", required = false) Boolean indoor,
       @RequestParam(name = "level", required = false) String level,
       @RequestParam(name = "round", required = false) String round,
+      @RequestParam(name = "tournamentId", required = false) Integer tournamentId,
       @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date,
       @RequestParam(name = "date1", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date1,
       @RequestParam(name = "date2", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date2,
@@ -513,9 +522,11 @@ public class RivalriesController extends PageController {
 		Player player2 = playerService.getPlayer(playerId2);
 		LocalDate aDate1 = dateForMatchup(dateSelector1, date1, date, player1);
 		LocalDate aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
+		LocalDate today = LocalDate.now();
+		boolean inProgress = abs(ChronoUnit.DAYS.between(aDate1, today)) <= IN_PROGRESS_DAYS_THRESHOLD && abs(ChronoUnit.DAYS.between(aDate2, today)) <= IN_PROGRESS_DAYS_THRESHOLD;
 		TournamentLevel tournamentLevel = TournamentLevel.safeDecode(level);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
-			playerId1, playerId2, aDate1, aDate2,
+			playerId1, playerId2, aDate1, aDate2, tournamentId, inProgress,
 			Surface.safeDecode(surface), indoor, tournamentLevel, Round.safeDecode(round)
       );
 		PlayerPerformance perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2, level, surface, indoor, round));
@@ -530,10 +541,12 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("rounds", Round.ROUNDS);
+		modelMap.addAttribute("tournaments", tournamentService.getTournaments());
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("date", date != null ? date : aDate1);
 		modelMap.addAttribute("date1", aDate1);
 		modelMap.addAttribute("date2", aDate2);
@@ -751,27 +764,30 @@ public class RivalriesController extends PageController {
 	// Util
 
 	private List<Integer> getSeasonsIntersection(int playerId1, int playerId2) {
-		List<Integer> seasons = new ArrayList<>(playerService.getPlayerSeasons(playerId1));
-		seasons.retainAll(playerService.getPlayerSeasons(playerId2));
-		return seasons;
+		return intersection(playerService.getPlayerSeasons(playerId1), playerService.getPlayerSeasons(playerId2));
 	}
 
-	private NavigableSet<Integer> getSeasonsUnion(int playerId1, int playerId2) {
-		NavigableSet<Integer> seasons = new TreeSet<>(reverseOrder());
-		seasons.addAll(playerService.getPlayerSeasons(playerId1));
-		seasons.addAll(playerService.getPlayerSeasons(playerId2));
-		return seasons;
+	private SortedSet<Integer> getSeasonsUnion(int playerId1, int playerId2) {
+		return union(playerService.getPlayerSeasons(playerId1), playerService.getPlayerSeasons(playerId2), reverseOrder());
 	}
 
 	private Set<CountryCode> getOpponentCountriesUnion(int playerId1, int playerId2) {
-		NavigableSet<CountryCode> countries = new TreeSet<>(comparing(CountryCode::getName));
-		countries.addAll(matchesService.getOpponentCountries(playerId1));
-		countries.addAll(matchesService.getOpponentCountries(playerId2));
-		return countries;
+		return union(matchesService.getOpponentCountries(playerId1), matchesService.getOpponentCountries(playerId2), comparing(CountryCode::getName));
+	}
+
+	private static <T> List<T> intersection(List<T> col1, List<T> col2) {
+		return col1.stream().filter(col2::contains).collect(toList());
 	}
 
 	private static <T> Set<T> union(Collection<T> col1, Collection<T> col2) {
 		Set<T> union = new TreeSet<>(col1);
+		union.addAll(col2);
+		return union;
+	}
+
+	private static <T> SortedSet<T> union(Collection<T> col1, Collection<T> col2, Comparator<T> comparator) {
+		SortedSet<T> union = new TreeSet<>(comparator);
+		union.addAll(col1);
 		union.addAll(col2);
 		return union;
 	}

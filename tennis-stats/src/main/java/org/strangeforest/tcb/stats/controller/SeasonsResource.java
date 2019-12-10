@@ -9,7 +9,7 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
-import com.google.common.collect.*;
+import static java.util.Map.*;
 
 @RestController
 public class SeasonsResource {
@@ -18,43 +18,43 @@ public class SeasonsResource {
 
 	private static final int MAX_SEASONS = 100;
 
-	private static Map<String, String> SEASONS_ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("season", "season")
-		.put("tournamentCount", "tournament_count")
-		.put("grandSlamCount", "grand_slam_count")
-		.put("tourFinalsCount", "tour_finals_count")
-		.put("mastersCount", "masters_count")
-		.put("olympicsCount", "olympics_count")
-		.put("atp500Count", "atp500_count")
-		.put("atp250Count", "atp250_count")
-		.put("hardCount", "hard_count")
-		.put("clayCount", "clay_count")
-		.put("grassCount", "grass_count")
-		.put("carpetCount", "carpet_count")
-		.put("outdoorCount", "outdoor_count")
-		.put("indoorCount", "indoor_count")
-		.put("matchCount", "match_count")
-		.put("speed", "court_speed NULLS LAST")
-	.build();
+	private static Map<String, String> SEASONS_ORDER_MAP = Map.ofEntries(
+		entry("season", "season"),
+		entry("tournamentCount", "tournament_count"),
+		entry("grandSlamCount", "grand_slam_count"),
+		entry("tourFinalsCount", "tour_finals_count"),
+		entry("mastersCount", "masters_count"),
+		entry("olympicsCount", "olympics_count"),
+		entry("atp500Count", "atp500_count"),
+		entry("atp250Count", "atp250_count"),
+		entry("hardCount", "hard_count"),
+		entry("clayCount", "clay_count"),
+		entry("grassCount", "grass_count"),
+		entry("carpetCount", "carpet_count"),
+		entry("outdoorCount", "outdoor_count"),
+		entry("indoorCount", "indoor_count"),
+		entry("matchCount", "match_count"),
+		entry("speed", "court_speed NULLS LAST")
+	);
 	private static final OrderBy SEASONS_DEFAULT_ORDER = OrderBy.desc("season");
 
-	private static Map<String, String> BEST_SEASONS_ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("season", "season")
-		.put("goatPoints", "goat_points")
-		.put("grandSlamTitles", "grand_slam_titles")
-		.put("grandSlamFinals", "grand_slam_finals")
-		.put("grandSlamSemiFinals", "grand_slam_semi_finals")
-		.put("tourFinalsTitles", "tour_finals_titles")
-		.put("tourFinalsFinals", "tour_finals_finals")
-		.put("mastersTitles", "masters_titles")
-		.put("mastersFinals", "masters_finals")
-		.put("olympicsTitles", "olympics_titles")
-		.put("olympicsFinals", "olympics_finals")
-		.put("titles", "titles")
-		.put("wonPct", "matches_won_pct")
-		.put("yearEndRank", "year_end_rank")
-		.put("bestEloRating", "best_elo_rating")
-	.build();
+	private static Map<String, String> BEST_SEASONS_ORDER_MAP = Map.ofEntries(
+		entry("season", "season"),
+		entry("goatPoints", "goat_points"),
+		entry("grandSlamTitles", "grand_slam_titles"),
+		entry("grandSlamFinals", "grand_slam_finals"),
+		entry("grandSlamSemiFinals", "grand_slam_semi_finals"),
+		entry("tourFinalsTitles", "tour_finals_titles"),
+		entry("tourFinalsFinals", "tour_finals_finals"),
+		entry("mastersTitles", "masters_titles"),
+		entry("mastersFinals", "masters_finals"),
+		entry("olympicsTitles", "olympics_titles"),
+		entry("olympicsFinals", "olympics_finals"),
+		entry("titles", "titles"),
+		entry("wonPct", "matches_won_pct"),
+		entry("yearEndRank", "year_end_rank"),
+		entry("bestEloRating", "best_elo_rating")
+	);
 	private static final OrderBy BEST_SEASONS_DEFAULT_ORDER = OrderBy.asc("season_rank");
 
 	@GetMapping("/seasonsTable")

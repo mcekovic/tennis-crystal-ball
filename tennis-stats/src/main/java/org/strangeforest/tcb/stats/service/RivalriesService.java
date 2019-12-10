@@ -17,6 +17,7 @@ import com.google.common.collect.*;
 
 import static java.lang.String.*;
 import static java.util.Collections.*;
+import static java.util.Map.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
@@ -33,98 +34,98 @@ public class RivalriesService {
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
 	private static final int MIN_MATCHES_SEASON_FACTOR = 10;
 	private static final int MIN_MATCHES_MONTH_FACTOR = 10;
-	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = ImmutableMap.<String, Double>builder()
-		.put("G",       4.0)
-		.put("F",       8.0)
-		.put("L",      10.0)
-		.put("M",       3.0)
-		.put("O",      20.0)
-		.put("A",       3.5)
-		.put("B",       2.5)
-		.put("D",       8.0)
-		.put("GFLMO",   1.8)
-		.put("FL",      8.0)
-		.put("MO",      3.0)
-		.put("AB",      1.8)
-		.put("GFLMOAB", 1.1)
-		.put("DT",      6.0)
-		.put("GLD",     3.5)
-		.put("FMOABT",  1.3)
-	.build();
-	private static final Map<Integer, Double> MIN_MATCHES_BEST_OF_FACTOR = ImmutableMap.<Integer, Double>builder()
-		.put(3, 1.4)
-		.put(5, 3.0)
-	.build();
-	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = ImmutableMap.<String, Double>builder()
-		.put("H",   2.0)
-		.put("C",   2.2)
-		.put("G",   5.0)
-		.put("P",   3.0)
-		.put("GP",  2.5)
-		.put("HG",  1.7)
-		.put("HC",  1.4)
-		.put("HP",  1.5)
-		.put("CG",  2.0)
-		.put("CGP", 1.7)
-		.put("HGP", 1.4)
-		.put("HCP", 1.2)
-		.put("HCG", 1.3)
-	.build();
-	private static final Map<Boolean, Double> MIN_MATCHES_INDOOR_FACTOR = ImmutableMap.<Boolean, Double>builder()
-		.put(Boolean.FALSE, 1.4)
-		.put(Boolean.TRUE,  2.5)
-	.build();
-	private static final Map<CourtSpeed, Double> MIN_MATCHES_SPEED_FACTOR = ImmutableMap.<CourtSpeed, Double>builder()
-		.put(CourtSpeed.VERY_FAST, 5.0)
-		.put(CourtSpeed.FAST, 5.0)
-		.put(CourtSpeed.MEDIUM_FAST, 5.0)
-		.put(CourtSpeed.MEDIUM, 4.0)
-		.put(CourtSpeed.MEDIUM_SLOW, 5.0)
-		.put(CourtSpeed.SLOW, 5.0)
-		.put(CourtSpeed.VERY_SLOW, 7.5)
-		.put(CourtSpeed.GE_FAST, 3.0)
-		.put(CourtSpeed.GE_MEDIUM_FAST, 2.5)
-		.put(CourtSpeed.GE_MEDIUM, 1.8)
-		.put(CourtSpeed.GE_MEDIUM_SLOW, 1.5)
-		.put(CourtSpeed.GE_SLOW, 1.4)
-		.put(CourtSpeed.LE_FAST, 1.6)
-		.put(CourtSpeed.LE_MEDIUM_FAST, 2.0)
-		.put(CourtSpeed.LE_MEDIUM, 2.2)
-		.put(CourtSpeed.LE_MEDIUM_SLOW, 3.0)
-		.put(CourtSpeed.LE_SLOW, 4.0)
-	.build();
-	private static final Map<String, Double> MIN_MATCHES_ROUND_FACTOR = ImmutableMap.<String, Double>builder()
-		.put("F",     5.0)
-		.put("SF",    4.0)
-		.put("SF+",   2.5)
-		.put("QF",    3.5)
-		.put("QF+",   1.5)
-		.put("R16",   3.5)
-		.put("R16+",  1.2)
-		.put("R32",   4.0)
-		.put("R32+",  1.2)
-		.put("R64",   5.0)
-		.put("R64+",  1.1)
-		.put("R128",  8.0)
-		.put("ENT",   2.0)
-		.put("RR",    8.0)
-		.put("BR",   20.0)
-		.put("BR+",   5.0)
-	.build();
-	private static final Map<Range<Integer>, Double> MIN_MATCHES_TOURNAMENT_FACTOR_MAP = ImmutableMap.<Range<Integer>, Double>builder()
-		.put(Range.atMost(2), 100.0)
-		.put(Range.closed(3, 5), 50.0)
-		.put(Range.closed(6, 9), 25.0)
-		.put(Range.atLeast(10), 20.0)
-	.build();
-	private static final Map<Integer, Double> MIN_MATCHES_BEST_RANK_FACTOR = ImmutableMap.<Integer, Double>builder()
-		.put(1,  3.5)
-		.put(2,  2.0)
-		.put(3,  1.7)
-		.put(5,  1.3)
-		.put(10, 1.25)
-		.put(20, 1.25)
-	.build();
+	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = Map.ofEntries(
+		entry("G",       4.0),
+		entry("F",       8.0),
+		entry("L",      10.0),
+		entry("M",       3.0),
+		entry("O",      20.0),
+		entry("A",       3.5),
+		entry("B",       2.5),
+		entry("D",       8.0),
+		entry("GFLMO",   1.8),
+		entry("FL",      8.0),
+		entry("MO",      3.0),
+		entry("AB",      1.8),
+		entry("GFLMOAB", 1.1),
+		entry("DT",      6.0),
+		entry("GLD",     3.5),
+		entry("FMOABT",  1.3)
+	);
+	private static final Map<Integer, Double> MIN_MATCHES_BEST_OF_FACTOR = Map.of(
+		3, 1.4,
+		5, 3.0
+	);
+	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = Map.ofEntries(
+		entry("H",   2.0),
+		entry("C",   2.2),
+		entry("G",   5.0),
+		entry("P",   3.0),
+		entry("GP",  2.5),
+		entry("HG",  1.7),
+		entry("HC",  1.4),
+		entry("HP",  1.5),
+		entry("CG",  2.0),
+		entry("CGP", 1.7),
+		entry("HGP", 1.4),
+		entry("HCP", 1.2),
+		entry("HCG", 1.3)
+	);
+	private static final Map<Boolean, Double> MIN_MATCHES_INDOOR_FACTOR = Map.of(
+		Boolean.FALSE, 1.4,
+		Boolean.TRUE,  2.5
+	);
+	private static final Map<CourtSpeed, Double> MIN_MATCHES_SPEED_FACTOR = Map.ofEntries(
+		entry(CourtSpeed.VERY_FAST, 5.0),
+		entry(CourtSpeed.FAST, 5.0),
+		entry(CourtSpeed.MEDIUM_FAST, 5.0),
+		entry(CourtSpeed.MEDIUM, 4.0),
+		entry(CourtSpeed.MEDIUM_SLOW, 5.0),
+		entry(CourtSpeed.SLOW, 5.0),
+		entry(CourtSpeed.VERY_SLOW, 7.5),
+		entry(CourtSpeed.GE_FAST, 3.0),
+		entry(CourtSpeed.GE_MEDIUM_FAST, 2.5),
+		entry(CourtSpeed.GE_MEDIUM, 1.8),
+		entry(CourtSpeed.GE_MEDIUM_SLOW, 1.5),
+		entry(CourtSpeed.GE_SLOW, 1.4),
+		entry(CourtSpeed.LE_FAST, 1.6),
+		entry(CourtSpeed.LE_MEDIUM_FAST, 2.0),
+		entry(CourtSpeed.LE_MEDIUM, 2.2),
+		entry(CourtSpeed.LE_MEDIUM_SLOW, 3.0),
+		entry(CourtSpeed.LE_SLOW, 4.0)
+	);
+	private static final Map<String, Double> MIN_MATCHES_ROUND_FACTOR = Map.ofEntries(
+		entry("F",     5.0),
+		entry("SF",    4.0),
+		entry("SF+",   2.5),
+		entry("QF",    3.5),
+		entry("QF+",   1.5),
+		entry("R16",   3.5),
+		entry("R16+",  1.2),
+		entry("R32",   4.0),
+		entry("R32+",  1.2),
+		entry("R64",   5.0),
+		entry("R64+",  1.1),
+		entry("R128",  8.0),
+		entry("ENT",   2.0),
+		entry("RR",    8.0),
+		entry("BR",   20.0),
+		entry("BR+",   5.0)
+	);
+	private static final Map<Range<Integer>, Double> MIN_MATCHES_TOURNAMENT_FACTOR_MAP = Map.of(
+		Range.atMost(2), 100.0,
+		Range.closed(3, 5), 50.0,
+		Range.closed(6, 9), 25.0,
+		Range.atLeast(10), 20.0
+	);
+	private static final Map<Integer, Double> MIN_MATCHES_BEST_RANK_FACTOR = Map.of(
+		1,  3.5,
+		2,  2.0,
+		3,  1.7,
+		5,  1.3,
+		10, 1.25,
+		20, 1.25
+	);
 
 	private static final String PLAYER_H2H_QUERY = //language=SQL
 		"SELECT h2h_won, h2h_draw, h2h_lost FROM player_h2h\n" +

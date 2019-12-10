@@ -5,8 +5,8 @@ import java.util.*;
 import org.strangeforest.tcb.stats.model.core.*;
 
 import static java.util.Collections.*;
-import static java.util.Comparator.*;
 import static java.util.Comparator.reverseOrder;
+import static java.util.Comparator.*;
 
 public class TournamentLevelTimeline {
 
@@ -60,7 +60,7 @@ public class TournamentLevelTimeline {
 	public void addMissingSeasonLastTournaments() {
 		for (int season : getSeasons()) {
 			Optional<Integer> optionalPrevSeason = getPrevSeason(season);
-			if (!optionalPrevSeason.isPresent())
+			if (optionalPrevSeason.isEmpty())
 				continue;
 			int prevSeason = optionalPrevSeason.get();
 			List<TournamentItem> seasonTournaments = seasonsTournaments.get(season);
@@ -80,7 +80,7 @@ public class TournamentLevelTimeline {
 
 	private Optional<Integer> getPrevSeason(int season) {
 		Set<Integer> seasons = getSeasons();
-		if (seasons.stream().sorted(naturalOrder()).findFirst().get() == season)
+		if (seasons.stream().min(naturalOrder()).get() == season)
 			return Optional.empty();
 		else {
 			for (int prevSeason = season - 1; true; prevSeason--) {

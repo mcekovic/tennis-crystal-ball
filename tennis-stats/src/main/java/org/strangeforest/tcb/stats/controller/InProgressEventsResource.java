@@ -10,8 +10,6 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
-import com.google.common.collect.*;
-
 import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
@@ -23,17 +21,17 @@ public class InProgressEventsResource {
 
 	private static final int MAX_TOURNAMENT_EVENTS = 5000;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("date", "date")
-		.put("name", "name")
-		.put("surface", "surface")
-		.put("draw", "draw_type, draw_size")
-		.put("playerCount", "player_count")
-		.put("participation", "participation")
-		.put("strength", "strength")
-		.put("averageEloRating", "average_elo_rating")
-		.put("completed", "completed")
-	.build();
+	private static Map<String, String> ORDER_MAP = Map.of(
+		"date", "date",
+		"name", "name",
+		"surface", "surface",
+		"draw", "draw_type, draw_size",
+		"playerCount", "player_count",
+		"participation", "participation",
+		"strength", "strength",
+		"averageEloRating", "average_elo_rating",
+		"completed", "completed"
+	);
 	public static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 
 	@GetMapping("/inProgressEventsTable")

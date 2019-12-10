@@ -140,9 +140,9 @@
 				</select>
 			</div>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-1">
 			<div id="byAgeDiv" class="checkbox">
-				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
+				<label class="text-nowrap" data-toggle="tooltip" data-placement="top" title="Show chart by age">
 					<input id="byAge" type="checkbox" th:checked="${byAge}"/> By age
 				</label>
 			</div>
@@ -151,7 +151,7 @@
 			<div id="statsChartSize" style="margin-top: 6px"></div>
 			<div style="text-align: center; opacity: 0.5; height: 15px">Chart size</div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
 				<i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Draw Chart
 			</a>

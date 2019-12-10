@@ -1,12 +1,12 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
 import java.util.function.*;
 
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class BestPlayerThatNeverCategory extends RecordCategory {
@@ -66,7 +66,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"WHERE goat_points > 0 AND coalesce(" + titleColumn + ", 0) = 0" + condition,
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
-			asList(GOAT_POINTS_COLUMN), notes
+			List.of(GOAT_POINTS_COLUMN), notes
 		);
 	}
 
@@ -81,7 +81,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"AND NOT EXISTS (SELECT * FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = p.player_id AND r.result >= 'BR'" + prefix(domain.condition, " AND e.") + ")",
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
-			asList(GOAT_POINTS_COLUMN), notes
+			List.of(GOAT_POINTS_COLUMN), notes
 		);
 	}
 
@@ -93,7 +93,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"WHERE goat_points > 0 AND " + rankColumn + " > " + bestRank,
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
-			asList(GOAT_POINTS_COLUMN)
+			List.of(GOAT_POINTS_COLUMN)
 		);
 	}
 
@@ -107,7 +107,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"WHERE g.goat_points IS NULL AND p.best_rank > 0",
 			"r.value", "r.value", "r.value, date",
 			IntegerRecordDetail.class, null,
-			asList(new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", "Best Rank"))
+			List.of(new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", "Best Rank"))
 		);
 	}
 }

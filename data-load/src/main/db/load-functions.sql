@@ -25,7 +25,7 @@ DECLARE
 BEGIN
 	SELECT player_id INTO l_player_id FROM player
 	WHERE full_name(first_name, last_name) = p_name
-	AND (p_date >= dob + (INTERVAL '10 year') OR dob IS NULL)
+	AND (p_date >= dob + (INTERVAL '10 year') OR dob IS NULL OR p_date IS NULL)
 	ORDER BY dob, player_id;
 	IF l_player_id IS NOT NULL THEN
 		RETURN l_player_id;
@@ -33,7 +33,7 @@ BEGIN
 
 	SELECT player_id INTO l_player_id FROM player
 	WHERE lower(full_name(first_name, last_name)) = lower(p_name)
-	AND (p_date >= dob + (INTERVAL '10 year') OR dob IS NULL)
+	AND (p_date >= dob + (INTERVAL '10 year') OR dob IS NULL OR p_date IS NULL)
 	ORDER BY dob, player_id;
 	IF l_player_id IS NOT NULL THEN
 		RETURN l_player_id;
@@ -1011,5 +1011,58 @@ BEGIN
 	UPDATE tournament
 	SET linked = TRUE
 	WHERE tournament_id = l_tournament_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- set_player_matches_country
+
+CREATE OR REPLACE FUNCTION set_player_matches_country(
+	p_name TEXT,
+	p_country_id TEXT,
+	p_to_date DATE
+) RETURNS VOID AS $$
+DECLARE
+	l_player_id INTEGER;
+	l_to_date DATE;
+BEGIN
+	l_player_id := find_player(p_name, NULL);
+	l_to_date := CASE WHEN p_to_date IS NOT NULL THEN l_to_date ELSE now() END;
+
+	UPDATE match
+	SET winner_country_id = p_country_id
+	WHERE winner_id = l_player_id
+	AND date < p_to_date;
+
+	UPDATE match
+	SET loser_country_id = p_country_id
+	WHERE loser_id = l_player_id
+	AND date < p_to_date;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- split_careers
+
+CREATE OR REPLACE FUNCTION split_careers(
+	p_name1 TEXT,
+	p_name2 TEXT,
+	p_split_date DATE
+) RETURNS VOID AS $$
+DECLARE
+	l_player1_id NUMERIC;
+	l_player2_id NUMERIC;
+BEGIN
+	SELECT player_id INTO l_player1_id FROM player_v WHERE name = p_name1;
+	SELECT player_id INTO l_player2_id FROM player_v WHERE name = p_name2;
+
+	UPDATE player_ranking SET player_id = CASE WHEN rank_date < p_split_date THEN l_player1_id ELSE l_player2_id END
+	WHERE player_id IN (l_player1_id, l_player2_id);
+
+	UPDATE match SET winner_id = CASE WHEN date < p_split_date THEN l_player1_id ELSE l_player2_id END
+	WHERE winner_id IN (l_player1_id, l_player2_id);
+
+	UPDATE match SET loser_id = CASE WHEN date < p_split_date THEN l_player1_id ELSE l_player2_id END
+	WHERE loser_id IN (l_player1_id, l_player2_id);
 END;
 $$ LANGUAGE plpgsql;

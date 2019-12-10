@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.prediction;
 
 import java.io.*;
 import java.time.*;
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -12,7 +13,6 @@ import org.springframework.test.context.*;
 import org.springframework.test.context.junit.jupiter.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
-import static java.util.Arrays.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.PredictionArea.*;
@@ -135,7 +135,7 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 	}
 
 	private PredictionResult doTunePredictionByArea(PredictionConfig config, Integer maxSteps) throws InterruptedException {
-		return tunePrediction(config, asList(PredictionArea.values()), METRICS, maxSteps);
+		return tunePrediction(config, List.of(PredictionArea.values()), METRICS, maxSteps);
 	}
 
 	private PredictionResult doTunePredictionByItem(PredictionConfig config, Integer maxSteps) throws InterruptedException {
@@ -143,11 +143,11 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 	}
 
 	private PredictionResult doTunePredictionInAreaFromPointZero(PredictionArea area, Integer maxSteps) throws InterruptedException {
-		return tunePrediction(PredictionConfig.areaEqualWeights(area), asList(area.getItems()), METRICS, maxSteps);
+		return tunePrediction(PredictionConfig.areaEqualWeights(area), List.of(area.getItems()), METRICS, maxSteps);
 	}
 
 	private PredictionResult doTunePredictionInArea(PredictionConfig config, PredictionArea area, Integer maxSteps) throws InterruptedException {
-		return tunePrediction(config, asList(area.getItems()), METRICS, maxSteps);
+		return tunePrediction(config, List.of(area.getItems()), METRICS, maxSteps);
 	}
 
 	private PredictionResult tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics, Integer maxSteps) throws InterruptedException {

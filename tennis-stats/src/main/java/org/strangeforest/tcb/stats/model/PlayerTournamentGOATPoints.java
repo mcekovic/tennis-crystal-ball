@@ -5,26 +5,29 @@ import java.util.concurrent.*;
 
 public class PlayerTournamentGOATPoints {
 
-	private Map<LevelResult, Integer> breakdown = new ConcurrentHashMap<>();
+	private Map<LevelResult, Integer> results = new ConcurrentHashMap<>();
 
 	public boolean hasItem(String level, String result) {
-		return breakdown.containsKey(new LevelResult(level, result));
+		return results.containsKey(new LevelResult(level, result));
 	}
 
-	public Integer getItem(String level, String result) {
-		return breakdown.get(new LevelResult(level, result));
+	public Integer getResultCount(String level, String result) {
+		return results.get(new LevelResult(level, result));
 	}
 
-	public void addItem(String level, String result, int count) {
-		breakdown.put(new LevelResult(level, result), count);
+	public void addResultCount(String level, String result, int count, int roundRobinWins) {
+		if (!result.equals("RR"))
+			results.put(new LevelResult(level, result), count);
+		if (roundRobinWins > 0)
+			results.compute(new LevelResult(level, "RR"), (lr, rrw) -> rrw != null ? rrw + roundRobinWins : roundRobinWins);
 	}
 
 	public String getLevel(String level, String result) {
 		if ("F".equals(level)) {
-			Integer tfResultCount = breakdown.get(new LevelResult("F", result));
-			Integer afResultCount = breakdown.get(new LevelResult("L", result));
-			if (afResultCount != null)
-				return Objects.equals(afResultCount, tfResultCount) ? "L" : "FL";
+			Integer tfResult = results.get(new LevelResult("F", result));
+			Integer afResult = results.get(new LevelResult("L", result));
+			if (afResult != null)
+				return Objects.equals(afResult, tfResult) ? "L" : "FL";
 			else
 				return "F";
 		}
@@ -33,32 +36,32 @@ public class PlayerTournamentGOATPoints {
 	}
 
 	void mergeTourFinals() {
-		for (Map.Entry<LevelResult, Integer> entry : breakdown.entrySet()) {
+		for (Map.Entry<LevelResult, Integer> entry : results.entrySet()) {
 			LevelResult levelResult = entry.getKey();
 			if ("L".equals(levelResult.level)) {
 				LevelResult tfLevelResult = new LevelResult("F", levelResult.result);
-				Integer tfResultCount = breakdown.get(tfLevelResult);
+				Integer tfResultCount = results.get(tfLevelResult);
 				Integer afResultCount = entry.getValue();
-				breakdown.put(tfLevelResult, tfResultCount != null ? tfResultCount + afResultCount : afResultCount);
+				results.put(tfLevelResult, tfResultCount != null ? tfResultCount + afResultCount : afResultCount);
 			}
 		}
 	}
 
 	void addAll(PlayerTournamentGOATPoints breakdown) {
-		for (Map.Entry<LevelResult, Integer> entry : breakdown.breakdown.entrySet()) {
+		for (Map.Entry<LevelResult, Integer> entry : breakdown.results.entrySet()) {
 			LevelResult levelResult = entry.getKey();
-			Integer allCount =  this.breakdown.get(levelResult);
+			Integer allCount = results.get(levelResult);
 			Integer count = entry.getValue();
-			this.breakdown.put(levelResult, allCount != null ? allCount + count : count);
+			results.put(levelResult, allCount != null ? allCount + count : count);
 		}
 	}
 
-	private static class LevelResult {
+	private static final class LevelResult {
 
 		private final String level;
 		private final String result;
 
-		public LevelResult(String level, String result) {
+		LevelResult(String level, String result) {
 			this.level = level;
 			this.result = result;
 		}

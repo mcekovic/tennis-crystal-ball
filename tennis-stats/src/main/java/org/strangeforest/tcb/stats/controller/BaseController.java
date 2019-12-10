@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
-import com.google.common.collect.*;
 import eu.bitwalker.useragentutils.*;
 
 public abstract class BaseController {
@@ -20,7 +19,7 @@ public abstract class BaseController {
 	private String googleAdSenseClientId;
 	private boolean digitalOcean;
 
-	public static final Map<String, String> VERSIONS = ImmutableMap.of(
+	public static final Map<String, String> VERSIONS = Map.of(
 		"jquery", "2.2.4",
 		"jquery-ui", "1.12.1",
 		"bootstrap", "3.4.0",

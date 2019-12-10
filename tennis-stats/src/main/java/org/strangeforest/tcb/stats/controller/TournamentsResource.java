@@ -15,6 +15,7 @@ import org.strangeforest.tcb.util.*;
 import com.google.common.collect.*;
 
 import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.util.BootgridUtil.*;
 import static org.strangeforest.tcb.util.CompareUtil.*;
 
@@ -27,23 +28,21 @@ public class TournamentsResource {
 
 	private static final Comparator<Tournament> BY_NAME = nullsLast(comparing(Tournament::getName));
 	private static final Comparator<Tournament> BY_LEVEL = (t1, t2) -> compareLists(mapSortList(t1.getLevels(), TournamentLevel::decode), mapSortList(t2.getLevels(), TournamentLevel::decode));
-	private static Map<String, Comparator<Tournament>> ORDER_MAP = ImmutableMap.<String, Comparator<Tournament>>builder()
-		.put("name", BY_NAME)
-		.put("levels", BY_LEVEL)
-		.put("surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
-		.put("speeds", (t1, t2) -> {
-			List<Integer> speeds1 = new ArrayList<>(t1.getSpeeds().values());
-			speeds1.sort(reverseOrder());
-			List<Integer> speeds2 = new ArrayList<>(t2.getSpeeds().values());
-			speeds2.sort(reverseOrder());
+	private static Map<String, Comparator<Tournament>> ORDER_MAP = Map.of(
+		"name", BY_NAME,
+		"levels", BY_LEVEL,
+		"surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::safeDecode), mapList(t2.getSurfaces(), Surface::safeDecode)),
+		"speeds", (t1, t2) -> {
+			List<Integer> speeds1 = t1.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
+			List<Integer> speeds2 = t2.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
 			return compareLists(speeds1, speeds2);
-		})
-		.put("eventCount", comparing(Tournament::getEventCount))
-		.put("playerCount", comparing(Tournament::getPlayerCount))
-		.put("participation", comparing(Tournament::getParticipation))
-		.put("strength", comparing(Tournament::getStrength))
-		.put("averageEloRating", comparing(Tournament::getAverageEloRating))
-	.build();
+		},
+		"eventCount", comparing(Tournament::getEventCount),
+		"playerCount", comparing(Tournament::getPlayerCount),
+		"participation", comparing(Tournament::getParticipation),
+		"strength", comparing(Tournament::getStrength),
+		"averageEloRating", comparing(Tournament::getAverageEloRating)
+	);
 
 	@GetMapping("/tournamentsTable")
 	public BootgridTable<Tournament> tournamentsTable(

@@ -34,14 +34,38 @@ public class RankingChartService {
 		"FROM %3$s r%4$s\n" +
 		"WHERE r.player_id IN (:playerIds)\n" +
 		"AND %2$s > 0%5$s\n" +
-		"ORDER BY %6$s, r.player_id";
+		"ORDER BY %6$s, player_id";
+
+	private static final String PLAYER_RANKINGS_REFERENCE_RANK_QUERY = //language=SQL
+		"SELECT r.rank_date AS date%1$s, r.player_id, %2$s AS rank_value\n" +
+		"FROM %3$s r%4$s\n" +
+		"WHERE r.player_id IN (:playerIds)\n" +
+		"AND %2$s > 0%5$s\n" +
+		"UNION ALL\n" +
+		"SELECT r.rank_date%1$s, -%7$s, %2$s\n" +
+		"FROM %3$s r%4$s\n" +
+		"WHERE -%7$s IN (:refRanks)\n" +
+		"AND %2$s > 0%5$s\n" +
+		"ORDER BY %6$s, player_id";
 
 	private static final String PLAYER_SEASON_RANKINGS_QUERY = //language=SQL
 		"SELECT r.season%1$s, r.player_id, %2$s AS rank_value\n" +
 		"FROM %3$s r%4$s\n" +
 		"WHERE r.player_id IN (:playerIds)\n" +
 		"AND %2$s > 0%5$s\n" +
-		"ORDER BY %6$s, r.player_id";
+		"ORDER BY %6$s, player_id";
+
+	private static final String PLAYER_SEASON_RANKINGS_REFERENCE_RANK_QUERY = //language=SQL
+		"SELECT r.season%1$s, r.player_id, %2$s AS rank_value\n" +
+		"FROM %3$s r%4$s\n" +
+		"WHERE r.player_id IN (:playerIds)\n" +
+		"AND %2$s > 0%5$s\n" +
+		"UNION ALL\n" +
+		"SELECT r.season%1$s, -%7$s, %2$s\n" +
+		"FROM %3$s r%4$s\n" +
+		"WHERE -%7$s IN (:refRanks)\n" +
+		"AND %2$s > 0%5$s\n" +
+		"ORDER BY %6$s, player_id";
 
 	private static final String PLAYER_GOAT_POINTS = //language=SQL
 		"WITH goat_points AS (\n" +
@@ -176,18 +200,22 @@ public class RankingChartService {
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
-	public DataTable getRankingDataTable(int[] playerIds, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
+	public DataTable getRankingDataTable(int[] playerIds, int[] refRanks, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
 		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
-		DataTable table = fetchRankingsDataTable(indexedPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
-		addColumns(table, indexedPlayers, rankType, bySeason, byAge);
+		IndexedPlayers indexedRefRanks = getIndexedReferenceRanks(rankType, refRanks);
+		IndexedPlayers indexedAll = indexedRefRanks.union(indexedPlayers);
+		DataTable table = fetchRankingsDataTable(indexedAll, indexedPlayers.getPlayerIds(), indexedRefRanks.getPlayerIds(), rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+		addColumns(table, indexedAll, rankType, bySeason, byAge);
 		return table;
 	}
 
-	public DataTable getRankingsDataTable(List<String> players, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
+	public DataTable getRankingsDataTable(List<String> players, int[] refRanks, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
 		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(players);
-		DataTable table = fetchRankingsDataTable(indexedPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+		IndexedPlayers indexedRefRanks = getIndexedReferenceRanks(rankType, refRanks);
+		IndexedPlayers indexedAll = indexedRefRanks.union(indexedPlayers);
+		DataTable table = fetchRankingsDataTable(indexedAll, indexedPlayers.getPlayerIds(), indexedRefRanks.getPlayerIds(), rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		if (!table.getRows().isEmpty())
-			addColumns(table, indexedPlayers, rankType, bySeason, byAge);
+			addColumns(table, indexedAll, rankType, bySeason, byAge);
 		else {
 			table.addColumn("string", "Player");
 			table.addColumn("number", format("%1$s %2$s not found", players.size() > 1 ? "Players" : "Player", join(", ", players)));
@@ -195,15 +223,24 @@ public class RankingChartService {
 		return table;
 	}
 
-	private DataTable fetchRankingsDataTable(IndexedPlayers players, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
+	private static IndexedPlayers getIndexedReferenceRanks(RankType rankType, int[] refRanks) {
+		IndexedPlayers indexedRefRanks = new IndexedPlayers();
+		for (int index = 0; index < refRanks.length; index++) {
+			int refRank = refRanks[index];
+			indexedRefRanks.addPlayer(-refRank, rankType.rankType.shortText + " No. " + refRank, index);
+		}
+		return indexedRefRanks;
+	}
+
+	private DataTable fetchRankingsDataTable(IndexedPlayers ranksAndPlayers, Collection<Integer> playerIds, Collection<Integer> refRankIds, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
 		DataTable table = new DataTable();
-		if (players.isEmpty())
+		if (ranksAndPlayers.isEmpty())
 			return table;
-		RowCursor rowCursor = bySeason ? new IntegerRowCursor(table, players) : (byAge ? new DoubleRowCursor(table, players) : new DateRowCursor(table, players));
+		RowCursor rowCursor = bySeason ? new IntegerRowCursor(table, ranksAndPlayers) : (byAge ? new DoubleRowCursor(table, ranksAndPlayers) : new DateRowCursor(table, ranksAndPlayers));
 		boolean compensate = compensatePoints && rankType == POINTS;
 		jdbcTemplate.query(
-			getSQL(rankType, bySeason, dateRange, seasonRange, byAge),
-			getParams(players, bySeason, dateRange, seasonRange, rankType.category == RankCategory.GOAT ? rankType.surface : null),
+			getSQL(rankType, !refRankIds.isEmpty(), bySeason, dateRange, seasonRange, byAge),
+			getParams(playerIds, refRankIds, bySeason, dateRange, seasonRange, rankType.category == RankCategory.GOAT ? rankType.surface : null),
 			rs -> {
 				Object x;
 				int playerId = rs.getInt("player_id");
@@ -240,7 +277,7 @@ public class RankingChartService {
 			table.addColumn("number", player + " " + rankType.text);
 	}
 
-	private String getSQL(RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
+	private String getSQL(RankType rankType, boolean referenceRank, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
 		String playerJoin = byAge ? PLAYER_JOIN : "";
 		String orderBy = byAge ? "age" : (bySeason ? "season" : "date");
 		if (rankType.category == RankCategory.GOAT) {
@@ -262,15 +299,15 @@ public class RankingChartService {
 		}
 		else {
 			if (bySeason) {
-				return format(PLAYER_SEASON_RANKINGS_QUERY,
+				return format(referenceRank ? PLAYER_SEASON_RANKINGS_REFERENCE_RANK_QUERY : PLAYER_SEASON_RANKINGS_QUERY,
 					byAge ? ", extract(YEAR FROM age(make_date(r.season, 12, 31), p.dob)) AS age" : "",
-					rankColumnBySeason(rankType), rankingTableBySeason(rankType), playerJoin, rangeFilter(seasonRange, "r.season", "season"), orderBy
+					rankColumnBySeason(rankType), rankingTableBySeason(rankType), playerJoin, rangeFilter(seasonRange, "r.season", "season"), orderBy, rankColumnBySeason(rankType.rankType)
 				);
 			}
 			else {
-				return format(PLAYER_RANKINGS_QUERY,
+				return format(referenceRank ? PLAYER_RANKINGS_REFERENCE_RANK_QUERY : PLAYER_RANKINGS_QUERY,
 					byAge ? ", age(r.rank_date, p.dob) AS age" : "",
-					rankColumn(rankType), rankingTable(rankType), playerJoin, rangeFilter(dateRange, "r.rank_date", "date"), orderBy
+					rankColumn(rankType), rankingTable(rankType), playerJoin, rangeFilter(dateRange, "r.rank_date", "date"), orderBy, rankColumn(rankType.rankType)
 				);
 			}
 		}
@@ -360,8 +397,10 @@ public class RankingChartService {
 		}
 	}
 
-	private MapSqlParameterSource getParams(IndexedPlayers players, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, Surface surface) {
-		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
+	private MapSqlParameterSource getParams(Collection<Integer> playerIds, Collection<Integer> refRankIds, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, Surface surface) {
+		MapSqlParameterSource params = params("playerIds", playerIds);
+		if (!refRankIds.isEmpty())
+			params.addValue("refRanks", refRankIds);
 		if (bySeason)
 			addRangeParams(params, seasonRange, "season");
 		else

@@ -14,14 +14,9 @@ COMMIT;
 
 -- Correct player nationalities
 
-WITH lendl_id AS (
-	SELECT player_id FROM player_v WHERE name = 'Ivan Lendl'
-)
-UPDATE match
-SET winner_country_id = CASE WHEN winner_id = (SELECT player_id FROM lendl_id) THEN 'CZE' ELSE winner_country_id END,
-	loser_country_id = CASE WHEN loser_id = (SELECT player_id FROM lendl_id) THEN 'CZE' ELSE loser_country_id END
-WHERE (winner_id = (SELECT player_id FROM lendl_id) OR loser_id = (SELECT player_id FROM lendl_id))
-AND date < DATE '1992-07-07';
+DO $$ BEGIN
+	PERFORM set_player_matches_country('Ivan Lendl', 'CZE', '1992-07-07');
+END $$;
 
 UPDATE player
 SET country_id = 'SRB'
@@ -31,36 +26,18 @@ UPDATE player
 SET country_id = 'GEO'
 WHERE first_name = 'Nikoloz' AND last_name = 'Basilashvili';
 
-WITH basilashvili_id AS (
-	SELECT player_id FROM player_v WHERE name = 'Nikoloz Basilashvili'
-)
-UPDATE match
-SET winner_country_id = CASE WHEN winner_id = (SELECT player_id FROM basilashvili_id) THEN 'GEO' ELSE winner_country_id END,
-	loser_country_id = CASE WHEN loser_id = (SELECT player_id FROM basilashvili_id) THEN 'GEO' ELSE loser_country_id END
-WHERE (winner_id = (SELECT player_id FROM basilashvili_id) OR loser_id = (SELECT player_id FROM basilashvili_id));
+DO $$ BEGIN
+	PERFORM set_player_matches_country('Nikoloz Basilashvili', 'GEO', NULL);
+END $$;
 
 COMMIT;
 
 
 -- Zverev Jr/Sr separation
 
-DO $$
-DECLARE
-	zverevSrId NUMERIC;
-	zverevJrId NUMERIC;
-BEGIN
-	SELECT player_id INTO zverevSrId FROM player_v WHERE name = 'Alexander Zverev Sr';
-	SELECT player_id INTO zverevJrId FROM player_v WHERE name = 'Alexander Zverev';
-
-	UPDATE player_ranking SET player_id = zverevSrId
-	WHERE player_id = zverevJrId AND rank_date < DATE '2000-01-01';
-
-	UPDATE match SET winner_id = zverevSrId
-	WHERE winner_id = zverevJrId AND date < DATE '2000-01-01';
-
-	UPDATE match SET loser_id = zverevSrId
-	WHERE loser_id = zverevJrId AND date < DATE '2000-01-01';
-END$$;;
+DO $$ BEGIN
+	PERFORM split_careers('Alexander Zverev Sr', 'Alexander Zverev', '2000-01-01');
+END $$;
 
 COMMIT;
 
@@ -93,6 +70,15 @@ COMMIT;
 
 UPDATE match SET best_of = 5
 WHERE best_of = 3 AND (w_sets > 2 OR l_sets > 2 OR w_sets + l_sets > 3);
+
+COMMIT;
+
+
+-- Correct draw_size
+
+UPDATE tournament_event
+SET draw_size = estimate_draw_size(tournament_event_id)
+WHERE draw_size IS NULL;
 
 COMMIT;
 

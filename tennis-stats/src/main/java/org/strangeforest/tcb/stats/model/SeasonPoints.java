@@ -4,19 +4,17 @@ import java.util.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
 
-import com.google.common.collect.*;
-
 import static org.strangeforest.tcb.stats.model.core.Surface.*;
 
 public class SeasonPoints {
 
 	private static final int POINTS_ROUNDER = 10;
-	private static final Map<Surface, Integer> SURFACE_POINTS_ROUNDER = ImmutableMap.<Surface, Integer>builder()
-		.put(HARD,   5)
-		.put(CLAY,   4)
-		.put(GRASS,  3)
-		.put(CARPET, 3)
-	.build();
+	private static final Map<Surface, Integer> SURFACE_POINTS_ROUNDER = Map.of(
+		HARD,   5,
+		CLAY,   4,
+		GRASS,  3,
+		CARPET, 3
+	);
 
 	public static int getPointsRounder(Surface surface) {
 		return surface == null ? POINTS_ROUNDER : SURFACE_POINTS_ROUNDER.get(surface);

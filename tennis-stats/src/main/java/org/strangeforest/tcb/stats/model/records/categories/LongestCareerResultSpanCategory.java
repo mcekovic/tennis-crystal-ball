@@ -6,7 +6,6 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.LongestCareerResultSpanCategory.ResultType.*;
 
@@ -125,7 +124,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 
 	private static final String SPAN_COLUMNS = "r.value, r.start_date, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_date, r.end_tournament_event_id, r.end_tournament, r.end_level";
 
-	private static final List<RecordColumn> SPAN_RECORD_COLUMNS = asList(
+	private static final List<RecordColumn> SPAN_RECORD_COLUMNS = List.of(
 		new RecordColumn("value", null, "valueUrl", SPAN_WIDTH, "left", "Career Span"),
 		new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "First Date"),
 		new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "First Tournament"),
@@ -154,7 +153,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"HAVING max(consecutive_seasons) > 1",
 			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
 			SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s&result=%3$s&fromDate=01-01-%4$d&toDate=31-12-%5$d", playerId, domain.urlParam, type.urlParam, recordDetail.getStartSeason(), recordDetail.getEndSeason()),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", SEASONS_WIDTH, "right", "Seasons"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
 				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "End Season")

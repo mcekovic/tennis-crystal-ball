@@ -6,15 +6,16 @@
 <!--/*@thymesVar id="toDate" type="java.lang.String"*/-->
 <!--/*@thymesVar id="bySeason" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankCategories" type="org.strangeforest.tcb.stats.model.core.RankCategory[]"*/-->
+<!--/*@thymesVar id="referenceRanks" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
 	var rankChartData, bySeason, rankPointCount, isRank, logScale;
 	google.charts.load("current", {packages: ["corechart"]});
 	google.charts.setOnLoadCallback(drawRankingChart);
 	function drawRankingChart() {
-		bySeason = $("#rankingBySeason").prop("checked") && $("#rankingTimeSpan").val() != "1";
+		bySeason = $("#rankingBySeason").prop("checked") && $("#rankingTimeSpan").val() !== "1";
 		isRank = $("#rankType").val().endsWith("RANK");
 		var rankingUrlParams = rankingsChartUrlParams();
 		if (rankingUrlParams == null) return;
@@ -26,7 +27,7 @@
 			logScale = isRank ? useLogScale(json) : false;
 			rankPointCount = json.rows.length;
 			var width = $("#rankChartSize").slider("value");
-			showRankingChart(rankChartData, "rankChart", width, bySeason, rankPointCount, isRank, logScale, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
+			showRankingChart(rankChartData, "rankChart", width, bySeason, rankPointCount, isRank, logScale, [(${playerId.length > 1})] || $("#rankingRefRank").val() ? "bottom" : "none");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -35,9 +36,13 @@
 		var rankType = $("#rankType").val();
 		var timeSpan = $("#rankingTimeSpan").val();
 		var params = "&rankType=" + rankType + "&timeSpan=" + timeSpan;
-		var bySeason = $("#rankingBySeason").prop("checked") && timeSpan != "1";
+		if (rankType.indexOf("GOAT") < 0) {
+			var refRank = $("#rankingRefRank").val();
+			if (refRank) params += "&refRank=" + refRank;
+		}
+		var bySeason = $("#rankingBySeason").prop("checked") && timeSpan !== "1";
 		if (bySeason) params += "&bySeason=" + bySeason;
-		if (timeSpan == "CS") {
+		if (timeSpan === "CS") {
 			if (bySeason) {
 				var fromSeason = $("#rankingFromSeason").val();
 				if (fromSeason) params += "&fromSeason=" + fromSeason;
@@ -54,21 +59,31 @@
 			}
 		}
 		var byAge = $("#rankingByAge").prop("checked");
-		if (byAge && timeSpan == "CR") params += "&byAge=" + byAge;
+		if (byAge && timeSpan === "CR") params += "&byAge=" + byAge;
 		var compensatePoints = $("#compensatePoints").prop("checked");
-		if (compensatePoints && rankType == "POINTS") params += "&compensatePoints=" + compensatePoints;
+		if (compensatePoints && rankType === "POINTS") params += "&compensatePoints=" + compensatePoints;
 		return params;
+	}
+	function onRankTypeChange() {
+		var rankType = $("#rankType").val();
+		$("#compensatePointsDiv").css("visibility", rankType === "POINTS" ? "visible" : "hidden");
+		$("#rankingRefRankDiv").css("visibility", rankType.indexOf("GOAT") < 0 ? "visible" : "hidden");
+	}
+	function onRankingReferenceRankChange() {
+		if ($("#rankingRefRank").val())
+			$("#rankingByAge").prop("checked", false);
 	}
 	function onRankingTimeSpanChange() {
 		var timeSpan = $("#rankingTimeSpan").val();
 		var bySeason = $("#rankingBySeason").prop("checked");
-		$("#rankingBySeasonDiv").css("display", timeSpan != "1" ? "block" : "none");
-		$("#rankingDateRange").css("display", timeSpan == "CS" && !bySeason ? "table" : "none");
-		$("#rankingSeasonRange").css("display", timeSpan == "CS" && bySeason ? "table" : "none");
-		$("#rankingByAgeDiv").css("display", timeSpan == "CR" ? "block" : "none");
+		$("#rankingBySeasonDiv").css("display", timeSpan !== "1" ? "block" : "none");
+		$("#rankingDateRange").css("display", timeSpan === "CS" && !bySeason ? "table" : "none");
+		$("#rankingSeasonRange").css("display", timeSpan === "CS" && bySeason ? "table" : "none");
+		$("#rankingByAgeDiv").css("display", timeSpan === "CR" ? "block" : "none");
 	}
-	function onRankTypeChange() {
-		$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
+	function onRankingByAgeChange() {
+		if ($("#rankingByAge").prop("checked"))
+			$("#rankingRefRank").val("");
 	}
 	$(function() {
 		dateRangePicker("rankingFromDate", "rankingToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
@@ -109,6 +124,15 @@
 			<label data-toggle="tooltip" data-placement="top" title="Compensate ranking points before 2009 to match the current ATP ranking system">
 				<input id="compensatePoints" type="checkbox"/> Compensate points
 			</label>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<div id="rankingRefRankDiv" class="input-group">
+			<label for="rankingRefRank" class="input-group-addon" title="Select reference rank" data-toggle="tooltip" data-placement="top">Ref. rank:</label>
+			<select id="rankingRefRank" class="form-control" onchange="onRankingReferenceRankChange()">
+				<option value=""></option>
+				<option th:each="referenceRank : ${referenceRanks}" th:value="${referenceRank}" value="1" th:text="${referenceRank}">1</option>
+			</select>
 		</div>
 	</div>
 	<div class="col-md-2">
@@ -164,7 +188,7 @@
 		</div>
 		<div id="rankingByAgeDiv" class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
-				<input id="rankingByAge" type="checkbox"/> By age
+				<input id="rankingByAge" type="checkbox" onchange="onRankingByAgeChange()"/> By age
 			</label>
 		</div>
 	</div>

@@ -5,7 +5,6 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -30,6 +29,7 @@ import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 @Service
 public class TournamentForecastService {
 
+	@Autowired private TournamentForecastService self;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private MatchPredictionService matchPredictionService;
 	@Autowired private PerformanceService performanceService;
@@ -372,12 +372,12 @@ public class TournamentForecastService {
 	@Cacheable("InProgressEventPlayerPath")
 	public PlayerPath getInProgressEventPlayerPath(int inProgressEventId, Integer playerId) {
 		PlayerForecast player = null;
-		InProgressEventForecast forecast = getAOPProxy().getInProgressEventForecast(inProgressEventId);
+		InProgressEventForecast forecast = self.getInProgressEventForecast(inProgressEventId);
 		TournamentEventResults completed = new TournamentEventResults();
 		PlayerPathMatches probable = new PlayerPathMatches();
 		if (playerId != null) {
 			// Completed matches
-			TournamentEventResults matches = getAOPProxy().getInProgressEventCompletedMatches(inProgressEventId);
+			TournamentEventResults matches = self.getInProgressEventCompletedMatches(inProgressEventId);
 			for (TournamentEventMatch match : matches.getMatches()) {
 				MatchPlayer winner = match.getWinner();
 				MatchPlayer loser = match.getLoser();
@@ -499,9 +499,5 @@ public class TournamentForecastService {
 			rs.getDouble("probability"),
 			priceFormat
 		);
-	}
-
-	private TournamentForecastService getAOPProxy() {
-		return (TournamentForecastService)AopContext.currentProxy();
 	}
 }

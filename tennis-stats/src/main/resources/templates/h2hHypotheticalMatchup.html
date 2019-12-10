@@ -9,6 +9,7 @@
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="date1" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="date2" type="java.time.LocalDate"*/-->
@@ -92,6 +93,9 @@
 			if (dateSelector2)
 				url += "&dateSelector2=" + dateSelector2;
 		}
+		var tournamentId = $("#predictionTournament").val();
+		if (tournamentId)
+			url += "&tournamentId=" + tournamentId;
 		url += "&showDetails=" + showDetails;
 		if (inMatch) {
 			url += "&sets1=" + $("#predictionSets1").val();
@@ -129,7 +133,7 @@
 			$("#predictionDate2").val(date);
 			$("#predictionDate").val("");
 		}
-		$("#predictionDateDiv").css("display", sameDate ? "block" : "none");
+		$("#predictionDateDiv").css("visibility", sameDate ? "visible" : "hidden");
 		$("#predictionDatesDiv").css("display", !sameDate ? "block" : "none");
 		if (sameDate)
 			predictMatch();
@@ -204,18 +208,26 @@
 	</div>
 </div>
 <div class="row" style="margin-top: 10px">
-	<div class="col-md-2 col-md-offset-3">
+	<div class="col-md-3">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Predict match with current form on the same date for both players">
 				<input id="predictionSameDate" type="checkbox" th:checked="${sameDates}" onchange="onSameDateChanged()"/> On Same Date
 			</label>
 		</div>
 	</div>
-	<div id="predictionDateDiv" class="col-md-3" th:style="'display: ' + ${sameDates ? 'inline-block' : 'none'}">
+	<div id="predictionDateDiv" class="col-md-3" th:style="'visibility: ' + ${sameDates ? 'visible' : 'hidden'}">
 		<div class="input-group">
 			<label for="predictionDate" class="input-group-addon">On Date:</label>
 			<input id="predictionDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
 		</div>
+	</div>
+	<div class="col-md-3">
+		<select id="predictionTournament" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select tournament">
+			<option value="">All tournaments</option>
+			<optgroup th:each="lts : ${tournaments}" th:label="${lts.key.text}" label="Grand Slam" th:class="'bg-level-' + ${lts.key.code}">
+				<option th:each="tournament : ${lts.value}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+			</optgroup>
+		</select>
 	</div>
 </div>
 <div id="predictionDatesDiv" class="row" th:style="'display: ' + ${sameDates ? 'none' : 'block'}">

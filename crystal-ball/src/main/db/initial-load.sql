@@ -60,6 +60,7 @@ VALUES
 ('D', 'KO', 'SF',    70, NULL, NULL, TRUE),
 ('D', 'KO', 'QF',    65, NULL, NULL, TRUE),
 ('D', 'KO', 'R16',   40, NULL, NULL, TRUE),
+('D', 'RR', 'F',   NULL, NULL,    1, TRUE),
 -- World Team Cup
 ('T', 'KO', 'F',   NULL, NULL,    1, TRUE);
 

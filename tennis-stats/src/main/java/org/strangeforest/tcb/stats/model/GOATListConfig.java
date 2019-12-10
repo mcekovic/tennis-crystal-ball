@@ -1,7 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
-import java.util.*;
 import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.*;
 
@@ -10,7 +10,6 @@ import org.strangeforest.tcb.util.*;
 import com.google.common.base.*;
 
 import static java.lang.Integer.*;
-import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.util.ObjectUtil.*;
@@ -18,8 +17,8 @@ import static org.strangeforest.tcb.util.ObjectUtil.*;
 public class GOATListConfig {
 
 	public static final GOATListConfig DEFAULT = new GOATListConfig(true, false, 1, 1, 1, emptyMap(), emptyMap(), 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-	public static final List<String> TOURNAMENT_LEVELS = asList("G", "F", "L", "M", "O", "A", "B", "D", "T");
-	public static final List<String> TOURNAMENT_RESULTS = asList("W", "F", "SF", "QF", "RR", "BR");
+	public static final List<String> TOURNAMENT_LEVELS = List.of("G", "F", "L", "M", "O", "A", "B", "D", "T");
+	public static final List<String> TOURNAMENT_RESULTS = List.of("W", "F", "SF", "QF", "RR", "BR");
 
 	private final boolean oldLegends;
 	private final boolean extrapolateCareer;

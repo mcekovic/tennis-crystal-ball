@@ -23,6 +23,8 @@ public class GOATPointsService {
 	private static final String LEVEL_RESULTS_QUERY = //language=SQL
 		"SELECT DISTINCT level, result FROM tournament_rank_points\n" +
 		"WHERE goat_points > 0 AND NOT additive\n" +
+		"UNION\n" +
+		"SELECT 'F', 'RR'\n" +
 		"ORDER BY level, result DESC";
 
 	private static final String TOTAL_POINTS_QUERY =
@@ -58,7 +60,7 @@ public class GOATPointsService {
 		"ORDER BY season DESC";
 
 	private static final String TOURNAMENT_POINTS_QUERY = //language=SQL
-		"SELECT season, level, result, count(*) AS count\n" +
+		"SELECT season, level, result, count(*) AS count, sum(round_robin_wins) AS round_robin_wins\n" +
 		"FROM player_tournament_event_result\n" +
 		"INNER JOIN tournament_event USING (tournament_event_id)\n" +
 		"WHERE goat_points > 0 AND player_id = :playerId%1$s\n" +
@@ -143,14 +145,16 @@ public class GOATPointsService {
 				String level = getInternedString(rs, "level");
 				String result = mapResult(level, getInternedString(rs, "result"));
 				int count = rs.getInt("count");
-				goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown().addItem(level, result, count);
+				int roundRobinWins = rs.getInt("round_robin_wins");
+				PlayerTournamentGOATPoints breakdown = goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown();
+				breakdown.addResultCount(level, result, count, roundRobinWins);
 			});
 
 			String teamTournamentPointsSql = format(TEAM_TOURNAMENT_POINTS_QUERY, overall ? "" : " AND surface = :surface::surface");
 			jdbcTemplate.query(teamTournamentPointsSql, params, rs -> {
 				int season = rs.getInt("season");
 				int count = rs.getInt("count");
-				goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown().addItem("T", "W", count);
+				goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown().addResultCount("T", "W", count, 0);
 			});
 
 			goatPoints.aggregateTournamentBreakdownAndMergeTourFinals();

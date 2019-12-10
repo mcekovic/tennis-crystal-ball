@@ -1,5 +1,7 @@
-apply plugin: 'groovy'
-apply plugin: 'application'
+plugins {
+	id 'groovy'
+	id 'application'
+}
 
 mainClassName = 'org.strangeforest.tcb.dataload.Main'
 applicationDefaultJvmArgs = [
@@ -12,10 +14,10 @@ applicationDefaultJvmArgs = [
 sourceSets.main.resources.srcDirs = ['src/main/resources', 'src/main/db']
 
 dependencies {
-	compile (project(':crystal-ball')) {
+	implementation (project(':crystal-ball')) {
 		exclude group: 'org.jetbrains.kotlin'
 	}
-	compile (project(':tennis-stats')) {
+	implementation (project(':tennis-stats')) {
 		exclude group: 'org.springframework.boot'
 		exclude group: 'io.micrometer'
 		exclude group: 'org.thymeleaf.extras'
@@ -24,19 +26,20 @@ dependencies {
 		exclude group: 'com.maxmind.geoip2'
 		exclude group: 'eu.bitwalker'
 	}
-	compile ("org.codehaus.groovy:groovy:$groovyVersion")
-	compile ("org.codehaus.groovy:groovy-sql:$groovyVersion")
-	compile ("org.codehaus.groovy:groovy-xml:$groovyVersion")
-	compile ("org.codehaus.groovy:groovy-json:$groovyVersion")
-	compile ("org.codehaus.groovy:groovy-cli-commons:$groovyVersion")
-	compile ("org.codehaus.groovy:groovy-jmx:$groovyVersion")
-	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
-	compile ("org.jsoup:jsoup:$jsoupVersion")
-	compile ("org.springframework:spring-jdbc:$springVersion")
-	compile ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-	compile ("commons-cli:commons-cli:$commonsCliVersion")
-	compile ("org.slf4j:slf4j-simple:$slf4jVersion")
-	testCompile ("org.mockito:mockito-core:$mockitoVersion")
+	implementation ("org.codehaus.groovy:groovy:$groovyVersion")
+	implementation ("org.codehaus.groovy:groovy-sql:$groovyVersion")
+	implementation ("org.codehaus.groovy:groovy-xml:$groovyVersion")
+	implementation ("org.codehaus.groovy:groovy-json:$groovyVersion")
+	implementation ("org.codehaus.groovy:groovy-cli-commons:$groovyVersion")
+	implementation ("org.codehaus.groovy:groovy-jmx:$groovyVersion")
+	implementation ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
+	implementation ("org.jsoup:jsoup:$jsoupVersion")
+	implementation ("org.springframework:spring-jdbc:$springVersion")
+	implementation ("com.zaxxer:HikariCP:$hikariCPVersion")
+	implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+	implementation ("commons-cli:commons-cli:$commonsCliVersion")
+	implementation ("org.slf4j:slf4j-simple:$slf4jVersion")
+	testImplementation ("org.mockito:mockito-core:$mockitoVersion")
 }
 
 task quickDeployToDigitalOcean {
@@ -45,13 +48,12 @@ task quickDeployToDigitalOcean {
 		def dataLoadJar = "data-load-${version}.jar"
 		def crystalBallJar = "crystal-ball-${version}.jar"
 		def tennisStatsJar = "tennis-stats-${version}.jar"
-		def srcPath = 'build/libs'
 		def destPath = '/tcb/data-load/lib'
 		ssh.run {
 			session(remotes.digitalOcean) {
-				put from: "${srcPath}/${dataLoadJar}", into: "${destPath}/${dataLoadJar}.new"
-				put from: "../crystal-ball/${srcPath}/${crystalBallJar}", into: "${destPath}/${crystalBallJar}.new"
-				put from: "../tennis-stats/${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
+				put from: "${buildDir}/libs/${dataLoadJar}", into: "${destPath}/${dataLoadJar}.new"
+				put from: "${rootDir}/crystal-ball/build/libs/${crystalBallJar}", into: "${destPath}/${crystalBallJar}.new"
+				put from: "${rootDir}/tennis-stats/build/libs/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
 				execute "mv -f ${destPath}/${dataLoadJar}.new ${destPath}/${dataLoadJar}"
 				execute "mv -f ${destPath}/${crystalBallJar}.new ${destPath}/${crystalBallJar}"
 				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
@@ -65,11 +67,10 @@ task fullDeployToDigitalOcean {
 		def version = project.property('version')
 		def dataLoad = "data-load-${version}"
 		def dataLoadDist = "${dataLoad}.tar"
-		def srcPath = 'build/distributions'
 		def destPath = '/tcb'
 		ssh.run {
 			session(remotes.digitalOcean) {
-				put from: "${srcPath}/${dataLoadDist}", into: destPath
+				put from: "${buildDir}/distributions/${dataLoadDist}", into: destPath
 				execute "rm -rf ${destPath}/data-load"
 				execute "cd ${destPath}; tar -xvf ${dataLoadDist}; rm ${dataLoadDist}; mv ${dataLoad} data-load"
 			}

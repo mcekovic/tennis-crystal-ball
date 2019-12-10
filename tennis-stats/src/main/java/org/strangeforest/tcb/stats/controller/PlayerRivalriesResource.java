@@ -15,7 +15,6 @@ import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
@@ -28,13 +27,13 @@ public class PlayerRivalriesResource {
 
 	private static final int MAX_RIVALRIES = 1000;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("bestRank", "best_rank")
-		.put("matches", "matches")
-		.put("won", "won")
-		.put("lost", "lost")
-		.put("wonPctStr", "CASE WHEN won + lost > 0 THEN won::REAL / (won + lost) ELSE 0 END")
-	.build();
+	private static Map<String, String> ORDER_MAP = Map.of(
+		"bestRank", "best_rank",
+		"matches", "matches",
+		"won", "won",
+		"lost", "lost",
+		"wonPctStr", "CASE WHEN won + lost > 0 THEN won::REAL / (won + lost) ELSE 0 END"
+	);
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("matches"), asc("best_rank"), desc("won")};
 
 	@GetMapping("/playerRivalriesTable")
@@ -89,6 +88,6 @@ public class PlayerRivalriesResource {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, score));
-		return asList(stats1.getMatchesWon(), stats1.getMatchesLost());
+		return List.of(stats1.getMatchesWon(), stats1.getMatchesLost());
 	}
 }

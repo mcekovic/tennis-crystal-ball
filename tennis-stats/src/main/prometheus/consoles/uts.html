@@ -48,7 +48,7 @@
 </tr>
 <tr>
 	<td>JVM Old Gen</td>
-	<td>{{ template "prom_query_drilldown" (args "jvm_memory_used_bytes{area='heap', id='Tenured Gen'}" "B" "humanize1024") }}</td>
+	<td>{{ template "prom_query_drilldown" (args "jvm_memory_used_bytes{area='heap', id='G1 Old Gen'}" "B" "humanize1024") }}</td>
 </tr>
 <tr>
 	<td>JVM Live Memory</td>

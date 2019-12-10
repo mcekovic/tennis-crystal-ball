@@ -400,13 +400,10 @@ class KOTournamentForecaster {
 	}
 
 	static class ConstantWeight implements Function<Integer, Double> {
-
 		Double weight
-
 		ConstantWeight(Double weight) {
 			this.weight = weight
 		}
-
 		@Override Double apply(Integer playerId) {
 			weight
 		}

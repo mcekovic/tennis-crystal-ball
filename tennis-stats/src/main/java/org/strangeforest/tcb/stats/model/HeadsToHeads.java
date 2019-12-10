@@ -1,10 +1,12 @@
 package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
+import java.util.stream.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
 
 import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 
 public class HeadsToHeads {
 
@@ -24,8 +26,9 @@ public class HeadsToHeads {
 			this.rivalryMap.put(new RivalryKey(playerId1, playerId2), rivalry);
 			this.rivalryMap.put(new RivalryKey(playerId2, playerId1), rivalry.inverted());
 		}
-		this.rivalries = new ArrayList<>(map.values());
-		this.rivalries.sort(comparing(HeadsToHeadsRivalry::getWonLost).thenComparing(HeadsToHeadsRivalry::getPlayer1));
+		this.rivalries = map.values().stream()
+			.sorted(comparing(HeadsToHeadsRivalry::getWonLost).thenComparing(HeadsToHeadsRivalry::getPlayer1))
+			.collect(toList());
 	}
 
 	public List<HeadsToHeadsRivalry> getRivalries() {

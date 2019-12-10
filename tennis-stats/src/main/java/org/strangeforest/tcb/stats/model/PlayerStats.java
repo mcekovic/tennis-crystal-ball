@@ -651,15 +651,15 @@ public class PlayerStats {
 	}
 
 	public Double getBreakPointsSavedOverPerformingRatio() {
-		return ratio(getBreakPointsSavedPct(), new Double(getServicePointsWonPct()));
+		return ratio(getBreakPointsSavedPct(), Double.valueOf(getServicePointsWonPct()));
 	}
 
 	public Double getBreakPointsConvertedOverPerformingRatio() {
-		return ratio(getBreakPointsWonPct(), new Double(getReturnPointsWonPct()));
+		return ratio(getBreakPointsWonPct(), Double.valueOf(getReturnPointsWonPct()));
 	}
 
 	public Double getBreakPointsOverPerformingRatio() {
-		return ratio(optPct(breakPointsSaved + getBreakPointsWon(), breakPointsFaced + opponentStats.getBreakPointsFaced()), new Double(getTotalPointsWonPct()));
+		return ratio(optPct(breakPointsSaved + getBreakPointsWon(), breakPointsFaced + opponentStats.getBreakPointsFaced()), Double.valueOf(getTotalPointsWonPct()));
 	}
 
 

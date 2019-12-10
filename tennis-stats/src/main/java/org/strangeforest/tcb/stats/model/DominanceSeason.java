@@ -6,20 +6,18 @@ import java.util.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.elo.*;
 
-import com.google.common.collect.*;
-
 import static java.lang.Math.*;
 import static org.strangeforest.tcb.stats.model.core.Surface.*;
 
 public class DominanceSeason {
 
 	private static final double DOMINANCE_RATIO_COEFFICIENT = 1500.0;
-	private static final Map<Surface, Double> SURFACE_DOMINANCE_RATIO_COEFFICIENT = ImmutableMap.<Surface, Double>builder()
-		.put(HARD,   400.0)
-		.put(CLAY,   130.0)
-		.put(GRASS,   60.0)
-		.put(CARPET, 110.0)
-	.build();
+	private static final Map<Surface, Double> SURFACE_DOMINANCE_RATIO_COEFFICIENT = Map.of(
+		HARD,   400.0,
+		CLAY,   130.0,
+		GRASS,   60.0,
+		CARPET, 110.0
+	);
 
 	public static double getDominanceRatioCoefficient(Surface surface) {
 		return surface == null ? DOMINANCE_RATIO_COEFFICIENT : SURFACE_DOMINANCE_RATIO_COEFFICIENT.get(surface);

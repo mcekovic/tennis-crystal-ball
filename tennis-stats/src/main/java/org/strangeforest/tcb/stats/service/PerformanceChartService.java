@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.sql.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -20,8 +21,31 @@ public class PerformanceChartService {
 	@Autowired private PlayerService playerService;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
+	public enum PerformanceChartType {
+		WON_LOST_PCT("Winning %", "CASE WHEN %1$s_won + %1$s_lost > 0 THEN %1$s_won::REAL / (%1$s_won + %1$s_lost) ELSE NULL END"),
+		WON("Won", "%1$s_won"),
+		LOST("Lost", "%1$s_lost"),
+		PLAYED("Played", "%1$s_won + %1$s_lost");
+
+		private final String text;
+		private final String expression;
+
+		PerformanceChartType(String text, String expression) {
+			this.text = text;
+			this.expression = expression;
+		}
+
+		public String getText() {
+			return text;
+		}
+
+		public String getExpression() {
+			return expression;
+		}
+	}
+
 	private static final String PLAYER_SEASON_PERFORMANCE_QUERY = //language=SQL
-		"SELECT %1$s, player_id, CASE WHEN %2$s_won + %2$s_lost > 0 THEN %2$s_won::REAL / (%2$s_won + %2$s_lost) ELSE NULL END AS won_lost_pct\n" +
+		"SELECT %1$s, player_id, %2$s AS value\n" +
 		"FROM player_season_performance pf%3$s\n" +
 		"WHERE player_id IN (:playerIds)%4$s\n" +
 		"ORDER BY %5$s, player_id";
@@ -29,16 +53,16 @@ public class PerformanceChartService {
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
 
-	public DataTable getPerformanceDataTable(int[] playerIds, PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
+	public DataTable getPerformanceDataTable(int[] playerIds, PerformanceCategory category, PerformanceChartType chartType, Range<Integer> seasonRange, boolean byAge) {
 		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
-		DataTable table = fetchPerformanceDataTable(indexedPlayers, category, seasonRange, byAge);
+		DataTable table = fetchPerformanceDataTable(indexedPlayers, category, chartType, seasonRange, byAge);
 		addColumns(table, indexedPlayers, category, byAge);
 		return table;
 	}
 
-	public DataTable getPerformanceDataTable(List<String> players, PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
+	public DataTable getPerformanceDataTable(List<String> players, PerformanceCategory category, PerformanceChartType chartType, Range<Integer> seasonRange, boolean byAge) {
 		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(players);
-		DataTable table = fetchPerformanceDataTable(indexedPlayers, category, seasonRange, byAge);
+		DataTable table = fetchPerformanceDataTable(indexedPlayers, category, chartType, seasonRange, byAge);
 		if (!table.getRows().isEmpty())
 			addColumns(table, indexedPlayers, category, byAge);
 		else {
@@ -48,27 +72,23 @@ public class PerformanceChartService {
 		return table;
 	}
 
-	private DataTable fetchPerformanceDataTable(IndexedPlayers players, PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
+	private DataTable fetchPerformanceDataTable(IndexedPlayers players, PerformanceCategory category, PerformanceChartType chartType, Range<Integer> seasonRange, boolean byAge) {
 		DataTable table = new DataTable();
 		if (players.isEmpty())
 			return table;
 		RowCursor rowCursor = new IntegerRowCursor(table, players);
 		jdbcTemplate.query(
-			getSQL(category, seasonRange, byAge),
+			getSQL(category, chartType, seasonRange, byAge),
 			getParams(players, seasonRange),
 			rs -> {
 				Object x = byAge ? rs.getInt("age") : rs.getInt("season");
 				int playerId = rs.getInt("player_id");
-				double y = round(rs.getDouble("won_lost_pct"), 10000.0);
+				Number y = getValue(rs, chartType);
 				rowCursor.next(x, playerId, y);
 			}
 		);
 		rowCursor.addRow();
 		return table;
-	}
-
-	private static double round(double value, double by) {
-		return Math.round(value * by) / by;
 	}
 
 	private static void addColumns(DataTable table, IndexedPlayers players, PerformanceCategory category, boolean byAge) {
@@ -80,10 +100,10 @@ public class PerformanceChartService {
 			table.addColumn("number", player + " " + category.getTitle());
 	}
 
-	private String getSQL(PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
+	private String getSQL(PerformanceCategory category, PerformanceChartType chartType, Range<Integer> seasonRange, boolean byAge) {
 		return format(PLAYER_SEASON_PERFORMANCE_QUERY,
 			byAge ? "extract(YEAR FROM age(make_date(pf.season, 12, 31), p.dob)) AS age" : "pf.season",
-			category.getColumn(),
+			format(chartType.getExpression(), category.getColumn()),
 			byAge ? PLAYER_JOIN : "",
 			rangeFilter(seasonRange, "pf.season", "season"),
 			byAge ? "age" : "season"
@@ -94,5 +114,16 @@ public class PerformanceChartService {
 		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
 		addRangeParams(params, seasonRange, "season");
 		return params;
+	}
+
+	private static Number getValue(ResultSet rs, PerformanceChartType chartType) throws SQLException {
+		switch (chartType) {
+			case WON_LOST_PCT: return round(rs.getDouble("value"), 10000.0);
+			default: return rs.getInt("value");
+		}
+	}
+
+	private static double round(double value, double by) {
+		return Math.round(value * by) / by;
 	}
 }

@@ -109,7 +109,7 @@
 		<summary>Tournament Forecasts enhancements - Improved match prediction accuracy, progressive Elo rating calculations and Favorites on the glance!</summary>
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml">
-				<p>Tournament Forecasts enhancements - Improved match prediction accuracy, progressive <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> calculations as tournament go and Tournament Favorites on the glance!</p>
+				<p>Tournament Forecasts enhancements - Improved match prediction accuracy, progressive <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" rel="noopener noreferrer">Elo rating</a> calculations as tournament go and Tournament Favorites on the glance!</p>
 			</div>
 		</content>
 		<author>

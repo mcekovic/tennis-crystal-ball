@@ -10,15 +10,13 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static java.util.Arrays.*;
-
 @Controller
 public class BlogController extends PageController {
 
 	@Autowired private GOATListService goatListService;
 
 	private static final String DEFAULT_BLOG_SECTION = "newBlogSection";
-	private static final Collection<String> VALID_BLOG_SECTIONS = asList(DEFAULT_BLOG_SECTION, "eloKfactorTweaks", "gameEvolution", "goatCalculator", "bestOf5vs3", "mythBusters", "big4CourtSpeed", "h2hSkew");
+	private static final Collection<String> VALID_BLOG_SECTIONS = List.of(DEFAULT_BLOG_SECTION, "eloKfactorTweaks", "gameEvolution", "goatCalculator", "bestOf5vs3", "mythBusters", "big4CourtSpeed", "h2hSkew");
 
 	@GetMapping("/blog")
 	public ModelAndView blog(

@@ -12,6 +12,8 @@ import org.springframework.boot.web.servlet.*;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
+import static java.lang.Math.*;
+
 @Component
 @Profile("ssl")
 public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFactory {
@@ -72,7 +74,7 @@ public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFact
 	}
 
 	private int port() {
-		return getPort() > 0 ? getPort() : 0;
+		return max(getPort(), 0);
 	}
 
 	private int redirectPort() {

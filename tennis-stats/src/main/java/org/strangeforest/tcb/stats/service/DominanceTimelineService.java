@@ -12,13 +12,11 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.core.*;
 
-import com.google.common.collect.*;
-
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.Surface.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class DominanceTimelineService {
@@ -26,12 +24,12 @@ public class DominanceTimelineService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MIN_GOAT_POINTS = 40;
-	private static final Map<Surface, Integer> MIN_SURFACE_GOAT_POINTS = ImmutableMap.<Surface, Integer>builder()
-		.put(HARD,  20)
-		.put(CLAY,  15)
-		.put(GRASS,  8)
-		.put(CARPET, 8)
-	.build();
+	private static final Map<Surface, Integer> MIN_SURFACE_GOAT_POINTS = Map.of(
+		HARD,  20,
+		CLAY,  15,
+		GRASS,  8,
+		CARPET, 8
+	);
 
 	private static final String TIMELINE_QUERY = //language=SQL
 		"SELECT player_id, p.dob, p.name, p.last_name, p.country_id, p.active, g.goat_points, array(SELECT ROW(s.season, s.goat_points)\n" +

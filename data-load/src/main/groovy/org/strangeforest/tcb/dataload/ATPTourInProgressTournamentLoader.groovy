@@ -166,7 +166,7 @@ class ATPTourInProgressTournamentLoader extends BaseATPTourTournamentLoader {
 		def doc = retriedGetDoc(url)
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1), '', '.')
-		if (!atpLevel || atpLevel == 'itf' || atpLevel == 'gen') {
+		if (!atpLevel || atpLevel == 'finals' || atpLevel == 'nextgen' || atpLevel == 'gen' || atpLevel == 'itf') {
 			println "Skipping tournament at '$url', unsupported level: $atpLevel"
 			return 0
 		}
@@ -214,7 +214,7 @@ class ATPTourInProgressTournamentLoader extends BaseATPTourTournamentLoader {
 		}
 
 		// Processing entry round
-		Elements entryMatches = drawTable.select('table.scores-draw-entry-box-table')
+		def entryMatches = drawTable.select('table.scores-draw-entry-box-table')
 		entryMatches.each { entryMatch ->
 			matchNum += 1
 			def name1 = extractEntryPlayer(entryMatch, 1)
@@ -272,7 +272,7 @@ class ATPTourInProgressTournamentLoader extends BaseATPTourTournamentLoader {
 			if (verbose)
 				println '\n' + round
 			short matchNumOffset = matchNum + 1
-			Elements roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan]")
+			def roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan]")
 			if (!roundPlayers.select('div.scores-draw-entry-box').find { e -> e.text() })
 				return
 			if (round == 'Winner' && roundPlayers.size() == 2) // Workaround ATP website bug
@@ -514,7 +514,7 @@ class ATPTourInProgressTournamentLoader extends BaseATPTourTournamentLoader {
 		def extId = event.ext_tournament_id
 		def oldMatchesHash = forceForecast ? null : sql.firstRow([extId: extId], FETCH_EVENT_HASH_SQL).matches_hash
 		if (matchesHash != oldMatchesHash) {
-			loadStats(matches.values(), 'p1_', 'p2_', 'player1_name', 'player2_name')
+			loadStats(matches.values(), LocalDate.now().year, extId, 'p1_', 'p2_', 'player1_name', 'player2_name')
 			sql.withBatch(LOAD_MATCH_SQL) { ps ->
 				matches.values().each { match ->
 					ps.addBatch(match)

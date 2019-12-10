@@ -28,6 +28,7 @@ public class PerfStatsChartResource {
 		@RequestParam(name = "playerId", required = false) int[] playerId,
 		@RequestParam(name = "players", defaultValue = "") String playersCSV,
 		@RequestParam(name = "category", defaultValue = "matches") String category,
+		@RequestParam(name = "chartType", defaultValue = "WON_LOST_PCT") PerformanceChartService.PerformanceChartType chartType,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "byAge", defaultValue = F) boolean byAge
@@ -37,10 +38,10 @@ public class PerfStatsChartResource {
 		if (!seasonRange.equals(Range.all()))
 			byAge = false;
 		if (playerId != null && playerId.length > 0)
-			return perfChartService.getPerformanceDataTable(playerId, perfCategory, seasonRange, byAge);
+			return perfChartService.getPerformanceDataTable(playerId, perfCategory, chartType, seasonRange, byAge);
 		else {
 			List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
-			return perfChartService.getPerformanceDataTable(players, perfCategory, seasonRange, byAge);
+			return perfChartService.getPerformanceDataTable(players, perfCategory, chartType, seasonRange, byAge);
 		}
 	}
 

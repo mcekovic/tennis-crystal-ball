@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.BreaksWinningTitleCategory.ItemType.*;
 import static org.strangeforest.tcb.stats.model.records.categories.BreaksWinningTitleCategory.RecordType.*;
@@ -117,7 +118,7 @@ public class BreaksWinningTitleCategory extends RecordCategory {
 			"GROUP BY player_id, tournament_event_id, e.name, e.level, e.season, e.date HAVING count(m.match_id) >= 3",
 			"r.value, r.value2, r.tournament_event_id, r.tournament, r.level, r.season, r.matches", type.order, type.order + ", r.date",
 			TournamentEventTwoIntegersRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", item.name),
 				new RecordColumn("value2", "numeric", null, BREAK_POINTS_WIDTH, "right", "Break Points"),
 				new RecordColumn("matches", "numeric", null, MATCHES_WIDTH, "right", "Matches"),
@@ -150,7 +151,7 @@ public class BreaksWinningTitleCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
 			IntegerRecordDetail.class, null,
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", "Titles")
 			),
 			"Minimum 3 matches played to win the title"

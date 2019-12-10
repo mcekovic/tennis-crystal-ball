@@ -26,7 +26,7 @@ class WikipediaPlayerDataLoader {
 
 	WikipediaPlayerDataLoader(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
-		playerService = new PlayerService(new NamedParameterJdbcTemplate(SqlPool.dataSource()), false)
+		playerService = new PlayerService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
 	}
 
 	def updatePlayerData() {
@@ -40,7 +40,7 @@ class WikipediaPlayerDataLoader {
 		def newLine = ProgressTicker.newLineTicker().withPreAction { printf(' %1$.2f%%', 100.0 * (updates.ticks + errors.ticks) / playerIds.size()) }
 		updates.withDownstreamTicker(newLine)
 		errors.withDownstreamTicker(newLine)
-		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
+		def pool = new ForkJoinPool(FETCH_THREAD_COUNT)
 		try {
 			pool.submit{
 				playerIds.parallelStream().forEach { playerId ->

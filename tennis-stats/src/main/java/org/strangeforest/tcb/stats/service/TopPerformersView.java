@@ -2,49 +2,47 @@ package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
 
-import com.google.common.collect.*;
-
 public class TopPerformersView {
 
-	private static final Map<String, String> LEVEL_CATEGORY_MAP = ImmutableMap.<String, String>builder()
-		.put("G", "grandSlamMatches")
-		.put("F", "tourFinalsMatches")
-		.put("L", "altFinalsMatches")
-		.put("M", "mastersMatches")
-		.put("O", "olympicsMatches")
-		.put("A", "atp500Matches")
-		.put("B", "atp250Matches")
-		.put("D", "davisCupMatches")
-		.put("T", "worldTeamCupMatches")
-	.build();
-	private static final Map<String, String> TOURNAMENT_LEVEL_CATEGORY_MAP = ImmutableMap.<String, String>builder()
-		.put("G", "grandSlamMatches")
-		.put("M", "mastersMatches")
-		.put("A", "atp500Matches")
-		.put("B", "atp250Matches")
-	.build();
-	private static final Map<Integer, String> BEST_OF_CATEGORY_MAP = ImmutableMap.<Integer, String>builder()
-		.put(3, "bestOf3Matches")
-		.put(5, "bestOf5Matches")
-	.build();
-	private static final Map<String, String> SURFACE_CATEGORY_MAP = ImmutableMap.<String, String>builder()
-		.put("H", "hardMatches")
-		.put("C", "clayMatches")
-		.put("G", "grassMatches")
-		.put("P", "carpetMatches")
-	.build();
-	private static final Map<Boolean, String> INDOOR_CATEGORY_MAP = ImmutableMap.<Boolean, String>builder()
-		.put(Boolean.FALSE, "outdoorMatches")
-		.put(Boolean.TRUE, "indoorMatches")
-	.build();
-	private static final Map<String, String> ROUND_CATEGORY_MAP = ImmutableMap.<String, String>builder()
-		.put("F", "finals")
-	.build();
-	private static final Map<Opponent, String> OPPOSITION_CATEGORY_MAP = ImmutableMap.<Opponent, String>builder()
-		.put(Opponent.NO_1, "vsNo1")
-		.put(Opponent.TOP_5, "vsTop5")
-		.put(Opponent.TOP_10, "vsTop10")
-	.build();
+	private static final Map<String, String> LEVEL_CATEGORY_MAP = Map.of(
+		"G", "grandSlamMatches",
+		"F", "tourFinalsMatches",
+		"L", "altFinalsMatches",
+		"M", "mastersMatches",
+		"O", "olympicsMatches",
+		"A", "atp500Matches",
+		"B", "atp250Matches",
+		"D", "davisCupMatches",
+		"T", "worldTeamCupMatches"
+	);
+	private static final Map<String, String> TOURNAMENT_LEVEL_CATEGORY_MAP = Map.of(
+		"G", "grandSlamMatches",
+		"M", "mastersMatches",
+		"A", "atp500Matches",
+		"B", "atp250Matches"
+	);
+	private static final Map<Integer, String> BEST_OF_CATEGORY_MAP = Map.of(
+		3, "bestOf3Matches",
+		5, "bestOf5Matches"
+	);
+	private static final Map<String, String> SURFACE_CATEGORY_MAP = Map.of(
+		"H", "hardMatches",
+		"C", "clayMatches",
+		"G", "grassMatches",
+		"P", "carpetMatches"
+	);
+	private static final Map<Boolean, String> INDOOR_CATEGORY_MAP = Map.of(
+		Boolean.FALSE, "outdoorMatches",
+		Boolean.TRUE, "indoorMatches"
+	);
+	private static final Map<String, String> ROUND_CATEGORY_MAP = Map.of(
+		"F", "finals"
+	);
+	private static final Map<Opponent, String> OPPOSITION_CATEGORY_MAP = Map.of(
+		Opponent.NO_1, "vsNo1",
+		Opponent.TOP_5, "vsTop5",
+		Opponent.TOP_10, "vsTop10"
+	);
 
 	private final String category;
 	private final PerfStatsFilter filter;

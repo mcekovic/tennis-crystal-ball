@@ -11,7 +11,6 @@ import org.springframework.test.context.junit.jupiter.*;
 import org.springframework.transaction.annotation.*;
 
 import static eu.bitwalker.useragentutils.BrowserType.*;
-import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -87,7 +86,7 @@ class VisitorRepositoryIT {
 		visitor1.visit();
 		visitor2.visit();
 		visitor2.visit();
-		repository.saveAll(asList(visitor1, visitor2));
+		repository.saveAll(List.of(visitor1, visitor2));
 
 		List<Visitor> visitors = repository.findAll();
 		assertThat(visitors).hasSize(existingVisitors + 2);

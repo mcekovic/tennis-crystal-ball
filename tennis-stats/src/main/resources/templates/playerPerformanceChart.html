@@ -1,15 +1,16 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="int[]"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.core.PerformanceCategory>>"*/-->
+<!--/*@thymesVar id="chartTypes" type="org.strangeforest.tcb.stats.service.PerformanceChartService.PerformanceChartType[]"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
-	var perfChartData, perfPointCount;
+	var perfChartData, perfPointCount, perfIsPct;
 	google.charts.load("current", {packages: ["corechart"]});
 	google.charts.setOnLoadCallback(drawPerformanceChart);
 	function drawPerformanceChart() {
-		var category = $("#perfCategory").val();
-		var dataUrl = "[[@{/playerPerformanceTable(playerId=${playerId})}]]".replace("&amp;", "&") + "&category=" + category;
+		var dataUrl = "[[@{/playerPerformanceTable(playerId=${playerId})}]]".replace("&amp;", "&");
+		dataUrl += "&category=" + $("#perfCategory").val() + "&chartType=" + $("#perfChartType").val();
 		dataUrl += "&fromSeason=" + $("#perfFromSeason").val() + "&toSeason=" + $("#perfToSeason").val();
 		dataUrl += "&byAge=" + $("#perfByAge").prop("checked");
 		var $loading = $("#perfChartLoading");
@@ -17,8 +18,9 @@
 		$.ajax(dataUrl).done(function(json) {
 			perfChartData = new google.visualization.DataTable(JSON.stringify(json));
 			perfPointCount = json.rows.length;
+			perfIsPct = $("#perfChartType").val() === "WON_LOST_PCT";
 			var width = $("#perfChartSize").slider("value");
-			showPerformanceChart(perfChartData, "perfChart", width, perfPointCount, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
+			showPerformanceChart(perfChartData, "perfChart", width, perfPointCount, perfIsPct, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -30,7 +32,7 @@
 			value: defaultChartWOLegendSize(detectDevice()),
 			step: 50,
 			slide: function(event, ui) {
-				showPerformanceChart(perfChartData, "perfChart", ui.value, perfPointCount, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
+				showPerformanceChart(perfChartData, "perfChart", ui.value, perfPointCount, perfIsPct, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 			}
 		});
 		onPerfSeasonRangeChange();
@@ -58,6 +60,14 @@
 			</select>
 		</div>
 	</div>
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="perfChartType" class="input-group-addon">Type:</label>
+			<select id="perfChartType" class="form-control">
+				<option th:each="chartType : ${chartTypes}" th:value="${chartType}" value="WON_LOST_PCT" th:text="${chartType.text}">Winning %</option>
+			</select>
+		</div>
+	</div>
 </div>
 <div class="row" style="margin-top: 5px">
 	<div class="col-md-4">
@@ -76,7 +86,7 @@
 	</div>
 	<div class="col-md-1">
 		<div id="perfByAgeDiv" class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
+			<label class="text-nowrap" data-toggle="tooltip" data-placement="top" title="Show chart by age">
 				<input id="perfByAge" type="checkbox"/> By age
 			</label>
 		</div>

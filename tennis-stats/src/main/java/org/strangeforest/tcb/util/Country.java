@@ -2,10 +2,10 @@ package org.strangeforest.tcb.util;
 
 import java.util.*;
 
-import com.google.common.collect.*;
 import com.neovisionaries.i18n.*;
 
 import static java.util.Comparator.*;
+import static java.util.Map.*;
 import static java.util.stream.Collectors.*;
 
 public class Country {
@@ -57,101 +57,101 @@ public class Country {
 
 	// Codes
 
-	private static final Map<String, String> OVERRIDES = ImmutableMap.<String, String>builder()
-		.put("AHO", "NLD")
-		.put("ALG", "DZA")
-		.put("ANG", "AGO")
-		.put("ANZ", "AUS")
-		.put("ARU", "ABW")
-		.put("ASA", "ASM")
-		.put("BAH", "BHS")
-		.put("BAN", "BGD")
-		.put("BAR", "BRB")
-		.put("BER", "BMU")
-		.put("BOT", "BWA")
-		.put("BRI", "GBR")
-		.put("BRU", "BRN")
-		.put("BUL", "BGR")
-		.put("CAL", "FRA")
-		.put("CAM", "KHM")
-		.put("CAR", "CAN")
-		.put("CAY", "CYM")
-		.put("CEY", "LKA")
-		.put("CGO", "COG")
-		.put("CHI", "CHL")
-		.put("CRC", "CRI")
-		.put("CRO", "HRV")
-		.put("DEN", "DNK")
-		.put("ECA", "ATG")
-		.put("ESA", "SLV")
-		.put("FIJ", "FJI")
-		.put("FRG", "DEU")
-		.put("GER", "DEU")
-		.put("GRE", "GRC")
-		.put("GRN", "GRL")
-		.put("GUA", "GTM")
-		.put("GUD", "FRA")
-		.put("HAI", "HTI")
-		.put("HAW", "USA")
-		.put("HON", "HND")
-		.put("INA", "IDN")
-		.put("IRI", "IRN")
-		.put("ISV", "IMN")
-		.put("ITF", "ITA")
-		.put("KSA", "SAU")
-		.put("KUW", "KWT")
-		.put("LAT", "LVA")
-		.put("LBA", "LBY")
-		.put("LES", "LSO")
-		.put("LIB", "LBN")
-		.put("MAD", "MDG")
-		.put("MAS", "MYS")
-		.put("MGL", "MNG")
-		.put("MON", "MCO")
-		.put("MTN", "MNE")
-		.put("MRI", "MUS")
-		.put("MYA", "MMR")
-		.put("NCA", "NIC")
-		.put("NED", "NLD")
-		.put("NEP", "NPL")
-		.put("NGR", "NGA")
-		.put("NIG", "NER")
-		.put("OMA", "OMN")
-		.put("PAR", "PRY")
-		.put("PHI", "PHL")
-		.put("POC", "PRI")
-		.put("POR", "PRT")
-		.put("PUR", "PRI")
-		.put("RHO", "ZWE")
-		.put("RSA", "ZAF")
-		.put("SAM", "WSM")
-		.put("SEY", "SYC")
-		.put("SIN", "SGP")
-		.put("SLO", "SVN")
-		.put("SOL", "SLB")
-		.put("SRI", "LKA")
-		.put("SUD", "SDN")
-		.put("SUI", "CHE")
-		.put("TAN", "TZA")
-		.put("TCH", "CZE")
-		.put("TOG", "TGO")
-		.put("TPE", "TWN")
-		.put("TRI", "TTO")
-		.put("UAE", "ARE")
-		.put("URS", "UZB")
-		.put("URU", "URY")
-		.put("VAN", "VUT")
-		.put("VIE", "VNM")
-		.put("VIN", "FIN")
-		.put("YUG", "SRB")
-		.put("ZAM", "ZMB")
-		.put("ZIM", "ZWE")
+	private static final Map<String, String> OVERRIDES = Map.ofEntries(
+		entry("AHO", "NLD"),
+		entry("ALG", "DZA"),
+		entry("ANG", "AGO"),
+		entry("ANZ", "AUS"),
+		entry("ARU", "ABW"),
+		entry("ASA", "ASM"),
+		entry("BAH", "BHS"),
+		entry("BAN", "BGD"),
+		entry("BAR", "BRB"),
+		entry("BER", "BMU"),
+		entry("BOT", "BWA"),
+		entry("BRI", "GBR"),
+		entry("BRU", "BRN"),
+		entry("BUL", "BGR"),
+		entry("CAL", "FRA"),
+		entry("CAM", "KHM"),
+		entry("CAR", "CAN"),
+		entry("CAY", "CYM"),
+		entry("CEY", "LKA"),
+		entry("CGO", "COG"),
+		entry("CHI", "CHL"),
+		entry("CRC", "CRI"),
+		entry("CRO", "HRV"),
+		entry("DEN", "DNK"),
+		entry("ECA", "ATG"),
+		entry("ESA", "SLV"),
+		entry("FIJ", "FJI"),
+		entry("FRG", "DEU"),
+		entry("GER", "DEU"),
+		entry("GRE", "GRC"),
+		entry("GRN", "GRL"),
+		entry("GUA", "GTM"),
+		entry("GUD", "FRA"),
+		entry("HAI", "HTI"),
+		entry("HAW", "USA"),
+		entry("HON", "HND"),
+		entry("INA", "IDN"),
+		entry("IRI", "IRN"),
+		entry("ISV", "IMN"),
+		entry("ITF", "ITA"),
+		entry("KSA", "SAU"),
+		entry("KUW", "KWT"),
+		entry("LAT", "LVA"),
+		entry("LBA", "LBY"),
+		entry("LES", "LSO"),
+		entry("LIB", "LBN"),
+		entry("MAD", "MDG"),
+		entry("MAS", "MYS"),
+		entry("MGL", "MNG"),
+		entry("MON", "MCO"),
+		entry("MTN", "MNE"),
+		entry("MRI", "MUS"),
+		entry("MYA", "MMR"),
+		entry("NCA", "NIC"),
+		entry("NED", "NLD"),
+		entry("NEP", "NPL"),
+		entry("NGR", "NGA"),
+		entry("NIG", "NER"),
+		entry("OMA", "OMN"),
+		entry("PAR", "PRY"),
+		entry("PHI", "PHL"),
+		entry("POC", "PRI"),
+		entry("POR", "PRT"),
+		entry("PUR", "PRI"),
+		entry("RHO", "ZWE"),
+		entry("RSA", "ZAF"),
+		entry("SAM", "WSM"),
+		entry("SEY", "SYC"),
+		entry("SIN", "SGP"),
+		entry("SLO", "SVN"),
+		entry("SOL", "SLB"),
+		entry("SRI", "LKA"),
+		entry("SUD", "SDN"),
+		entry("SUI", "CHE"),
+		entry("TAN", "TZA"),
+		entry("TCH", "CZE"),
+		entry("TOG", "TGO"),
+		entry("TPE", "TWN"),
+		entry("TRI", "TTO"),
+		entry("UAE", "ARE"),
+		entry("URS", "UZB"),
+		entry("URU", "URY"),
+		entry("VAN", "VUT"),
+		entry("VIE", "VNM"),
+		entry("VIN", "FIN"),
+		entry("YUG", "SRB"),
+		entry("ZAM", "ZMB"),
+		entry("ZIM", "ZWE"),
 
-		.put("BIZ", "???")
-		.put("NMI", "???")
-		.put("TKS", "???")
-		.put("UNK", "???")
-	.build();
+		entry("BIZ", "???"),
+		entry("NMI", "???"),
+		entry("TKS", "???"),
+		entry("UNK", "???")
+	);
 
 	public static CountryCode code(String countryId) {
 		if (!UNKNOWN_ID.equals(countryId)) {

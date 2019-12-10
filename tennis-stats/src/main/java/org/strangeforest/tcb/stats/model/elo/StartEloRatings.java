@@ -2,14 +2,12 @@ package org.strangeforest.tcb.stats.model.elo;
 
 import java.util.*;
 
-import static java.util.Arrays.*;
-
 public abstract class StartEloRatings {
 
 	public static final double START_RATING = 1500.0;
 
 	static final int START_RATING_RANK = 1000;
-	private static final List<RatingPoint> START_RATING_TABLE = asList(
+	private static final List<RatingPoint> START_RATING_TABLE = List.of(
 		new RatingPoint(  1, 2405),
 		new RatingPoint(  2, 2336),
 		new RatingPoint(  3, 2285),

@@ -17,7 +17,6 @@ import com.github.benmanes.caffeine.cache.*;
 
 import static java.lang.Math.*;
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
@@ -117,14 +116,14 @@ public class MatchPredictionService implements HasCache {
 		tuningSetLevel = TuningSetLevel.SURFACE;
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
 		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
-		return predictMatch(playerId1, playerId2, date, date, null, null, true, surface, indoor, level, null, round, config);
+		return predictMatch(playerId1, playerId2, date, date, null, null, inProgress, surface, indoor, level, null, round, config);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
 		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
-		return predictMatch(playerId1, playerId2, date1, date2, null, null, true, surface, indoor, level, null, round, config);
+		return predictMatch(playerId1, playerId2, date1, date2, tournamentId, null, inProgress, surface, indoor, level, null, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round) {
@@ -159,7 +158,7 @@ public class MatchPredictionService implements HasCache {
 		RankingData rankingData2 = getRankingData(playerId2, date2, surface, indoor, inProgress ? round : null);
 		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
-		MatchPrediction prediction = predictMatch(asList(
+		MatchPrediction prediction = predictMatch(List.of(
 			new RankingMatchPredictor(rankingData1, rankingData2, bestOf, config),
 			new RecentFormMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, bestOf, config),
 			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bestOf, config),
@@ -173,7 +172,7 @@ public class MatchPredictionService implements HasCache {
 	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, short bestOf, Round round, PredictionConfig config) {
 		RankingData rankingData = getRankingData(playerId, date, surface, indoor, inProgress ? round : null);
 		List<MatchData> matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
-		return predictMatch(asList(
+		return predictMatch(List.of(
 			new RankingMatchPredictor(rankingData, getQualifierRankingData(), bestOf, config),
 			new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bestOf, config)
 		), config, bestOf);
@@ -269,7 +268,8 @@ public class MatchPredictionService implements HasCache {
 		MapSqlParameterSource params = params("playerId", key.playerId).addValue("date", key.date).addValue("round", key.round.getCode());
 		jdbcTemplate.query(PLAYER_IN_PROGRESS_ELO_RATINGS_QUERY, params, rs -> {
 			LocalDate rankDate = rs.getObject("date", LocalDate.class).plusDays(1);
-			if (inProgressData.getEloDate() == null || rankDate.isAfter(inProgressData.getEloDate())) {
+			LocalDate eloDate = inProgressData.getEloDate();
+			if (eloDate == null || rankDate.isAfter(eloDate)) {
 				inProgressData.setEloRating(getInteger(rs, "elo_rating"));
 				inProgressData.setRecentEloRating(getInteger(rs, "recent_elo_rating"));
 				if (key.surface != null && key.surface.getCode().equals(rs.getString("surface")))

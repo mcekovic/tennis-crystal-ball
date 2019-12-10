@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="players" type="java.lang.String"*/-->
+<!--/*@thymesVar id="refRank" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.core.RankType"*/-->
 <!--/*@thymesVar id="compensatePoints" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="timeSpan" type="java.lang.String"*/-->
@@ -10,8 +11,9 @@
 <!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="byAge" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankCategories" type="org.strangeforest.tcb.stats.model.core.RankCategory[]"*/-->
+<!--/*@thymesVar id="referenceRanks" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Rankings Chart</title>
 	<template>
@@ -30,7 +32,7 @@
 				$("#rankChart").html("<br/><div class='row'><div class='col-md-11'><div class='alert alert-warning'>No player selected!</div></div></div>");
 		}
 		function doDrawChart() {
-			bySeason = $("#bySeason").prop("checked") && $("#timeSpan").val() != "1";
+			bySeason = $("#bySeason").prop("checked") && $("#timeSpan").val() !== "1";
 			isRank = $("#rankType").val().endsWith("RANK");
 			urlParams = rankingsChartUrlParams();
 			if (urlParams == null) return;
@@ -52,9 +54,13 @@
 			var rankType = $("#rankType").val();
 			var timeSpan = $("#timeSpan").val();
 			var params = "?players=" + players + "&rankType=" + rankType + "&timeSpan=" + timeSpan;
-			var bySeason = $("#bySeason").prop("checked") && timeSpan != "1";
+			if (rankType.indexOf("GOAT") < 0) {
+				var refRank = $("#refRank").val();
+				if (refRank) params += "&refRank=" + refRank;
+			}
+			var bySeason = $("#bySeason").prop("checked") && timeSpan !== "1";
 			if (bySeason) params += "&bySeason=" + bySeason;
-			if (timeSpan == "CS") {
+			if (timeSpan === "CS") {
 				if (bySeason) {
 					var fromSeason = $("#fromSeason").val();
 					if (fromSeason) params += "&fromSeason=" + fromSeason;
@@ -71,21 +77,31 @@
 				}
 			}
 			var byAge = $("#byAge").prop("checked");
-			if (byAge && timeSpan == "CR") params += "&byAge=" + byAge;
+			if (byAge && timeSpan === "CR") params += "&byAge=" + byAge;
 			var compensatePoints = $("#compensatePoints").prop("checked");
-			if (compensatePoints && rankType == "POINTS") params += "&compensatePoints=" + compensatePoints;
+			if (compensatePoints && rankType === "POINTS") params += "&compensatePoints=" + compensatePoints;
 			return params;
+		}
+		function onRankTypeChange() {
+			var rankType = $("#rankType").val();
+			$("#compensatePointsDiv").css("visibility", rankType === "POINTS" ? "visible" : "hidden");
+			$("#refRankDiv").css("visibility", rankType.indexOf("GOAT") < 0 ? "visible" : "hidden");
+		}
+		function onReferenceRankChange() {
+			if ($("#refRank").val())
+				$("#byAge").prop("checked", false);
 		}
 		function onTimeSpanChange() {
 			var timeSpan = $("#timeSpan").val();
 			var bySeason = $("#bySeason").prop("checked");
-			$("#bySeasonDiv").css("display", timeSpan != "1" ? "block" : "none");
-			$("#dateRange").css("display", timeSpan == "CS" && !bySeason ? "table" : "none");
-			$("#seasonRange").css("display", timeSpan == "CS" && bySeason ? "table" : "none");
-			$("#byAgeDiv").css("display", timeSpan == "CR" ? "block" : "none");
+			$("#bySeasonDiv").css("display", timeSpan !== "1" ? "block" : "none");
+			$("#dateRange").css("display", timeSpan === "CS" && !bySeason ? "table" : "none");
+			$("#seasonRange").css("display", timeSpan === "CS" && bySeason ? "table" : "none");
+			$("#byAgeDiv").css("display", timeSpan === "CR" ? "block" : "none");
 		}
-		function onRankTypeChange() {
-			$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
+		function onByAgeChange() {
+			if ($("#byAge").prop("checked"))
+				$("#refRank").val("");
 		}
 		function rankingsChartPermalink() {
 			var url = "/rankingsChart";
@@ -141,11 +157,20 @@
 				</select>
 			</div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-2">
 			<div id="compensatePointsDiv" class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Compensate ranking points before 2009 to match the current ATP ranking system">
 					<input id="compensatePoints" type="checkbox" th:checked="${compensatePoints}"/> Compensate points
 				</label>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div id="refRankDiv" class="input-group">
+				<label for="refRank" class="input-group-addon" title="Select reference rank" data-toggle="tooltip" data-placement="top">Ref. rank:</label>
+				<select id="refRank" class="form-control" onchange="onReferenceRankChange()">
+					<option value=""></option>
+					<option th:each="referenceRank : ${referenceRanks}" th:value="${referenceRank}" value="1" th:text="${referenceRank}" th:selected="${referenceRank == refRank}">1</option>
+				</select>
 			</div>
 		</div>
 		<div class="col-md-2">
@@ -196,7 +221,7 @@
 			</div>
 			<div id="byAgeDiv" class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
-					<input id="byAge" type="checkbox" th:checked="${byAge}"/> By age
+					<input id="byAge" type="checkbox" th:checked="${byAge}" onchange="onByAgeChange()"/> By age
 				</label>
 			</div>
 		</div>

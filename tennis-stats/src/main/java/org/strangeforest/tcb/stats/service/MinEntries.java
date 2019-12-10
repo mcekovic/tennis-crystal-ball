@@ -10,6 +10,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 import com.google.common.collect.*;
 
 import static java.lang.Math.*;
+import static java.util.Map.*;
 import static org.strangeforest.tcb.util.RangeUtil.*;
 
 @Service
@@ -23,132 +24,132 @@ public class MinEntries {
 	private static final int MIN_ENTRIES_SEASON_FACTOR =  10;
 	private static final int MIN_ENTRIES_MONTH_FACTOR  =  10;
 	private static final int MIN_ENTRIES_EVENT_FACTOR  = 100;
-	private static final Map<String, Double> MIN_ENTRIES_LEVEL_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
-		.put("G",      0.25)
-		.put("F",      0.05)
-		.put("L",      0.05)
-		.put("M",      0.25)
-		.put("O",      0.025)
-		.put("A",      0.25)
-		.put("B",      0.25)
-		.put("D",      0.1)
-		.put("T",      0.025)
-		.put("GFLMO",  0.5)
-		.put("FL",     0.05)
-		.put("MO",     0.25)
-		.put("AB",     0.5)
-		.put("DT",     0.1)
-		.put("GLD",    0.25)
-		.put("FMOABT", 0.75)
-	.build();
-	private static final Map<Integer, Double> MIN_ENTRIES_BEST_OF_WEIGHT_MAP = ImmutableMap.<Integer, Double>builder()
-		.put(3, 0.75)
-		.put(5, 0.25)
-	.build();
-	private static final Map<String, Double> MIN_ENTRIES_SURFACE_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
-		.put("H", 0.5)
-		.put("C", 0.5)
-		.put("G", 0.25)
-		.put("P", 0.25)
-	.build();
-	private static final Map<Boolean, Double> MIN_ENTRIES_INDOOR_WEIGHT_MAP = ImmutableMap.<Boolean, Double>builder()
-		.put(Boolean.FALSE, 0.75)
-		.put(Boolean.TRUE,  0.25)
-	.build();
-	private static final Map<CourtSpeed, Double> MIN_ENTRIES_SPEED_WEIGHT_MAP = ImmutableMap.<CourtSpeed, Double>builder()
-		.put(CourtSpeed.VERY_FAST, 0.05)
-		.put(CourtSpeed.FAST, 0.075)
-		.put(CourtSpeed.MEDIUM_FAST, 0.125)
-		.put(CourtSpeed.MEDIUM, 0.15)
-		.put(CourtSpeed.MEDIUM_SLOW, 0.125)
-		.put(CourtSpeed.SLOW, 0.075)
-		.put(CourtSpeed.VERY_SLOW, 0.05)
-		.put(CourtSpeed.GE_FAST, 0.125)
-		.put(CourtSpeed.GE_MEDIUM_FAST, 0.25)
-		.put(CourtSpeed.GE_MEDIUM, 0.50)
-		.put(CourtSpeed.GE_MEDIUM_SLOW, 0.75)
-		.put(CourtSpeed.GE_SLOW, 1.0)
-		.put(CourtSpeed.LE_FAST, 1.0)
-		.put(CourtSpeed.LE_MEDIUM_FAST, 0.75)
-		.put(CourtSpeed.LE_MEDIUM, 0.50)
-		.put(CourtSpeed.LE_MEDIUM_SLOW, 0.25)
-		.put(CourtSpeed.LE_SLOW, 0.125)
-	.build();
-	private static final Map<String, Double> MIN_ENTRIES_ROUND_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
-		.put("F",    0.1)
-		.put("BR",   0.005)
-		.put("BR+",  0.1)
-		.put("SF",   0.1)
-		.put("SF+",  0.15)
-		.put("QF",   0.15)
-		.put("QF+",  0.2)
-		.put("R16",  0.25)
-		.put("R16+", 0.5)
-		.put("R32",  0.5)
-		.put("R32+", 0.75)
-		.put("R64",  0.25)
-		.put("R128", 0.1)
-		.put("ENT",  0.75)
-		.put("RR",   0.05)
-	.build();
+	private static final Map<String, Double> MIN_ENTRIES_LEVEL_WEIGHT_MAP = Map.ofEntries(
+		entry("G",      0.25),
+		entry("F",      0.05),
+		entry("L",      0.05),
+		entry("M",      0.25),
+		entry("O",      0.025),
+		entry("A",      0.25),
+		entry("B",      0.25),
+		entry("D",      0.1),
+		entry("T",      0.025),
+		entry("GFLMO",  0.5),
+		entry("FL",     0.05),
+		entry("MO",     0.25),
+		entry("AB",     0.5),
+		entry("DT",     0.1),
+		entry("GLD",    0.25),
+		entry("FMOABT", 0.75)
+	);
+	private static final Map<Integer, Double> MIN_ENTRIES_BEST_OF_WEIGHT_MAP = Map.of(
+		3, 0.75,
+		5, 0.25
+	);
+	private static final Map<String, Double> MIN_ENTRIES_SURFACE_WEIGHT_MAP = Map.of(
+		"H", 0.5,
+		"C", 0.5,
+		"G", 0.25,
+		"P", 0.25
+	);
+	private static final Map<Boolean, Double> MIN_ENTRIES_INDOOR_WEIGHT_MAP = Map.of(
+		Boolean.FALSE, 0.75,
+		Boolean.TRUE,  0.25
+	);
+	private static final Map<CourtSpeed, Double> MIN_ENTRIES_SPEED_WEIGHT_MAP = Map.ofEntries(
+		entry(CourtSpeed.VERY_FAST, 0.05),
+		entry(CourtSpeed.FAST, 0.075),
+		entry(CourtSpeed.MEDIUM_FAST, 0.125),
+		entry(CourtSpeed.MEDIUM, 0.15),
+		entry(CourtSpeed.MEDIUM_SLOW, 0.125),
+		entry(CourtSpeed.SLOW, 0.075),
+		entry(CourtSpeed.VERY_SLOW, 0.05),
+		entry(CourtSpeed.GE_FAST, 0.125),
+		entry(CourtSpeed.GE_MEDIUM_FAST, 0.25),
+		entry(CourtSpeed.GE_MEDIUM, 0.50),
+		entry(CourtSpeed.GE_MEDIUM_SLOW, 0.75),
+		entry(CourtSpeed.GE_SLOW, 1.0),
+		entry(CourtSpeed.LE_FAST, 1.0),
+		entry(CourtSpeed.LE_MEDIUM_FAST, 0.75),
+		entry(CourtSpeed.LE_MEDIUM, 0.50),
+		entry(CourtSpeed.LE_MEDIUM_SLOW, 0.25),
+		entry(CourtSpeed.LE_SLOW, 0.125)
+	);
+	private static final Map<String, Double> MIN_ENTRIES_ROUND_WEIGHT_MAP = Map.ofEntries(
+		entry("F",    0.1),
+		entry("BR",   0.005),
+		entry("BR+",  0.1),
+		entry("SF",   0.1),
+		entry("SF+",  0.15),
+		entry("QF",   0.15),
+		entry("QF+",  0.2),
+		entry("R16",  0.25),
+		entry("R16+", 0.5),
+		entry("R32",  0.5),
+		entry("R32+", 0.75),
+		entry("R64",  0.25),
+		entry("R128", 0.1),
+		entry("ENT",  0.75),
+		entry("RR",   0.05)
+	);
 	private static final Map<String, Double> MIN_ENTRIES_RESULT_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
 		.put("W",    0.05)
 		.putAll(MIN_ENTRIES_ROUND_WEIGHT_MAP)
 	.build();
-	private static final Map<String, Double> MIN_ENTRIES_OPPONENT_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
+	private static final Map<String, Double> MIN_ENTRIES_OPPONENT_WEIGHT_MAP = Map.ofEntries(
 		// Rank
-		.put(Opponent.NO_1.name(), 0.05)
-		.put(Opponent.TOP_5.name(), 0.1)
-		.put(Opponent.TOP_10.name(), 0.1)
-		.put(Opponent.TOP_20.name(), 0.25)
-		.put(Opponent.TOP_50.name(), 0.5)
-		.put(Opponent.TOP_100.name(), 1.0)
-		.put(Opponent.OVER_100.name(), 0.1)
-		.put(Opponent.HIGHER_RANKED.name(), 0.25)
-		.put(Opponent.LOWER_RANKED.name(), 0.25)
+		entry(Opponent.NO_1.name(), 0.05),
+		entry(Opponent.TOP_5.name(), 0.1),
+		entry(Opponent.TOP_10.name(), 0.1),
+		entry(Opponent.TOP_20.name(), 0.25),
+		entry(Opponent.TOP_50.name(), 0.5),
+		entry(Opponent.TOP_100.name(), 1.0),
+		entry(Opponent.OVER_100.name(), 0.1),
+		entry(Opponent.HIGHER_RANKED.name(), 0.25),
+		entry(Opponent.LOWER_RANKED.name(), 0.25),
 		// Elo Rating
-		.put(Opponent.ELO_2400.name(), 0.025)
-		.put(Opponent.ELO_2200.name(), 0.1)
-		.put(Opponent.ELO_2000.name(), 0.5)
-		.put(Opponent.ELO_1800.name(), 1.0)
-		.put(Opponent.HIGHER_ELO.name(), 0.25)
-		.put(Opponent.LOWER_ELO.name(), 0.25)
+		entry(Opponent.ELO_2400.name(), 0.025),
+		entry(Opponent.ELO_2200.name(), 0.1),
+		entry(Opponent.ELO_2000.name(), 0.5),
+		entry(Opponent.ELO_1800.name(), 1.0),
+		entry(Opponent.HIGHER_ELO.name(), 0.25),
+		entry(Opponent.LOWER_ELO.name(), 0.25),
 		// Age
-		.put(Opponent.UNDER_18.name(), 0.05)
-		.put(Opponent.UNDER_21.name(), 0.2)
-		.put(Opponent.UNDER_25.name(), 0.5)
-		.put(Opponent.OVER_25.name(), 0.5)
-		.put(Opponent.OVER_30.name(), 0.2)
-		.put(Opponent.OVER_35.name(), 0.05)
-		.put(Opponent.YOUNGER.name(), 0.25)
-		.put(Opponent.OLDER.name(), 0.25)
+		entry(Opponent.UNDER_18.name(), 0.05),
+		entry(Opponent.UNDER_21.name(), 0.2),
+		entry(Opponent.UNDER_25.name(), 0.5),
+		entry(Opponent.OVER_25.name(), 0.5),
+		entry(Opponent.OVER_30.name(), 0.2),
+		entry(Opponent.OVER_35.name(), 0.05),
+		entry(Opponent.YOUNGER.name(), 0.25),
+		entry(Opponent.OLDER.name(), 0.25),
 		// Playing style
-		.put(Opponent.RIGHT_HANDED.name(), 1.0)
-		.put(Opponent.LEFT_HANDED.name(), 0.2)
-		.put(Opponent.BACKHAND_2.name(), 0.1)
-		.put(Opponent.BACKHAND_1.name(), 0.1)
+		entry(Opponent.RIGHT_HANDED.name(), 1.0),
+		entry(Opponent.LEFT_HANDED.name(), 0.2),
+		entry(Opponent.BACKHAND_2.name(), 0.1),
+		entry(Opponent.BACKHAND_1.name(), 0.1),
 		// Seeding
-		.put(Opponent.SEEDED.name(), 0.5)
-		.put(Opponent.UNSEEDED.name(), 0.5)
-		.put(Opponent.QUALIFIER.name(), 0.1)
-		.put(Opponent.WILD_CARD.name(), 0.05)
-		.put(Opponent.LUCKY_LOSER.name(), 0.05)
-		.put(Opponent.PROTECTED_RANKING.name(), 0.005)
-		.put(Opponent.SPECIAL_EXEMPT.name(), 0.005)
+		entry(Opponent.SEEDED.name(), 0.5),
+		entry(Opponent.UNSEEDED.name(), 0.5),
+		entry(Opponent.QUALIFIER.name(), 0.1),
+		entry(Opponent.WILD_CARD.name(), 0.05),
+		entry(Opponent.LUCKY_LOSER.name(), 0.05),
+		entry(Opponent.PROTECTED_RANKING.name(), 0.005),
+		entry(Opponent.SPECIAL_EXEMPT.name(), 0.005),
 		// Height
-		.put(Opponent.UNDER_5_10.name(), 0.25)
-		.put(Opponent.UNDER_6_0.name(), 0.5)
-		.put(Opponent.OVER_6_2.name(), 0.5)
-		.put(Opponent.OVER_6_4.name(), 0.25)
-		.put(Opponent.SHORTER.name(), 0.25)
-		.put(Opponent.TALLER.name(), 0.25)
-	.build();
-	private static final Map<Range<Integer>, Double> MIN_ENTRIES_TOURNAMENT_FACTOR_MAP = ImmutableMap.<Range<Integer>, Double>builder()
-		.put(Range.atMost(2), 100.0)
-		.put(Range.closed(3, 5), 50.0)
-		.put(Range.closed(6, 9), 25.0)
-		.put(Range.atLeast(10), 20.0)
-	.build();
+		entry(Opponent.UNDER_5_10.name(), 0.25),
+		entry(Opponent.UNDER_6_0.name(), 0.5),
+		entry(Opponent.OVER_6_2.name(), 0.5),
+		entry(Opponent.OVER_6_4.name(), 0.25),
+		entry(Opponent.SHORTER.name(), 0.25),
+		entry(Opponent.TALLER.name(), 0.25)
+	);
+	private static final Map<Range<Integer>, Double> MIN_ENTRIES_TOURNAMENT_FACTOR_MAP = Map.of(
+		Range.atMost(2), 100.0,
+		Range.closed(3, 5), 50.0,
+		Range.closed(6, 9), 25.0,
+		Range.atLeast(10), 20.0
+	);
 	private static final int MIN_ENTRIES_COUNTRY_FACTOR = 10;
 
 	public int getFilteredMinEntries(int minEntries, PerfStatsFilter filter) {

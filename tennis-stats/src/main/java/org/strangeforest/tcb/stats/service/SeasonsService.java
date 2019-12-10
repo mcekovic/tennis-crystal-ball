@@ -14,8 +14,6 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
-import com.google.common.collect.*;
-
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
@@ -31,12 +29,12 @@ public class SeasonsService {
 
 	private static final int MAX_BEST_SEASON_COUNT = 200;
 	private static final int MIN_SEASON_GOAT_POINTS = 25;
-	private static final Map<String, Integer> MIN_SURFACE_SEASON_GOAT_POINTS = ImmutableMap.<String, Integer>builder()
-		.put("H", 10)
-		.put("C", 8)
-		.put("G", 5)
-		.put("P", 5)
-	.build();
+	private static final Map<String, Integer> MIN_SURFACE_SEASON_GOAT_POINTS = Map.of(
+		"H", 10,
+		"C",  8,
+		"G",  5,
+		"P",  5
+	);
 
 	private static final String SEASONS_QUERY = //language=SQL
 		"WITH season_tournament_count AS (\n" +

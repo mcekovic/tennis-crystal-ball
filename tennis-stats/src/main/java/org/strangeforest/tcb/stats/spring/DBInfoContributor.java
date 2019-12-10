@@ -1,12 +1,12 @@
 package org.strangeforest.tcb.stats.spring;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.info.*;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
-
-import com.google.common.collect.*;
 
 import static org.strangeforest.tcb.util.DateUtil.*;
 
@@ -20,7 +20,7 @@ public class DBInfoContributor implements InfoContributor {
 	private String databaseName;
 
 	@Override public void contribute(Info.Builder builder) {
-		builder.withDetail("db", ImmutableMap.of(
+		builder.withDetail("db", Map.of(
 			"version", dataService.getDBServerVersionString(),
 			"size", dataService.getDatabaseSize(databaseName),
 			"dataUpdate", formatDate(dataService.getDataUpdate())

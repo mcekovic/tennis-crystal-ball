@@ -35,7 +35,7 @@ public class TournamentLevelService {
 		"FROM team_tournament_event_winner w\n" +
 		"LEFT JOIN tournament_event e ON e.level = w.level AND e.season = w.season\n" +
 		"WHERE w.level = :level::tournament_level\n" +
-		"AND (e.level <> 'D' OR e.name LIKE '%WG')\n" +
+		"AND (e.level <> 'D' OR e.name LIKE '%WG' OR e.name LIKE '%Finals')\n" +
 		"ORDER BY w.season DESC, e.date DESC";
 
 

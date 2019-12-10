@@ -95,7 +95,7 @@ public class VisitorManager {
 	private Visitor doVisit(String ipAddress, String agentType) throws Exception {
 		return lockManager.withLock(ipAddress, () -> {
 			Optional<Visitor> optionalVisitor = visitors.get(ipAddress);
-			if (!optionalVisitor.isPresent()) {
+			if (optionalVisitor.isEmpty()) {
 				Optional<Country> optionalCountry = geoIPService.getCountry(ipAddress);
 				String countryId = null;
 				String countryName = null;

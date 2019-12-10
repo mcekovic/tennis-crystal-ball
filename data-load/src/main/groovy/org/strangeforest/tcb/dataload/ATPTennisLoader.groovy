@@ -160,7 +160,6 @@ class ATPTennisLoader {
 			atpTourMatchLoader.loadTournament(1972, 'tokyo', 9037, false, 'B', 'C', '1972-10-05', [], 'Tokyo WCT')
 			atpTourMatchLoader.loadTournament(1972, 'hilton-head', 724, false, 'B')
 			atpTourMatchLoader.loadTournament(1973, 'charleston', 6945, false, 'B')
-			atpTourMatchLoader.loadTournament(1973, 'kitzbuehel', 319, false, 'B', null, null, ['R32'])
 			atpTourMatchLoader.loadTournament(1974, 'lakeway', 6836, false, 'B')
 			atpTourMatchLoader.loadTournament(1974, 'hong-kong', 336, false, 'B')
 			atpTourMatchLoader.loadTournament(1975, 'australian-open', 580, false, null, 'G')
@@ -201,15 +200,9 @@ class ATPTennisLoader {
 			xmlMatchLoader.loadFile('classpath:/tournaments/1984-memphis+.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1984-rotterdam.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1987-stratton-mountain.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/1990-dusseldorf.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/1990-tour-finals.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/1999-tour-finals+.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/2000-dusseldorf+.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/2000-tour-finals+.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/2002-tour-finals+.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/2003-tour-finals+.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/2004-tour-finals+.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/2007-vina-del-mar.xml')
+			xmlMatchLoader.loadFile('classpath:/tournaments/2019-davis-cup-finals.xml')
 
 			println()
 		}
@@ -327,9 +320,9 @@ class ATPTennisLoader {
 		def stopwatch = Stopwatch.createStarted()
 
 		println 'Vacuuming tables and materialized views...'
-		def tables = sql.rows('SELECT tablename FROM pg_tables WHERE schemaname = \'public\' ORDER BY tablename')
+		def tables = sql.rows('SELECT tablename FROM pg_tables WHERE schemaname IN (\'public\', \'tcb\') ORDER BY tablename')
 			.collect { row -> row.tablename }
-		def matViews = sql.rows('SELECT matviewname FROM pg_matviews WHERE schemaname = \'public\' ORDER BY matviewname')
+		def matViews = sql.rows('SELECT matviewname FROM pg_matviews WHERE schemaname IN (\'public\', \'tcb\') ORDER BY matviewname')
 			.collect { row -> row.matviewname }
 		tables.addAll matViews
 		sql.connection.autoCommit = true

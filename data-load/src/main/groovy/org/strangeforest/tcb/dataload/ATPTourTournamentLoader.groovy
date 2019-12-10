@@ -30,18 +30,16 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		super(sql)
 	}
 
-	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, String date = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null, boolean scrapeDraws = false, boolean forceReloadStats = false) {
+	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, String date = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null, boolean scrapeDraws = false) {
 		def url = tournamentUrl(current, season, urlId, extId, scrapeDraws)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
 		def doc = retriedGetDoc(url)
 		List<Object> matches = scrapeDraws
-			? scrapeDraws(doc, level, urlId, name, season, surface, date, skipRounds, overrideExtId, extId)
+			? this.scrapeDraws(doc, level, urlId, name, season, surface, date, overrideExtId, extId, true)
 			: scrapeResults(doc, level, urlId, name, season, surface, date, skipRounds, overrideExtId, extId)
 
-		loadStats(matches, 'w_', 'l_', 'winner_name', 'loser_name')
-		if (forceReloadStats)
-			reloadStats(matches, season, extId, 'w_', 'l_', 'winner_name', 'loser_name')
+		loadStats(matches, season, extId, 'w_', 'l_', 'winner_name', 'loser_name')
 
 		withTx sql, { Sql s ->
 			s.withBatch(LOAD_SQL) { ps ->
@@ -68,7 +66,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		def matchNum = 0
 		def startDate = date(tournamentDate ?: extractStartDate(dates))
 
-		Elements rounds = doc.select('#scoresResultsContent div table')
+		def rounds = doc.select('#scoresResultsContent div table')
 		if (rounds.toString().contains('Round Robin'))
 			drawType = 'RR'
 		rounds.each {
@@ -95,7 +93,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 //					def lId = extract(lPlayer.attr('href'), '/', 4)
 					def lIsSeed = allDigits lSeedEntry
 					def scoreElem = match.select('td.day-table-score a')
-					def score = fitScore scoreElem.html().replace('<sup>', '(').replace('</sup>', ')')
+					def score = fitScore scoreElem.filter(REMOVE_COMMENTS_FILTER).html().replace('<sup>', '(').replace('</sup>', ')')
 					def matchScore = MatchScoreParser.parse(score)
 					def bestOf = smallint matchScore.bestOf ?: mapBestOf(level)
 
@@ -138,7 +136,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		matches
 	}
 
-	def scrapeDraws(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, Collection<String> skipRounds, overrideExtId, extId, verbose) {
+	def scrapeDraws(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, overrideExtId, extId, verbose) {
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1), '', '.')
 		level = level ?: mapLevel(atpLevel, urlId)
@@ -164,7 +162,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		}
 
 		// Processing entry round
-		Elements entryMatches = drawTable.select('table.scores-draw-entry-box-table')
+		def entryMatches = drawTable.select('table.scores-draw-entry-box-table')
 		entryMatches.each { entryMatch ->
 			matchNum += 1
 			def name1 = extractEntryPlayer(entryMatch, 1)
@@ -217,8 +215,6 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 			params.player2_name = name2
 			params.player2_seed = seed2
 			params.player2_entry = entry2
-
-			setScoreParams(params)
 
 			matches[matchNum] = params
 
@@ -312,8 +308,8 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 	}
 
 	def setScoreParams(Map params, MatchScore matchScore) {
-		params.outcome = matchScore.outcome
 		if (matchScore) {
+			params.outcome = matchScore.outcome
 			params.w_sets = matchScore.w_sets
 			params.l_sets = matchScore.l_sets
 			params.w_games = matchScore.w_games
@@ -350,5 +346,14 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 
 	def deleteTournament(int season, extId) {
 		sql.execute([season: season, extId: string(extId)], DELETE_TOURNAMENT_EVENT_SQL)
+	}
+
+	static final NodeFilter REMOVE_COMMENTS_FILTER = new NodeFilter() {
+		@Override NodeFilter.FilterResult head(Node node, int depth) {
+			node instanceof Comment ? NodeFilter.FilterResult.REMOVE : NodeFilter.FilterResult.CONTINUE
+		}
+		@Override NodeFilter.FilterResult tail(Node node, int depth) {
+			node instanceof Comment ? NodeFilter.FilterResult.REMOVE : NodeFilter.FilterResult.CONTINUE
+		}
 	}
 }

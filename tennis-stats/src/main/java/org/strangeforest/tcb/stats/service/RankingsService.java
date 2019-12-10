@@ -5,7 +5,6 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-import org.springframework.aop.framework.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -19,15 +18,16 @@ import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
 import static org.strangeforest.tcb.stats.model.core.RankType.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.util.NameUtil.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
-import static org.strangeforest.tcb.stats.util.NameUtil.*;
 import static org.strangeforest.tcb.util.EnumUtil.*;
 
 @Service
 public class RankingsService {
 
-	private NamedParameterJdbcTemplate jdbcTemplate;
+	@Autowired private RankingsService self;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int TOP_RANKS_FOR_TIMELINE = 5;
 
@@ -85,19 +85,19 @@ public class RankingsService {
 		"  FROM player_best_elo_rating\n" +
 		"  WHERE %1$s IS NOT NULL\n" +
 		"), best_elo_rating_ordered AS (\n" +
-		"  SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating, r.best_elo_rating_date\n" +
+		"  SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating, r.best_elo_rating_date, extract(YEAR FROM age(r.best_elo_rating_date, p.dob)) AS best_elo_rating_age\n" +
 		"  FROM best_elo_rating_ranked r\n" +
 		"  INNER JOIN player_v p USING (player_id)%2$s\n" +
 		"  ORDER BY rank OFFSET :offset LIMIT :limit\n" +
 		"), best_elo_rating_ordered2 AS (\n" +
-		"  SELECT r.rank, r.player_id, r.name, r.country_id, r.active, r.best_elo_rating, r.best_elo_rating_date,\n" +
+		"  SELECT r.rank, r.player_id, r.name, r.country_id, r.active, r.best_elo_rating, r.best_elo_rating_date, r.best_elo_rating_age,\n" +
 		"  CASE WHEN r.best_elo_rating_date IS NOT NULL THEN (\n" +
 		"    SELECT tournament_event_id FROM player_tournament_event_result er INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"    WHERE er.player_id = r.player_id AND e.date < r.best_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1\n" +
 		"  ) ELSE NULL END AS best_elo_rating_event_id\n" +
 		"  FROM best_elo_rating_ordered r\n" +
 		")\n" +
-		"SELECT r.rank, player_id, r.name, r.country_id, r.active, r.best_elo_rating AS points, r.best_elo_rating_date AS points_date, k.%3$s AS best_rank, k.%4$s AS best_rank_date,\n" +
+		"SELECT r.rank, player_id, r.name, r.country_id, r.active, r.best_elo_rating AS points, r.best_elo_rating_date AS best_rating_date, r.best_elo_rating_age AS best_rating_age, k.%3$s AS best_rank, k.%4$s AS best_rank_date,\n" +
 		"  e.tournament_event_id, e.name AS tournament, e.season, e.level\n" +
 		"FROM best_elo_rating_ordered2 r\n" +
 		"LEFT JOIN player_best_elo_rank k USING (player_id)\n" +
@@ -183,8 +183,11 @@ public class RankingsService {
 
 
 	@Autowired
+	public RankingsService() {}
+
 	public RankingsService(NamedParameterJdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
+		self = this;
 	}
 
 	@Cacheable("RankingsTable.Date")
@@ -193,7 +196,7 @@ public class RankingsService {
 			if (season != null)
 				date = getSeasonEndRankingDate(rankType, season);
 			if (date == null)
-				date = getAOPProxy().getCurrentRankingDate(rankType);
+				date = self.getCurrentRankingDate(rankType);
 		}
 		return date;
 	}
@@ -216,7 +219,7 @@ public class RankingsService {
 	}
 
 	public List<PlayerRanking> getRankingsTopN(RankType rankType, int playerCount) {
-		return getAOPProxy().getRankingsTopN(rankType, getAOPProxy().getCurrentRankingDate(rankType), playerCount);
+		return self.getRankingsTopN(rankType, self.getCurrentRankingDate(rankType), playerCount);
 	}
 
 	@Cacheable("RankingsTable.TopN")
@@ -309,9 +312,10 @@ public class RankingsService {
 				int points = rs.getInt("points");
 				int bestRank = rs.getInt("best_rank");
 				LocalDate bestRankDate = getLocalDate(rs, "best_rank_date");
-				LocalDate pointsDate = getLocalDate(rs, "points_date");
+				LocalDate bestRatingDate = getLocalDate(rs, "best_rating_date");
+				Integer bestRatingAge = getInteger(rs, "best_rating_age");
 				TournamentEventItem tournamentEvent = mapTournamentEvent(rs);
-				table.addRow(new PlayerPeakEloRankingsRow(rank, playerId, name, countryId, active, points, pointsDate, bestRank, bestRankDate, tournamentEvent));
+				table.addRow(new PlayerPeakEloRankingsRow(rank, playerId, name, countryId, active, points, bestRatingDate, bestRank, bestRankDate, tournamentEvent, bestRatingAge));
 			}
 		);
 		return table;
@@ -615,9 +619,5 @@ public class RankingsService {
 			case CARPET_GOAT_POINTS: return "player_season_goat_rank";
 			default: throw unknownEnum(rankType);
 		}
-	}
-
-	private RankingsService getAOPProxy() {
-		return (RankingsService)AopContext.currentProxy();
 	}
 }

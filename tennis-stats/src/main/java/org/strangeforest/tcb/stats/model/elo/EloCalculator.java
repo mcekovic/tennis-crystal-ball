@@ -2,8 +2,6 @@ package org.strangeforest.tcb.stats.model.elo;
 
 import java.util.*;
 
-import com.google.common.collect.*;
-
 import static java.lang.Math.*;
 import static org.strangeforest.tcb.stats.model.elo.StartEloRatings.*;
 
@@ -30,8 +28,7 @@ public abstract class EloCalculator {
 	private static final double INACTIVITY_ADJ_GRADIENT = 100.0;
 	private static final double INACTIVITY_ADJ_DRIFT = 1.0 / (1.0 + pow(E, (INACTIVITY_ADJ_PERIOD - INACTIVITY_ADJ_NO_PENALTY_PERIOD) / INACTIVITY_ADJ_GRADIENT));
 	private static final double DEFAULT_INACTIVITY_ADJ_FACTOR = 1.0;
-	private static final Map<String, Double> INACTIVITY_ADJ_FACTOR = ImmutableMap.<String, Double>builder()
-		.put("R", 2.0).put("H", 0.85).put("C", 0.75).put("G", 0.5).put("P", 0.5).put("O", 0.85).put("I", 0.6).build();
+	private static final Map<String, Double> INACTIVITY_ADJ_FACTOR = Map.of("R", 2.0, "H", 0.85, "C", 0.75, "G", 0.5, "P", 0.5, "O", 0.85, "I", 0.6);
 
 //	public static volatile double tuningValue;
 
@@ -120,6 +117,18 @@ public abstract class EloCalculator {
 						}
 						return TIE_BREAK_K_FACTOR * (wDelta * wTBs - lDelta * lTBs);
 					}
+//					case "X": {
+//						int wTBs = match.wTbs;
+//						int lTBs = match.lTbs;
+//						if (lTBs > wTBs) {
+//							double d = wDelta; wDelta = lDelta; lDelta = d;
+//						}
+//						return
+//							0.59 * delta +
+//							0.19 * (wDelta * match.wSets - lDelta * match.lSets) +
+//							0.002 * (wDelta * match.wGames - lDelta * match.lGames) +
+//							0.055 * (wDelta * wTBs - lDelta * lTBs);
+//					}
 					default: throw new IllegalStateException();
 				}
 			}
@@ -188,6 +197,6 @@ public abstract class EloCalculator {
 	}
 
 	public static double eloWinProbability(double eloRating1, double eloRating2) {
-		return 1.0 / (1.0 + pow(10.0, (eloRating2 - eloRating1) / 400.0));
+		return 1.0 / (1.0 + pow(10.0, (eloRating2 - eloRating1) / RATING_SCALE));
 	}
 }

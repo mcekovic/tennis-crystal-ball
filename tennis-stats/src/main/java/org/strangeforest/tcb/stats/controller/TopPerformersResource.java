@@ -24,12 +24,12 @@ public class TopPerformersResource {
 	@Autowired private TopPerformersService topPerformersService;
 	@Autowired private MatchesService matchesService;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("wonLostPct", "won_lost_pct")
-		.put("won", "won")
-		.put("lost", "lost")
-		.put("played", "played")
-	.build();
+	private static Map<String, String> ORDER_MAP = Map.of(
+		"wonLostPct", "won_lost_pct",
+		"won", "won",
+		"lost", "lost",
+		"played", "played"
+	);
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("won"), asc("lost"), asc("name")};
 
 	@GetMapping("/topPerformersTable")

@@ -8,7 +8,6 @@ import java.util.stream.*;
 
 import org.postgresql.util.*;
 
-import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
@@ -27,7 +26,7 @@ public abstract class ResultSetUtil {
 			return emptyList();
 		Object array = sqlArray.getArray();
 		if (array instanceof Integer[])
-			return asList((Integer[])array);
+			return List.of((Integer[])array);
 		else if (array instanceof Number[])
 			return Stream.of((Number[])array).map(n -> n != null ? n.intValue() : null).collect(toList());
 		else

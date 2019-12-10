@@ -90,27 +90,26 @@ WITH match_result AS (
 	SELECT m.player_id, tournament_event_id, max(m.result) AS result
 	FROM match_result m
 	INNER JOIN tournament_event e USING (tournament_event_id)
-	WHERE e.level <> 'D' OR e.name LIKE '%WG'
+	WHERE e.level <> 'D' OR e.name LIKE '%WG' OR e.name LIKE '%Finals'
 	GROUP BY m.player_id, tournament_event_id
 )
-SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, goat_points FROM (
-	SELECT r.player_id, r.tournament_event_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
-	FROM best_round r
-	INNER JOIN tournament_event e USING (tournament_event_id)
-	LEFT JOIN tournament_rank_points p USING (level, draw_type, result)
-	WHERE NOT p.additive OR p.additive IS NULL
-	UNION
-	SELECT r.player_id, r.tournament_event_id, r.result,
-		sum(p.rank_points) FILTER (WHERE m.winner_id = r.player_id),
-		sum(p.rank_points_2008) FILTER (WHERE m.winner_id = r.player_id),
-		sum(p.goat_points) FILTER (WHERE m.winner_id = r.player_id)
-	FROM best_round r
-	INNER JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
-	LEFT JOIN match m ON m.tournament_event_id = r.tournament_event_id AND (m.winner_id = r.player_id OR m.loser_id = r.player_id)
-	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.draw_type = e.draw_type AND p.result = m.round::TEXT::tournament_event_result
-	WHERE p.additive
-	GROUP BY r.player_id, r.tournament_event_id, r.result
-) AS player_tournament_event_result;
+SELECT r.player_id, r.tournament_event_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points, NULL AS round_robin_wins
+FROM best_round r
+INNER JOIN tournament_event e USING (tournament_event_id)
+LEFT JOIN tournament_rank_points p USING (level, draw_type, result)
+WHERE NOT p.additive OR p.additive IS NULL
+UNION
+SELECT r.player_id, r.tournament_event_id, r.result,
+	sum(p.rank_points) FILTER (WHERE m.winner_id = r.player_id),
+	sum(p.rank_points_2008) FILTER (WHERE m.winner_id = r.player_id),
+	sum(p.goat_points) FILTER (WHERE m.winner_id = r.player_id),
+   count(m.match_id) FILTER (WHERE m.winner_id = r.player_id AND m.round = 'RR')
+FROM best_round r
+INNER JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
+LEFT JOIN match m ON m.tournament_event_id = r.tournament_event_id AND (m.winner_id = r.player_id OR m.loser_id = r.player_id)
+LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.draw_type = e.draw_type AND p.result = m.round::TEXT::tournament_event_result
+WHERE p.additive
+GROUP BY r.player_id, r.tournament_event_id, r.result;
 
 CREATE MATERIALIZED VIEW player_tournament_event_result AS SELECT * FROM player_tournament_event_result_v;
 
@@ -771,8 +770,8 @@ WITH season_stats AS (
 	HAVING sum(s2.p_sv_pt) IS NOT NULL
 ), tournament_event_surface_stats AS (
 	SELECT m.tournament_event_id, sum(s.ace_pct / nullif(sqrt(p.ace_pct * o.ace_against_pct), 0) * m.p_ace) / nullif(sum(m.p_sv_pt), 0)                                                  AS s_ace_pct,
-	       sum(sqrt(s.sv_pts_won_pct * o.rt_pts_won_pct / nullif(p.sv_pts_won_pct * (1.0 - s.sv_pts_won_pct), 0)) * (m.p_1st_won + m.p_2nd_won)) / nullif(sum(m.p_sv_pt), 0)             AS s_sv_pts_won_pct,
-	       sum(sqrt(s.sv_gms_won_pct * o.rt_gms_won_pct / nullif(p.sv_gms_won_pct * (1.0 - s.sv_gms_won_pct), 0)) * (m.p_sv_gms - (m.p_bp_fc - m.p_bp_sv))) / nullif(sum(m.p_sv_gms), 0) AS s_sv_gms_won_pct
+		sum(sqrt(s.sv_pts_won_pct * o.rt_pts_won_pct / nullif(p.sv_pts_won_pct * (1.0 - s.sv_pts_won_pct), 0)) * (m.p_1st_won + m.p_2nd_won)) / nullif(sum(m.p_sv_pt), 0)             AS s_sv_pts_won_pct,
+		sum(sqrt(s.sv_gms_won_pct * o.rt_gms_won_pct / nullif(p.sv_gms_won_pct * (1.0 - s.sv_gms_won_pct), 0)) * (m.p_sv_gms - (m.p_bp_fc - m.p_bp_sv))) / nullif(sum(m.p_sv_gms), 0) AS s_sv_gms_won_pct
 	FROM player_match_stats_v m
 	INNER JOIN season_surface_stats s USING (season, surface)
 	INNER JOIN player_season_surface_stats p USING (player_id, season, surface)
@@ -2402,7 +2401,7 @@ WITH goat_points AS (
       0, 0, 0, 0, 0, sum(p.goat_points),
 	   0, 0
 	FROM match m
-	INNER JOIN tournament_event e ON e.tournament_event_id = m.tournament_event_id AND e.level = 'D' AND e.name LIKE '%WG'
+	INNER JOIN tournament_event e ON e.tournament_event_id = m.tournament_event_id AND e.level = 'D' AND (e.name LIKE '%WG' OR e.name LIKE '%Finals')
 	INNER JOIN tournament_rank_points p ON p.level = e.level AND p.draw_type = e.draw_type AND p.result = m.round::TEXT::tournament_event_result AND p.additive AND p.goat_points > 0
 	GROUP BY m.surface, m.winner_id, e.season
 	UNION ALL

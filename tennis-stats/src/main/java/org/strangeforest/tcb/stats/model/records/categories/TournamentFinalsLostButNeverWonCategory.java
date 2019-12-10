@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class TournamentFinalsLostButNeverWonCategory extends RecordCategory {
@@ -55,7 +56,7 @@ public class TournamentFinalsLostButNeverWonCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s%3$s", playerId, domain.urlParam, urlParam),
-			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
+			List.of(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}
 
@@ -74,7 +75,7 @@ public class TournamentFinalsLostButNeverWonCategory extends RecordCategory {
 			"GROUP BY player_id, e.season",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
 			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d%3$s%4$s", playerId, recordDetail.getSeason(), domain.urlParam, urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			)
@@ -96,7 +97,7 @@ public class TournamentFinalsLostButNeverWonCategory extends RecordCategory {
 			"GROUP BY player_id, tournament_id, t.name, t.level",
 			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.last_date",
 			TournamentIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentId=%2$d%3$s%4$s", playerId, recordDetail.getTournamentId(), domain.urlParam, urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			)

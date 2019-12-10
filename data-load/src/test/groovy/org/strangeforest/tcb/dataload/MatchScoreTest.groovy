@@ -6,7 +6,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test best-of-3 match score"() {
-		MatchScore score = MatchScoreParser.parse('6-3 0-6 7-5')
+		def score = MatchScoreParser.parse('6-3 0-6 7-5')
 
 		assert score.outcome == null
 		assert score.w_sets == 2
@@ -24,7 +24,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test best-of-5 match score"() {
-		MatchScore score = MatchScoreParser.parse('2-6 6-1 6-0 5-7 12-10')
+		def score = MatchScoreParser.parse('2-6 6-1 6-0 5-7 12-10')
 
 		assert score.outcome == null
 		assert score.w_sets == 3
@@ -44,7 +44,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test match score with tie-break"() {
-		MatchScore score = MatchScoreParser.parse('7-6(4) 6-7(0) 7-6(12)')
+		def score = MatchScoreParser.parse('7-6(4) 6-7(0) 7-6(12)')
 
 		assert score.outcome == null
 		assert score.w_sets == 2
@@ -62,7 +62,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test match score to 9 games"() {
-		MatchScore score = MatchScoreParser.parse('6-3 8-9 9-8')
+		def score = MatchScoreParser.parse('6-3 8-9 9-8')
 
 		assert score.outcome == null
 		assert score.w_sets == 2
@@ -80,7 +80,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test match score 6-5 games"() {
-		MatchScore score = MatchScoreParser.parse('6-5 5-6 6-4')
+		def score = MatchScoreParser.parse('6-5 5-6 6-4')
 
 		assert score.outcome == null
 		assert score.w_sets == 2
@@ -98,7 +98,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test walk-over"() {
-		MatchScore score = MatchScoreParser.parse('W/O')
+		def score = MatchScoreParser.parse('W/O')
 
 		assert score.outcome == 'W/O'
 		assert score.w_sets == 0
@@ -113,7 +113,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test walk-over 2"() {
-		MatchScore score = MatchScoreParser.parse('RET')
+		def score = MatchScoreParser.parse('RET')
 
 		assert score.outcome == 'W/O'
 		assert score.w_sets == 0
@@ -128,7 +128,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test walk-over 3"() {
-		MatchScore score = MatchScoreParser.parse('(W/O)')
+		def score = MatchScoreParser.parse('(W/O)')
 
 		assert score.outcome == 'W/O'
 		assert score.w_sets == 0
@@ -143,7 +143,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test retired"() {
-		MatchScore score = MatchScoreParser.parse('6-4 3-0 RET')
+		def score = MatchScoreParser.parse('6-4 3-0 RET')
 
 		assert score.outcome == 'RET'
 		assert score.w_sets == 1
@@ -160,7 +160,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test retired 2"() {
-		MatchScore score = MatchScoreParser.parse('6-6 (RET)')
+		def score = MatchScoreParser.parse('6-6 (RET)')
 
 		assert score.outcome == 'RET'
 		assert score.w_sets == 0
@@ -176,7 +176,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test retired 3"() {
-		MatchScore score = MatchScoreParser.parse('7-5 RET')
+		def score = MatchScoreParser.parse('7-5 RET')
 
 		assert score.outcome == 'RET'
 		assert score.w_sets == 1
@@ -192,7 +192,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test retired missing"() {
-		MatchScore score = MatchScoreParser.parse('6-4 6-3 3-6 1-6 2-3')
+		def score = MatchScoreParser.parse('6-4 6-3 3-6 1-6 2-3')
 
 		assert score.outcome == 'RET'
 		assert score.w_sets == 2
@@ -208,7 +208,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test score missing"() {
-		MatchScore score = MatchScoreParser.parse('')
+		def score = MatchScoreParser.parse('')
 
 		assert score == null
 	}

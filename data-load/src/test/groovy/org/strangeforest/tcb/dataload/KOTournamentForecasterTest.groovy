@@ -23,7 +23,7 @@ class KOTournamentForecasterTest {
 			[player1_id: 1, player2_id: 2, round: 'SF', player1_seed:    1, player2_seed: null],
 			[player1_id: 3, player2_id: 4, round: 'SF', player1_seed: null, player2_seed:    2]
 		]
-		KOTournamentForecaster forecaster = new KOTournamentForecaster(predictor, 1, matches, KOResult.SF, false, true, true)
+		def forecaster = new KOTournamentForecaster(predictor, 1, matches, KOResult.SF, false, true, true)
 		def results = forecaster.forecast()
 
 		assertThat(probability(results, 1, 'W')).isCloseTo(0.25d, OFFSET)
@@ -33,14 +33,14 @@ class KOTournamentForecasterTest {
 
 	@Test
 	void "Tournament with Byes"() {
-		TournamentMatchPredictor predictor = makePredictor()
+		def predictor = makePredictor()
 		def matches = [
 			[player1_id:    1, player2_id: null, round: 'QF', player1_seed:    1, player2_seed: null],
 			[player1_id:    3, player2_id:    4, round: 'QF', player1_seed: null, player2_seed: null],
 			[player1_id:    5, player2_id:    6, round: 'QF', player1_seed: null, player2_seed: null],
 			[player1_id: null, player2_id:    8, round: 'QF', player1_seed: null, player2_seed:    2]
 		]
-		KOTournamentForecaster forecaster = new KOTournamentForecaster(predictor, 1, matches, KOResult.QF, false, true, true)
+		def forecaster = new KOTournamentForecaster(predictor, 1, matches, KOResult.QF, false, true, true)
 		def results = forecaster.forecast()
 
 		assertThat(probability(results, 1, 'W')).isCloseTo(0.25d, OFFSET)
@@ -75,7 +75,7 @@ class KOTournamentForecasterTest {
 			[player1_id:   29, player2_id:   30, round: 'R32', player1_seed: null, player2_seed: null],
 			[player1_id: null, player2_id:   32, round: 'R32', player1_seed: null, player2_seed:    2]
 		]
-		KOTournamentForecaster forecaster = new KOTournamentForecaster(predictor, 1, matches, KOResult.R32, false, true, true)
+		def forecaster = new KOTournamentForecaster(predictor, 1, matches, KOResult.R32, false, true, true)
 		def results = forecaster.forecast()
 
 		assertThat(probability(results, 1, 'W')).isCloseTo(0.0625d, OFFSET)
@@ -89,8 +89,7 @@ class KOTournamentForecasterTest {
 	def makePredictor() {
 		def predictor = mock(TournamentMatchPredictor.class)
 		when(predictor.getWinProbability(anyInt(), anyInt(), any(Round.class), anyBoolean())).thenAnswer(new Answer<Object>() {
-			@Override
-			Object answer(InvocationOnMock invocation) throws Throwable {
+			@Override Object answer(InvocationOnMock invocation) throws Throwable {
 				int playerId1 = invocation.arguments[0]
 				int playerId2 = invocation.arguments[1]
 				playerId1 > 0 && playerId2 > 0 ? 0.5d : 0.25d

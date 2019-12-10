@@ -1,26 +1,12 @@
-buildscript {
-	repositories {
-		maven {
-			url "https://plugins.gradle.org/m2"
-		}
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-		classpath "gradle.plugin.com.boxfuse.client:flyway-release:$flywayVersion"
-	}
+plugins {
+	id 'org.jetbrains.kotlin.jvm'
+	id 'org.flywaydb.flyway'
 }
-
-apply plugin: 'kotlin'
-apply plugin: 'org.flywaydb.flyway'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 sourceSets.main.resources.srcDirs = ['src/main/resources', 'src/main/db']
 
 dependencies {
-	compile ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+	implementation ("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }
 
 flyway {

@@ -1,12 +1,12 @@
 package org.strangeforest.tcb.stats.visitors;
 
 import java.time.*;
+import java.util.*;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.junit.jupiter.*;
 
-import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.*;
@@ -27,7 +27,7 @@ class VisitorManagerTimedIT extends BaseVisitorManagerTest {
 
 		Visitor visitor = visitAndVerifyFirstVisit(ipAddress);
 
-		when(repository.findAll()).thenReturn(asList(visitor));
+		when(repository.findAll()).thenReturn(List.of(visitor));
 		Thread.sleep(2000L);
 
 		verify(repository, atLeast(1)).findAll();

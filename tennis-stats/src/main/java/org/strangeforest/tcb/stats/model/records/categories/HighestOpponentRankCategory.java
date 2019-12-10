@@ -1,11 +1,12 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HighestOpponentRankCategory.RecordType.*;
 
@@ -105,7 +106,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"FROM opponent_rank" + rankingType.where,
 			"r.value", "r.unrounded_value" + desc, "r.unrounded_value" + desc,
 			DoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&%2$s", playerId, domain.urlParam),
-			asList(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name)),
+			List.of(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name)),
 			format("Minimum %1$d %2$s; %3$s", minEntries, perfCategory.getEntriesName(), rankingType.notes)
 		);
 	}
@@ -127,7 +128,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"FROM season_opponent_rank" + rankingType.where,
 			"r.value, r.season", "r.unrounded_value" + desc, "r.unrounded_value" + desc + ", r.season",
 			SeasonDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&season=%2$d&%3$s", playerId, recordDetail.getSeason(), domain.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			),
@@ -153,7 +154,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"FROM tournament_opponent_rank" + rankingType.where,
 			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", "r.unrounded_value" + desc, "r.unrounded_value" + desc + ", r.date",
 			TournamentEventDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
@@ -180,7 +181,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"FROM titles_opponent_rank" + rankingType.where,
 			"r.value", "r.unrounded_value" + desc, "r.unrounded_value" + desc,
 			DoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&result=W&%2$s", playerId, domain.urlParam),
-			asList(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name)),
+			List.of(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name)),
 			format("Minimum %1$d matches; %2$s", minEntries, rankingType.notes)
 		);
 	}

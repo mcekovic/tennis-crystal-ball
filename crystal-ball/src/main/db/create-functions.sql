@@ -210,70 +210,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- merge_elo_ranking
-
--- deprecated
-CREATE OR REPLACE FUNCTION merge_elo_ranking(
-	p_rank_date DATE,
-	p_player_id INTEGER,
-	p_rank INTEGER,
-	p_elo_rating INTEGER,
-	p_recent_rank INTEGER,
-	p_recent_elo_rating INTEGER,
-	p_hard_rank INTEGER,
-	p_hard_elo_rating INTEGER,
-	p_clay_rank INTEGER,
-	p_clay_elo_rating INTEGER,
-	p_grass_rank INTEGER,
-	p_grass_elo_rating INTEGER,
-	p_carpet_rank INTEGER,
-	p_carpet_elo_rating INTEGER,
-	p_outdoor_rank INTEGER,
-	p_outdoor_elo_rating INTEGER,
-	p_indoor_rank INTEGER,
-	p_indoor_elo_rating INTEGER,
-	p_set_rank INTEGER,
-	p_set_elo_rating INTEGER,
-	p_game_rank INTEGER,
-	p_game_elo_rating INTEGER,
-	p_service_game_rank INTEGER,
-	p_service_game_elo_rating INTEGER,
-	p_return_game_rank INTEGER,
-	p_return_game_elo_rating INTEGER,
-	p_tie_break_rank INTEGER,
-	p_tie_break_elo_rating INTEGER
-) RETURNS VOID AS $$
-BEGIN
-	BEGIN
-		INSERT INTO player_elo_ranking
-		(rank_date, player_id, rank, elo_rating, recent_rank, recent_elo_rating,
-		 hard_rank, hard_elo_rating, clay_rank, clay_elo_rating, grass_rank, grass_elo_rating, carpet_rank, carpet_elo_rating, outdoor_rank, outdoor_elo_rating, indoor_rank, indoor_elo_rating,
-		 set_rank, set_elo_rating, game_rank, game_elo_rating, service_game_rank, service_game_elo_rating, return_game_rank, return_game_elo_rating, tie_break_rank, tie_break_elo_rating)
-		VALUES
-		(p_rank_date, p_player_id, p_rank, p_elo_rating, p_recent_rank, p_recent_elo_rating,
-		 p_hard_rank, p_hard_elo_rating, p_clay_rank, p_clay_elo_rating, p_grass_rank, p_grass_elo_rating, p_carpet_rank, p_carpet_elo_rating, p_outdoor_rank, p_outdoor_elo_rating, p_indoor_rank, p_indoor_elo_rating,
-		 p_set_rank, p_set_elo_rating, p_game_rank, p_game_elo_rating, p_service_game_rank, p_service_game_elo_rating, p_return_game_rank, p_return_game_elo_rating, p_tie_break_rank, p_tie_break_elo_rating);
-	EXCEPTION WHEN unique_violation THEN
-		UPDATE player_elo_ranking
-		SET rank = p_rank, elo_rating = p_elo_rating,
-			recent_rank = p_recent_rank, recent_elo_rating = p_recent_elo_rating,
-			hard_rank = p_hard_rank, hard_elo_rating = p_hard_elo_rating,
-			clay_rank = p_clay_rank, clay_elo_rating = p_clay_elo_rating,
-			grass_rank = p_grass_rank, grass_elo_rating = p_grass_elo_rating,
-			carpet_rank = p_carpet_rank, carpet_elo_rating = p_carpet_elo_rating,
-			outdoor_rank = p_outdoor_rank, outdoor_elo_rating = p_outdoor_elo_rating,
-			indoor_rank = p_indoor_rank, indoor_elo_rating = p_indoor_elo_rating,
-			set_rank = p_set_rank, set_elo_rating = p_set_elo_rating,
-			game_rank = p_game_rank, game_elo_rating = p_game_elo_rating,
-			service_game_rank = p_service_game_rank, service_game_elo_rating = p_service_game_elo_rating,
-			return_game_rank = p_return_game_rank, return_game_elo_rating = p_return_game_elo_rating,
-			tie_break_rank = p_tie_break_rank, tie_break_elo_rating = p_tie_break_elo_rating
-		WHERE rank_date = p_rank_date AND player_id = p_player_id;
-	END;
-END;
-$$ LANGUAGE plpgsql;
-
-
 -- performance_min_entries
 
 CREATE OR REPLACE FUNCTION performance_min_entries(
@@ -312,6 +248,44 @@ BEGIN
 		END IF;
 	END LOOP;
 	RETURN l_max_participation;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- estimate_draw_size
+CREATE OR REPLACE FUNCTION estimate_draw_size(
+	p_tournament_event_id INTEGER
+) RETURNS INTEGER AS $$
+DECLARE
+	l_draw_type draw_type;
+	l_player_count INTEGER;
+	l_match_count INTEGER;
+BEGIN
+	SELECT draw_type INTO l_draw_type FROM tournament_event WHERE tournament_event_id = p_tournament_event_id;
+	IF l_draw_type = 'KO' THEN
+		SELECT count(*) INTO l_match_count FROM match WHERE tournament_event_id = p_tournament_event_id;
+		RETURN CASE
+		   WHEN l_match_count >= 120 THEN 128
+		   WHEN l_match_count >= 112 THEN 120
+		   WHEN l_match_count >= 96 THEN 112
+		   WHEN l_match_count >= 64 THEN 96
+		   WHEN l_match_count >= 56 THEN 64
+		   WHEN l_match_count >= 48 THEN 56
+		   WHEN l_match_count >= 32 THEN 48
+		   WHEN l_match_count >= 28 THEN 32
+		   WHEN l_match_count >= 24 THEN 28
+		   WHEN l_match_count >= 16 THEN 24
+		   WHEN l_match_count >= 12 THEN 16
+		   WHEN l_match_count >= 8 THEN 12
+		   WHEN l_match_count >= 6 THEN 8
+		   WHEN l_match_count >= 4 THEN 6
+		   WHEN l_match_count >= 2 THEN 4
+		   ELSE 2
+		END;
+   ELSEIF l_draw_type = 'RR' THEN
+	   SELECT player_count INTO l_player_count FROM event_participation WHERE tournament_event_id = p_tournament_event_id;
+	   RETURN l_player_count;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 

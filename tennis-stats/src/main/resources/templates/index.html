@@ -133,7 +133,7 @@
 		<div class="col-lg-10 col-md-9">
 			<h1 style="margin-top: 0; margin-bottom: 20px"><img src="/images/uts-logo.png" class="uts-logo" alt="UTS"/> <th:block th:include="fragments/promotion :: logo"/></h1>
 			<p>
-				Welcome to <th:block th:include="fragments/promotion :: logo"/>, the ultimate tennis statistics destination for the die-hard tennis fans!<br/>
+				Welcome to <th:block th:include="fragments/promotion :: logo"/>, the ultimate men's tennis statistics destination for the die-hard tennis fans!<br/>
 				Be it latest or historical results, in-match statistics, records or all-time greats comparisons, Elo ratings or tournament forecasts, you will find it here. More details at <a href="/about" class="text-nowrap"><i class="fa fa-question-circle"></i> About</a> page.
 			</p>
 			<th:block th:include="fragments/ads :: responsive"/>
@@ -216,19 +216,17 @@
 			</div>
 			<h4 class="text-nowrap" style="margin-top: 10px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature"></sup></h4>
 			<ul>
+				<li>Reference rank in <a href="/rankingsChart">Rankings Charts</a> like <a href="/rankingsChart?players=Roger%20Federer,%20Rafael%20Nadal,%20Novak%20Djokovic&rankType=POINTS&refRank=1&compensatePoints=true">Compare Big 3 ATP Points with ATP No. 1 ATP Points</a> to see how much Big 3 had more ATP Points than average ATP No. 1</li>
 				<li><a href="/resultsChart">Titles and Results Charts</a> like <a href="/resultsChart?players=Roger%20Federer,%20Rafael%20Nadal,%20Novak%20Djokovic&result=W&level=G&byAge=true">Big 3 Grand Slam Title race by age</a> or <a href="/resultsChart?players=Dominic%20Thiem,%20Alexander%20Zverev,%20Nick%20Kyrgios,%20Lucas%20Pouille,%20Stefanos%20Tsitsipas,%20Karen%20Khachanov,%20Daniil%20Medvedev,%20Borna%20Coric,%20Alex%20De%20Minaur,%20Matteo%20Berrettini&result=W&byAge=true">The Next Gen Title race by age</a></li>
 				<li>Past forecasts for the completed tournaments are available at <a href="/inProgressEventsForecasts">Tournament Forecasts</a> by checking the 'Completed' checkbox</li>
 				<li>Easy CSV download in the most of the data grids (click <button type="button" disabled="disabled" class="btn btn-default btn-xs" style="vertical-align: bottom"><i class="fa fa-file-excel-o"></i></button> button in the upper-right grid corner)</li>
 				<li>New statistics categories across the site (<a href="/statsLeaders">Statistics Leaders</a>, <a href="/topMatchStats">Top Match Stats</a>, <a href="/statsChart">Statistics Chart</a>...): <span th:title="#{stats.firstServeEff.title}">First Serve Effectiveness</span>, <span th:title="#{stats.serveRating.title}">Serve Rating</span>, <span th:title="#{stats.returnRating.title}">Return Rating</span>, <span th:title="#{stats.totalSSIPPointsWonPct.title}">Total 2nd Serve In-play Points Won %</span>, <span th:title="#{stats.ipPointsDominanceRatio.title}">In-play Points Dominance Ratio</span>, <span th:title="#{stats.ssIPPointsDominanceRatio.title}">2nd Serve In-play Points Dominance Ratio</span> (details at <a href="/glossary#statsCategories">Glossary</a> page)</li>
 				<li>In-progress tournament Court Speed and Statistics Leaders - Find out the ongoing tournaments' court speeds and explore who has the most aces, the greatest serve % or the greatest service or return points won % so far</li>
-				<li>New website logo - <img src="/images/uts-logo.png" width="50" height="15"/> Courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank">crazysesirdzija@gmail.com</a></li>
+				<li>New website logo - <img src="/images/uts-logo.png" width="50" height="15"/> Courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank" rel="noopener noreferrer">crazysesirdzija@gmail.com</a></li>
 				<li><a href="/topMatchStats">Top Match Stats</a> - Top match statistics figures, like who and when had most aces, service or return points won in a single match</li>
 				<li>In-match winning probabilities for a match, current set, current game, next set, service or return game and service or return point at Head-to-Head Hypothetical Matchup</li>
 				<li><a href="/eloRatings">Elo Ratings</a> inactivity penalty redesigned to use a logistic function with tuned parameters for maximum predictability after comebacks from long injury breaks</li>
 				<li>Adjusted H2H takes into account surface and importance skew in H2H matches and normalizes it (Federer vs Nadal <a href="/headToHead?name1=Roger%20Federer&name2=Rafael%20Nadal">Adjusted H2H</a>, details about formula at <a href="/glossary">Glossary</a> page and in the <a href="/blog?post=h2hSkew">Blog Post</a>)</li>
-				<li>Court Speed Index in filters across the site as well as player performance breakdown by court speed (i.e. <a href="/playerProfile?name=Roger%20Federer&tab=performance" title="Federer performance breakdown">Federer</a>, <a href="/playerProfile?name=Novak%20Djokovic&tab=performance" title="Djokovic performance breakdown">Djokovic</a>, <a href="/playerProfile?name=Rafael%20Nadal&tab=performance" title="Nadal performance breakdown">Nadal</a>, more info in the <a href="/blog?post=big4CourtSpeed">Blog Post</a>)</li>
-				<li>New Records for Different Masters Slot <a href="/record?recordId=DifferentMastersSlotTitles">Titles</a> (+2 'GOAT' Points) / <a href="/record?recordId=DifferentMastersSlotFinals">Finals</a> (Masters Slot is an order number (1-9) by date of the Masters event within the season) and <a href="/record?recordId=YoungestEndOfSeasonATPNo1">Youngest</a> / <a href="/record?recordId=OldestEndOfSeasonATPNo1">Oldest</a> year-end No. 1</li>
-				<li>Court Speed Index (0 - 100) for tournaments and tournament events (more info about the formula used at <a href="/glossary">Glossary</a> page, visible by default on 1440+ pixels screens)</li>
 			</ul>
 			<th:block th:include="fragments/ads :: responsive"/>
 		</div>
@@ -236,7 +234,7 @@
 			<div id="rankingTopN"></div>
 			<div class="panel panel-default component text-center text-nowrap">
 				<a href="/liveScores" title="Live scores"><strong>Live Scores</strong> <img src="/images/active.png" style="vertical-align: -5%" width="12" height="12"/></a> via<br/>
-				<a href="http://www.livescore.in/" title="Livescore.in" target="_blank">Livescore.in</a>
+				<a href="https://www.enetscores.com" title="Enetscores by Enetpulse" target="_blank" rel="noopener noreferrer" class="external">Enetscores</a>
 			</div>
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>
 			<th:block th:include="fragments/promotion :: facebook"/>

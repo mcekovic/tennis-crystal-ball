@@ -1,6 +1,23 @@
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		jcenter()
+	}
+	plugins {
+		id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
+		id 'org.springframework.boot' version "$springBootVersion"
+		id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
+		id 'com.gorylenko.gradle-git-properties' version "$gradleGitPropertiesVersion"
+		id 'org.flywaydb.flyway' version "$flywayVersion"
+		id 'org.hidetake.ssh' version "$gradleSshVersion"
+		id 'com.github.ben-manes.versions' version "$gradleVersionsVersion"
+		id 'org.standardout.versioneye' version "$gradleVersionEyeVersion"
+		id 'org.sonarqube' version "$gradleSonarqubeVersion"
+	}
+}
+
 rootProject.name = 'ultimate-tennis-statistics'
 
-include 'data-load'
-include 'tennis-stats'
-include 'crystal-ball'
+include 'crystal-ball', 'tennis-stats', 'data-load'
 

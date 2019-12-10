@@ -2,8 +2,8 @@ function showRankingChart(chartData, elementId, width, bySeason, pointCount, isR
 	showChart(chartData, elementId, width, bySeason, pointCount, isRank ? -1 : 1, isRank ? 1 : undefined, useLogScale, false, !bySeason, 0, legendPosition);
 }
 
-function showPerformanceChart(chartData, elementId, width, pointCount, legendPosition) {
-	showChart(chartData, elementId, width, true, pointCount, 1, 0, false, true, false, 0, legendPosition);
+function showPerformanceChart(chartData, elementId, width, pointCount, isPct, legendPosition) {
+	showChart(chartData, elementId, width, true, pointCount, 1, 0, false, isPct, false, 0, legendPosition);
 }
 
 function showStatsChart(chartData, elementId, width, pointCount, isPct, legendPosition) {

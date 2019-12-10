@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
 import java.util.stream.*;
 
 import org.strangeforest.tcb.stats.model.records.*;
@@ -7,7 +8,6 @@ import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.util.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.MostMatchesCategory.RecordType.*;
@@ -75,6 +75,9 @@ public class MostMatchesCategory extends RecordCategory {
 		register(mostSeasonMatches(type, CARPET));
 		register(mostSeasonMatches(type, OUTDOOR));
 		register(mostSeasonMatches(type, INDOOR));
+		register(mostSeasonMatchesVs(type, NO_1_FILTER));
+		register(mostSeasonMatchesVs(type, TOP_5_FILTER));
+		register(mostSeasonMatchesVs(type, TOP_10_FILTER));
 		register(mostTournamentMatches(type, ALL));
 		register(mostTournamentMatches(type, GRAND_SLAM));
 		register(mostTournamentMatches(type, MASTERS));
@@ -101,7 +104,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"SELECT player_id, " + type.expression(domain.columnPrefix + "matches") + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s%3$s", playerId, domain.urlParam, type.urlParam + "played"),
-			asList(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name))
+			List.of(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name))
 		);
 	}
 
@@ -112,7 +115,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"SELECT player_id, " + type.expression(domain.columnPrefix) + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s%3$s", playerId, domain.urlParam, type.urlParam + "played"),
-			asList(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name + " Vs " + domain.name))
+			List.of(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name + " Vs " + domain.name))
 		);
 	}
 
@@ -123,8 +126,22 @@ public class MostMatchesCategory extends RecordCategory {
 			"SELECT player_id, season, " + type.expression(domain.columnPrefix + "matches") + " AS value FROM player_season_performance",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
 			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d%3$s%4$s", playerId, recordDetail.getSeason(), domain.urlParam, type.urlParam + "played"),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name),
+				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
+			)
+		);
+	}
+
+	private static Record mostSeasonMatchesVs(RecordType type, RecordDomain domain) {
+		return new Record<>(
+			"SeasonMatchesVs" + domain.id + type.name, "Most Matches " + type.name + " Vs " + domain.name + " in Single Season",
+			/* language=SQL */
+			"SELECT player_id, season, " + type.expression(domain.columnPrefix) + " AS value FROM player_season_performance",
+			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
+			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d%3$s%4$s", playerId, recordDetail.getSeason(), domain.urlParam, type.urlParam + "played"),
+			List.of(
+				new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name + " Vs " + domain.name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			)
 		);
@@ -138,7 +155,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id) WHERE t." + ALL_TOURNAMENTS,
 			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.tournament",
 			TournamentIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentId=%2$d%3$s%4$s", playerId, recordDetail.getTournamentId(), domain.urlParam, type.urlParam + "played"),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			)
@@ -154,7 +171,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries%2$s", playerId, domain.urlParam),
-			asList(new RecordColumn("value", null, "valueUrl", PLAYERS_WIDTH, "right", "Players"))
+			List.of(new RecordColumn("value", null, "valueUrl", PLAYERS_WIDTH, "right", "Players"))
 		);
 	}
 
@@ -168,7 +185,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.date",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s", playerId, type.urlParam + urlParamValue),
-			asList(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name))
+			List.of(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name))
 		);
 	}
 

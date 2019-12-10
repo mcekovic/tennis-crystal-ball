@@ -7,14 +7,21 @@ import org.assertj.core.data.*;
 import org.junit.jupiter.api.*;
 
 import io.micrometer.core.instrument.*;
+import io.micrometer.core.instrument.composite.*;
 import io.micrometer.core.instrument.distribution.*;
-import io.micrometer.core.instrument.simple.*;
+import io.micrometer.prometheus.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 class MicrometerTest {
 
-	private MeterRegistry meterRegistry = new SimpleMeterRegistry();
+	private MeterRegistry meterRegistry = createMeterRegistry();
+
+	private static MeterRegistry createMeterRegistry() {
+		CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
+		meterRegistry.add(new PrometheusMeterRegistry(PrometheusConfig.DEFAULT));
+		return meterRegistry;
+	}
 
 	@Test
 	void testTimer() {
@@ -39,5 +46,44 @@ class MicrometerTest {
 		HistogramSnapshot histogramSnapshot = timer.takeSnapshot();
 		System.out.println(histogramSnapshot);
 		System.out.println(timer.measure());
+	}
+
+	@RepeatedTest(100)
+	void testTaggedCounterConcurrently() throws InterruptedException {
+		int count = 10000;
+		int tagCount = 100;
+		var executor = Executors.newFixedThreadPool(10);
+		for (int i = 0; i < count; i++) {
+			int tagValue = i % tagCount;
+			executor.execute(() ->
+				createCounter(tagValue).increment()
+			);
+		}
+		executor.shutdown();
+		executor.awaitTermination(1L, TimeUnit.DAYS);
+		for (int i = 0; i < tagCount; i++)
+			assertThat(createCounter(i).count()).isEqualTo(count / tagCount);
+	}
+
+	@RepeatedTest(100)
+	void testPreregisteredTaggedCounterConcurrently() throws InterruptedException {
+		int count = 10000000;
+		int tagCount = 10;
+		var executor = Executors.newFixedThreadPool(10);
+		var counters = new ConcurrentHashMap<Integer, Counter>();
+		for (int i = 0; i < count; i++) {
+			int tagValue = (i * 127) % tagCount;
+			executor.execute(() ->
+				counters.computeIfAbsent(tagValue, s -> createCounter(tagValue)).increment()
+			);
+		}
+		executor.shutdown();
+		executor.awaitTermination(1L, TimeUnit.DAYS);
+		for (int i = 0; i < tagCount; i++)
+			assertThat(createCounter(i).count()).isEqualTo(count / tagCount);
+	}
+
+	private Counter createCounter(int tagValue) {
+		return Counter.builder("TestCounter").tag("test-tag", String.valueOf(tagValue)).register(meterRegistry);
 	}
 }

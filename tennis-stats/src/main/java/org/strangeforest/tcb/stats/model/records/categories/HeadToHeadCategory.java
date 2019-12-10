@@ -7,7 +7,6 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadCategory.ItemType.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadCategory.PctRecordType.*;
@@ -181,7 +180,7 @@ public class HeadToHeadCategory extends RecordCategory {
 			"GROUP BY m.player_id, player_id2, name2, country_id2, active2",
 			"r.player_id2, r.name2, r.country_id2, r.active2, r.value", "r.value DESC", "r.value DESC, r.last_date",
 			H2HIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&opponent=OPP_%2$d%3$s%4$s&outcome=%5$s", playerId, recordDetail.getPlayer2().getPlayerId(), domain.urlParam, item.urlParam, type.outcomeUrlParam),
-			asList(
+			List.of(
 				new RecordColumn("player2", null, "player2", PLAYER_WIDTH, "left", "Opponent"),
 				new RecordColumn("value", null, "valueUrl", H2H_WIDTH, "right", item.name + " " + type.name)
 			)
@@ -203,7 +202,7 @@ public class HeadToHeadCategory extends RecordCategory {
 			"HAVING count(m.match_id) >= " + minMatches,
 			"r.player_id2, r.name2, r.country_id2, r.active2, r.won, r.lost", "r.pct DESC, r.won + r.lost DESC", "r.pct DESC, r.won + r.lost DESC, r.last_date",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&opponent=OPP_%2$d%3$s%4$s&outcome=played", playerId, recordDetail.getPlayer2().getPlayerId(), domain.urlParam, item.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("player2", null, "player2", PLAYER_WIDTH, "left", "Opponent"),
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,

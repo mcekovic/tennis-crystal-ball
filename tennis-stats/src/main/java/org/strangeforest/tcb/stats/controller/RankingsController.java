@@ -20,6 +20,8 @@ import static org.thymeleaf.util.StringUtils.*;
 @Controller
 public class RankingsController extends PageController {
 
+	public static final List<Integer> REFERENCE_RANKS = List.of(1, 2, 3, 4, 5, 10, 20, 50, 100);
+	
 	@Autowired private PlayerService playerService;
 	@Autowired private RankingsService rankingsService;
 
@@ -70,6 +72,7 @@ public class RankingsController extends PageController {
 	@GetMapping("/rankingsChart")
 	public ModelAndView rankingsChart(
 		@RequestParam(name = "players", required = false) String players,
+		@RequestParam(name = "refRank", required = false) Integer refRank,
 		@RequestParam(name = "rankType", required = false) RankType rankType,
 		@RequestParam(name = "compensatePoints", defaultValue = F) Boolean compensatePoints,
 		@RequestParam(name = "timeSpan", required = false) String timeSpan,
@@ -83,6 +86,7 @@ public class RankingsController extends PageController {
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("players", players);
+		modelMap.addAttribute("refRank", refRank);
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("compensatePoints", compensatePoints);
 		if (isEmpty(timeSpan) && (fromDate != null || toDate != null || season != null || fromSeason != null || toSeason != null))
@@ -101,8 +105,9 @@ public class RankingsController extends PageController {
 		}
 		modelMap.addAttribute("byAge", byAge);
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
-		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("rankCategories", RankCategory.values());
+		modelMap.addAttribute("referenceRanks", REFERENCE_RANKS);
+		modelMap.addAttribute("seasons", dataService.getSeasons());
 		return new ModelAndView("rankingsChart", modelMap);
 	}
 }

@@ -6,7 +6,6 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class WinningStreaksCategory extends RecordCategory {
@@ -86,7 +85,7 @@ public class WinningStreaksCategory extends RecordCategory {
 			(useMaterializedView ? prefix(condition, "\nWHERE s.") : ""),
 			"r.value, r.start_season, r.start_date, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_season, r.end_date, r.end_tournament_event_id, r.end_tournament, r.end_level" + (forTournament ? ", r.tournament_id" : ""), "r.value DESC", "r.value DESC, r.end_date",
 			StreakRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=played&fromDate=%3$td-%3$tm-%3$tY&toDate=%4$td-%4$tm-%4$tY", playerId, urlParam, recordDetail.getStartDate(), recordDetail.getEndDate()) + (forTournament ? "&tournamentId=" + recordDetail.getTournamentId() : ""),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", STREAK_WIDTH, "right", "Streak"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
 				new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "Start Tournament"),

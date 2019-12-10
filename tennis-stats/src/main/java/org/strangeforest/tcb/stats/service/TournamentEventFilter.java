@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.service;
 
 import java.time.*;
 import java.util.Objects;
+import java.util.*;
 
 import org.springframework.jdbc.core.namedparam.*;
 
@@ -11,7 +12,6 @@ import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
 import static org.strangeforest.tcb.util.ObjectUtil.*;
@@ -96,13 +96,13 @@ public class TournamentEventFilter {
 			if (level.length() == 1)
 				params.addValue("level", level);
 			else
-				params.addValue("levels", asList(level.split("")));
+				params.addValue("levels", List.of(level.split("")));
 		}
 		if (!isNullOrEmpty(surface)) {
 			if (surface.length() == 1)
 				params.addValue("surface", surface);
 			else
-				params.addValue("surfaces", asList(surface.split("")));
+				params.addValue("surfaces", List.of(surface.split("")));
 		}
 		if (indoor != null)
 			params.addValue("indoor", indoor);

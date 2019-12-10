@@ -26,15 +26,15 @@ public class PlayerMatchesResource {
 
 	private static final int MAX_MATCHES = 10000;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("date", "date")
-		.put("tournament", "tournament")
-		.put("surface", "surface")
-		.put("speed", "court_speed NULLS LAST")
-		.put("round", "round")
-		.put("wonLost", "CASE WHEN outcome = 'ABD' THEN 0 WHEN pw.player_id = :playerId THEN 1 ELSE -1 END")
-		.put("bestOf", "best_of")
-	.build();
+	private static Map<String, String> ORDER_MAP = Map.of(
+		"date", "date",
+		"tournament", "tournament",
+		"surface", "surface",
+		"speed", "court_speed NULLS LAST",
+		"round", "round",
+		"wonLost", "CASE WHEN outcome = 'ABD' THEN 0 WHEN pw.player_id = :playerId THEN 1 ELSE -1 END",
+		"bestOf", "best_of"
+	);
 	private static Map<String, String> ORDER_MAP_BIG_WINS = ImmutableMap.<String, String>builder()
 		.putAll(ORDER_MAP)
 		.put("bigWinPoints", "big_win_points")

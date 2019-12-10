@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
+import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.strangeforest.tcb.stats.service.*;
 import com.google.common.collect.*;
 
 import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.util.BootgridUtil.*;
 import static org.strangeforest.tcb.util.CompareUtil.*;
 
@@ -24,23 +26,21 @@ public class PlayerTournamentsResource {
 
 	private static final Comparator<PlayerTournament> BY_NAME = nullsLast(comparing(PlayerTournament::getName));
 	private static final Comparator<PlayerTournament> BY_LEVEL = (t1, t2) -> compareLists(mapSortList(t1.getLevels(), TournamentLevel::decode), mapSortList(t2.getLevels(), TournamentLevel::decode));
-	private static Map<String, Comparator<PlayerTournament>> ORDER_MAP = ImmutableMap.<String, Comparator<PlayerTournament>>builder()
-		.put("name", BY_NAME)
-		.put("levels", BY_LEVEL)
-		.put("surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
-		.put("speeds", (t1, t2) -> {
-			List<Integer> speeds1 = new ArrayList<>(t1.getSpeeds().values());
-			speeds1.sort(reverseOrder());
-			List<Integer> speeds2 = new ArrayList<>(t2.getSpeeds().values());
-			speeds2.sort(reverseOrder());
+	private static Map<String, Comparator<PlayerTournament>> ORDER_MAP = Map.of(
+		"name", BY_NAME,
+		"levels", BY_LEVEL,
+		"surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)),
+		"speeds", (t1, t2) -> {
+			List<Integer> speeds1 = t1.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
+			List<Integer> speeds2 = t2.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
 			return compareLists(speeds1, speeds2);
-		})
-		.put("eventCount", comparing(PlayerTournament::getEventCount))
-		.put("bestResult", comparing(PlayerTournament::bestResultOrder))
-		.put("lastResult", comparing(PlayerTournament::lastResultOrder))
-		.put("wonPct", comparing(PlayerTournament::wonLost))
-		.put("titles", comparing(PlayerTournament::getTitles))
-	.build();
+		},
+		"eventCount", comparing(PlayerTournament::getEventCount),
+		"bestResult", comparing(PlayerTournament::bestResultOrder),
+		"lastResult", comparing(PlayerTournament::lastResultOrder),
+		"wonPct", comparing(PlayerTournament::wonLost),
+		"titles", comparing(PlayerTournament::getTitles)
+	);
 
 	@GetMapping("/playerTournamentsTable")
 	public BootgridTable<PlayerTournament> playerTournamentsTable(

@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class HardestTitleCategory extends RecordCategory {
@@ -55,7 +56,7 @@ public class HardestTitleCategory extends RecordCategory {
 			"WHERE " + TITLES + " AND " + domain.condition,
 			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", "r.unrounded_value" + type.order, "r.unrounded_value" + type.order + ", r.date",
 			TournamentEventDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "factor3", DIFFICULTY_WIDTH, "right", "Relative Difficulty"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
@@ -74,7 +75,7 @@ public class HardestTitleCategory extends RecordCategory {
 			"WHERE " + TITLES + " AND " + domain1.condition + " AND " + domain2.condition,
 			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", "r.unrounded_value" + type.order, "r.unrounded_value" + type.order + ", r.date",
 			TournamentEventDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "factor3", DIFFICULTY_WIDTH, "right", "Relative Difficulty"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")

@@ -27,7 +27,7 @@ class RivalriesServiceIT {
 
 	@Test
 	void headsToHeads() {
-		List<Integer> playerIds = Arrays.asList(
+		List<Integer> playerIds = List.of(
 			fixtures.getPlayerId("Roger Federer"),
 			fixtures.getPlayerId("Rafael Nadal"),
 			fixtures.getPlayerId("Novak Djokovic"),

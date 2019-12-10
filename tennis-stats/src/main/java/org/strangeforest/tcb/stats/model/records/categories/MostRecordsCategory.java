@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.categories.MostRecordsCategory.RecordType.*;
 
 public class MostRecordsCategory extends RecordCategory {
@@ -43,7 +44,7 @@ public class MostRecordsCategory extends RecordCategory {
 			"GROUP BY pr.player_id",
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=records%2$s", playerId, type.urlParam),
-			asList(new RecordColumn("value", null, "valueUrl", RECORDS_WIDTH, "right", "Records"))
+			List.of(new RecordColumn("value", null, "valueUrl", RECORDS_WIDTH, "right", "Records"))
 		);
 	}
 }

@@ -154,24 +154,24 @@
 	</tr>
 	<!--/* Social */-->
 	<tr>
-		<td class="text-right" colspan="2"><img src="/images/glyphicons-social-wikipedia-small.png" width="16" height="16"/> <a th:href="${player1.wikipedia != null ? player1.wikipedia : '/playerWikipediaUrl?playerId=' + player1.id}" href="https://en.wikipedia.org/wiki/Roger_Federer" target="_blank" class="external">Wikipedia</a></td>
+		<td class="text-right" colspan="2"><img src="/images/glyphicons-social-wikipedia-small.png" width="16" height="16"/> <a th:href="${player1.wikipedia != null ? player1.wikipedia : '/playerWikipediaUrl?playerId=' + player1.id}" href="https://en.wikipedia.org/wiki/Roger_Federer" target="_blank" rel="noopener noreferrer" class="external">Wikipedia</a></td>
 		<th class="text-center">Wikipedia</th>
-		<td class="text-left" colspan="2"><img src="/images/glyphicons-social-wikipedia-small.png" width="16" height="16"/> <a th:href="${player2.wikipedia != null ? player2.wikipedia : '/playerWikipediaUrl?playerId=' + player2.id}" href="https://en.wikipedia.org/wiki/Rafael_Nadal" target="_blank" class="external">Wikipedia</a></td>
+		<td class="text-left" colspan="2"><img src="/images/glyphicons-social-wikipedia-small.png" width="16" height="16"/> <a th:href="${player2.wikipedia != null ? player2.wikipedia : '/playerWikipediaUrl?playerId=' + player2.id}" href="https://en.wikipedia.org/wiki/Rafael_Nadal" target="_blank" rel="noopener noreferrer" class="external">Wikipedia</a></td>
 	</tr>
 	<tr th:if="${player1.webSite != null || player2.webSite != null}">
-		<td class="text-right" colspan="2"><a th:if="${player1.webSite}" th:href="'http://' + ${player1.webSite}" href="http://www.johnsmith.com" target="_blank" class="external" th:text="${player1.webSite}">www.johnsmith.com</a></td>
+		<td class="text-right" colspan="2"><a th:if="${player1.webSite}" th:href="'http://' + ${player1.webSite}" href="http://www.johnsmith.com" target="_blank" rel="noopener noreferrer" class="external" th:text="${player1.webSite}">www.johnsmith.com</a></td>
 		<th class="text-center">Web Site</th>
-		<td class="text-left" colspan="2"><a th:if="${player2.webSite}" th:href="'http://' + ${player2.webSite}" href="http://www.johnsmith.com" target="_blank" class="external" th:text="${player2.webSite}">www.johnsmith.com</a></td>
+		<td class="text-left" colspan="2"><a th:if="${player2.webSite}" th:href="'http://' + ${player2.webSite}" href="http://www.johnsmith.com" target="_blank" rel="noopener noreferrer" class="external" th:text="${player2.webSite}">www.johnsmith.com</a></td>
 	</tr>
 	<tr th:if="${player1.facebook != null || player2.facebook != null}">
-		<td class="text-right" colspan="2"><th:block th:if="${player1.facebook}"><img src="/images/glyphicons-social-facebook-small.png" width="16" height="16"/> <a th:href="'https://www.facebook.com/' + ${player1.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" class="external" th:text="${player1.facebook}">JohnSmith</a></th:block></td>
+		<td class="text-right" colspan="2"><th:block th:if="${player1.facebook}"><img src="/images/glyphicons-social-facebook-small.png" width="16" height="16"/> <a th:href="'https://www.facebook.com/' + ${player1.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" rel="noopener noreferrer" class="external" th:text="${player1.facebook}">JohnSmith</a></th:block></td>
 		<th class="text-center">Facebook</th>
-		<td class="text-left" colspan="2"><th:block th:if="${player2.facebook}"><img src="/images/glyphicons-social-facebook-small.png" width="16" height="16"/> <a th:href="'https://www.facebook.com/' + ${player2.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" class="external" th:text="${player2.facebook}">JohnSmith</a></th:block></td>
+		<td class="text-left" colspan="2"><th:block th:if="${player2.facebook}"><img src="/images/glyphicons-social-facebook-small.png" width="16" height="16"/> <a th:href="'https://www.facebook.com/' + ${player2.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" rel="noopener noreferrer" class="external" th:text="${player2.facebook}">JohnSmith</a></th:block></td>
 	</tr>
 	<tr th:if="${player1.twitter != null || player2.twitter != null}">
-		<td class="text-right" colspan="2"><th:block th:if="${player1.twitter}"><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player1.twitter}" href="https://twitter.com/JohnSmith" target="_blank" class="external" th:text="'@'+ ${player1.twitter}">@JohnSmith</a></th:block></td>
+		<td class="text-right" colspan="2"><th:block th:if="${player1.twitter}"><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player1.twitter}" href="https://twitter.com/JohnSmith" target="_blank" rel="noopener noreferrer" class="external" th:text="'@'+ ${player1.twitter}">@JohnSmith</a></th:block></td>
 		<th class="text-center">Twitter</th>
-		<td class="text-left" colspan="2"><th:block th:if="${player2.twitter}"><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player2.twitter}" href="https://twitter.com/JohnSmith" target="_blank" class="external" th:text="'@'+ ${player2.twitter}">@JohnSmith</a></th:block></td>
+		<td class="text-left" colspan="2"><th:block th:if="${player2.twitter}"><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player2.twitter}" href="https://twitter.com/JohnSmith" target="_blank" rel="noopener noreferrer" class="external" th:text="'@'+ ${player2.twitter}">@JohnSmith</a></th:block></td>
 	</tr>
 	<tr th:if="${player1.nicknames != null || player2.nicknames != null}">
 		<td class="text-right" colspan="2" th:text="${player1.nicknames}">Maestro</td>

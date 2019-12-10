@@ -10,7 +10,7 @@
 	var categoryTypes = [[${categoryTypes}]];
 </script>
 <script type="text/javascript">
-	var statsChartData, statsPointCount, isPct;
+	var statsChartData, statsPointCount, statsIsPct;
 	google.charts.load("current", {packages: ["corechart"]});
 	google.charts.setOnLoadCallback(drawStatsChart);
 	function drawStatsChart() {
@@ -23,9 +23,9 @@
 		$.ajax(dataUrl).done(function(json) {
 			statsChartData = new google.visualization.DataTable(JSON.stringify(json));
 			statsPointCount = json.rows.length;
-			isPct = categoryTypes[category] == "PERCENTAGE";
+			statsIsPct = categoryTypes[category] == "PERCENTAGE";
 			var width = $("#statsChartSize").slider("value");
-			showStatsChart(statsChartData, "statsChart", width, statsPointCount, isPct, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
+			showStatsChart(statsChartData, "statsChart", width, statsPointCount, statsIsPct, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -37,7 +37,7 @@
 			value: defaultChartWOLegendSize(detectDevice()),
 			step: 50,
 			slide: function(event, ui) {
-				showStatsChart(statsChartData, "statsChart", ui.value, statsPointCount, isPct, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
+				showStatsChart(statsChartData, "statsChart", ui.value, statsPointCount, statsIsPct, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 			}
 		});
 		onStatsSeasonRangeChange();
@@ -93,7 +93,7 @@
 	</div>
 	<div class="col-md-1">
 		<div id="statsByAgeDiv" class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
+			<label class="text-nowrap" data-toggle="tooltip" data-placement="top" title="Show chart by age">
 				<input id="statsByAge" type="checkbox"/> By age
 			</label>
 		</div>

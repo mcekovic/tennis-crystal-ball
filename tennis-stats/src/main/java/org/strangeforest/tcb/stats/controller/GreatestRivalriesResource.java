@@ -20,10 +20,10 @@ public class GreatestRivalriesResource {
 
 	private static final int MAX_RIVALRIES = 1000;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("matches", "matches")
-		.put("rivalryScore", "rivalry_score")
-	.build();
+	private static Map<String, String> ORDER_MAP = Map.of(
+		"matches", "matches",
+		"rivalryScore", "rivalry_score"
+	);
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("rivalry_rank");
 
 	@GetMapping("/greatestRivalriesTable")

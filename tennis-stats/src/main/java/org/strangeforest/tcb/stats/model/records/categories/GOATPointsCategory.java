@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 
 public class GOATPointsCategory extends RecordCategory {
 
@@ -65,7 +66,7 @@ public class GOATPointsCategory extends RecordCategory {
 			"WHERE " + suffix(domain.condition, " AND ") + columnName + " > 0",
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints%2$s", playerId, domain.urlParam),
-			asList(new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", suffix(name, " ") + "GOAT Points"))
+			List.of(new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", suffix(name, " ") + "GOAT Points"))
 		);
 	}
 
@@ -86,7 +87,7 @@ public class GOATPointsCategory extends RecordCategory {
 			"WHERE " + columnName + " > 0",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
 			detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, recordDetail.getSeason()),
-			asList(
+			List.of(
 				new RecordColumn("value", null, formatter, POINTS_WIDTH, "right", suffix(name, " ") + "GOAT Points"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			)
@@ -107,7 +108,7 @@ public class GOATPointsCategory extends RecordCategory {
 			"WHERE end_season - start_season > 0",
          "r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
          SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints", playerId),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", SEASONS_WIDTH, "right", "Seasons"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "First Season"),
 				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "Last Season")
@@ -132,7 +133,7 @@ public class GOATPointsCategory extends RecordCategory {
 			"HAVING max(consecutive_seasons) > 1",
 			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
 			SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints", playerId),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", CONS_SEASONS_WIDTH, "right", "Consecutive Seasons"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
 				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "End Season")

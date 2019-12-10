@@ -3,8 +3,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Live Scores</title>
 	<template>
-	<meta name="description" content="Live tennis scores via Livescore.in"/>
-	<script th:src="@{/js/livescore.js}"></script>
+	<meta name="description" content="Live tennis scores via Enetscore"/>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			loadRankingTopN("RANK", 20);
@@ -19,10 +18,10 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3><img src="/images/active.png" class="fa-spin" style="vertical-align: 0" width="18" height="18"/> Live Scores via <a href="https://www.livescore.in" title="Livescore.in" target="_blank">Livescore.in</a></h3>
+	<h3><img src="/images/active.png" class="fa-spin" style="vertical-align: 0" width="18" height="18"/> Live Scores via <a href="https://www.enetscores.com" title="Enetscores by Enetpulse" target="_blank" rel="noopener noreferrer">Enetscores</a></h3>
 	<div class="row">
 		<div class="col-lg-10 col-md-9">
-			<iframe id="inscore-xdc-983043" src="https://www.livescore.in/free/983043/" width="624" height="500" frameborder="0" scrolling="no"></iframe>
+			<script type="text/javascript" src="https://widget.enetscores.com/FW8F2D81ECF2A71A10"></script>
 		</div>
 		<div class="col-lg-2 col-md-3">
 			<div id="rankingTopN"></div>

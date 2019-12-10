@@ -15,7 +15,6 @@ import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
 import static org.strangeforest.tcb.util.EnumUtil.*;
@@ -124,7 +123,7 @@ public class StatisticsChartService {
 			if (surface.length() == 1)
 				params.addValue("surface", surface);
 			else
-				params.addValue("surfaces", asList(surface.split("")));
+				params.addValue("surfaces", List.of(surface.split("")));
 		}
 		addRangeParams(params, seasonRange, "season");
 		return params;

@@ -103,7 +103,7 @@
 					<td th:if="${outcomeOrStats}" class="score" th:text="${match.outcome}"></td>
 					<td th:unless="${loser == null || (forecast && (winner.qualifier || loser.qualifier))}" rowspan="2" class="player-h2h">
 						<a th:unless="${forecast}" th:href="@{/headToHead(playerId1=${winner.id}, playerId2=${loser.id})}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
-						<a th:if="${forecast}" th:href="@{/headToHead(playerId1=${winner.id}, playerId2=${loser.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, indoor=${inProgressEvent.indoor}, round=${round})}" class="player-h2h" title="Show Head-to-Head Hypothetical Matchup">H<br/>2<br/>H</a>
+						<a th:if="${forecast}" th:href="@{/headToHead(playerId1=${winner.id}, playerId2=${loser.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, indoor=${inProgressEvent.indoor}, round=${round}, date=${#temporals.format(inProgressEvent.completed ? inProgressEvent.date : #temporals.createToday(), 'dd-MM-yyyy')}, tournamentId=${inProgressEvent.tournamentId})}" class="player-h2h" title="Show Head-to-Head Hypothetical Matchup">H<br/>2<br/>H</a>
 					</td>
 				</tr>
 				<tr th:if="${loser}">

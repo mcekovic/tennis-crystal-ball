@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+  <tournament season="2019" tournament-name="Davis Cup Finals" name="Davis Cup Finals" date="2019-11-18" ext-id="DF">
+    <level>D</level>
+    <surface>H</surface>
+    <indoor>true</indoor>
+    <draw-type>RR</draw-type>
+    <draw-size>18</draw-size>
+    <!-- RR Group A -->
+    <match match-num="1" round="RR" best-of="3" winner="Filip KRAJINOVIC" loser="Jo Wilfried TSONGA" score="7-5 7-6(5)"/>
+    <match match-num="2" round="RR" best-of="3" winner="Novak DJOKOVIC" loser="Benoit PAIRE" score="6-3 6-3"/>
+    <match match-num="3" round="RR" best-of="3" winner="Filip KRAJINOVIC" loser="Yuichi SUGITA" score="6-2 6-4"/>
+    <match match-num="4" round="RR" best-of="3" winner="Novak DJOKOVIC" loser="Yoshihito NISHIOKA" score="6-1 6-2"/>
+    <match match-num="5" round="RR" best-of="3" winner="Jo Wilfried TSONGA" loser="Yasutaka UCHIYAMA" score="6-2 6-1"/>
+    <match match-num="6" round="RR" best-of="3" winner="Yoshihito NISHIOKA" loser="Gael MONFILS" score="7-5 6-2"/>
+    <!-- RR Group B -->
+    <match match-num="7" round="RR" best-of="3" winner="Roberto BAUTISTA AGUT" loser="Nikola MEKTIC" score="6-1 6-3"/>
+    <match match-num="8" round="RR" best-of="3" winner="Rafael NADAL" loser="Borna GOJO" score="6-4 6-3"/>
+    <match match-num="9" round="RR" best-of="3" winner="Andrey RUBLEV" loser="Roberto BAUTISTA AGUT" score="3-6 6-3 7-6(0)"/>
+    <match match-num="10" round="RR" best-of="3" winner="Rafael NADAL" loser="Karen KHACHANOV" score="6-3 7-6(7)"/>
+    <match match-num="11" round="RR" best-of="3" winner="Andrey RUBLEV" loser="Borna GOJO" score="6-3 6-3"/>
+    <match match-num="12" round="RR" best-of="3" winner="Karen KHACHANOV" loser="Borna CORIC" score="6-7(4) 6-4 6-4"/>
+    <!-- RR Group C -->
+    <match match-num="13" round="RR" best-of="3" winner="Philipp KOHLSCHREIBER" loser="Guido PELLA" score="1-6 6-3 6-4"/>
+    <match match-num="14" round="RR" best-of="3" winner="Jan Lennard STRUFF" loser="Diego SCHWARTZMAN" score="6-3 7-6(8)"/>
+    <match match-num="15" round="RR" best-of="3" winner="Philipp KOHLSCHREIBER" loser="Nicolas JARRY" score="6-4 6-3"/>
+    <match match-num="16" round="RR" best-of="3" winner="Cristian GARIN" loser="Jan Lennard STRUFF" score="6-7(3) 7-6(7) 7-6(8)"/>
+    <match match-num="17" round="RR" best-of="3" winner="Guido PELLA" loser="Nicolas JARRY" score="6-4 6-3"/>
+    <match match-num="18" round="RR" best-of="3" winner="Diego SCHWARTZMAN" loser="Cristian GARIN" score="6-2 6-2"/>
+    <!-- RR Group D -->
+    <match match-num="19" round="RR" best-of="3" winner="Nick KYRGIOS" loser="Steve DARCIS" score="6-2 7-6(9)"/>
+    <match match-num="20" round="RR" best-of="3" winner="Alex DE MINAUR" loser="David GOFFIN" score="6-0 7-6(4)"/>
+    <match match-num="21" round="RR" best-of="3" winner="Nick KYRGIOS" loser="Alejandro GONZALEZ" score="6-4 6-4"/>
+    <match match-num="22" round="RR" best-of="3" winner="Alex DE MINAUR" loser="Daniel Elahi GALAN" score="6-4 6-3"/>
+    <match match-num="23" round="RR" best-of="3" winner="Steve DARCIS" loser="Santiago GIRALDO" score="6-3 6-2"/>
+    <match match-num="24" round="RR" best-of="3" winner="David GOFFIN" loser="Daniel Elahi GALAN" score="3-6 6-3 6-3"/>
+    <!-- RR Group E -->
+    <match match-num="25" round="RR" best-of="3" winner="Kyle EDMUND" loser="Mikhail KUKUSHKIN" score="6-3 6-3"/>
+    <match match-num="26" round="RR" best-of="3" winner="Alexander BUBLIK" loser="Daniel EVANS" score="5-7 6-4 6-1"/>
+    <match match-num="27" round="RR" best-of="3" winner="Andy MURRAY" loser="Tallon GRIEKSPOOR" score="6-7(7) 6-4 7-6(5)"/>
+    <match match-num="28" round="RR" best-of="3" winner="Robin HAASE" loser="Daniel EVANS" score="3-6 7-6(5) 6-4"/>
+    <match match-num="29" round="RR" best-of="3" winner="Mikhail KUKUSHKIN" loser="Botic VAN DE ZANDSCHULP" score="6-2 6-2"/>
+    <match match-num="30" round="RR" best-of="3" winner="Robin HAASE" loser="Alexander BUBLIK" score="7-5 3-6 7-6(5)"/>
+    <!-- RR Group F -->
+    <match match-num="31" round="RR" best-of="3" winner="Vasek POSPISIL" loser="Reilly OPELKA" score="7-6(5) 7-6(7)"/>
+    <match match-num="32" round="RR" best-of="3" winner="Denis SHAPOVALOV" loser="Taylor FRITZ" score="7-6(6) 6-3"/>
+    <match match-num="33" round="RR" best-of="3" winner="Vasek POSPISIL" loser="Fabio FOGNINI" score="7-6(5) 7-5"/>
+    <match match-num="34" round="RR" best-of="3" winner="Denis SHAPOVALOV" loser="Matteo BERRETTINI" score="7-6(5) 6-7(3) 7-6(5)"/>
+    <match match-num="35" round="RR" best-of="3" winner="Fabio FOGNINI" loser="Reilly OPELKA" score="6-4 6-7(4) 6-3"/>
+    <match match-num="36" round="RR" best-of="3" winner="Taylor FRITZ" loser="Matteo BERRETTINI" score="5-7 7-6(5) 6-2"/>
+    <!-- QF -->
+    <match match-num="37" round="QF" best-of="3" winner="Andrey RUBLEV" loser="Filip KRAJINOVIC" score="6-1 6-2"/>
+    <match match-num="38" round="QF" best-of="3" winner="Novak DJOKOVIC" loser="Karen KHACHANOV" score="6-3 6-3"/>
+    <match match-num="39" round="QF" best-of="3" winner="Vasek POSPISIL" loser="John MILLMAN" score="7-6(7) 6-4"/>
+    <match match-num="40" round="QF" best-of="3" winner="Alex DE MINAUR" loser="Denis SHAPOVALOV" score="3-6 6-3 7-5"/>
+    <match match-num="41" round="QF" best-of="3" winner="Kyle EDMUND" loser="Philipp KOHLSCHREIBER" score="6-3 7-5"/>
+    <match match-num="42" round="QF" best-of="3" winner="Daniel EVANS" loser="Jan Lennard STRUFF" score="7-6(6) 3-6 7-6(2)"/>
+    <match match-num="43" round="QF" best-of="3" winner="Guido PELLA" loser="Pablo CARRENO BUSTA" score="6-7(3) 7-6(4) 6-1"/>
+    <match match-num="44" round="QF" best-of="3" winner="Rafael NADAL" loser="Diego SCHWARTZMAN" score="6-1 6-2"/>
+    <!-- SF -->
+    <match match-num="45" round="SF" best-of="3" winner="Andrey RUBLEV" loser="Vasek POSPISIL" score="6-4 6-4"/>
+    <match match-num="46" round="SF" best-of="3" winner="Denis SHAPOVALOV" loser="Karen KHACHANOV" score="6-4 4-6 6-4"/>
+    <match match-num="47" round="SF" best-of="3" winner="Kyle EDMUND" loser="Feliciano LOPEZ" score="6-3 7-6(3)"/>
+    <match match-num="48" round="SF" best-of="3" winner="Rafael NADAL" loser="Daniel EVANS" score="6-4 6-0"/>
+    <!-- F -->
+    <match match-num="49" round="F" best-of="3" winner="Roberto BAUTISTA AGUT" loser="Felix AUGER ALIASSIME" score="7-6(3) 6-3"/>
+    <match match-num="50" round="F" best-of="3" winner="Rafael NADAL" loser="Denis SHAPOVALOV" score="6-3 7-6(7)"/>
+  </tournament>
+</tournament-data>

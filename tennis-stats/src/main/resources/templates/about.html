@@ -54,8 +54,8 @@
 			<h4 class="text-nowrap"><i class="fa fa-home"></i> Introduction</h4>
 			<p>
 				<th:block th:include="fragments/promotion :: logo"/> aims to become the ultimate tennis statistics destination for the die-hard tennis fans.
-				It tries to provide all kind of tennis statistics in the <a href="https://en.wikipedia.org/wiki/History_of_tennis#Open_Era" target="_blank" class="external">Open Era</a> male tennis with simple yet effective web GUI.
-				If you have any suggestions for additional features or tweaks to the current features, please e-mail me at <a href="mailto:mcekovic@gmail.com" target="_blank">mcekovic@gmail.com</a> or log a <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank" class="external">GitHub issue</a>.
+				It tries to provide all kind of tennis statistics in the <a href="https://en.wikipedia.org/wiki/History_of_tennis#Open_Era" target="_blank" rel="noopener noreferrer" class="external">Open Era</a> men's tennis with simple yet effective web GUI.
+				If you have any suggestions for additional features or tweaks to the current features, please e-mail me at <a href="mailto:mcekovic@gmail.com" target="_blank" rel="noopener noreferrer">mcekovic@gmail.com</a> or log a <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank" rel="noopener noreferrer" class="external">GitHub issue</a>.
 			</p>
 			<th:block th:include="fragments/ads :: responsive"/>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-star"></i> Features</h4>
@@ -68,7 +68,7 @@
 				<li><a href="/greatestRivalries"><i class="fa fa-handshake-o"></i> Greatest Rivalries</a> - Explore greatest rivalries, overall or by season, tournament level, surface or round</li>
 				<li><a href="/greatestMatches"><i class="fa fa-signing"></i> Greatest Matches</a> - Explore greatest matches ranked by special Match Greatness Score formula</li>
 				<li><a href="/rankingsTable"><i class="fa fa-list-ol"></i> Ranking Tables</a> - Player weekly ranking tables</li>
-				<li><a href="/eloRatings"><i class="fa fa-sort-amount-desc"></i> Elo Ratings</a> - Player weekly <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" class="external">Elo rating</a> tables (overall, by surface, outdoor or indoor, set or game) using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">Elo rating formula</a></li>
+				<li><a href="/eloRatings"><i class="fa fa-sort-amount-desc"></i> Elo Ratings</a> - Player weekly <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" rel="noopener noreferrer" class="external">Elo rating</a> tables (overall, by surface, outdoor or indoor, set or game) using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">Elo rating formula</a></li>
 				<li><a href="/rankingsChart"><i class="fa fa-bar-chart"></i> Ranking Charts</a> - Player ranking and ranking point charts (including Elo rating), compare players by constructing custom charts</li>
 				<li><a href="/peakEloRatings"><i class="fa fa-tachometer"></i> Peak Elo Ratings</a><sup class="cool-feature"></sup> - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie-break)</li>
 				<li><a href="/topPerformers"><i class="fa fa-tasks"></i> Top Performers</a> - Find top performers in both performance and pressure situations categories</li>
@@ -83,19 +83,21 @@
 				<li><a href="/tournamentEvents"><i class="fa fa-calendar"></i> Tournament Events</a> - Browse all Open Era tournament events, see tournament event draw, performance, statistics, historical winners and records</li>
 				<li><a href="/inProgressEventsForecasts"><i class="fa fa-eye"></i> Tournament Forecasts</a><sup class="cool-feature"></sup> - <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#tournamentForecastPopover">Tournament Event Forecasts</a> for in-progress tournaments driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</a></li>
 				<li><a href="/records"><i class="fa fa-book"></i> Records</a><sup class="cool-feature"></sup> - Various match, tournament result and ranking records, famous and infamous (the best player that never...)</li>
-				<li><a href="/liveScores"><img src="/images/active.png" title="Live" width="12" height="12" style="vertical-align: 0"/> Live Scores</a> - Live Scores via <a href="https://www.livescore.in" title="Livescore.in" target="_blank" class="external">Livescore.in</a></li>
+				<li><a href="/liveScores"><img src="/images/active.png" title="Live" width="12" height="12" style="vertical-align: 0"/> Live Scores</a> - Live Scores via <a href="https://www.enetscores.com" title="Enetscores by Enetpulse" target="_blank" rel="noopener noreferrer" class="external">Enetscores</a></li>
 				<li><a href="/blog"><i class="fa fa-pencil-square"></i> Blog Section</a> - A blog section</li>
 			</ul>
 			<p>More info about feature details can be found at <a href="/glossary"><i class="fa fa-book"></i> Glossary</a> page.</p>
 			<p>Some useful tips can be found at <a href="/tips"><i class="fa fa-bullhorn"></i> Tips</a> page.</p>
 			<h4 id="data" class="text-nowrap" style="margin-top: 25px"><i class="fa fa-database"></i> Tennis Data</h4>
 			<p>
-				Data on which the statistics are based is from open source tennis data <a href="https://github.com/JeffSackmann/tennis_atp" target="_blank" class="external">repository</a> by <a href="https://github.com/JeffSackmann" target="_blank" class="external">Jeff Sackmann</a>, with some corrections and additions where data is wrong or lacking.
+				Data on which the statistics are based is from open source tennis data <a href="https://github.com/JeffSackmann/tennis_atp" target="_blank" rel="noopener noreferrer" class="external">repository</a> by <a href="https://github.com/JeffSackmann" target="_blank" rel="noopener noreferrer" class="external">Jeff Sackmann</a>, with some corrections and additions where data is wrong or lacking.
 				Even with these corrections and additions, there are still small errors and data missing, most notably for many tournaments between 1968 and 1972.
 				Rankings before official ATP rankings started in 1973 season are estimated and as well still not complete.<br/>
 				In-Match statistics data (Aces, DFs, Serve %...) started to be recorded from 1991 onward, and thus this data is available on UTS also only for seasons 1991 onward.<br/>
 				Data is updated every Monday morning with new rankings and newly completed tournaments, followed by re-computation of aggregated data and records. In-progress tournament forecasts are updated every 15 minutes.<br/>
-				Please provide feedback on data as well at <a href="mailto:mcekovic@gmail.com" target="_blank">mcekovic@gmail.com</a> or <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank" class="external">GitHub</a>.
+				Qualifying, Challengers and Futures matches are currently not included. They are in medium-to-remote plan to be included: <a href="https://github.com/mcekovic/tennis-crystal-ball/issues/328" target="_blank" rel="noopener noreferrer" class="external">#328</a><br/>
+				Woman tennis data is not included, for now it is only in the very remote plans: <a href="https://github.com/mcekovic/tennis-crystal-ball/issues/289" target="_blank" rel="noopener noreferrer" class="external">#289</a><br/>
+				Please provide feedback on data as well at <a href="mailto:mcekovic@gmail.com" target="_blank" rel="noopener noreferrer">mcekovic@gmail.com</a> or <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank" rel="noopener noreferrer" class="external">GitHub</a>.
 			</p>
 			<h4 id="levels" class="text-nowrap" style="margin-top: 25px"><i class="fa fa-trophy"></i> Tournament Classification</h4>
 			<p>
@@ -108,18 +110,18 @@
 				<a href="/tournaments?level=B" class="label label-B" title="Show ATP 250 tournaments">ATP 250</a>
 				<ul>
 					<li>
-						Masters tournament classification is per Wikipedia's <a href="https://en.wikipedia.org/wiki/Tennis_Masters_Series_records_and_statistics" target="_blank" class="external">Tennis Masters Series records and statistics</a>.
+						Masters tournament classification is per Wikipedia's <a href="https://en.wikipedia.org/wiki/Tennis_Masters_Series_records_and_statistics" target="_blank" rel="noopener noreferrer" class="external">Tennis Masters Series records and statistics</a>.
 						This is not completely fair, as this classification starts from 1970 (there are no Masters tournaments in 1968 and 1969),
-						as well as classification from 1970 to 1978 is fuzzy and contradictory to the Wikipedia's <a href="https://en.wikipedia.org/wiki/Grand_Prix_Super_Series" target="_blank" class="external">Grand Prix Super Series</a>.
+						as well as classification from 1970 to 1978 is fuzzy and contradictory to the Wikipedia's <a href="https://en.wikipedia.org/wiki/Grand_Prix_Super_Series" target="_blank" rel="noopener noreferrer" class="external">Grand Prix Super Series</a>.
 					</li>
 					<li>
-						In addition to official <a href="https://en.wikipedia.org/wiki/ATP_Finals" target="_blank" class="external">Tour Finals</a> tournaments, <a href="https://en.wikipedia.org/wiki/WCT_Finals" target="_blank" class="external">Dallas WCT Finals</a> (1971-1989), <a href="https://en.wikipedia.org/wiki/Grand_Slam_Cup" target="_blank" class="external">Grand Slam Cup</a> (1990-1999) and Tennis Champions Classic (1970, 1971) are considered alternative Tour Finals and are weighted a little less than official Tour Finals, the same as Masters tournaments.
+						In addition to official <a href="https://en.wikipedia.org/wiki/ATP_Finals" target="_blank" rel="noopener noreferrer" class="external">Tour Finals</a> tournaments, <a href="https://en.wikipedia.org/wiki/WCT_Finals" target="_blank" rel="noopener noreferrer" class="external">Dallas WCT Finals</a> (1971-1989), <a href="https://en.wikipedia.org/wiki/Grand_Slam_Cup" target="_blank" rel="noopener noreferrer" class="external">Grand Slam Cup</a> (1990-1999) and Tennis Champions Classic (1970, 1971) are considered alternative Tour Finals and are weighted a little less than official Tour Finals, the same as Masters tournaments.
 					</li>
 					<li>
 						Separation of ATP 500/Championship Series vs ATP 250/World Series for seasons 1990 and onwards is as per ATP.
 						For seasons before 1990, 11 tournaments per season with the strongest participation based on player ranks are considered ATP 500 tournaments.
 						For seasons 1968 and 1969, in order to compensate lack of Tour Finals and Masters tournaments, 25 strongest tournaments per season are considered ATP 500 tournaments.
-						In addition, <a href="https://en.wikipedia.org/wiki/Pepsi_Grand_Slam" target="_blank" class="external">Pepsi Grand Slam</a> (1976-1981), <a href="https://en.wikipedia.org/wiki/WCT_Challenge_Cup" target="_blank" class="external">WCT Challenge Cup</a> (1976-1980) and <a href="https://en.wikipedia.org/wiki/WCT_Finals#Seasonal_finals_events" target="_blank" class="external">Seasonal WCT Finals</a> (1972, 1982) are also considered as ATP 500.
+						In addition, <a href="https://en.wikipedia.org/wiki/Pepsi_Grand_Slam" target="_blank" rel="noopener noreferrer" class="external">Pepsi Grand Slam</a> (1976-1981), <a href="https://en.wikipedia.org/wiki/WCT_Challenge_Cup" target="_blank" rel="noopener noreferrer" class="external">WCT Challenge Cup</a> (1976-1980) and <a href="https://en.wikipedia.org/wiki/WCT_Finals#Seasonal_finals_events" target="_blank" rel="noopener noreferrer" class="external">Seasonal WCT Finals</a> (1972, 1982) are also considered as ATP 500.
 					</li>
 				</ul>
 			</p>
@@ -160,20 +162,20 @@
 					<td><img src="/images/credits/spring-boot-logo.png" width="50" height="50" alt="Spring Boot"/></td>
 				</tr>
 				<tr>
-					<td><a href="https://www.linux.org" target="_blank" class="external">Linux</a></td>
-					<td><a href="https://www.postgresql.org" target="_blank" class="external">PostgreSQL</a></td>
-					<td><a href="https://www.oracle.com/java" target="_blank" class="external">Java</a></td>
-					<td><a href="https://spring.io/projects/spring-boot" target="_blank" class="external">Spring Boot</a></td>
+					<td><a href="https://www.linux.org" target="_blank" rel="noopener noreferrer" class="external">Linux</a></td>
+					<td><a href="https://www.postgresql.org" target="_blank" rel="noopener noreferrer" class="external">PostgreSQL</a></td>
+					<td><a href="https://www.oracle.com/java" target="_blank" rel="noopener noreferrer" class="external">Java</a></td>
+					<td><a href="https://spring.io/projects/spring-boot" target="_blank" rel="noopener noreferrer" class="external">Spring Boot</a></td>
 				</tr>
 			</table>
-			<p><th:block th:include="fragments/promotion :: logo"/> logo <img src="/images/uts-logo.png" width="50" height="15"/> is courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank">crazysesirdzija@gmail.com</a>.</p>
+			<p><th:block th:include="fragments/promotion :: logo"/> logo <img src="/images/uts-logo.png" width="50" height="15"/> is courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank" rel="noopener noreferrer">crazysesirdzija@gmail.com</a>.</p>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-legal"></i> License</h4>
 			<p>
-				<th:block th:include="fragments/promotion :: logo"/> and <th:block th:include="fragments/promotion :: tcb"/> source code is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" class="external">Apache 2.0 License</a>.
+				<th:block th:include="fragments/promotion :: logo"/> and <th:block th:include="fragments/promotion :: tcb"/> source code is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener noreferrer" class="external">Apache 2.0 License</a>.
 			</p>
 			<p>
-				<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width: 0; margin-bottom: 5px" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a><br/>
-				'GOAT' Points formula, customizations of Elo Ratings for tennis, <th:block th:include="fragments/promotion :: tcb"/> Match Prediction, Tournament Forecast and other algorithms by <th:block th:include="fragments/promotion :: logo"/> are licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="external">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br/>
+				<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="license noopener noreferrer"><img alt="Creative Commons License" style="border-width: 0; margin-bottom: 5px" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a><br/>
+				'GOAT' Points formula, customizations of Elo Ratings for tennis, <th:block th:include="fragments/promotion :: tcb"/> Match Prediction, Tournament Forecast and other algorithms by <th:block th:include="fragments/promotion :: logo"/> are licensed under a <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="license noopener noreferrer" class="external">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br/>
 				In short: Attribution is required. Non-commercial use only.
 			</p>
 			<th:block th:include="fragments/ads :: responsive"/>

@@ -16,7 +16,6 @@ import com.neovisionaries.i18n.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
@@ -28,7 +27,7 @@ public class GOATListService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MAX_PLAYER_COUNT = 1000;
-	private static final List<List<String>> LEVEL_AREAS = asList(asList("G"), asList("F", "L"), asList("M"), asList("O"), asList("A", "B"), asList("D", "T"));
+	private static final List<List<String>> LEVEL_AREAS = List.of(List.of("G"), List.of("F", "L"), List.of("M"), List.of("O"), List.of("A", "B"), List.of("D", "T"));
 
 	private static final String GOAT_TOP_N_QUERY = //language=SQL
 		"SELECT player_id, goat_rank, last_name, country_id, active, goat_points\n" +

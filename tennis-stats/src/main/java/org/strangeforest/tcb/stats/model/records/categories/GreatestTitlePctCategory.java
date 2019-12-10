@@ -1,11 +1,12 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class GreatestTitlePctCategory extends RecordCategory {
@@ -84,7 +85,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"FROM player_performance WHERE finals_won + finals_lost >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&round=F", playerId),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
@@ -105,7 +106,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"GROUP BY r.player_id HAVING count(r.player_id) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&round=F", playerId, domain.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
@@ -126,7 +127,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"GROUP BY r.player_id HAVING count(r.player_id) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
 			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s", playerId, domain.urlParam),
-			asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", "Winning Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,

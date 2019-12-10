@@ -21,17 +21,17 @@ public class TournamentEventsResource {
 
 	private static final int MAX_TOURNAMENT_EVENTS = 5000;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("date", "date")
-		.put("name", "name")
-		.put("surface", "surface")
-		.put("speed", "court_speed NULLS LAST")
-		.put("draw", "draw_type, draw_size")
-		.put("playerCount", "player_count")
-		.put("participation", "participation")
-		.put("strength", "strength")
-		.put("averageEloRating", "average_elo_rating")
-	.build();
+	private static Map<String, String> ORDER_MAP = Map.of(
+		"date", "date",
+		"name", "name",
+		"surface", "surface",
+		"speed", "court_speed NULLS LAST",
+		"draw", "draw_type, draw_size",
+		"playerCount", "player_count",
+		"participation", "participation",
+		"strength", "strength",
+		"averageEloRating", "average_elo_rating"
+	);
 	private static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 
 	@GetMapping("/tournamentEventsTable")

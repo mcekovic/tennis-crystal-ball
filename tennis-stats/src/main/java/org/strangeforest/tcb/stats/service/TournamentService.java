@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.service;
 import java.io.*;
 import java.sql.*;
 import java.time.*;
-import java.util.ArrayList;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
@@ -23,7 +22,6 @@ import com.fasterxml.jackson.databind.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.*;
 import static java.util.Map.*;
@@ -450,7 +448,7 @@ public class TournamentService {
 			}
 		);
 		String level = event.getLevel();
-		if (asList("D", "T").contains(level)) {
+		if (List.of("D", "T").contains(level)) {
 			int season = event.getSeason();
 			jdbcTemplate.query(
 				TEAM_TOURNAMENT_EVENT_WINNER_QUERY, params("level", level).addValue("season", season),
@@ -562,9 +560,9 @@ public class TournamentService {
 
 	@Cacheable("PlayersTournamentsIntersection")
 	public Map<TournamentLevel, List<TournamentItem>> getPlayersTournamentsIntersection(int playerId1, int playerId2) {
-		List<TournamentItem> tournaments = new ArrayList<>(fetchPlayerTournamentItems(playerId1));
-		tournaments.retainAll(fetchPlayerTournamentItems(playerId2));
-		return groupTournamentsByLevel(tournaments);
+		List<TournamentItem> tournaments1 = fetchPlayerTournamentItems(playerId1);
+		List<TournamentItem> tournaments2 = fetchPlayerTournamentItems(playerId2);
+		return groupTournamentsByLevel(tournaments1.stream().filter(tournaments2::contains).collect(toList()));
 	}
 
 	@Cacheable("PlayersTournamentsUnion")
@@ -587,8 +585,7 @@ public class TournamentService {
 	public List<PlayerTournament> getPlayerTournaments(int playerId, TournamentEventResultFilter filter) {
 		return jdbcTemplate.query(
 			format(PLAYER_TOURNAMENTS_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "", filter.getCriteria()),
-			filter.getParams()
-				.addValue("playerId", playerId),
+			filter.getParams().addValue("playerId", playerId),
 			(rs, rowNum) -> {
 				Map<String, Integer> levels = new HashMap<>();
 				Map<String, Integer> surfaces = new HashMap<>();

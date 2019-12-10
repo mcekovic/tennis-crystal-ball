@@ -9,7 +9,6 @@ import org.strangeforest.tcb.stats.model.core.*;
 import com.google.common.collect.*;
 
 import static java.lang.Math.*;
-import static java.util.Arrays.*;
 
 public abstract class MatchDataUtil {
 
@@ -135,7 +134,7 @@ public abstract class MatchDataUtil {
 		};
 	}
 
-	private static final List<Range<Integer>> RANK_RANGES = asList(
+	private static final List<Range<Integer>> RANK_RANGES = List.of(
 		Range.closed(1, 5),
 		Range.openClosed(5, 10),
 		Range.openClosed(10, 20),

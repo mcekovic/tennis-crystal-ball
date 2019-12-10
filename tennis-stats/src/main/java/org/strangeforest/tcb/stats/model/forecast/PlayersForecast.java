@@ -114,7 +114,7 @@ public class PlayersForecast {
 	}
 
 	void removePastRounds() {
-		for (String result : new ArrayList<>(results)) {
+		for (String result : List.copyOf(results)) {
 			if (!"W".equals(result) && isPastRound(result))
 				results.remove(result);
 		}

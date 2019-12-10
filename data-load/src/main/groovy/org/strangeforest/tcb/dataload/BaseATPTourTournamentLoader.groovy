@@ -3,6 +3,7 @@ package org.strangeforest.tcb.dataload
 import java.util.concurrent.*
 
 import org.jsoup.nodes.*
+import org.strangeforest.tcb.stats.model.forecast.*
 import org.strangeforest.tcb.util.*
 
 import groovy.sql.*
@@ -56,6 +57,7 @@ abstract class BaseATPTourTournamentLoader {
 	static mapLevel(String level, String urlId) {
 		switch (level) {
 			case 'grandslam': return 'G'
+			case 'finals':
 			case 'finals-pos': return 'F'
 			case '1000':
 			case '1000s': return 'M'
@@ -104,7 +106,7 @@ abstract class BaseATPTourTournamentLoader {
 				)) ||
 				(season >= 2018 && (
 					name.startsWith('New York') ||
-					name.startsWith('Tokyo')
+					(name.startsWith('Tokyo') && season == 2018)
 				))
 			case 'C': return (season >= 2018 && (
 					name.startsWith('Sao Paulo')
@@ -120,7 +122,7 @@ abstract class BaseATPTourTournamentLoader {
 		}
 	}
 
-	static mapRound(String round) {
+	static mapRound(String round, List<String> rounds = null) {
 		switch (round) {
 			case 'Final':
 			case 'Finals': return 'F'
@@ -135,8 +137,20 @@ abstract class BaseATPTourTournamentLoader {
 			case 'Round of 64': return 'R64'
 			case 'Round of 128': return 'R128'
 			case 'Round Robin': return 'RR'
+			case '1st Rd':
+			case '2nd Rd':
+			case '3rd Rd':
+			case '4th Rd':
+				int pos = rounds.indexOf(round)
+				for (int i = pos + 1; i < rounds.size(); i++) {
+					int j = KOResult.values().findIndexOf { v -> v.name() == rounds[i]}
+					if (j >= 0)
+						return KOResult.values()[j].offset(pos - i).name()
+				}
+				break
 			default: return null
 		}
+		round
 	}
 
 	static mapBestOf(String level) {
@@ -269,40 +283,32 @@ abstract class BaseATPTourTournamentLoader {
 
 	// Statistics
 
-	static loadStats(matches, String prefix1, String prefix2, String nameProperty1, String nameProperty2) {
+	static loadStats(matches, int season, extId, String prefix1, String prefix2, String nameProperty1, String nameProperty2) {
 		def progress = new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker())
 		def pool = new ForkJoinPool(FETCH_THREAD_COUNT)
 		try {
 			pool.submit {
 				matches.parallelStream().forEach { match ->
 					def statsUrl = match.statsUrl
+					def forcedUrl = false
+					// ATP Web site strips in-match stats links for GS tournaments for one month (probably some legal issue with ITF), but stats are there, just links are stripped!
+					if (!statsUrl && season > 1991 && match.tournament_level == 'G') {
+						statsUrl = matchStatsUrl(season, extId, String.format('%03d', match.match_num))
+						forcedUrl = true
+					}
 					if (statsUrl) {
 						def statsDoc = retriedGetDoc(statsUrl)
-						setMatchStatsParams(match, statsDoc, prefix1, prefix2, nameProperty1, nameProperty2, progress)
+						if (forcedUrl) {
+							def title = statsDoc.select('div.modal-scores-header h3.section-title').text()
+							if (title) {
+								match = findMatch(matches, title, nameProperty1, nameProperty2)
+								if (!match)
+									println "\nMatch '$title' cannot be found"
+							}
+						}
+						if (match)
+							setMatchStatsParams(match, statsDoc, prefix1, prefix2, nameProperty1, nameProperty2, progress)
 					}
-				}
-			}.get()
-		}
-		finally {
-			pool.shutdown()
-		}
-		pool.awaitTermination(1L, TimeUnit.HOURS)
-		if (progress.ticks > 0)
-			println()
-	}
-
-	static reloadStats(matches, int season, extId, String prefix1, String prefix2, String nameProperty1, String nameProperty2) {
-		def progress = new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker())
-		def pool = new ForkJoinPool(FETCH_THREAD_COUNT)
-		def matchNums = 1..matches.size()
-		try {
-			pool.submit {
-				matchNums.parallelStream().forEach { matchNum ->
-					def statsUrl = matchStatsUrl(season, extId, String.format('%03d', matchNum))
-					def statsDoc = retriedGetDoc(statsUrl)
-					def match = findMatch(matches, statsDoc.select('div.modal-scores-header h3.section-title').text(), nameProperty1, nameProperty2)
-					if (match)
-						setMatchStatsParams(match, statsDoc, prefix1, prefix2, nameProperty1, nameProperty2, progress)
 				}
 			}
 		}
@@ -379,7 +385,7 @@ abstract class BaseATPTourTournamentLoader {
 	}
 
 	static Map findMatch(matches, String title, String nameProperty1, String nameProperty2) {
-		title = title.toLowerCase()
+		title = player title.toLowerCase()
 		matches.find { match ->
 			title.contains(match[nameProperty1].toLowerCase()) && title.contains(match[nameProperty2].toLowerCase())
 		}

@@ -73,7 +73,7 @@ class CascadingCrawler {
 
 	def visit(Closure c) {
 		while (!urls.empty) {
-			for (String url : new ArrayList<>(urls)) {
+			for (String url : List.copyOf(urls)) {
 				c(url)
 				visited url
 			}

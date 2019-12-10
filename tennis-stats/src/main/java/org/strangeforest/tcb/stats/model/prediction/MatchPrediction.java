@@ -178,8 +178,8 @@ public final class MatchPrediction {
 
 	public MatchPrediction swap() {
 		MatchPrediction swapped = new MatchPrediction(totalAreaWeight, bestOf);
-		swapped.itemProbabilities1 = new ArrayList<>(itemProbabilities2);
-		swapped.itemProbabilities2 = new ArrayList<>(itemProbabilities1);
+		swapped.itemProbabilities1 = List.copyOf(itemProbabilities2);
+		swapped.itemProbabilities2 = List.copyOf(itemProbabilities1);
 		swapped.winProbability1 = winProbability2;
 		swapped.winProbability2 = winProbability1;
 		swapped.rankingData1 = rankingData2;

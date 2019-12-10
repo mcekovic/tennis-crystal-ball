@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 
 public abstract class ResultsStreaksCategory extends RecordCategory {
 
@@ -58,7 +59,7 @@ public abstract class ResultsStreaksCategory extends RecordCategory {
 					url += "&tournamentId=" + tournamentId;
 				return url;
 			},
-         asList(
+			List.of(
 				new RecordColumn("value", null, "valueUrl", STREAK_WIDTH, "right", "Streak"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
 				new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "Start Tournament"),

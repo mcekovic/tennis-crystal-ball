@@ -34,10 +34,10 @@
 					<small class="hidden-xs">Updated: </small><small th:text="${#temporals.format(dataUpdate, 'dd-MM-yyyy')}" title="Last data update">21-09-2015</small>
 				</div>
 				<div class="navbar-text pull-left text-nowrap" style="margin-top: 5px">
-					<a href="https://www.facebook.com/UltimateTennisStatistics" target="_blank" title="Ultimate Tennis Statistics on Facebook"><img src="/images/glyphicons-social-facebook.png" width="24" height="24"/></a>
-					<a href="https://twitter.com/UltmTennisStats" target="_blank" title="Ultimate Tennis Statistics on Twitter"><img src="/images/glyphicons-social-twitter.png" width="24" height="24"/></a>
-					<a href="https://github.com/mcekovic/tennis-crystal-ball" target="_blank" title="Ultimate Tennis Statistics on GitHub"><img src="/images/glyphicons-social-github.png" width="24" height="24"/></a>
-					<a href="/feed.atom" target="_blank" title="Ultimate Tennis Statistics Atom Feed"><img src="/images/glyphicons-social-rss.png" width="24" height="24"/></a>
+					<a href="https://www.facebook.com/UltimateTennisStatistics" target="_blank" rel="noopener noreferrer" title="Ultimate Tennis Statistics on Facebook"><img src="/images/glyphicons-social-facebook.png" width="24" height="24"/></a>
+					<a href="https://twitter.com/UltmTennisStats" target="_blank" rel="noopener noreferrer" title="Ultimate Tennis Statistics on Twitter"><img src="/images/glyphicons-social-twitter.png" width="24" height="24"/></a>
+					<a href="https://github.com/mcekovic/tennis-crystal-ball" target="_blank" rel="noopener noreferrer" title="Ultimate Tennis Statistics on GitHub"><img src="/images/glyphicons-social-github.png" width="24" height="24"/></a>
+					<a href="/feed.atom" target="_blank" rel="noopener noreferrer" title="Ultimate Tennis Statistics Atom Feed"><img src="/images/glyphicons-social-rss.png" width="24" height="24"/></a>
 				</div>
 			</div>
 			<div class="navbar-header navbar-right">
@@ -124,7 +124,7 @@
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Live<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/liveScores' ? 'active' : _}"><a href="/liveScores"><img src="/images/active.png" title="Live" width="12" height="12" style="vertical-align: 0"/> Live Scores</a></li>
-							<li><a href="http://live-tennis.eu" target="_blank"><i class="fa fa-sort-numeric-asc"></i> Live Rankings</a></li>
+							<li><a href="http://live-tennis.eu" target="_blank" rel="noopener noreferrer"><i class="fa fa-sort-numeric-asc"></i> Live Rankings</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/about' || path == '/glossary' || path == '/blog' || path == '/tips' || path == '/contact' ? 'active dropdown navbar-left' : 'dropdown navbar-left'}">
