@@ -81,3 +81,12 @@ versioneye {
 	includeSubProjects = true
 	dependencies = transitive
 }
+
+sonarqube {
+	properties {
+		property 'sonar.host.url', 'https://sonarcloud.io'
+		property 'sonar.organization', 'mcekovic'
+		property 'sonar.projectKey', 'mcekovic_tennis-crystal-ball'
+		property 'sonar.login', '7abf868a380087cd2970435d6567cb0e410680bc'
+	}
+}

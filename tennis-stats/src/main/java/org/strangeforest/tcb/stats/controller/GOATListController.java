@@ -24,7 +24,7 @@ public class GOATListController extends PageController {
 	@Autowired private GOATListService goatListService;
 	@Autowired private GOATLegendService goatLegendService;
 
-	private static Map<Integer, String> FACTOR_MAP = Map.of(
+	private static final Map<Integer, String> FACTOR_MAP = Map.of(
 		0, "x 0",
 		1, "x 1",
 		2, "x 2",

@@ -259,7 +259,9 @@ public class EloRatingsManager {
 				try {
 					matchRatingsForSave.put(matchEloRating);
 				}
-				catch (InterruptedException ignored) {}
+				catch (InterruptedException ex) {
+					Thread.currentThread().interrupt();
+				}
 			}
 		});
 	}

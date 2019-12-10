@@ -224,6 +224,6 @@ public class MinEntries {
 
 	private double getMinEntriesTournamentFactor(int tournamentId) {
 		int eventCount = tournamentService.getTournamentEventCount(tournamentId);
-		return MIN_ENTRIES_TOURNAMENT_FACTOR_MAP.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().get().getValue();
+		return MIN_ENTRIES_TOURNAMENT_FACTOR_MAP.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().orElseThrow().getValue();
 	}
 }

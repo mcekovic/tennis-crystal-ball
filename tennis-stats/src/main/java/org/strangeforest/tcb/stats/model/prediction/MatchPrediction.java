@@ -74,7 +74,7 @@ public final class MatchPrediction {
 			weightProbabilitySum += weight * itemProbability.getProbability();
 			weightSum += weight;
 		}
-		return weightProbabilitySum / weightSum;
+		return weightSum != 0.0 ? weightProbabilitySum / weightSum : 0.0;
 	}
 
 	public List<PredictionItem> getItems() {

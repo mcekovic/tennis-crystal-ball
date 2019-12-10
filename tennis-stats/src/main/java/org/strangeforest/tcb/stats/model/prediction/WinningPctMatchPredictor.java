@@ -123,13 +123,13 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	}
 
 	private static final class WL {
-		
-		public int won;
-		public int lost;
 
-		public WL() {}
+		private int won;
+		private int lost;
 
-		public WL(int won, int lost) {
+		private WL() {}
+
+		private WL(int won, int lost) {
 			this.won = won;
 			this.lost = lost;
 		}

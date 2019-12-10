@@ -15,8 +15,8 @@ class RankTypeTest {
 	@Test
 	void rankTypesAndPointTypeAreLinked() {
 		assertThat(RANK.rankType).isEqualTo(RANK);
-		assertThat(RANK.pointsType).isEqualTo(POINTS);
+		assertThat(RANK.getPointsType()).isEqualTo(POINTS);
 		assertThat(POINTS.rankType).isEqualTo(RANK);
-		assertThat(POINTS.pointsType).isEqualTo(POINTS);
+		assertThat(POINTS.getPointsType()).isEqualTo(POINTS);
 	}
 }

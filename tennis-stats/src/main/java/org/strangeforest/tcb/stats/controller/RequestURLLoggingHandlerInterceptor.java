@@ -11,17 +11,25 @@ public class RequestURLLoggingHandlerInterceptor extends HandlerInterceptorAdapt
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestURLLoggingHandlerInterceptor.class);
 	
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+	@Override public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 		if (ex != null)
-			LOGGER.warn("Request that generated exception: {}\nRequest URL: {}\nUser-Agent: {}", ex.getMessage(), getRequestURL(request), request.getHeader("User-Agent"));
+			LOGGER.warn("Request that generated exception: {}\nRequest URL: {}\nUser-Agent: {}", ex.getMessage(), getRequestURL(request), getUserAgent(request));
 	}
 
 	private static String getRequestURL(HttpServletRequest request) {
 		StringBuffer url = request.getRequestURL();
 		String params = request.getQueryString();
 		if (!Strings.isNullOrEmpty(params))
-			url.append('?').append(params);
-		return url.toString();
+			url.append('?').append(replacePatternBreakingChars(params));
+		return replacePatternBreakingChars(url.toString());
+	}
+
+	private String getUserAgent(HttpServletRequest request) {
+		String userAgent = request.getHeader("User-Agent");
+		return !Strings.isNullOrEmpty(userAgent) ? replacePatternBreakingChars(userAgent) : "N/A";
+	}
+
+	private static String replacePatternBreakingChars(String s) {
+		return s.replaceAll("[\n|\r|\t]", " ");
 	}
 }

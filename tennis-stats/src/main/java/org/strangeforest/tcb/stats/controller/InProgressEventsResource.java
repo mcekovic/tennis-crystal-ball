@@ -32,7 +32,7 @@ public class InProgressEventsResource {
 		"averageEloRating", "average_elo_rating",
 		"completed", "completed"
 	);
-	public static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
+	static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 
 	@GetMapping("/inProgressEventsTable")
 	public BootgridTable<InProgressEvent> inProgressEventsTable(

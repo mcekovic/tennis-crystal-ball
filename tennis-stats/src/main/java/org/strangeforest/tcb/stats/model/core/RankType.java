@@ -43,8 +43,8 @@ public enum RankType {
 	CARPET_GOAT_POINTS(GOAT, null, true, "Carpet GOAT Points", null, CARPET);
 
 	public final RankCategory category;
-	public RankType rankType;
-	public RankType pointsType;
+	public final RankType rankType;
+	private RankType pointsType;
 	public final boolean points;
 	public final String text;
 	public final String shortText;
@@ -63,5 +63,9 @@ public enum RankType {
 		this.text = text;
 		this.shortText = shortText;
 		this.surface = surface;
+	}
+
+	public RankType getPointsType() {
+		return pointsType;
 	}
 }

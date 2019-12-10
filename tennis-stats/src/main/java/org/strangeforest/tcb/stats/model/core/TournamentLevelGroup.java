@@ -50,6 +50,6 @@ public enum TournamentLevelGroup implements CodedEnum {
 		return CodedEnum.decode(TournamentLevelGroup.class, code);
 	}
 
-	public static Set<TournamentLevelGroup> INDIVIDUAL_LEVEL_GROUPS = EnumSet.of(BIG, ALL_FINALS, MEDIUM, SMALL, BEST_OF_5_IND, BEST_OF_3_IND);
-	public static Set<TournamentLevelGroup> ALL_LEVEL_GROUPS = EnumSet.of(BIG, ALL_FINALS, MEDIUM, SMALL, INDIVIDUAL, TEAM, BEST_OF_5, BEST_OF_3);
+	public static final Set<TournamentLevelGroup> INDIVIDUAL_LEVEL_GROUPS = EnumSet.of(BIG, ALL_FINALS, MEDIUM, SMALL, BEST_OF_5_IND, BEST_OF_3_IND);
+	public static final Set<TournamentLevelGroup> ALL_LEVEL_GROUPS = EnumSet.of(BIG, ALL_FINALS, MEDIUM, SMALL, INDIVIDUAL, TEAM, BEST_OF_5, BEST_OF_3);
 }

@@ -13,27 +13,23 @@ import org.springframework.scheduling.annotation.*;
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class TennisStatsApplication {
 
-	private static ConfigurableApplicationContext context;
+	private static volatile ConfigurableApplicationContext context;
 
 	public static void main(String[] args) {
-		setContext(run(args));
+		run(args);
 	}
 
-	public static synchronized void restart() {
+	public static void restart() {
 		String[] args = context.getBean(ApplicationArguments.class).getSourceArgs();
 		Thread thread = new Thread(() -> {
 			context.close();
-			context = run(args);
+			run(args);
 		}, "Application restarter");
 		thread.setDaemon(false);
 		thread.start();
 	}
 
-	private static ConfigurableApplicationContext run(String[] args) {
-		return SpringApplication.run(TennisStatsApplication.class, args);
-	}
-
-	private static synchronized void setContext(ConfigurableApplicationContext ctx) {
-		context = ctx;
+	private static void run(String[] args) {
+		context = SpringApplication.run(TennisStatsApplication.class, args);
 	}
 }

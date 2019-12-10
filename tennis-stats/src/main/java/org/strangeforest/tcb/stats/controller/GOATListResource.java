@@ -19,7 +19,7 @@ public class GOATListResource {
 	@Autowired private GOATListService goatListService;
 	@Autowired private MatchesService matchesService;
 
-	private static Map<String, String> ORDER_MAP = Map.ofEntries(
+	private static final Map<String, String> ORDER_MAP = Map.ofEntries(
 		entry("totalPoints", "goat_points"),
 		entry("tournamentPoints", "tournament_goat_points"),
 		entry("tGPoints", "tournament_g_goat_points"),

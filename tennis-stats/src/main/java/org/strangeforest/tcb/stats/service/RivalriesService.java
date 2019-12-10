@@ -440,7 +440,7 @@ public class RivalriesService {
 
 	private double getMinMatchesTournamentFactor(int tournamentId) {
 		int eventCount = tournamentService.getTournamentEventCount(tournamentId);
-		return MIN_MATCHES_TOURNAMENT_FACTOR_MAP.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().get().getValue();
+		return MIN_MATCHES_TOURNAMENT_FACTOR_MAP.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().orElseThrow().getValue();
 	}
 
 	private String rivalriesJoin(RivalryFilter filter) {

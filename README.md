@@ -6,6 +6,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mcekovic_tennis-crystal-ball&metric=alert_status)](https://sonarcloud.io/dashboard?id=mcekovic_tennis-crystal-ball)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
 
+![Logo](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/tennis-stats/src/main/resources/static/images/uts-logo.png)
 Ultimate Tennis Statistics is a Tennis Big Data Analysis tool with a nice web GUI.
 Tennis Crystal Ball is a set of Match Prediction and Tournament Forecasts algorithms powered by AI and machine learning.
 
@@ -49,60 +50,60 @@ https://www.ultimatetennisstatistics.com
 ### Screenshots
 
 ##### Home Page
-![Home Page](https://github.com/mcekovic/open-box/blob/master/HomePage.png?raw=true)
+![Home Page](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/HomePage.png)
 
 ##### GOAT List
-![GOAT List](https://github.com/mcekovic/open-box/blob/master/GOATList.png?raw=true)
+![GOAT List](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/GOATList.png)
 
 ##### Player Profile
-![Player Profile](https://github.com/mcekovic/open-box/blob/master/PlayerProfile.png?raw=true)
+![Player Profile](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/PlayerProfile.png)
 
 ##### Player Tournaments
-![Player Tournaments](https://github.com/mcekovic/open-box/blob/master/PlayerTournaments.png?raw=true)
+![Player Tournaments](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/PlayerTournaments.png)
 
 ##### Player Timeline
-![Player Timeline](https://github.com/mcekovic/open-box/blob/master/PlayerTimeline.png?raw=true)
+![Player Timeline](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/PlayerTimeline.png)
 
 ##### Player Rivalries
-![Player Rivalries](https://github.com/mcekovic/open-box/blob/master/PlayerRivalries.png?raw=true)
+![Player Rivalries](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/PlayerRivalries.png)
 
 ##### Player GOAT Points
-![Player GOAT Points](https://github.com/mcekovic/open-box/blob/master/PlayerGOATPoints.png?raw=true)
+![Player GOAT Points](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/PlayerGOATPoints.png)
 
 ##### Dominance Timeline
-![Dominance Timeline](https://github.com/mcekovic/open-box/blob/master/BigGunsTimeline.png?raw=true)
+![Dominance Timeline](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/BigGunsTimeline.png)
 
 ##### Surface Timeline
-![Surface Timeline](https://github.com/mcekovic/open-box/blob/master/SurfaceTimeline.png?raw=true)
+![Surface Timeline](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/SurfaceTimeline.png)
 
 ##### Greatest Rivalries
-![Greatest Rivalries](https://github.com/mcekovic/open-box/blob/master/GreatestRivalries.png?raw=true)
+![Greatest Rivalries](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/GreatestRivalries.png)
 
 ##### Ranking Charts
-![Ranking Points Chart](https://github.com/mcekovic/open-box/blob/master/RankingChart.png?raw=true)
+![Ranking Points Chart](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/RankingChart.png)
 
-![GOAT Points Chart](https://github.com/mcekovic/open-box/blob/master/RankingChart2.png?raw=true)
+![GOAT Points Chart](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/RankingChart2.png)
 
 ##### Peak Elo Ratings
-![Peak Elo Ratings](https://github.com/mcekovic/open-box/blob/master/PeakEloRatings.png?raw=true)
+![Peak Elo Ratings](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/PeakEloRatings.png)
 
 ##### Top Performers
-![Top Performers](https://github.com/mcekovic/open-box/blob/master/TopPerformers.png?raw=true)
+![Top Performers](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/TopPerformers.png)
 
 ##### Statistics Leaders
-![Statistics Leaders](https://github.com/mcekovic/open-box/blob/master/StatisticsLeaders.png?raw=true)
+![Statistics Leaders](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/StatisticsLeaders.png)
 
 ##### Seasons
-![Seasons](https://github.com/mcekovic/open-box/blob/master/Seasons.png?raw=true)
+![Seasons](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/Seasons.png)
 
 ##### Best Seasons
-![Best Seasons](https://github.com/mcekovic/open-box/blob/master/BestSeasons.png?raw=true)
+![Best Seasons](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/BestSeasons.png)
 
 ##### Tournaments
-![Tournaments](https://github.com/mcekovic/open-box/blob/master/Tournaments.png?raw=true)
+![Tournaments](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/Tournaments.png)
 
 ##### Records Book
-![Records Book](https://github.com/mcekovic/open-box/blob/master/RecordsBook.png?raw=true)
+![Records Book](https://raw.githubusercontent.com/mcekovic/tennis-crystal-ball/master/RecordsBook.png)
 
 ### License
 

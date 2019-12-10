@@ -59,5 +59,5 @@ public enum Round implements CodedEnum {
 		return CodedEnum.safeDecode(Round.class, code);
 	}
 
-	public static Set<Round> ROUNDS = EnumSet.of(F, SF, QF, R16, R32, R64, R128, RR, BR);
+	public static final Set<Round> ROUNDS = EnumSet.of(F, SF, QF, R16, R32, R64, R128, RR, BR);
 }

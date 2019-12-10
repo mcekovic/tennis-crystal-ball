@@ -54,7 +54,7 @@ public class WonDrawLost extends WonLost {
 	}
 
 	private static double scaledPct(int value, int from) {
-		return new BigDecimal(pct(value, from)).setScale(1, HALF_EVEN).doubleValue();
+		return BigDecimal.valueOf(pct(value, from)).setScale(1, HALF_EVEN).doubleValue();
 	}
 
 	private static String formatPct(double pct) {

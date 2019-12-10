@@ -6,11 +6,10 @@ import org.strangeforest.tcb.stats.model.core.*;
 
 import static java.util.Collections.*;
 import static java.util.Comparator.reverseOrder;
-import static java.util.Comparator.*;
 
 public class TournamentLevelTimeline {
 
-	private final Map<Integer, List<TournamentItem>> seasonsTournaments = new TreeMap<>(reverseOrder());
+	private final SortedMap<Integer, List<TournamentItem>> seasonsTournaments = new TreeMap<>(reverseOrder());
 	private final Map<Integer, List<TournamentLevelTimelineItem>> seasonsEvents = new HashMap<>();
 	private final Map<String, Map<Integer, Integer>> playerWins = new HashMap<>();
 
@@ -79,27 +78,37 @@ public class TournamentLevelTimeline {
 	// Util
 
 	private Optional<Integer> getPrevSeason(int season) {
-		Set<Integer> seasons = getSeasons();
-		if (seasons.stream().min(naturalOrder()).get() == season)
+		if (season == getFirstSeason())
 			return Optional.empty();
 		else {
 			for (int prevSeason = season - 1; true; prevSeason--) {
-				if (seasons.contains(prevSeason))
+				if (hasSeason(prevSeason))
 					return Optional.of(prevSeason);
 			}
 		}
 	}
 
 	private Optional<Integer> getNextSeason(int season) {
-		Set<Integer> seasons = getSeasons();
-		if (seasons.stream().findFirst().get() == season)
+		if (season == getLastSeason())
 			return Optional.empty();
 		else {
 			for (int nextSeason = season + 1; true; nextSeason++) {
-				if (seasons.contains(nextSeason))
+				if (hasSeason(nextSeason))
 					return Optional.of(nextSeason);
 			}
 		}
+	}
+
+	private Integer getFirstSeason() {
+		return seasonsTournaments.lastKey();
+	}
+
+	private Integer getLastSeason() {
+		return seasonsTournaments.firstKey();
+	}
+
+	private boolean hasSeason(int season) {
+		return seasonsTournaments.containsKey(season);
 	}
 
 	private static <T> boolean startsWith(List<T> list, List<T> subList) {
