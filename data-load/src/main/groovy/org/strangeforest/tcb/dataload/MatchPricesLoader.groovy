@@ -105,17 +105,18 @@ class MatchPricesLoader extends BaseCSVLoader {
 			case 'St. Polten': return 'St. Poelten'
 			case 'French Open': return 'Roland Garros'
 			case 'AEGON Championships': return 'London'
-			case 'Queens Club': return season <= 2014 ? 'Queen\'s Club' : name
-			case '\'s-Hertogenbosch': return season >= 2008 && season != 2017 as short ? 's-Hertogenbosch' : name
+			case 'Queens Club': return season <= 2017 ? 'Queen\'s Club' : (season >= 2018 ? 'London' : name)
+			case '\'s-Hertogenbosch': return season >= 2008 ? 's-Hertogenbosch' : name
 			case 'Salvador': return 'Costa Do Sauipe'
 			case 'Sopot': return season == 2001 as short ? 'Sopot - WS' : name
-			case 'Winston-Salem': return season == 2018 as short ? 'Winston Salem' : name
+			case 'Winston-Salem':
+			case 'Winston-Salem Open': return season >= 2018 ? 'Winston Salem' : name
 			case 'Rogers Masters': case 'Rogers Cup': case 'Toronto': case 'Montreal': return 'Canada Masters'
 			case 'Western & Southern Financial Group Masters': case 'Cincinnati': return 'Cincinnati Masters'
 			case 'Ho Chi Min City': return 'Ho Chi Minh City'
 			case 'St. Petersburg Open': return 'St.Petersburg'
 			case 'Paris': return 'Paris Masters'
-			case 'Masters Cup': return season == 2016 as short ? 'Barclays ATP World Tour Finals' : (season >= 2009 ? 'Tour Finals': name)
+			case 'Masters Cup': return season >= 2009 ? 'Tour Finals': name
 			default: return name
 		}
 	}

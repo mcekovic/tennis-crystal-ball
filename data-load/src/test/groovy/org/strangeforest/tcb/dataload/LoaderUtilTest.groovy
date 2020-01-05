@@ -7,7 +7,7 @@ import static org.strangeforest.tcb.dataload.LoaderUtil.*
 class LoaderUtilTest {
 
 	@Test
-	void "Retry test"() {
+	void 'Retry test'() {
 		def i = 0
 		retry(5, 0L, { th -> th instanceof IllegalArgumentException }) {
 			if (++i <= 2) throw new RuntimeException('Booom!!!', new IllegalArgumentException('Wrong data.'))
@@ -15,7 +15,7 @@ class LoaderUtilTest {
 	}
 
 	@Test
-	void "Collection tile test"() {
+	void 'Collection tile test'() {
 		assert tile([1])[0] == [1]
 
 		assert tile([1, 2])[0] == [1]

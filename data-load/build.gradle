@@ -40,6 +40,7 @@ dependencies {
 	implementation ("commons-cli:commons-cli:$commonsCliVersion")
 	implementation ("org.slf4j:slf4j-simple:$slf4jVersion")
 	testImplementation ("org.mockito:mockito-core:$mockitoVersion")
+	testImplementation ("org.testcontainers:postgresql:$testContainersVersion")
 }
 
 task quickDeployToDigitalOcean {

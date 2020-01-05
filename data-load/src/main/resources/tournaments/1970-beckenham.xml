@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="1970" tournament-name="Beckenham" name="Beckenham" date="1970-06-08" ext-id="7310">
+    <level>B</level>
+    <surface>G</surface>
+    <indoor>false</indoor>
+    <draw-type>KO</draw-type>
+    <draw-size>64</draw-size>
+    <player name="Abe Segal" country="RSA" />
+    <player name="Allan Mcdonald" country="AUS" />
+    <player name="Allan Stone" country="AUS" />
+    <player name="Alvin Gardiner" country="AUS" />
+    <player name="Anatoli Volkov" country="RUS" />
+    <player name="Andrew Pattison" country="USA" />
+    <player name="Bobby Wilson" country="???" />
+    <player name="Bob Giltinan" country="AUS" />
+    <player name="Byron Bertram" country="RSA" />
+    <player name="Clark Graebner" country="USA" />
+    <player name="Colin Mchugo" country="GBR" />
+    <player name="Danny Obryant" country="USA" />
+    <player name="Dick Crealy" country="AUS" />
+    <player name="Dick R Bohrnstedt" country="USA" />
+    <player name="Douglas Irvine" country="ZIM" />
+    <player name="Eduardo Gorostiaga" country="BOL" />
+    <player name="Eduardo Zuleta" country="ECU" />
+    <player name="Ezio Di Matteo" country="ITA" />
+    <player name="Franco Bartoni" country="ITA" />
+    <player name="Fred Hemmes" country="NED" />
+    <player name="Frew Mcmillan" country="RSA" />
+    <player name="Gerald Battrick" country="GBR" />
+    <player name="Graham B Primrose" country="AUS" />
+    <player name="Ian Beverly" country="???" />
+    <player name="Joaquin Loyo Mayo" country="MEX" />
+    <player name="John Alexander" country="AUS" />
+    <player name="John Barrett" country="GBR" />
+    <player name="John Clifton" country="GBR" />
+    <player name="John Paish" country="GBR" />
+    <player name="Keith Diepraam" country="RSA" />
+    <player name="Massimo Di Domenico" country="ITA" />
+    <player name="Mel Baleson" country="RSA" />
+    <player name="Miecyslav Rybarczyk" country="POL" />
+    <player name="Nicholas Kalogeropoulos" country="GRE" />
+    <player name="Phil Dent" country="AUS" />
+    <player name="Pietro Marzano" country="ITA" />
+    <player name="Rauty Krog" country="RSA" />
+    <player name="Ray Keldie" country="AUS" />
+    <player name="Rayno Seegers" country="RSA" />
+    <player name="Ray Ruffels" country="AUS" />
+    <player name="Robert Maud" country="RSA" />
+    <player name="Roger Dowdeswell" country="ZIM" />
+    <player name="Stephen Warboys" country="GBR" />
+    <player name="Steve Fiske" country="USA" />
+    <player name="Syd Ball" country="AUS" />
+    <player name="Tadeusz Nowicki" country="POL" />
+    <player name="Viktor Palman" country="URS" />
+    <!-- R64 -->
+    <match match-num="32" round="R64" best-of="3" winner="John Alexander" loser="Miecyslav Rybarczyk" score="6-3 4-6 6-3" />
+    <match match-num="33" round="R64" best-of="3" winner="Syd Ball" loser="Fred Hemmes" score="6-2 6-4" />
+    <match match-num="34" round="R64" best-of="3" winner="John Barrett" loser="Viktor Palman" score="2-6 7-5 6-4" />
+    <match match-num="35" round="R64" best-of="3" winner="Byron Bertram" loser="Dick R Bohrnstedt" score="8-6 6-2" />
+    <match match-num="36" round="R64" best-of="3" winner="Phil Dent" loser="John Paish" score="5-7 6-4 6-4" />
+    <match match-num="37" round="R64" best-of="3" winner="Ezio Di Matteo" loser="John Clifton" score="8-6 6-4" />
+    <match match-num="38" round="R64" best-of="3" winner="Keith Diepraam" loser="Eduardo Zuleta" score="6-2 6-4" />
+    <match match-num="39" round="R64" best-of="3" winner="Douglas Irvine" loser="Ian Beverly" score="6-3 6-3" />
+    <match match-num="40" round="R64" best-of="3" winner="Nicholas Kalogeropoulos" loser="Steve Fiske" score="9-11 6-3 6-3" />
+    <match match-num="41" round="R64" best-of="3" winner="Rauty Krog" loser="Roger Dowdeswell" score="6-2 6-4" />
+    <match match-num="42" round="R64" best-of="3" winner="Joaquin Loyo Mayo" loser="Mel Baleson" score="6-3 6-3" />
+    <match match-num="43" round="R64" best-of="3" winner="Allan Mcdonald" loser="Tadeusz Nowicki" score="6-8 6-4 6-3" />
+    <match match-num="44" round="R64" best-of="3" winner="Danny Obryant" loser="Dick Crealy" score="8-6 6-3" />
+    <match match-num="45" round="R64" best-of="3" winner="Ray Ruffels" loser="Eduardo Gorostiaga" score="6-3 6-4" />
+    <match match-num="46" round="R64" best-of="3" winner="Stephen Warboys" loser="Franco Bartoni" score="6-2 6-4" />
+    <!-- R32 -->
+    <match match-num="16" round="R32" best-of="3" winner="John Barrett" loser="Joaquin Loyo Mayo" score="6-3 6-3" />
+    <match match-num="17" round="R32" best-of="3" winner="Gerald Battrick" loser="Andrew Pattison" score="2-6 6-4 6-1" />
+    <match match-num="18" round="R32" best-of="3" winner="Byron Bertram" loser="Allan Mcdonald" score="6-3 6-2" />
+    <match match-num="19" round="R32" best-of="3" winner="Phil Dent" loser="Rauty Krog" score="9-7 6-3" />
+    <match match-num="20" round="R32" best-of="3" winner="Massimo Di Domenico" loser="Allan Stone" score="6-4 4-6 6-4" />
+    <match match-num="21" round="R32" best-of="3" winner="Ezio Di Matteo" loser="Danny Obryant" score="7-5 6-2" />
+    <match match-num="22" round="R32" best-of="3" winner="Keith Diepraam" loser="Syd Ball" score="6-3 2-6 6-1" />
+    <match match-num="23" round="R32" best-of="3" winner="Bob Giltinan" loser="Abe Segal" score="3-6 6-4 6-2" />
+    <match match-num="24" round="R32" best-of="3" winner="Clark Graebner" loser="Graham B Primrose" score="6-2 6-2" />
+    <match match-num="25" round="R32" best-of="3" winner="Douglas Irvine" loser="John Alexander" score="6-2 6-4" />
+    <match match-num="26" round="R32" best-of="3" winner="Nicholas Kalogeropoulos" loser="Frew Mcmillan" score="6-2 3-6 6-4" />
+    <match match-num="27" round="R32" best-of="3" winner="Ray Keldie" loser="Pietro Marzano" score="6-2 6-3" />
+    <match match-num="28" round="R32" best-of="3" winner="Robert Maud" loser="Alvin Gardiner" score="6-2 6-3" />
+    <match match-num="29" round="R32" best-of="3" winner="Ray Ruffels" loser="Stephen Warboys" score="6-4 6-3" />
+    <match match-num="30" round="R32" best-of="3" winner="Rayno Seegers" loser="Colin Mchugo" score="9-11 13-11 6-0" />
+    <match match-num="31" round="R32" best-of="3" winner="Bobby Wilson" loser="Anatoli Volkov" score="6-4 6-1" />
+    <!-- R16 -->
+    <match match-num="8" round="R16" best-of="3" winner="Gerald Battrick" loser="Bob Giltinan" score="6-2 6-2" />
+    <match match-num="9" round="R16" best-of="3" winner="Byron Bertram" loser="Ezio Di Matteo" score="6-4 6-3" />
+    <match match-num="10" round="R16" best-of="3" winner="Clark Graebner" loser="Rayno Seegers" score="6-1 6-4" />
+    <match match-num="11" round="R16" best-of="3" winner="Douglas Irvine" loser="John Barrett" score="6-1 6-2" />
+    <match match-num="12" round="R16" best-of="3" winner="Nicholas Kalogeropoulos" loser="Phil Dent" score="6-2 6-3" />
+    <match match-num="13" round="R16" best-of="3" winner="Robert Maud" loser="Ray Keldie" score="6-3 7-9 6-4" />
+    <match match-num="14" round="R16" best-of="3" winner="Ray Ruffels" loser="Keith Diepraam" score="6-2 6-1" />
+    <match match-num="15" round="R16" best-of="3" winner="Bobby Wilson" loser="Massimo Di Domenico" score="2-6 6-3 6-1" />
+    <!-- QF -->
+    <match match-num="4" round="QF" best-of="3" winner="Clark Graebner" loser="Gerald Battrick" score="12-10 6-2" />
+    <match match-num="5" round="QF" best-of="3" winner="Nicholas Kalogeropoulos" loser="Byron Bertram" score="6-4 6-1" />
+    <match match-num="6" round="QF" best-of="3" winner="Robert Maud" loser="Bobby Wilson" score="6-3 7-5" />
+    <match match-num="7" round="QF" best-of="3" winner="Ray Ruffels" loser="Douglas Irvine" score="7-5 11-9" />
+    <!-- SF -->
+    <match match-num="2" round="SF" best-of="3" winner="Clark Graebner" loser="Nicholas Kalogeropoulos" score="6-1 6-3" />
+    <match match-num="3" round="SF" best-of="3" winner="Robert Maud" loser="Ray Ruffels" score="6-4 7-5" />
+    <!-- F -->
+    <match match-num="1" round="F" best-of="3" winner="Clark Graebner" loser="Robert Maud" score="6-4 10-8" />
+  </tournament>
+</tournament-data>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="1974" tournament-name="Eastbourne" name="Beckenham" date="1974-06-10" ext-id="741">
+    <level>B</level>
+    <surface>G</surface>
+    <indoor>false</indoor>
+    <draw-type>KO</draw-type>
+    <draw-size>64</draw-size>
+    <player name="Anand Amritraj" country="IND" />
+    <player name="Anthony Perkins" country="GBR" />
+    <player name="Benito Schon" country="MEX" />
+    <player name="Bernard Mitton" country="RSA" />
+    <player name="Bob Giltinan" country="AUS" />
+    <player name="C Brebnor" country="???" />
+    <player name="Colin Dibley" country="AUS" />
+    <player name="Colin Dowdeswell" country="GBR" />
+    <player name="David Segal" country="USA" />
+    <player name="Derek Schroder" country="RSA" />
+    <player name="Dick Dell" country="USA" />
+    <player name="Eric Deblicker" country="FRA" />
+    <player name="Ernie Ewert" country="AUS" />
+    <player name="Francois Van Der Merwe" country="RSA" />
+    <player name="Fred Hemmes" country="NED" />
+    <player name="Geoff Pollard" country="AUS" />
+    <player name="Graeme Thomson" country="AUS" />
+    <player name="Herve Gauvain" country="FRA" />
+    <player name="Ian Fletcher" country="AUS" />
+    <player name="Jan Hordijk" country="NED" />
+    <player name="Jan Zabrodsky" country="SWE" />
+    <player name="Jay Royappa" country="IND" />
+    <player name="Jean Louis Haillet" country="FRA" />
+    <player name="Jeff Simpson" country="NZL" />
+    <player name="John Eastburn" country="AUS" />
+    <player name="John Lloyd" country="GBR" />
+    <player name="John Yuill" country="RSA" />
+    <player name="Jonathan Smith" country="GBR" />
+    <player name="Jose Moreno" country="ESP" />
+    <player name="Juan Ignacio Muntanola" country="ESP" />
+    <player name="Julian Ganzabal" country="ARG" />
+    <player name="Jun Kamiwazumi" country="JPN" />
+    <player name="Jun Kuki" country="JPN" />
+    <player name="Keith Hancock" country="AUS" />
+    <player name="Lance Johnson" country="USA" />
+    <player name="Lito Alvarez" country="ARG" />
+    <player name="Michal Jordan" country="POL" />
+    <player name="Mike Collins" country="GBR" />
+    <player name="Munawar Iqbal" country="PAK" />
+    <player name="Nicolas Kelaidis" country="GRE" />
+    <player name="Norman Holmes" country="USA" />
+    <player name="Pat Cramer" country="RSA" />
+    <player name="Phil Siviter" country="GBR" />
+    <player name="Ramiro Benavides" country="BOL" />
+    <player name="Rauty Krog" country="RSA" />
+    <player name="Ray Keldie" country="AUS" />
+    <player name="Rayno Seegers" country="RSA" />
+    <player name="Richard Lewis" country="GBR" />
+    <player name="Russell Simpson" country="NZL" />
+    <player name="Shamil Tarpischev" country="RUS" />
+    <player name="Sherwood Stewart" country="USA" />
+    <player name="Stephen Warboys" country="GBR" />
+    <player name="Steve Faulk" country="USA" />
+    <player name="Steve Krulevitz" country="USA" />
+    <player name="Syd Ball" country="AUS" />
+    <player name="Terry Ryan" country="RSA" />
+    <player name="Tom Gorman" country="USA" />
+    <player name="Tony Bardsley" country="CAN" />
+    <player name="Tony Parun P071" country="NZL" />
+    <player name="U Unknown" country="???" />
+    <player name="Vijay Amritraj" country="IND" />
+    <player name="William Durham" country="AUS" />
+    <!-- R64 -->
+    <match match-num="1" round="R64" best-of="3" winner="Tom Gorman" loser="Fred Hemmes" score="6-4 6-3" />
+    <match match-num="2" round="R64" best-of="3" winner="Ernie Ewert" loser="Jose Moreno" score="3-6 7-5 6-1" />
+    <match match-num="3" round="R64" best-of="3" winner="Keith Hancock" loser="Pat Cramer" score="6-3 6-4" />
+    <match match-num="4" round="R64" best-of="3" winner="Herve Gauvain" loser="Jay Royappa" score="7-6 6-3" />
+    <match match-num="5" round="R64" best-of="3" winner="Mike Collins" loser="Michal Jordan" score="6-7 6-2 6-3" />
+    <match match-num="6" round="R64" best-of="3" winner="Ray Keldie" loser="Phil Siviter" score="7-5 6-2" />
+    <match match-num="7" round="R64" best-of="3" winner="John Lloyd" loser="Benito Schon" score="7-5 6-4" />
+    <match match-num="8" round="R64" best-of="3" winner="William Durham" loser="Rayno Seegers" score="7-6 6-3" />
+    <match match-num="9" round="R64" best-of="3" winner="Anand Amritraj" loser="Eric Deblicker" score="6-4 6-2" />
+    <match match-num="10" round="R64" best-of="3" winner="Rauty Krog" loser="Sherwood Stewart" score="7-6 2-6 6-3" />
+    <match match-num="11" round="R64" best-of="3" winner="Lito Alvarez" loser="Lance Johnson" score="7-5 6-3" />
+    <match match-num="12" round="R64" best-of="3" winner="Geoff Pollard" loser="Anthony Perkins" score="7-5 6-3" />
+    <match match-num="13" round="R64" best-of="3" winner="Russell Simpson" loser="Juan Ignacio Muntanola" score="6-2 6-4" />
+    <match match-num="14" round="R64" best-of="3" winner="John Yuill" loser="Nicolas Kelaidis" score="6-3 7-5" />
+    <match match-num="15" round="R64" best-of="3" winner="Richard Lewis" loser="Jan Hordijk" score="3-6 7-5 7-5" />
+    <match match-num="16" round="R64" best-of="3" winner="Jun Kuki" loser="Bob Giltinan" score="2-6 6-2 7-5" />
+    <match match-num="17" round="R64" best-of="3" winner="Steve Faulk" loser="Jan Zabrodsky" score="7-6 7-6" />
+    <match match-num="18" round="R64" best-of="5" winner="Norman Holmes" loser="U Unknown" />
+    <match match-num="19" round="R64" best-of="3" winner="Tony Bardsley" loser="Colin Dowdeswell" score="3-6 6-3 6-3" />
+    <match match-num="20" round="R64" best-of="5" winner="Syd Ball" loser="Terry Ryan" />
+    <match match-num="21" round="R64" best-of="3" winner="Colin Dibley" loser="Jonathan Smith" score="6-3 6-2" />
+    <match match-num="22" round="R64" best-of="3" winner="John Eastburn" loser="Munawar Iqbal" score="6-4 6-2" />
+    <match match-num="23" round="R64" best-of="3" winner="Steve Krulevitz" loser="C Brebnor" score="6-3 6-2" />
+    <match match-num="24" round="R64" best-of="3" winner="Francois Van Der Merwe" loser="Jun Kamiwazumi" score="6-4 6-4" />
+    <match match-num="25" round="R64" best-of="5" winner="Bernard Mitton" loser="U Unknown" />
+    <match match-num="26" round="R64" best-of="3" winner="Jean Louis Haillet" loser="Julian Ganzabal" score="6-7 6-2 6-4" />
+    <match match-num="27" round="R64" best-of="3" winner="David Segal" loser="Ramiro Benavides" score="2-6 6-4 6-3" />
+    <match match-num="28" round="R64" best-of="3" winner="U Unknown" loser="Ian Fletcher" score="6-3 7-6" />
+    <match match-num="29" round="R64" best-of="3" winner="Derek Schroder" loser="Shamil Tarpischev" score="6-3 6-4" />
+    <match match-num="30" round="R64" best-of="3" winner="Jeff Simpson" loser="Dick Dell" score="6-4 6-3" />
+    <match match-num="31" round="R64" best-of="3" winner="Stephen Warboys" loser="Graeme Thomson" score="6-7 6-4 6-4" />
+    <match match-num="32" round="R64" best-of="3" winner="Vijay Amritraj" loser="Tony Parun P071" score="6-2 7-5" />
+    <!-- R32 -->
+    <match match-num="33" round="R32" best-of="3" winner="Tom Gorman" loser="Ernie Ewert" score="6-1 7-5" />
+    <match match-num="34" round="R32" best-of="3" winner="Keith Hancock" loser="Herve Gauvain" score="6-4 6-3" />
+    <match match-num="35" round="R32" best-of="3" winner="Mike Collins" loser="Ray Keldie" score="7-5 6-3" />
+    <match match-num="36" round="R32" best-of="3" winner="William Durham" loser="John Lloyd" score="6-7 7-5 7-6" />
+    <match match-num="37" round="R32" best-of="3" winner="Anand Amritraj" loser="Rauty Krog" score="6-4 6-4" />
+    <match match-num="38" round="R32" best-of="3" winner="Lito Alvarez" loser="Geoff Pollard" score="6-4 6-3" />
+    <match match-num="39" round="R32" best-of="3" winner="Russell Simpson" loser="John Yuill" score="6-4 5-7 7-5" />
+    <match match-num="40" round="R32" best-of="3" winner="Richard Lewis" loser="Jun Kuki" score="7-6 6-7 6-2" />
+    <match match-num="41" round="R32" best-of="3" winner="Norman Holmes" loser="Steve Faulk" score="3-6 7-5 6-3" />
+    <match match-num="42" round="R32" best-of="3" winner="Syd Ball" loser="Tony Bardsley" score="6-3 3-6 6-3" />
+    <match match-num="43" round="R32" best-of="3" winner="Colin Dibley" loser="John Eastburn" score="4-6 6-1 6-4" />
+    <match match-num="44" round="R32" best-of="3" winner="Steve Krulevitz" loser="Francois Van Der Merwe" score="7-6 6-3" />
+    <match match-num="45" round="R32" best-of="3" winner="Bernard Mitton" loser="Jean Louis Haillet" score="6-1 6-0" />
+    <match match-num="46" round="R32" best-of="3" winner="U Unknown" loser="David Segal" score="6-3 6-3" />
+    <match match-num="47" round="R32" best-of="3" winner="Derek Schroder" loser="Jeff Simpson" score="7-6 3-6 7-6" />
+    <match match-num="48" round="R32" best-of="3" winner="Vijay Amritraj" loser="Stephen Warboys" score="6-2 6-4" />
+    <!-- R16 -->
+    <match match-num="49" round="R16" best-of="3" winner="Tom Gorman" loser="Keith Hancock" score="6-4 6-7 6-3" />
+    <match match-num="50" round="R16" best-of="3" winner="Mike Collins" loser="William Durham" score="7-6 6-3" />
+    <match match-num="51" round="R16" best-of="3" winner="Anand Amritraj" loser="Lito Alvarez" score="6-3 7-6" />
+    <match match-num="52" round="R16" best-of="3" winner="Russell Simpson" loser="Richard Lewis" score="7-5 6-4" />
+    <match match-num="53" round="R16" best-of="3" winner="Syd Ball" loser="Norman Holmes" score="7-5 7-5" />
+    <match match-num="54" round="R16" best-of="3" winner="Colin Dibley" loser="Steve Krulevitz" score="6-3 6-4" />
+    <match match-num="55" round="R16" best-of="3" winner="Bernard Mitton" loser="U Unknown" score="7-5 6-4" />
+    <match match-num="56" round="R16" best-of="3" winner="Vijay Amritraj" loser="Derek Schroder" score="6-3 6-2" />
+    <!-- QF -->
+    <match match-num="57" round="QF" best-of="3" winner="Tom Gorman" loser="Mike Collins" score="6-2 6-3" />
+    <match match-num="58" round="QF" best-of="3" winner="Anand Amritraj" loser="Russell Simpson" score="6-7 7-6 7-5" />
+    <match match-num="59" round="QF" best-of="5" winner="Syd Ball" loser="Colin Dibley" />
+    <match match-num="60" round="QF" best-of="3" winner="Vijay Amritraj" loser="Bernard Mitton" score="6-2 6-1" />
+    <!-- SF -->
+    <match match-num="61" round="SF" best-of="3" winner="Tom Gorman" loser="Anand Amritraj" score="6-4 6-0" />
+    <match match-num="62" round="SF" best-of="3" winner="Vijay Amritraj" loser="Syd Ball" score="6-2 6-2" />
+    <!-- F -->
+    <match match-num="63" round="F" best-of="3" winner="Vijay Amritraj" loser="Tom Gorman" score="6-7 6-2 6-4" />
+  </tournament>
+</tournament-data>

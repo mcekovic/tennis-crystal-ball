@@ -105,7 +105,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 		def matchScore = MatchScoreParser.parse(score)
 		params.score = matchScore?.toString()
 		def outcome = string(match.@outcome)
-		params.outcome = outcome ?: matchScore.outcome
+		params.outcome = outcome ?: matchScore?.outcome
 		params.w_sets = matchScore?.w_sets
 		params.l_sets = matchScore?.l_sets
 		params.w_games = matchScore?.w_games

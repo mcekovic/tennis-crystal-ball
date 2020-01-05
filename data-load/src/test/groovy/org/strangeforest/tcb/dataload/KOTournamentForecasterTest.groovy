@@ -17,7 +17,7 @@ class KOTournamentForecasterTest {
 	static final Offset<Double> OFFSET = Offset.offset(0.000001d)
 
 	@Test
-	void "Simple Tournament"() {
+	void 'Simple Tournament'() {
 		TournamentMatchPredictor predictor = makePredictor()
 		def matches = [
 			[player1_id: 1, player2_id: 2, round: 'SF', player1_seed:    1, player2_seed: null],
@@ -32,7 +32,7 @@ class KOTournamentForecasterTest {
 	}
 
 	@Test
-	void "Tournament with Byes"() {
+	void 'Tournament with Byes'() {
 		def predictor = makePredictor()
 		def matches = [
 			[player1_id:    1, player2_id: null, round: 'QF', player1_seed:    1, player2_seed: null],
@@ -52,7 +52,7 @@ class KOTournamentForecasterTest {
 	}
 
 	@Test
-	void "ATP 250 with Byes"() {
+	void 'ATP 250 with Byes'() {
 		TournamentMatchPredictor predictor = makePredictor()
 		def matches = [
 			[player1_id:    1, player2_id: null, round: 'R32', player1_seed:    1, player2_seed: null],

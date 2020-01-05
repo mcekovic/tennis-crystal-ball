@@ -27,11 +27,13 @@ abstract class BaseCSVLoader {
 	abstract int batchSize()
 	abstract def params(record, Connection conn)
 
-	def loadFile(String file) {
+	def loadFile(String file, boolean readFirstLine = false) {
 		println "Loading file '$file'"
 		def stopwatch = Stopwatch.createStarted()
 		List columnNames = columnNames()
-		def csvParams = columnNames ? [columnNames: columnNames] : [:]
+		def csvParams = [readFirstLine: readFirstLine]
+		if (columnNames)
+			csvParams << [columnNames: columnNames]
 		def data = CsvParser.parseCsv(csvParams, new FileReader(file))
 		int rows = load(data)
 		printLoadInfo(stopwatch, rows)

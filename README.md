@@ -46,7 +46,7 @@ PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groo
 https://www.ultimatetennisstatistics.com
 
 ### Data Loaders
-- For Jeff Sackmann ATP CSV repository: https://github.com/JeffSackmann/tennis_atp
+- For Jeff Sackmann ATP CSV repository: https://github.com/JeffSackmann/tennis_atp (as of commit cf2201c on 2 dec 2019)
 
 ### Screenshots
 

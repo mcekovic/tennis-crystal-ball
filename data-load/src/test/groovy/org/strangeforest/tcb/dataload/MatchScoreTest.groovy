@@ -5,7 +5,7 @@ import org.junit.jupiter.api.*
 class MatchScoreTest {
 
 	@Test
-	void "Test best-of-3 match score"() {
+	void 'Test best-of-3 match score'() {
 		def score = MatchScoreParser.parse('6-3 0-6 7-5')
 
 		assert score.outcome == null
@@ -23,7 +23,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test best-of-5 match score"() {
+	void 'Test best-of-5 match score'() {
 		def score = MatchScoreParser.parse('2-6 6-1 6-0 5-7 12-10')
 
 		assert score.outcome == null
@@ -43,7 +43,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test match score with tie-break"() {
+	void 'Test match score with tie-break'() {
 		def score = MatchScoreParser.parse('7-6(4) 6-7(0) 7-6(12)')
 
 		assert score.outcome == null
@@ -61,7 +61,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test match score to 9 games"() {
+	void 'Test match score to 9 games'() {
 		def score = MatchScoreParser.parse('6-3 8-9 9-8')
 
 		assert score.outcome == null
@@ -79,7 +79,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test match score 6-5 games"() {
+	void 'Test match score 6-5 games'() {
 		def score = MatchScoreParser.parse('6-5 5-6 6-4')
 
 		assert score.outcome == null
@@ -97,7 +97,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test walk-over"() {
+	void 'Test walk-over'() {
 		def score = MatchScoreParser.parse('W/O')
 
 		assert score.outcome == 'W/O'
@@ -112,7 +112,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test walk-over 2"() {
+	void 'Test walk-over 2'() {
 		def score = MatchScoreParser.parse('RET')
 
 		assert score.outcome == 'W/O'
@@ -127,7 +127,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test walk-over 3"() {
+	void 'Test walk-over 3'() {
 		def score = MatchScoreParser.parse('(W/O)')
 
 		assert score.outcome == 'W/O'
@@ -142,7 +142,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test retired"() {
+	void 'Test retired'() {
 		def score = MatchScoreParser.parse('6-4 3-0 RET')
 
 		assert score.outcome == 'RET'
@@ -159,7 +159,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test retired 2"() {
+	void 'Test retired 2'() {
 		def score = MatchScoreParser.parse('6-6 (RET)')
 
 		assert score.outcome == 'RET'
@@ -175,7 +175,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test retired 3"() {
+	void 'Test retired 3'() {
 		def score = MatchScoreParser.parse('7-5 RET')
 
 		assert score.outcome == 'RET'
@@ -191,7 +191,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test retired missing"() {
+	void 'Test retired missing'() {
 		def score = MatchScoreParser.parse('6-4 6-3 3-6 1-6 2-3')
 
 		assert score.outcome == 'RET'
@@ -207,7 +207,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void "Test score missing"() {
+	void 'Test score missing'() {
 		def score = MatchScoreParser.parse('')
 
 		assert score == null

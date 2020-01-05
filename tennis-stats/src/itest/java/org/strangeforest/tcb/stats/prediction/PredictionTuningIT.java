@@ -67,8 +67,10 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	void scriptedTuneDefaultPrediction() throws InterruptedException {
-		int factor = 50;
+		int factor = 10; // H: 20, C: 30, G: 50, I: 50, A: 10
 		PredictionConfig config = PredictionConfig.defaultConfig(TUNING_SET);
+		System.out.println("Tuning by area...");
+		doTunePredictionByArea(config, 10 * factor);
 		if (config.isAreaEnabled(RANKING)) {
 			System.out.println("Tuning RANKING area...");
 			config = doTunePredictionInArea(config, RANKING, 10 * factor).getConfig();
@@ -85,8 +87,6 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 			System.out.println("Tuning WINNING_PCT area...");
 			config = doTunePredictionInArea(config, WINNING_PCT, 5 * factor).getConfig();
 		}
-		System.out.println("Tuning by area...");
-		doTunePredictionByArea(config, 10 * factor);
 	}
 
 

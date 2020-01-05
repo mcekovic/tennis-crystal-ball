@@ -19,7 +19,7 @@ class ATPTennisLoader {
 
 	def loadPlayers(loader) {
 		println 'Loading players'
-		loader.loadFile(baseDir() + 'atp_players.csv')
+		loader.loadFile(baseDir() + 'atp_players.csv', true)
 		println()
 	}
 
@@ -31,7 +31,7 @@ class ATPTennisLoader {
 				for (decade in ['70s', '80s', '90s', '00s', '10s'])
 					rows += loader.loadFile(baseDir() + "atp_rankings_${decade}.csv")
 			}
-			rows += loader.loadFile(baseDir() + "atp_rankings_current.csv")
+			rows += loader.loadFile(baseDir() + "atp_rankings_current.csv", true)
 		}
 		println()
 	}
@@ -121,6 +121,7 @@ class ATPTennisLoader {
 			atpTourMatchLoader.loadTournament(1969, 'brussels', 406, false, 'B', 'C')
 			atpTourMatchLoader.loadTournament(1969, 'dublin', 2029, false, 'B', 'G', null, ['R32'])
 			atpTourMatchLoader.loadTournament(1969, 'las-vegas', 413, false, 'B', 'H')
+			atpTourMatchLoader.loadTournament(1969, 'indianapolis', 717, false, 'B', null, null, [], null, 419)
 			atpTourMatchLoader.loadTournament(1970, 'north-miami-beach', 681, false, 'B')
 			atpTourMatchLoader.loadTournament(1970, 'richmond', 802, false, 'B', 'H')
 			atpTourMatchLoader.loadTournament(1970, 'salisbury', 355, false, 'B')
@@ -156,6 +157,8 @@ class ATPTennisLoader {
 			atpTourMatchLoader.loadTournament(1971, 'bristol', 313, false, 'B')
 			atpTourMatchLoader.loadTournament(1971, 'eastbourne', 2049, false, 'B', 'G', '1971-06-14', [], 'Eastbourne')
 			atpTourMatchLoader.loadTournament(1971, 'senigallia', 6834, false, 'B', null, null, ['R64'])
+			atpTourMatchLoader.loadTournament(1971, 'johannesburg', 426, false, 'M', null, null, ['R64', 'R128'])
+			atpTourMatchLoader.loadTournament(1971, 'indianapolis', 717, false, 'B', null, null, [], null, 419)
 			atpTourMatchLoader.loadTournament(1972, 'macon', 2066, false, 'B')
 			atpTourMatchLoader.loadTournament(1972, 'tokyo', 9037, false, 'B', 'C', '1972-10-05', [], 'Tokyo WCT')
 			atpTourMatchLoader.loadTournament(1972, 'hilton-head', 724, false, 'B')
@@ -166,6 +169,9 @@ class ATPTennisLoader {
 			atpTourMatchLoader.loadTournament(1976, 'birmingham', 350, false, 'B')
 			atpTourMatchLoader.loadTournament(1976, 'pepsi-grand-slam', 1725, false, 'B', null, null, [], 'Pepsi Grand Slam')
 			atpTourMatchLoader.loadTournament(1977, 'birmingham', 350, false, 'B')
+			atpTourMatchLoader.loadTournament(1977, 'adelaide', 7308, false, 'B', null, null, [], null, 339)
+			atpTourMatchLoader.loadTournament(1978, 'palm-springs', 404, false, 'B', null, null, [], null, 729)
+			atpTourMatchLoader.loadTournament(1979, 'rancho-mirage', 404, false, 'B', null, null, [], null, 728)
 			atpTourMatchLoader.loadTournament(1980, 'indian-wells', 404, false, 'B', null, null, [], null, 728)
 			atpTourMatchLoader.deleteTournament(1981, 540)
 			atpTourMatchLoader.loadTournament(1981, 'wimbledon', 540)
@@ -175,12 +181,15 @@ class ATPTennisLoader {
 			atpTourMatchLoader.deleteTournament(2016, 580)
 			atpTourMatchLoader.loadTournament(2016, 'australian-open', 580)
 			atpTourMatchLoader.loadTournament(2017, 'next-gen-atp-finals', 7696)
+			atpTourMatchLoader.loadTournament(2019, 'next-gen-atp-finals', 7696)
 
 			def xmlMatchLoader = new XMLMatchLoader(sql)
+			xmlMatchLoader.loadFile('classpath:/tournaments/1968-beckenham.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1969-fort-worth.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1969-johannesburg.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1969-los-angeles.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1969-wembley.xml')
+			xmlMatchLoader.loadFile('classpath:/tournaments/1970-beckenham.xml')
 //			xmlMatchLoader.loadFile('classpath:/tournaments/1970-fort-worth.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1970-johannesburg.xml')
 //			xmlMatchLoader.loadFile('classpath:/tournaments/1970-salisbury.xml')
@@ -188,11 +197,12 @@ class ATPTennisLoader {
 			xmlMatchLoader.loadFile('classpath:/tournaments/1970-tennis-champions-classic.xml')
 //			xmlMatchLoader.loadFile('classpath:/tournaments/1970-vancouver.xml')
 //			xmlMatchLoader.loadFile('classpath:/tournaments/1970-wembley.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/1971-johannesburg.xml')
+//			xmlMatchLoader.loadFile('classpath:/tournaments/1971-johannesburg.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1971-tennis-champions-classic.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1972-roanoke.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1973-washington-indoor-2.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1974-auckland.xml')
+			xmlMatchLoader.loadFile('classpath:/tournaments/1974-beckenham.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1977-johannesburg.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1977-johannesburg-2.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/1979-dorado-beach.xml')
@@ -202,7 +212,7 @@ class ATPTennisLoader {
 			xmlMatchLoader.loadFile('classpath:/tournaments/1987-stratton-mountain.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/2000-dusseldorf+.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/2007-vina-del-mar.xml')
-			xmlMatchLoader.loadFile('classpath:/tournaments/2019-davis-cup-finals.xml')
+//			xmlMatchLoader.loadFile('classpath:/tournaments/2019-davis-cup-finals.xml')
 
 			println()
 		}
@@ -269,6 +279,15 @@ class ATPTennisLoader {
 			s.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
 		}
 		println " finished in $stopwatch"
+	}
+
+	def installExtensions(Sql sql) {
+		def stopwatch = Stopwatch.createStarted()
+
+		println 'Installing extensions...'
+		executeSQLFile(sql, '/create-extensions.sql')
+
+		println "Extensions installed in $stopwatch"
 	}
 
 	def createDatabase(Sql sql) {

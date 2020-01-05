@@ -52,7 +52,7 @@ class MatchLoader extends BaseCSVLoader {
 		def surface = string record.surface
 		params.surface = mapSurface surface
 		params.indoor = mapIndoor(surface, eventName, season)
-		params.draw_type = mapDrawType(mappedLevel, season)
+		params.draw_type = mapDrawType(mappedLevel, season, eventName)
 		params.draw_size = mapDrawSize(drawSize, mappedLevel, season)
 		params.rank_points = mapRankPoints mappedLevel
 
@@ -63,8 +63,8 @@ class MatchLoader extends BaseCSVLoader {
 		params.best_of = smallint record.best_of
 
 		params.ext_winner_id = integer record.winner_id
-		params.winner_seed = smallint record.winner_seed
-		params.winner_entry = mapEntry(string(record.winner_entry))
+		params.winner_seed = extractSeed(record, 'winner_')
+		params.winner_entry = extractEntry(record, 'winner_')
 		params.winner_rank = integer mapRank(record.winner_rank)
 		params.winner_rank_points = integer record.winner_rank_points
 		params.winner_age = real record.winner_age
@@ -74,8 +74,8 @@ class MatchLoader extends BaseCSVLoader {
 		params.winner_hand = hand record.winner_hand
 		
 		params.ext_loser_id = integer record.loser_id
-		params.loser_seed = smallint record.loser_seed
-		params.loser_entry = mapEntry(string(record.loser_entry))
+		params.loser_seed = extractSeed(record, 'loser_')
+		params.loser_entry = extractEntry(record, 'loser_')
 		params.loser_rank = integer mapRank(record.loser_rank)
 		params.loser_rank_points = integer record.loser_rank_points
 		params.loser_age = real record.loser_age
@@ -316,9 +316,10 @@ class MatchLoader extends BaseCSVLoader {
 		BaseATPTourTournamentLoader.mapIndoor(mapSurface(surface), name, season)
 	}
 
-	static mapDrawType(String level, int season) {
+	static mapDrawType(String level, int season, String name) {
 		switch (level) {
 			case 'F': return season in 1982..1985 ? 'KO' : 'RR'
+			case 'H': return name == 'Next Gen Finals' ? 'RR' : 'KO'
 			default: return 'KO'
 		}
 	}
@@ -339,6 +340,31 @@ class MatchLoader extends BaseCSVLoader {
 			case 'R3': return 'SF'
 			case 'R1': return 'F'
 			default: return round
+		}
+	}
+
+	static extractSeed(def record, String prefix) {
+		def seed = record[prefix + 'seed']?.toString()
+		isNumeric(seed) ? smallint(seed) : null
+	}
+
+	static extractEntry(def record, String prefix) {
+		def entry = mapEntry(string(record[prefix + 'entry']))
+		if (entry)
+			return entry
+		def seed = record[prefix + 'seed']?.toString()
+		seed && !isNumeric(seed) ? mapEntry(string(seed)) : null
+	}
+
+	static boolean isNumeric(String s) {
+		if (!s)
+			return false
+		try {
+			Integer.parseInt(s)
+			return true
+		}
+		catch (NumberFormatException ex) {
+			return false
 		}
 	}
 

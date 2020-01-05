@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.dataload
 
+import java.nio.file.*
 import java.text.*
 
 import groovy.sql.*
@@ -47,12 +48,17 @@ class XMLTournamentExporter {
 		this.sql = sql
 	}
 
-	def exportTournament(String extId, int season) {
+	def exportTournament(String extId, int season, String path = null) {
 		def event = sql.firstRow([extId: extId, season: season], FETCH_TOURNAMENT_EVENT_SQL)
 		def players = sql.rows(FETCH_TOURNAMENT_EVENT_PLAYERS_SQL, [tournamentEventId: event.tournament_event_id])
 		def matches = sql.rows(FETCH_TOURNAMENT_EVENT_MATCHES_SQL, [tournamentEventId: event.tournament_event_id])
 
-		def writer = new FileWriter("data-load/src/main/resources/tournaments/${season}-${event.name.toLowerCase().replace(' ', '-')}.xml")
+		def eventNameId = event.name.toLowerCase().replace(' ', '-')
+		def fileName = path
+			? path + "/${season}/${eventNameId}-${extId}.xml"
+			: "data-load/src/main/resources/tournaments/${season}-${eventNameId}.xml"
+		Files.createDirectories(Path.of(fileName).parent)
+		def writer = new FileWriter(fileName)
 		def xml = new MarkupBuilder(writer)
 		xml.doubleQuotes = true
 		xml.omitNullAttributes = true
@@ -86,7 +92,7 @@ class XMLTournamentExporter {
 			}
 		}
 
-		println "Tournament $extId for season $season exported."
+		println "Tournament ${event.name} ($extId) for season $season exported to: $fileName"
 	}
 
 	private static String formatDate(Date date) {

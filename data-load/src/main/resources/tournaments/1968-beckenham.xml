@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="1968" tournament-name="Beckenham" name="Beckenham" date="1968-06-10" ext-id="7310">
+    <level>A</level>
+    <surface>G</surface>
+    <indoor>false</indoor>
+    <draw-type>KO</draw-type>
+    <draw-size>64</draw-size>
+    <player seed="1" name="Andres Gimeno" country="ESP" />
+    <player seed="2" name="Roy Emerson" country="AUS" />
+    <player seed="3" name="Lew Hoad" country="AUS" />
+    <player seed="4" name="Fred Stolle" country="AUS" />
+    <player seed="6" name="Vladimir Korotkov" country="RUS" />
+    <player seed="7" name="Graham Stilwell" country="GBR" />
+    <player seed="8" name="Abe Segal" country="RSA" />
+    <player name="Anatoli Volkov" country="RUS" />
+    <player name="Colin Mchugo" country="GBR" />
+    <player name="Haroon Rahim" country="PAK" />
+    <player name="John Paish" country="GBR" />
+    <player name="Lars Olander" country="SWE" />
+    <player name="N Field" country="GBR" />
+    <player name="Peter Curtis" country="GBR" />
+    <player name="Premjit Lall" country="IND" />
+    <player name="Sj Smith" country="USA" />
+    <!-- R16 -->
+    <match match-num="8" round="R16" best-of="3" winner="Andres Gimeno" loser="N Field" score="6-1 6-1" />
+    <match match-num="9" round="R16" best-of="3" winner="Roy Emerson" loser="Lars Olander" score="6-3 6-4" />
+    <match match-num="10" round="R16" best-of="3" winner="Lew Hoad" loser="Peter Curtis" score="6-4 6-4" />
+    <match match-num="11" round="R16" best-of="3" winner="Fred Stolle" loser="John Paish" score="6-1 8-6" />
+    <match match-num="12" round="R16" best-of="3" winner="Vladimir Korotkov" loser="Haroon Rahim" score="3-6 7-5 7-5" />
+    <match match-num="13" round="R16" best-of="3" winner="Graham Stilwell" loser="Sj Smith" score="6-2 6-2" />
+    <match match-num="14" round="R16" best-of="3" winner="Premjit Lall" loser="Abe Segal" score="4-6 6-3 6-4" />
+    <match match-num="15" round="R16" best-of="3" winner="Anatoli Volkov" loser="Colin Mchugo" score="6-2 6-2" />
+    <!-- QF -->
+    <match match-num="4" round="QF" best-of="3" winner="Andres Gimeno" loser="Premjit Lall" score="6-4 6-4" />
+    <match match-num="5" round="QF" best-of="3" winner="Roy Emerson" loser="Graham Stilwell" score="6-1 6-2" />
+    <match match-num="6" round="QF" best-of="3" winner="Lew Hoad" loser="Vladimir Korotkov" score="6-2 8-6" />
+    <match match-num="7" round="QF" best-of="3" winner="Fred Stolle" loser="Anatoli Volkov" score="6-1 6-4" />
+    <!-- SF -->
+    <match match-num="2" round="SF" best-of="3" winner="Fred Stolle" loser="Andres Gimeno" score="6-3 3-6 6-2" />
+    <match match-num="3" round="SF" best-of="3" winner="Roy Emerson" loser="Lew Hoad" score="6-1 6-4" />
+    <!-- F -->
+    <match match-num="1" round="F" best-of="3" winner="Fred Stolle" loser="Roy Emerson" score="6-3 6-1" />
+  </tournament>
+</tournament-data>

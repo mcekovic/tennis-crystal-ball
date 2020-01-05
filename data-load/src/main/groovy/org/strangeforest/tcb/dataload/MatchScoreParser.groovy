@@ -74,6 +74,7 @@ class MatchScoreParser {
 					case 'unfinished':
 					case 'Unfinished': outcome = 'ABD'; break
 					case 'Default':
+					case 'Def.':
 					case 'DEF':
 					case '(DEF)': outcome = 'DEF'; break
 					case 'NA': return null

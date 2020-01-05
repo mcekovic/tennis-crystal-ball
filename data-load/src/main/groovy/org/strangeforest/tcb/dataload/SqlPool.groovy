@@ -26,7 +26,7 @@ class SqlPool extends LinkedBlockingDeque<Sql> {
 		print 'Allocating DB connections'
 		def conns = size ?: connections
 		for (int i = 0; i < conns; i++) {
-			Sql sql = Sql.newInstance(dbURL + '?prepareThreshold=1', username, password, 'org.postgresql.Driver')
+			Sql sql = Sql.newInstance(dbURL + (dbURL.contains('?') ? '&' : '?') + 'prepareThreshold=1', username, password, 'org.postgresql.Driver')
 			sql.connection.autoCommit = false
 			sql.cacheStatements = true
 			addFirst(sql)

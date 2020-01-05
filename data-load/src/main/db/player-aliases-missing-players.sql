@@ -4,6 +4,7 @@ INSERT INTO player_alias
 VALUES
    ('Alejandro Gomez', 'Alejandro Gomez Gb42'),
    ('Alexandar Lazov', 'Alexander Lazov'),
+   ('Alexandru Jecan', 'Mircea Alexandru Jecan'),
    ('Alafia Ayeni', 'Olukayode Alafia Damina Ayeni'),
    ('Andre Thielemans', 'Andre Tielemans'),
    ('Andre Zietsman', 'Andre Zietsmann'),
@@ -21,6 +22,8 @@ VALUES
    ('Christofer Delaney', 'Chris Delaney'),
    ('Cristian Garin', 'Christian Garin'),
    ('Christopher O''Connell', 'Christopher Oconnell'),
+   ('Clive Brebnor', 'Clive S Brebnor'),
+   ('Colin Diederichs', 'C Diederichs'),
    ('Daniel Elahi Galan', 'Daniel Elahi Galan Riveros'),
    ('Dave Phillips', 'David D Phillips'),
    ('Diego Schwartzman', 'Diego Sebastian Schwartzman'),
@@ -48,6 +51,7 @@ VALUES
    ('Johan Tatlot', 'Johan Sebastien Tatlot'),
    ('Johnny Muller', 'John Muller'),
    ('Jordan Correia', 'Jordan Correia Passos Do Carmo'),
+   ('Jorge Panta', 'Jorge Brian Panta Herreros'),
    ('Jose Edison Mandarino', 'Jose Mandarino'),
    ('Juan Luis Rascon Lope', 'Juan Luis Tati Rascon'),
    ('Juan Pablo Varillas', 'Juan Pablo Varillas Patino Samudio'),
@@ -66,6 +70,7 @@ VALUES
    ('Junjo Kawamuri', 'Junzo Kawamori'),
    ('Jurabek Karimov', 'Djurabek Karimov'),
    ('Khumoyun Sultanov', 'Khumoun Sultanov'),
+   ('Lester Brown', 'Lr Brown'),
    ('Lloyd Harris', 'Lloyd George Muirhead Harris'),
    ('Marcelo Lara', 'Marcello Lara'),
    ('Matthias A Muller', 'Matthias Muller'),
@@ -81,9 +86,11 @@ VALUES
    ('Patricio Rodriguez', 'Patricio Rodriguez Chi'),
    ('Pedro Martinez', 'Pedro Martinez Portero'),
    ('Ricardo Rodriguez  Pace', 'Ricardo Rodriguez'),
+   ('Richard Dick Knight', 'Dick Knight'),
    ('Rick Meyer', 'Rick Meyers'),
    ('Robert Casey', 'Robert Casey C100'),
    ('Roberto Cid Subervi', 'Roberto Cid'),
+   ('Roland Russo', 'Ronald Russo'),
    ('Rubin Statham', 'Jose Rubin Statham'),
    ('Rudolf Hoskowetz', 'Ruby Hoskowetz'),
    ('Sam Groth', 'Samuel Groth'),
@@ -135,6 +142,7 @@ PERFORM create_player('Philip', 'Holton', NULL, 'AUS');
 PERFORM create_player('Ryoichi', 'Miyake', NULL, 'JPN');
 PERFORM create_player('V', 'Rudj', NULL, 'RUS');
 PERFORM create_player('William', 'Lloyd', DATE '1949-05-07', 'AUS');
+PERFORM create_player('Win', 'Irwin', NULL, 'USA');
 
 END $$;
 

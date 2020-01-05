@@ -108,6 +108,7 @@ PERFORM set_tournament_event_surface(1976, 'Vienna', NULL, TRUE);
 PERFORM set_tournament_event_surface(1976, 'Stockholm', NULL, TRUE);
 
 -- 1977
+PERFORM set_tournament_event_surface(1977, 'Virginia Beach', 'C', FALSE);
 PERFORM set_tournament_event_surface(1977, 'Tournament of Champions WCT', 'H', FALSE);
 PERFORM set_tournament_event_surface(1977, 'Montreal / Toronto', 'C', FALSE);
 PERFORM set_tournament_event_surface(1977, 'London WCT', NULL, TRUE);
