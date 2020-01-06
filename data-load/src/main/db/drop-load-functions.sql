@@ -37,3 +37,4 @@ DROP FUNCTION set_tournament_event_surface(INTEGER, TEXT, TEXT, BOOLEAN) CASCADE
 DROP FUNCTION link_tournament(TEXT, TEXT) CASCADE;
 DROP FUNCTION set_player_matches_country(TEXT, TEXT, DATE) CASCADE;
 DROP FUNCTION split_careers(TEXT, TEXT, DATE) CASCADE;
+DROP FUNCTION merge_careers(TEXT, TEXT) CASCADE;

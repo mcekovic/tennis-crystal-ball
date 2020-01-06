@@ -1066,3 +1066,28 @@ BEGIN
 	WHERE loser_id IN (l_player1_id, l_player2_id);
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- merge_careers
+
+CREATE OR REPLACE FUNCTION merge_careers(
+    p_name1 TEXT,
+    p_name2 TEXT
+) RETURNS VOID AS $$
+DECLARE
+    l_player1_id NUMERIC;
+    l_player2_id NUMERIC;
+BEGIN
+    SELECT player_id INTO l_player1_id FROM player_v WHERE name = p_name1;
+    SELECT player_id INTO l_player2_id FROM player_v WHERE name = p_name2;
+
+    UPDATE player_ranking SET player_id = l_player1_id
+    WHERE player_id = l_player2_id;
+
+    UPDATE match SET winner_id = l_player1_id
+    WHERE winner_id = l_player2_id;
+
+    UPDATE match SET loser_id = l_player1_id
+    WHERE loser_id = l_player2_id;
+END;
+$$ LANGUAGE plpgsql;

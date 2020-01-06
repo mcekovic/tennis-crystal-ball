@@ -825,6 +825,24 @@ PERFORM set_tournament_event_surface(2018, 'Paris Masters', NULL, TRUE);
 PERFORM set_tournament_event_surface(2018, 'Next Gen Finals', NULL, TRUE);
 PERFORM set_tournament_event_surface(2018, 'Tour Finals', NULL, TRUE);
 
+-- 2019
+PERFORM set_tournament_event_surface(2019, 'Montpellier', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Sofia', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Rotterdam', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'New York', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Marseille', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Sao Paulo', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Metz', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'St. Petersburg', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Antwerp', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Moscow', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Stockholm', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Basel', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Vienna', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Paris Masters', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Next Gen Finals', NULL, TRUE);
+PERFORM set_tournament_event_surface(2019, 'Tour Finals', NULL, TRUE);
+
 END $$;
 
 COMMIT;

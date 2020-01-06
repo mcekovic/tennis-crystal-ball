@@ -13,7 +13,7 @@ public class DownForMaintenanceInterceptor extends HandlerInterceptorAdapter {
 
 	@Override public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		String servletPath = request.getServletPath();
-		if (!(servletPath.equals(MAINTENANCE_PATH) || servletPath.startsWith("/images"))) {
+		if (!(servletPath.equals(MAINTENANCE_PATH) || servletPath.startsWith("/images") || servletPath.startsWith("/webjars"))) {
 			response.sendRedirect(request.getContextPath() + MAINTENANCE_PATH);
 			return false;
 		}

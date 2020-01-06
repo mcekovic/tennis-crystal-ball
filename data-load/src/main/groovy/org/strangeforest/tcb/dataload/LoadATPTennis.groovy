@@ -36,8 +36,6 @@ sqlPool.withSql { sql -> new RecordsLoader().loadRecords(loader, sql) }
 
 new WikipediaPlayerDataLoader(sqlPool).updatePlayerData()
 
-LoadInProgressTournaments.loadTournaments(sqlPool)
-
 sqlPool.withSql { sql -> loader.vacuum(sql) }
 
 println "Tennis Data loaded in $stopwatch"

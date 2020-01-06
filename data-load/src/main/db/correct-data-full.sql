@@ -33,10 +33,20 @@ END $$;
 COMMIT;
 
 
--- Zverev Jr/Sr separation
+-- Split Careers
 
 DO $$ BEGIN
 	PERFORM split_careers('Alexander Zverev Sr', 'Alexander Zverev', '2000-01-01');
+	PERFORM split_careers('Ramanathan Krishnan', 'Ramesh Krishnan', '1976-11-01');
+END $$;
+
+COMMIT;
+
+
+-- Merge Careers
+
+DO $$ BEGIN
+	PERFORM merge_careers('Sandy Mayer', 'Alex Mayer');
 END $$;
 
 COMMIT;

@@ -6,12 +6,14 @@ import static org.strangeforest.tcb.dataload.LoadParams.*
 
 def cli = new CliBuilder(usage: 'data-load [commands]', header: 'Commands:')
 cli.bd(args: 1, argName: 'Base Data Directory', 'Base Data Directory where CSV data files are located [required for -lt]')
+cli.url(args: 1, argName: 'JDBC URL', 'Database JDBC URL [default tcb]')
 cli.u(args: 1, argName: 'DB username', 'Database login username [default tcb]')
 cli.p(args: 1, argName: 'DB password', 'Database login password [default tcb]')
 cli.c(args: 1, argName: 'DB connections', 'Number of database connections to allocate [default 2]')
 cli.t(args: 1, argName: 'Processing threads', 'Number of processing threads to use (Elo Ratings) [default 8]')
 cli.f('Full load [default]')
 cli.d('Delta load')
+cli.ie('Install database extensions')
 cli.dd('Drop database objects')
 cli.cd('Create database objects')
 cli.lt('Load all tennis data')
@@ -32,9 +34,11 @@ cli.rsc('Restart connector')
 cli.help('Print this message')
 def options = cli.parse(args)
 
-if (options && (options.dd || options.cd || options.lt || options.ln || options.lp || options.la || options.nr || options.nt || options.el || options.rc || options.rr || options.rp || options.ip || options.ff || options.vc || options.cc || options.rsc)) {
+if (options && (options.ie || options.dd || options.cd || options.lt || options.ln || options.lp || options.la || options.nr || options.nt || options.el || options.rc || options.rr || options.rp || options.ip || options.ff || options.vc || options.cc || options.rsc)) {
 	setProperties(options)
 
+	if (options.ie)
+		callLoader('installExtensions')
 	if (options.dd)
 		callLoader('dropDatabase')
 	if (options.cd)
@@ -80,6 +84,7 @@ else
 
 static def setProperties(def options) {
 	setProperty(options.getProperty('bd'), BASE_DIR_PROPERTY)
+	setProperty(options.getProperty('url'), SqlPool.DB_URL_PROPERTY)
 	setProperty(options.getProperty('u'), SqlPool.USERNAME_PROPERTY)
 	setProperty(options.getProperty('p'), SqlPool.PASSWORD_PROPERTY)
 	setProperty(options.getProperty('c'), SqlPool.DB_CONNECTIONS_PROPERTY)

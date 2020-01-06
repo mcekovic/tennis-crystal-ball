@@ -24,6 +24,11 @@ class WikipediaPlayerDataLoader {
 //		'AND (wikipedia IS NULL OR backhand IS NULL OR turned_pro IS NULL OR prize_money IS NULL OR web_site IS NULL)\n' +
 		'ORDER BY goat_points DESC, best_rank'
 
+	static final Map PARAM_CASTS = [
+		hand: '::player_hand',
+		backhand: '::player_backhand'
+	]
+
 	WikipediaPlayerDataLoader(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
 		playerService = new PlayerService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
@@ -92,6 +97,10 @@ class WikipediaPlayerDataLoader {
 		def plays = findVCardField(vcard, 'plays')
 		if (plays) {
 			plays = plays.toLowerCase()
+			if (plays.contains('right'))
+				playerData['hand'] = 'R'
+			else if (plays.contains('left'))
+				playerData['hand'] = 'L'
 			if (plays.contains('two') || plays.contains('double') || plays.contains('2'))
 				playerData['backhand'] = '2'
 			else if (plays.contains('one') || plays.contains('single') || plays.contains('1'))
@@ -133,7 +142,7 @@ class WikipediaPlayerDataLoader {
 	}
 
 	def updatePlayer(int playerId, Map params) {
-		def paramsSql = params.keySet().collect{ param -> "$param = :$param" + (param == 'backhand' ? '::player_backhand' : '') }.join(', ')
+		def paramsSql = params.keySet().collect{ param -> "$param = :$param" + (PARAM_CASTS[param] ?: '') }.join(', ')
 		def paramMap = [playerId: playerId] << params
 		sqlPool.withSql { sql ->
 			sql.execute(paramMap, "UPDATE player SET $paramsSql WHERE player_id = :playerId")

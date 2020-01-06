@@ -47,6 +47,8 @@ https://www.ultimatetennisstatistics.com
 
 ### Data Loaders
 - For Jeff Sackmann ATP CSV repository: https://github.com/JeffSackmann/tennis_atp (as of commit cf2201c on 2 dec 2019)
+- Database setup instructions: [#232](https://github.com/mcekovic/tennis-crystal-ball/issues/232)
+- Docker image [mcekovic/uts-database](https://hub.docker.com/r/mcekovic/uts-database) with PostgreSQL database pre-populated with ATP tennis data as of season 2019: [#337](https://github.com/mcekovic/tennis-crystal-ball/issues/337) 
 
 ### Screenshots
 
