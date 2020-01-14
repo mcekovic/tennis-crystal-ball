@@ -121,6 +121,9 @@ DROP VIEW player_tournament_win_streak_v;
 DROP MATERIALIZED VIEW player_tournament_level_win_streak;
 DROP VIEW player_tournament_level_win_streak_v;
 
+DROP MATERIALIZED VIEW player_team_titles;
+DROP VIEW player_team_titles_v;
+
 DROP VIEW player_big_wins_v;
 DROP VIEW player_match_performance_v;
 DROP VIEW player_in_progress_match_stats_v;

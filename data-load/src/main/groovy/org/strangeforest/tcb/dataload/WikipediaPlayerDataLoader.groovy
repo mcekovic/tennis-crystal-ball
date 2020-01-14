@@ -97,7 +97,11 @@ class WikipediaPlayerDataLoader {
 		def plays = findVCardField(vcard, 'plays')
 		if (plays) {
 			plays = plays.toLowerCase()
-			if (plays.contains('right'))
+			if (plays.startsWith('right'))
+				playerData['hand'] = 'R'
+			else if (plays.startsWith('left'))
+				playerData['hand'] = 'L'
+			else if (plays.contains('right'))
 				playerData['hand'] = 'R'
 			else if (plays.contains('left'))
 				playerData['hand'] = 'L'

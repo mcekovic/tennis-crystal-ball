@@ -13,7 +13,7 @@ public class TopPerformersView {
 		"A", "atp500Matches",
 		"B", "atp250Matches",
 		"D", "davisCupMatches",
-		"T", "worldTeamCupMatches"
+		"T", "teamCupsMatches"
 	);
 	private static final Map<String, String> TOURNAMENT_LEVEL_CATEGORY_MAP = Map.of(
 		"G", "grandSlamMatches",

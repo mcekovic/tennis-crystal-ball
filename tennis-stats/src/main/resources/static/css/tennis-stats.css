@@ -222,6 +222,9 @@ a.label-btn {
 .label-HCG {
 	background: repeating-linear-gradient(to right, #337ab7, #337ab7 20px, #d9534f 20px, #d9534f 40px, #5cb85c 40px, #5cb85c 60px);
 }
+.text-danger2 {
+	color: #d860f8;
+}
 .black {
 	color: black;
 }

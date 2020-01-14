@@ -31,6 +31,7 @@ import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.controller.RankingsController.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
+import static org.strangeforest.tcb.stats.service.MatchPredictionService.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
@@ -69,6 +70,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "speed", required = false) String speed,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "rankType", required = false) String rankType
 	) {
 		Player player1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : null);
@@ -91,6 +93,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("speed", speed);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentId", tournamentId);
+		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("headToHead", modelMap);
@@ -115,6 +118,8 @@ public class RivalriesController extends PageController {
 		BootgridTable<PlayerTournamentEvent> lastEvent2 = tournamentService.getPlayerTournamentEventsTable(playerId2, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
 		Map<String, Integer> surfaceTitles1 = performanceService.getPlayerSurfaceTitles(playerId1);
 		Map<String, Integer> surfaceTitles2 = performanceService.getPlayerSurfaceTitles(playerId2);
+		Map<String, Integer> teamTitles1 = performanceService.getPlayerTeamTitles(playerId1);
+		Map<String, Integer> teamTitles2 = performanceService.getPlayerTeamTitles(playerId2);
 		WonDrawLost playerH2H1 = rivalriesService.getPlayerH2H(playerId1).orElse(null);
 		WonDrawLost playerH2H2 = rivalriesService.getPlayerH2H(playerId2).orElse(null);
 
@@ -144,6 +149,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("performance2", performance2);
 		modelMap.addAttribute("surfaceTitles1", surfaceTitles1);
 		modelMap.addAttribute("surfaceTitles2", surfaceTitles2);
+		modelMap.addAttribute("teamTitles1", teamTitles1);
+		modelMap.addAttribute("teamTitles2", teamTitles2);
 		modelMap.addAttribute("playerH2H1", playerH2H1);
 		modelMap.addAttribute("playerH2H2", playerH2H2);
 		modelMap.addAttribute("h2h", h2h);
@@ -486,8 +493,6 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("h2hGOATPoints", modelMap);
 	}
 
-	private  static final int IN_PROGRESS_DAYS_THRESHOLD = 14;
-
 	@GetMapping("/h2hHypotheticalMatchup")
 	public ModelAndView h2hHypotheticalMatchup(
       @RequestParam(name = "playerId1") int playerId1,
@@ -497,6 +502,7 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "level", required = false) String level,
       @RequestParam(name = "round", required = false) String round,
       @RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+      @RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
       @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date,
       @RequestParam(name = "date1", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date1,
       @RequestParam(name = "date2", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date2,
@@ -526,7 +532,7 @@ public class RivalriesController extends PageController {
 		boolean inProgress = abs(ChronoUnit.DAYS.between(aDate1, today)) <= IN_PROGRESS_DAYS_THRESHOLD && abs(ChronoUnit.DAYS.between(aDate2, today)) <= IN_PROGRESS_DAYS_THRESHOLD;
 		TournamentLevel tournamentLevel = TournamentLevel.safeDecode(level);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
-			playerId1, playerId2, aDate1, aDate2, tournamentId, inProgress,
+			playerId1, playerId2, aDate1, aDate2, tournamentId, tournamentEventId, inProgress,
 			Surface.safeDecode(surface), indoor, tournamentLevel, Round.safeDecode(round)
       );
 		PlayerPerformance perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2, level, surface, indoor, round));
@@ -547,6 +553,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentId", tournamentId);
+		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("date", date != null ? date : aDate1);
 		modelMap.addAttribute("date1", aDate1);
 		modelMap.addAttribute("date2", aDate2);
@@ -673,7 +680,7 @@ public class RivalriesController extends PageController {
 	}
 
 	private static BaseProbabilities toBaseProbabilities(PlayerStats stats) {
-		return stats.isEmpty() ? BaseProbabilities.UNKNOWN : new BaseProbabilities(stats.getServicePointsWonPct() / PCT, stats.getReturnPointsWonPct() / PCT);
+		return stats.hasPointStats() ? new BaseProbabilities(stats.getServicePointsWonPct() / PCT, stats.getReturnPointsWonPct() / PCT) : BaseProbabilities.UNKNOWN;
 	}
 
 

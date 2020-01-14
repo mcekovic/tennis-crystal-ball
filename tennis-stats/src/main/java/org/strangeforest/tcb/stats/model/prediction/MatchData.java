@@ -5,6 +5,8 @@ import java.time.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.elo.*;
 
+import com.google.common.base.*;
+
 public final class MatchData {
 
 	private final LocalDate date;
@@ -133,5 +135,27 @@ public final class MatchData {
 
 	public int getSets() {
 		return pSets + oSets;
+	}
+
+	@Override public String toString() {
+		return MoreObjects.toStringHelper(this).omitNullValues()
+			.add("date", date)
+			.add("tournamentId", tournamentId)
+			.add("tournamentEventId", tournamentEventId)
+			.add("inProgress", inProgress)
+			.add("level", level)
+			.add("surface", surface)
+			.add("round", round)
+			.add("opponentId", opponentId)
+			.add("opponentRank", opponentRank)
+			.add("opponentEloRating", opponentEloRating)
+			.add("opponentHand", opponentHand)
+			.add("opponentBackhand", opponentBackhand)
+			.add("opponentEntry", opponentEntry)
+			.add("pMatches", pMatches)
+			.add("oMatches", oMatches)
+			.add("pSets", pSets)
+			.add("oSets", oSets)
+		.toString();
 	}
 }

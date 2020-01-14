@@ -17,7 +17,7 @@ class PlayerLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call load_player(:ext_player_id, :first_name, :last_name, :dob, :country_id, :hand)}'
+		'CALL load_player(:ext_player_id, :first_name, :last_name, :dob, :country_id, :hand)'
 	}
 
 	int batchSize() { 500 }

@@ -175,7 +175,7 @@ class ATPTennisLoader {
 			atpTourMatchLoader.loadTournament(1980, 'indian-wells', 404, false, 'B', null, null, [], null, 728)
 			atpTourMatchLoader.deleteTournament(1981, 540)
 			atpTourMatchLoader.loadTournament(1981, 'wimbledon', 540)
-			atpTourMatchLoader.loadTournament(1982, 'la-quinta', 404, false, 'B')
+			atpTourMatchLoader.loadTournament(1982, 'la-quinta', 404, false, 'B', null, null, [], null, 708)
 //			atpTourMatchLoader.loadTournament(2007, 'vina-del-mar', 505)
 			atpTourMatchLoader.loadTournament(2008, 'moscow', 438, false, 'B')
 			atpTourMatchLoader.deleteTournament(2016, 580)
@@ -213,6 +213,7 @@ class ATPTennisLoader {
 			xmlMatchLoader.loadFile('classpath:/tournaments/2000-dusseldorf+.xml')
 			xmlMatchLoader.loadFile('classpath:/tournaments/2007-vina-del-mar.xml')
 //			xmlMatchLoader.loadFile('classpath:/tournaments/2019-davis-cup-finals.xml')
+			xmlMatchLoader.loadFile('classpath:/tournaments/2020-atp-cup.xml')
 
 			println()
 		}
@@ -250,7 +251,7 @@ class ATPTennisLoader {
 	def refreshMaterializedViews(Sql sql) {
 		refreshMaterializedViews(sql,
 			'event_participation',
-			'player_tournament_event_result', 'player_titles',
+			'player_tournament_event_result', 'player_titles', 'player_team_titles',
 			'player_current_rank', 'player_best_rank', 'player_best_rank_points', 'player_year_end_rank',
 			'player_current_elo_rank', 'player_best_elo_rank', 'player_best_elo_rating', 'player_season_best_elo_rating', 'player_year_end_elo_rank',
 			'player_season_weeks_at_no1', 'player_weeks_at_no1', 'player_season_weeks_at_elo_topn', 'player_weeks_at_elo_topn', 'player_season_weeks_at_surface_elo_topn', 'player_weeks_at_surface_elo_topn',

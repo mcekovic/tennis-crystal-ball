@@ -34,6 +34,8 @@ public class MatchPredictionService implements HasCache {
 	private final LoadingCache<InProgressRankingKey, RankingData> inProgressPlayersRankings;
 	private final LoadingCache<Integer, List<MatchData>> playersMatches;
 
+	public static final int IN_PROGRESS_DAYS_THRESHOLD = 14;
+
 	private static final String PLAYER_QUERY =
 		"SELECT hand, backhand FROM player\n" +
 		"WHERE player_id = :playerId";
@@ -85,14 +87,14 @@ public class MatchPredictionService implements HasCache {
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player2_id\n" +
-		"WHERE winner IS NOT NULL AND m.player1_id = :playerId AND m.player2_id > 0\n" +
+		"WHERE NOT e.completed AND winner IS NOT NULL AND m.player1_id = :playerId AND m.player2_id > 0\n" +
 		"UNION\n" +
 		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round,\n" +
 		"  m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.p2_sets, m.p1_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player1_id\n" +
-		"WHERE winner IS NOT NULL AND m.player1_id > 0 AND m.player2_id = :playerId\n";
+		"WHERE NOT e.completed AND winner IS NOT NULL AND m.player1_id > 0 AND m.player2_id = :playerId\n";
 
 	
 	public MatchPredictionService() {
@@ -121,9 +123,9 @@ public class MatchPredictionService implements HasCache {
 		return predictMatch(playerId1, playerId2, date, date, null, null, inProgress, surface, indoor, level, null, round, config);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
 		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
-		return predictMatch(playerId1, playerId2, date1, date2, tournamentId, null, inProgress, surface, indoor, level, null, round, config);
+		return predictMatch(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, null, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round) {
@@ -298,7 +300,7 @@ public class MatchPredictionService implements HasCache {
 						return false;
 				}
 				else {
-					if (abs(Duration.between(matchDate.atStartOfDay(), date.atStartOfDay()).toDays()) > 14)
+					if (abs(Duration.between(matchDate.atStartOfDay(), date.atStartOfDay()).toDays()) > IN_PROGRESS_DAYS_THRESHOLD)
 						return false;
 				}
 				return round != null && match.getRound().compareTo(round) > 0;

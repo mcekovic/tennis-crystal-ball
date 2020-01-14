@@ -303,9 +303,9 @@ $$ LANGUAGE plpgsql;
 
 -- records
 
-CREATE OR REPLACE FUNCTION delete_records(
+CREATE OR REPLACE PROCEDURE delete_records(
 	p_record_id TEXT
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
 	DELETE FROM player_record WHERE record_id LIKE p_record_id;
 	DELETE FROM active_player_record WHERE record_id LIKE p_record_id;

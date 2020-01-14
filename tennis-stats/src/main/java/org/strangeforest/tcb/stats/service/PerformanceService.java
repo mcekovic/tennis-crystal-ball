@@ -20,7 +20,7 @@ public class PerformanceService {
 
 	private static final String PLAYER_PERFORMANCE_COLUMNS =
 		"matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, tour_finals_matches_won, tour_finals_matches_lost, alt_finals_matches_won, alt_finals_matches_lost, masters_matches_won, masters_matches_lost, olympics_matches_won, olympics_matches_lost,\n" +
-		"atp500_matches_won, atp500_matches_lost, atp250_matches_won, atp250_matches_lost, davis_cup_matches_won, davis_cup_matches_lost, world_team_cup_matches_won, world_team_cup_matches_lost,\n" +
+		"atp500_matches_won, atp500_matches_lost, atp250_matches_won, atp250_matches_lost, davis_cup_matches_won, davis_cup_matches_lost, team_cups_matches_won, team_cups_matches_lost,\n" +
 		"best_of_3_matches_won, best_of_3_matches_lost, best_of_5_matches_won, best_of_5_matches_lost,\n" +
 		"hard_matches_won, hard_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
 		"outdoor_matches_won, outdoor_matches_lost, indoor_matches_won, indoor_matches_lost,\n" +
@@ -37,7 +37,7 @@ public class PerformanceService {
 		"sum(atp500_matches_won) atp500_matches_won, sum(atp500_matches_lost) atp500_matches_lost,\n" +
 		"sum(atp250_matches_won) atp250_matches_won, sum(atp250_matches_lost) atp250_matches_lost,\n" +
 		"sum(davis_cup_matches_won) davis_cup_matches_won, sum(davis_cup_matches_lost) davis_cup_matches_lost,\n" +
-		"sum(world_team_cup_matches_won) world_team_cup_matches_won, sum(world_team_cup_matches_lost) world_team_cup_matches_lost,\n" +
+		"sum(team_cups_matches_won) team_cups_matches_won, sum(team_cups_matches_lost) team_cups_matches_lost,\n" +
 		"sum(best_of_3_matches_won) best_of_3_matches_won, sum(best_of_3_matches_lost) best_of_3_matches_lost,\n" +
 		"sum(best_of_5_matches_won) best_of_5_matches_won, sum(best_of_5_matches_lost) best_of_5_matches_lost,\n" +
 		"sum(hard_matches_won) hard_matches_won, sum(hard_matches_lost) hard_matches_lost,\n" +
@@ -129,6 +129,9 @@ public class PerformanceService {
 	private static final String PLAYER_SURFACE_TITLES_QUERY =
 		"SELECT hard_titles, clay_titles, grass_titles, carpet_titles FROM player_titles WHERE player_id = :playerId";
 
+	private static final String PLAYER_TEAM_TITLES_QUERY =
+		"SELECT davis_cups, team_cups FROM player_team_titles WHERE player_id = :playerId";
+
 	public PlayerPerformance getPlayerPerformance(int playerId) {
 		return getPlayerPerformance(playerId, PerfStatsFilter.ALL);
 	}
@@ -192,7 +195,7 @@ public class PerformanceService {
 		perf.setAtp500Matches(mapWonLost(rs, "atp500_matches"));
 		perf.setAtp250Matches(mapWonLost(rs, "atp250_matches"));
 		perf.setDavisCupMatches(mapWonLost(rs, "davis_cup_matches"));
-		perf.setWorldTeamCupMatches(mapWonLost(rs, "world_team_cup_matches"));
+		perf.setTeamCupsMatches(mapWonLost(rs, "team_cups_matches"));
 		perf.setBestOf3Matches(mapWonLost(rs, "best_of_3_matches"));
 		perf.setBestOf5Matches(mapWonLost(rs, "best_of_5_matches"));
 		perf.setHardMatches(mapWonLost(rs, "hard_matches"));
@@ -307,6 +310,25 @@ public class PerformanceService {
 					titles.put("G", rs.getInt("grass_titles"));
 					titles.put("P", rs.getInt("carpet_titles"));
 					return titles;
+				}
+				else
+					return emptyMap();
+			}
+		);
+	}
+
+
+	// Player team titles
+
+	public Map<String, Integer> getPlayerTeamTitles(int playerId) {
+		return jdbcTemplate.query(
+			PLAYER_TEAM_TITLES_QUERY, params("playerId", playerId),
+			rs -> {
+				if (rs.next()) {
+					Map<String, Integer> teamTitles = new HashMap<>();
+					teamTitles.put("D", rs.getInt("davis_cups"));
+					teamTitles.put("T", rs.getInt("team_cups"));
+					return teamTitles;
 				}
 				else
 					return emptyMap();

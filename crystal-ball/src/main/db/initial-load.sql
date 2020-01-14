@@ -61,8 +61,9 @@ VALUES
 ('D', 'KO', 'QF',    65, NULL, NULL, TRUE),
 ('D', 'KO', 'R16',   40, NULL, NULL, TRUE),
 ('D', 'RR', 'F',   NULL, NULL,    1, TRUE),
--- World Team Cup
-('T', 'KO', 'F',   NULL, NULL,    1, TRUE);
+-- Team Cups
+('T', 'KO', 'F',   NULL, NULL,    1, TRUE),
+('T', 'RR', 'F',   NULL, NULL,    1, TRUE);
 
 DELETE FROM tournament_event_rank_factor;
 INSERT INTO tournament_event_rank_factor
@@ -208,7 +209,7 @@ VALUES
 ('B', 'F',  1),
 -- Davis Cup
 ('D', 'F',  1),
--- World Team Cup
+-- Team Cups
 ('T', 'F',  1);
 
 DELETE FROM big_win_rank_factor;

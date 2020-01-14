@@ -51,6 +51,10 @@ public abstract class DiffOutcome {
 	protected abstract double pItemWin(int item);
 
 	protected double pDeuce(double p1, double p2, int items1, int items2) {
+		if (p1 <= 0.0)
+			return 0.0;
+		else if (p2 <= 0.0)
+			return 1.0;
 		double p12 = p1 * p2;
 		return p12 / (1.0 - p1 - p2 + 2.0 * p12);
 	}

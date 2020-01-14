@@ -18,7 +18,7 @@ class RankingLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call load_ranking(?, ?, ?, ?)}'
+		'CALL load_ranking(?, ?, ?, ?)'
 	}
 
 	int batchSize() { 1000 }

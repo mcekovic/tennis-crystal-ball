@@ -10,6 +10,7 @@
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="date1" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="date2" type="java.time.LocalDate"*/-->
@@ -96,6 +97,9 @@
 		var tournamentId = $("#predictionTournament").val();
 		if (tournamentId)
 			url += "&tournamentId=" + tournamentId;
+		var tournamentEventId = $("#predictionTournamentEvent").val();
+		if (tournamentEventId)
+			url += "&tournamentEventId=" + tournamentEventId;
 		url += "&showDetails=" + showDetails;
 		if (inMatch) {
 			url += "&sets1=" + $("#predictionSets1").val();
@@ -228,6 +232,7 @@
 				<option th:each="tournament : ${lts.value}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 			</optgroup>
 		</select>
+		<input id="predictionTournamentEvent" type="hidden" th:value="${tournamentEventId}"/>
 	</div>
 </div>
 <div id="predictionDatesDiv" class="row" th:style="'display: ' + ${sameDates ? 'none' : 'block'}">

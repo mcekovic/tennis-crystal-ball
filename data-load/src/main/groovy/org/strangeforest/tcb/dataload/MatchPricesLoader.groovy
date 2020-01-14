@@ -21,9 +21,9 @@ class MatchPricesLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call load_match_prices(' +
+		'CALL load_match_prices(' +
 			':season, :location, :tournament, :date, :surface, :round, :winner, :loser, :B365W, :B365L, :EXW, :EXL, :LBW, :LBL, :PSW, :PSL' +
-		')}'
+		')'
 	}
 
 	int batchSize() { 100 }

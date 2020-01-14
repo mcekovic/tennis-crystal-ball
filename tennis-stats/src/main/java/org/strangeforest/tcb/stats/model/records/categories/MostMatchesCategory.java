@@ -102,7 +102,7 @@ public class MostMatchesCategory extends RecordCategory {
 			domain.id + "Matches" + type.name, "Most " + suffix(domain.name, " ") + "Matches " + type.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(domain.columnPrefix + "matches") + " AS value FROM player_performance",
-			"r.value", "r.value DESC", "r.value DESC",
+			"r.value", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s%3$s", playerId, domain.urlParam, type.urlParam + "played"),
 			List.of(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name))
 		);
@@ -113,7 +113,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"MatchesVs" + domain.id + type.name, "Most Matches " + type.name + " Vs " + domain.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(domain.columnPrefix) + " AS value FROM player_performance",
-			"r.value", "r.value DESC", "r.value DESC",
+			"r.value", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s%3$s", playerId, domain.urlParam, type.urlParam + "played"),
 			List.of(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name + " Vs " + domain.name))
 		);
@@ -124,7 +124,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"Season" + domain.id + "Matches" + type.name, "Most " + suffix(domain.name, " ") + "Matches " + type.name + " in Single Season",
 			/* language=SQL */
 			"SELECT player_id, season, " + type.expression(domain.columnPrefix + "matches") + " AS value FROM player_season_performance",
-			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
+			"r.value, r.season", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.season",
 			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d%3$s%4$s", playerId, recordDetail.getSeason(), domain.urlParam, type.urlParam + "played"),
 			List.of(
 				new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name),
@@ -138,7 +138,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"SeasonMatchesVs" + domain.id + type.name, "Most Matches " + type.name + " Vs " + domain.name + " in Single Season",
 			/* language=SQL */
 			"SELECT player_id, season, " + type.expression(domain.columnPrefix) + " AS value FROM player_season_performance",
-			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
+			"r.value, r.season", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.season",
 			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d%3$s%4$s", playerId, recordDetail.getSeason(), domain.urlParam, type.urlParam + "played"),
 			List.of(
 				new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name + " Vs " + domain.name),
@@ -153,7 +153,7 @@ public class MostMatchesCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + domain.columnPrefix + "matches") + " AS value\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id) WHERE t." + ALL_TOURNAMENTS,
-			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.tournament",
+			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.tournament",
 			TournamentIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentId=%2$d%3$s%4$s", playerId, recordDetail.getTournamentId(), domain.urlParam, type.urlParam + "played"),
 			List.of(
 				new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name),

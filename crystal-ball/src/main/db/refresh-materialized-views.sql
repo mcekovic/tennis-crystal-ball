@@ -1,6 +1,7 @@
 REFRESH MATERIALIZED VIEW event_participation;
 REFRESH MATERIALIZED VIEW player_tournament_event_result;
 REFRESH MATERIALIZED VIEW player_titles;
+REFRESH MATERIALIZED VIEW player_team_titles;
 
 REFRESH MATERIALIZED VIEW player_current_rank;
 REFRESH MATERIALIZED VIEW player_best_rank;

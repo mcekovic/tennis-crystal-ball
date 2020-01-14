@@ -15,7 +15,7 @@ public class PlayerPerformance {
 	private WonLost atp500Matches;
 	private WonLost atp250Matches;
 	private WonLost davisCupMatches;
-	private WonLost worldTeamCupMatches;
+	private WonLost teamCupsMatches;
 	private WonLost bestOf3Matches;
 	private WonLost bestOf5Matches;
 	private WonLost hardMatches;
@@ -49,7 +49,7 @@ public class PlayerPerformance {
 		atp500Matches = perf.atp500Matches;
 		atp250Matches = perf.atp250Matches;
 		davisCupMatches = perf.davisCupMatches;
-		worldTeamCupMatches = perf.worldTeamCupMatches;
+		teamCupsMatches = perf.teamCupsMatches;
 		bestOf3Matches = perf.bestOf3Matches;
 		bestOf5Matches = perf.bestOf5Matches;
 		hardMatches = perf.hardMatches;
@@ -146,12 +146,12 @@ public class PlayerPerformance {
 		this.davisCupMatches = davisCupMatches;
 	}
 
-	public WonLost getWorldTeamCupMatches() {
-		return worldTeamCupMatches;
+	public WonLost getTeamCupsMatches() {
+		return teamCupsMatches;
 	}
 
-	public void setWorldTeamCupMatches(WonLost worldTeamCupMatches) {
-		this.worldTeamCupMatches = worldTeamCupMatches;
+	public void setTeamCupsMatches(WonLost teamCupsMatches) {
+		this.teamCupsMatches = teamCupsMatches;
 	}
 
 	public WonLost getBestOf3Matches() {
@@ -331,7 +331,7 @@ public class PlayerPerformance {
 		empty.atp500Matches = WonLost.EMPTY;
 		empty.atp250Matches = WonLost.EMPTY;
 		empty.davisCupMatches = WonLost.EMPTY;
-		empty.worldTeamCupMatches = WonLost.EMPTY;
+		empty.teamCupsMatches = WonLost.EMPTY;
 		empty.bestOf3Matches = WonLost.EMPTY;
 		empty.bestOf5Matches = WonLost.EMPTY;
 		empty.hardMatches = WonLost.EMPTY;

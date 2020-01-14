@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+  <tournament season="2020" tournament-name="ATP Cup" name="ATP Cup" date="2020-01-03" ext-id="8888">
+    <level>T</level>
+    <surface>H</surface>
+    <indoor>false</indoor>
+    <draw-type>RR</draw-type>
+    <draw-size>24</draw-size>
+    <!-- RR Group A -->
+    <match match-num="1" round="RR" best-of="3" winner="Dusan Lajovic" loser="Lloyd Harris" score="3-6 7-6(4) 6-3" ext-id="122"/>
+    <match match-num="2" round="RR" best-of="3" winner="Novak Djokovic" loser="Kevin Anderson" score="7-6(5) 7-6(6)" ext-id="121"/>
+    <match match-num="3" round="RR" best-of="3" winner="Gael Monfils" loser="Cristian Garin" score="6-3 7-5" ext-id="151"/>
+    <match match-num="4" round="RR" best-of="3" winner="Benoit Paire" loser="Nicolas Jarry" score="6-7(3) 6-3 6-3" ext-id="152"/>
+    <match match-num="5" round="RR" best-of="3" winner="Kevin Anderson" loser="Cristian Garin" score="6-0 6-3" ext-id="161"/>
+    <match match-num="6" round="RR" best-of="3" winner="Lloyd Harris" loser="Nicolas Jarry" score="6-4 6-4" ext-id="162"/>
+    <match match-num="7" round="RR" best-of="3" winner="Novak Djokovic" loser="Gael Monfils" score="6-3 6-2" ext-id="111"/>
+    <match match-num="8" round="RR" best-of="3" winner="Benoit Paire" loser="Dusan Lajovic" score="6-2 6-7(6) 6-4" ext-id="112"/>
+    <match match-num="9" round="RR" best-of="3" winner="Kevin Anderson" loser="Benoit Paire" score="2-6 7-6(1) 7-6(5)" ext-id="141"/>
+    <match match-num="10" round="RR" best-of="3" winner="Gilles Simon" loser="Lloyd Harris" score="2-6 6-2 6-2" ext-id="142"/>
+    <match match-num="11" round="RR" best-of="3" winner="Novak Djokovic" loser="Cristian Garin" score="6-3 6-3" ext-id="131"/>
+    <match match-num="12" round="RR" best-of="3" winner="Dusan Lajovic" loser="Nicolas Jarry" score="6-2 7-6(3)" ext-id="132"/>
+    <!-- RR Group B -->
+    <match match-num="13" round="RR" best-of="3" winner="Roberto Bautista Agut" loser="Aleksandre Metreveli" score="6-0 6-0" ext-id="222"/>
+    <match match-num="14" round="RR" best-of="3" winner="Rafael Nadal" loser="Nikoloz Basilashvili" score="6-3 7-5" ext-id="221"/>
+    <match match-num="15" round="RR" best-of="3" winner="Yoshihito Nishioka" loser="Pablo Cuevas" score="6-0 6-1" ext-id="251"/>
+    <match match-num="16" round="RR" best-of="3" winner="Go Soeda" loser="Martin Cuevas" score="6-1 6-3" ext-id="252"/>
+    <match match-num="17" round="RR" best-of="3" winner="Roberto Bautista Agut" loser="Franco Roncadelli" score="6-1 6-2" ext-id="232"/>
+    <match match-num="18" round="RR" best-of="3" winner="Rafael Nadal" loser="Pablo Cuevas" score="6-2 6-1" ext-id="231"/>
+    <match match-num="19" round="RR" best-of="3" winner="Yoshihito Nishioka" loser="Nikoloz Basilashvili" score="6-2 6-3" ext-id="241"/>
+    <match match-num="20" round="RR" best-of="3" winner="Go Soeda" loser="Aleksandre Metreveli" score="4-6 6-3 6-2" ext-id="242"/>
+    <match match-num="21" round="RR" best-of="3" winner="Nikoloz Basilashvili" loser="Pablo Cuevas" score="6-4 1-6 6-4" ext-id="261"/>
+    <match match-num="22" round="RR" best-of="3" winner="Aleksandre Metreveli" loser="Franco Roncadelli" score="6-2 6-1" ext-id="262"/>
+    <match match-num="23" round="RR" best-of="3" winner="Roberto Bautista Agut" loser="Go Soeda" score="6-2 6-4" ext-id="212"/>
+    <match match-num="24" round="RR" best-of="3" winner="Rafael Nadal" loser="Yoshihito Nishioka" score="7-6(4) 6-4" ext-id="211"/>
+    <!-- RR Group C -->
+    <match match-num="25" round="RR" best-of="3" winner="Steve Darcis" loser="Alexander Cozbinov" score="6-4 6-7(4) 7-5" ext-id="332"/>
+    <match match-num="26" round="RR" best-of="3" winner="David Goffin" loser="Radu Albot" score="6-4 6-1" ext-id="331"/>
+    <match match-num="27" round="RR" best-of="3" winner="Grigor Dimitrov" loser="Daniel Evans" score="2-6 6-4 6-1" ext-id="341"/>
+    <match match-num="28" round="RR" best-of="3" winner="Cameron Norrie" loser="Dimitar Kuzmanov" score="6-2 3-6 6-2" ext-id="342"/>
+    <match match-num="29" round="RR" best-of="3" winner="Steve Darcis" loser="Cameron Norrie" score="6-2 6-4" ext-id="312"/>
+    <match match-num="30" round="RR" best-of="3" winner="Daniel Evans" loser="David Goffin" score="6-4 6-4" ext-id="311"/>
+    <match match-num="31" round="RR" best-of="3" winner="Grigor Dimitrov" loser="Radu Albot" score="6-2 6-3" ext-id="361"/>
+    <match match-num="32" round="RR" best-of="3" winner="Dimitar Kuzmanov" loser="Alexander Cozbinov" score="6-1 7-5" ext-id="362"/>
+    <match match-num="33" round="RR" best-of="3" winner="Daniel Evans" loser="Radu Albot" score="6-2 6-2" ext-id="351"/>
+    <match match-num="34" round="RR" best-of="3" winner="Cameron Norrie" loser="Alexander Cozbinov" score="6-2 6-2" ext-id="352"/>
+    <match match-num="35" round="RR" best-of="3" winner="David Goffin" loser="Grigor Dimitrov" score="4-6 6-2 6-2" ext-id="321"/>
+    <match match-num="36" round="RR" best-of="3" winner="Dimitar Kuzmanov" loser="Steve Darcis" score="6-0 6-3" ext-id="322"/>
+    <!-- RR Group D -->
+    <match match-num="37" round="RR" best-of="3" winner="Taylor Fritz" loser="Viktor Durasovic" score="6-2 6-2" ext-id="462"/>
+    <match match-num="38" round="RR" best-of="3" winner="Casper Ruud" loser="John Isner" score="6-7(3) 7-6(10) 7-5" ext-id="461"/>
+    <match match-num="39" round="RR" best-of="3" winner="Karen Khachanov" loser="Stefano Travaglia" score="7-5 6-3" ext-id="412"/>
+    <match match-num="40" round="RR" best-of="3" winner="Daniil Medvedev" loser="Fabio Fognini" score="1-6 6-1 6-3" ext-id="411"/>
+    <match match-num="41" round="RR" best-of="3" winner="Karen Khachanov" loser="Taylor Fritz" score="3-6 7-5 6-1" ext-id="422"/>
+    <match match-num="42" round="RR" best-of="3" winner="Daniil Medvedev" loser="John Isner" score="6-3 6-1" ext-id="421"/>
+    <match match-num="43" round="RR" best-of="3" winner="Casper Ruud" loser="Fabio Fognini" score="6-2 6-2" ext-id="451"/>
+    <match match-num="44" round="RR" best-of="3" winner="Stefano Travaglia" loser="Viktor Durasovic" score="6-1 6-1" ext-id="452"/>
+    <match match-num="45" round="RR" best-of="3" winner="Fabio Fognini" loser="John Isner" score="6-4 7-6(5)" ext-id="441"/>
+    <match match-num="46" round="RR" best-of="3" winner="Stefano Travaglia" loser="Taylor Fritz" score="7-6(3) 7-6(1)" ext-id="442"/>
+    <match match-num="47" round="RR" best-of="3" winner="Karen Khachanov" loser="Viktor Durasovic" score="6-2 6-1" ext-id="432"/>
+    <match match-num="48" round="RR" best-of="3" winner="Daniil Medvedev" loser="Casper Ruud" score="6-3 7-6(6)" ext-id="431"/>
+    <!-- RR Group E -->
+    <match match-num="49" round="RR" best-of="3" winner="Marin Cilic" loser="Dennis Novak" score="6-7(4) 6-4 6-4" ext-id="512"/>
+    <match match-num="50" round="RR" best-of="3" winner="Borna Coric" loser="Dominic Thiem" score="7-6(4) 2-6 6-3" ext-id="511"/>
+    <match match-num="51" round="RR" best-of="3" winner="Hubert Hurkacz" loser="Diego Sebastian Schwartzman" score="4-6 6-2 6-3" ext-id="561"/>
+    <match match-num="52" round="RR" best-of="3" winner="Guido Pella" loser="Kamil Majchrzak" score="6-2 2-6 6-2" ext-id="562"/>
+    <match match-num="53" round="RR" best-of="3" winner="Marin Cilic" loser="Kacper Zuk" score="7-6(8) 6-4" ext-id="552"/>
+    <match match-num="54" round="RR" best-of="3" winner="Hubert Hurkacz" loser="Borna Coric" score="6-2 6-2" ext-id="551"/>
+    <match match-num="55" round="RR" best-of="3" winner="Dennis Novak" loser="Guido Pella" score="0-6 6-4 6-4" ext-id="522"/>
+    <match match-num="56" round="RR" best-of="3" winner="Dominic Thiem" loser="Diego Sebastian Schwartzman" score="6-3 7-6(3)" ext-id="521"/>
+    <match match-num="57" round="RR" best-of="3" winner="Hubert Hurkacz" loser="Dominic Thiem" score="3-6 6-4 7-6(5)" ext-id="531"/>
+    <match match-num="58" round="RR" best-of="3" winner="Kacper Zuk" loser="Dennis Novak" score="5-7 7-6(3) 6-3" ext-id="532"/>
+    <match match-num="59" round="RR" best-of="3" winner="Guido Pella" loser="Marin Cilic" score="7-6(1) 6-3" ext-id="542"/>
+    <match match-num="60" round="RR" best-of="3" winner="Diego Sebastian Schwartzman" loser="Borna Coric" score="6-2 6-2" ext-id="541"/>
+    <!-- RR Group F -->
+    <match match-num="61" round="RR" best-of="3" winner="Felix Auger Aliassime" loser="Michail Pervolarakis" score="6-1 6-3" ext-id="642"/>
+    <match match-num="62" round="RR" best-of="3" winner="Denis Shapovalov" loser="Stefanos Tsitsipas" score="7-6(6) 7-6(4)" ext-id="641"/>
+    <match match-num="63" round="RR" best-of="3" winner="Alex de Minaur" loser="Alexander Zverev" score="4-6 7-6(3) 6-2" ext-id="631"/>
+    <match match-num="64" round="RR" best-of="3" winner="Nick Kyrgios" loser="Jan Lennard Struff" score="6-4 7-6(4)" ext-id="632"/>
+    <match match-num="65" round="RR" best-of="3" winner="Alex de Minaur" loser="Denis Shapovalov" score="6-7(6) 6-4 6-2" ext-id="661"/>
+    <match match-num="66" round="RR" best-of="3" winner="John Millman" loser="Felix Auger Aliassime" score="6-4 6-2" ext-id="662"/>
+    <match match-num="67" round="RR" best-of="3" winner="Jan Lennard Struff" loser="Michail Pervolarakis" score="6-4 6-1" ext-id="612"/>
+    <match match-num="68" round="RR" best-of="3" winner="Stefanos Tsitsipas" loser="Alexander Zverev" score="6-1 6-4" ext-id="611"/>
+    <match match-num="69" round="RR" best-of="3" winner="Nick Kyrgios" loser="Stefanos Tsitsipas" score="7-6(7) 6-7(3) 7-6(5)" ext-id="651"/>
+    <match match-num="70" round="RR" best-of="3" winner="John Millman" loser="Michail Pervolarakis" score="4-6 6-1 7-6(1)" ext-id="652"/>
+    <match match-num="71" round="RR" best-of="3" winner="Denis Shapovalov" loser="Alexander Zverev" score="6-2 6-2" ext-id="621"/>
+    <match match-num="72" round="RR" best-of="3" winner="Jan Lennard Struff" loser="Felix Auger Aliassime" score="6-1 6-4" ext-id="622"/>
+    <!-- QF -->
+    <match match-num="73" round="QF" best-of="3" winner="Daniel Evans" loser="Alex de Minaur" score="7-6(4) 4-6 7-6(2)" ext-id="061"/>
+    <match match-num="74" round="QF" best-of="3" winner="Nick Kyrgios" loser="Cameron Norrie" score="6-2 6-2" ext-id="062"/>
+    <match match-num="75" round="QF" best-of="3" winner="Karen Khachanov" loser="Guido Pella" score="6-2 7-6(4)" ext-id="052"/>
+    <match match-num="76" round="QF" best-of="3" winner="Daniil Medvedev" loser="Diego Sebastian Schwartzman" score="6-4 4-6 6-3" ext-id="051"/>
+    <match match-num="77" round="QF" best-of="3" winner="Roberto Bautista Agut" loser="Kimmer Coppejans" score="6-1 6-4" ext-id="072"/>
+    <match match-num="78" round="QF" best-of="3" winner="David Goffin" loser="Rafael Nadal" score="6-4 7-6(3)" ext-id="071"/>
+    <match match-num="79" round="QF" best-of="3" winner="Dusan Lajovic" loser="Felix Auger Aliassime" score="6-4 6-2" ext-id="042"/>
+    <match match-num="80" round="QF" best-of="3" winner="Novak Djokovic" loser="Denis Shapovalov" score="4-6 6-1 7-6(4)" ext-id="041"/>
+    <!-- SF -->
+    <match match-num="81" round="SF" best-of="3" winner="Roberto Bautista Agut" loser="Nick Kyrgios" score="6-1 6-4" ext-id="032"/>
+    <match match-num="82" round="SF" best-of="3" winner="Rafael Nadal" loser="Alex de Minaur" score="4-6 7-5 6-1" ext-id="031"/>
+    <match match-num="83" round="SF" best-of="3" winner="Dusan Lajovic" loser="Karen Khachanov" score="7-5 7-6(1)" ext-id="022"/>
+    <match match-num="84" round="SF" best-of="3" winner="Novak Djokovic" loser="Daniil Medvedev" score="6-1 5-7 6-4" ext-id="021"/>
+    <!-- F -->
+    <match match-num="85" round="F" best-of="3" winner="Roberto Bautista Agut" loser="Dusan Lajovic" score="7-5 6-1" ext-id="012"/>
+    <match match-num="86" round="F" best-of="3" winner="Novak Djokovic" loser="Rafael Nadal" score="6-2 7-6(4)" ext-id="011"/>
+  </tournament>
+</tournament-data>

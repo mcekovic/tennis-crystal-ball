@@ -18,7 +18,7 @@ public enum TournamentLevel implements CodedEnum {
 	EXHIBITIONS("E", "CUEH", "Exhibitions", 3),
 	OTHERS("H", "CUEH", "Others", 3),
 	DAVIS_CUP("D", "DT", "Davis Cup", 5),
-	OTHERS_TEAM("T", "DT", "World Team Cup", 3);
+	OTHERS_TEAM("T", "DT", "Team Cups", 3);
 
 	private final String code;
 	private final String predictionCodes;

@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 import java.time.*;
 
+import com.google.common.base.*;
+
 public final class RankingData {
 
 	private Integer rank;
@@ -88,5 +90,18 @@ public final class RankingData {
 		copy.setEloRating = setEloRating;
 		copy.eloDate = eloDate;
 		return copy;
+	}
+
+	@Override public String toString() {
+		return MoreObjects.toStringHelper(this).omitNullValues()
+			.add("rank", rank)
+			.add("rankPoints", rankPoints)
+			.add("eloRating", eloRating)
+			.add("recentEloRating", recentEloRating)
+			.add("surfaceEloRating", surfaceEloRating)
+			.add("inOutEloRating", inOutEloRating)
+			.add("setEloRating", setEloRating)
+			.add("eloDate", eloDate)
+		.toString();
 	}
 }

@@ -1,8 +1,8 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
 import java.io.*;
-import java.util.*;
 import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 import java.util.stream.*;
@@ -13,6 +13,9 @@ import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
+import static java.util.Comparator.*;
+import static java.util.Map.Entry.*;
+import static java.util.stream.Collectors.*;
 
 public class PredictionConfig {
 
@@ -263,7 +266,10 @@ public class PredictionConfig {
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("weights", new TreeMap<>(areaWeights))
-			.add("itemWeights", itemWeights)
+			.add("itemWeights", new TreeMap<>(itemWeights.entrySet().stream().collect(groupingBy(e -> e.getKey().getArea(), collectingAndThen(toList(), entries -> {
+				entries.sort(comparingByKey(comparing(PredictionItem::ordinal)));
+				return entries;
+			})))))
 			.add("matchRecentPeriods", new TreeMap<>(matchRecentPeriods))
 			.add("setRecentPeriods", new TreeMap<>(setRecentPeriods))
 			.add("lastMatchesCounts", new TreeMap<>(lastMatchesCounts))

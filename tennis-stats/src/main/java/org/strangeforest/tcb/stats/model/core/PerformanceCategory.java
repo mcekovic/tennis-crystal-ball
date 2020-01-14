@@ -29,7 +29,7 @@ public final class PerformanceCategory {
 		addCategory(PERFORMANCE, "atp500Matches", "atp500_matches", "ATP 500 Matches", 50, "matches", false, "level-category bg-level-A");
 		addCategory(PERFORMANCE, "atp250Matches", "atp250_matches", "ATP 250 Matches", 100, "matches", false, "level-category bg-level-B");
 		addCategory(PERFORMANCE, "davisCupMatches", "davis_cup_matches", "Davis Cup Matches", 20, "matches", false, "level-category bg-level-D");
-		addCategory(PERFORMANCE, "worldTeamCupMatches", "world_team_cup_matches", "World Team Cup Matches", 5, "matches", false, "level-category bg-level-T");
+		addCategory(PERFORMANCE, "teamCupsMatches", "team_cups_matches", "Team Cups Matches", 5, "matches", false, "level-category bg-level-T");
 		addCategory(PERFORMANCE, "bestOf3Matches", "best_of_3_matches", "Best of 3 Matches", 150, "matches", false);
 		addCategory(PERFORMANCE, "bestOf5Matches", "best_of_5_matches", "Best of 5 Matches", 50, "matches", false);
 		addCategory(SURFACE_PERFORMANCE, "hardMatches", "hard_matches", "Hard Matches", 100, "matches", true, "surface-category bg-surface-H");

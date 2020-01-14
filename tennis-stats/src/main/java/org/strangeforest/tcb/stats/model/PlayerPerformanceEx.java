@@ -39,7 +39,7 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 		addLevelMatches(TournamentLevel.ATP_500, perf.getAtp500Matches());
 		addLevelMatches(TournamentLevel.ATP_250, perf.getAtp250Matches());
 		addLevelMatches(TournamentLevel.DAVIS_CUP, perf.getDavisCupMatches());
-		addLevelMatches(TournamentLevel.OTHERS_TEAM, perf.getWorldTeamCupMatches());
+		addLevelMatches(TournamentLevel.OTHERS_TEAM, perf.getTeamCupsMatches());
 		addBestOfMatches(3, perf.getBestOf3Matches());
 		addBestOfMatches(5, perf.getBestOf5Matches());
 		addSurfaceMatches(Surface.HARD, perf.getHardMatches());

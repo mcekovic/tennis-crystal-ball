@@ -139,7 +139,7 @@
 			</td>
 			<td class="text-right visible-lg">
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent">
-					<a th:if="${opponent.known}" th:href="@{/headToHead(playerId1=${playerId}, playerId2=${opponent.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, indoor=${inProgressEvent.indoor}, round=${round}, date=${#temporals.format(inProgressEvent.completed ? inProgressEvent.date : #temporals.createToday(), 'dd-MM-yyyy')}, tournamentId=${inProgressEvent.tournamentId})}" class="label label-primary label-btn h2h" title="Show Head-to-Head Hypothetical Matchup">H2H</a>
+					<a th:if="${opponent.known}" th:href="@{/headToHead(playerId1=${playerId}, playerId2=${opponent.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, indoor=${inProgressEvent.indoor}, round=${round}, date=${#temporals.format(inProgressEvent.completed ? inProgressEvent.date : #temporals.createToday(), 'dd-MM-yyyy')}, tournamentId=${inProgressEvent.tournamentId}, tournamentEventId=${inProgressEvent.id})}" class="label label-primary label-btn h2h" title="Show Head-to-Head Hypothetical Matchup">H2H</a>
 				</div>
 			</td>
 		</tr>

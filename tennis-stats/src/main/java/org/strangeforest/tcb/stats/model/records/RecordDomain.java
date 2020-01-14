@@ -17,6 +17,7 @@ public enum RecordDomain {
 	ATP_250("ATP250", "ATP 250/WS", N_A, "level = 'B'", "atp250_", "atp250Matches", "&level=B"),
 	SMALL_TOURNAMENTS("Small", "Small", "(ATP 500/CS, ATP 250/WS)", "level IN ('A', 'B')", null, "atp250Matches", "&level=AB"),
 	DAVIS_CUP("DavisCup", "Davis Cup", N_A, "level = 'D'", "davis_cup_", "davisCupMatches", "&level=D"),
+	TEAM_CUPS("TeamCups", "Team Cups", N_A, "level = 'T'", "team_cups_", "teamCupsMatches", "&level=T"),
 	BEST_OF_3("BestOf3", "Best of 3", N_A, "best_of = 3", "best_of_3_", "bestOf3Matches", "&bestOf=3"),
 	BEST_OF_5("BestOf5", "Best of 5", N_A, "best_of = 5", "best_of_5_", "bestOf5Matches", "&bestOf=5"),
 	HARD_TOURNAMENTS("Hard", "Hard", N_A, "surface = 'H' AND " + ALL_TOURNAMENTS, "hard_", "hardMatches", "&surface=H"),

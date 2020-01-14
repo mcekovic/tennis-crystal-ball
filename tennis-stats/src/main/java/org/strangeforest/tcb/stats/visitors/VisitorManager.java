@@ -14,6 +14,7 @@ import org.strangeforest.tcb.util.*;
 import com.github.benmanes.caffeine.cache.*;
 import com.maxmind.geoip2.record.Country;
 import com.neovisionaries.i18n.*;
+import io.micrometer.core.instrument.util.*;
 
 import static java.util.stream.Collectors.*;
 
@@ -48,7 +49,7 @@ public class VisitorManager {
 			.removalListener(this::visitorRemoved)
 			.build(repository::find);
 		visitors.putAll(repository.findAll().stream().collect(toMap(Visitor::getIpAddress, Optional::of)));
-		visitorExpirer = Executors.newSingleThreadScheduledExecutor();
+		visitorExpirer = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Visitor Expirer"));
 		long period = expiryCheckPeriod.getSeconds();
 		visitorExpirerFuture = visitorExpirer.scheduleAtFixedRate(this::expire, period, period, TimeUnit.SECONDS);
 	}

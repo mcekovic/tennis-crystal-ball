@@ -110,16 +110,16 @@
 	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).davisCupMatches.WL}" class="stats">456-167</td>
 </tr>
 </th:block>
-<th:block th:unless="${careerPerf.worldTeamCupMatches.empty}">
+<th:block th:unless="${careerPerf.teamCupsMatches.empty}">
 <tr class="pct-data">
-	<td class="stats-header stats-perf">World Team Cup</td>
-	<td th:text="${careerPerf.worldTeamCupMatches.wonPctStr}" class="stats">75.2%</td>
-	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).worldTeamCupMatches.wonPctStr}" class="stats">75.2%</td>
+	<td class="stats-header stats-perf">Team Cups</td>
+	<td th:text="${careerPerf.teamCupsMatches.wonPctStr}" class="stats">75.2%</td>
+	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).teamCupsMatches.wonPctStr}" class="stats">75.2%</td>
 </tr>
 <tr class="raw-data">
-	<td class="stats-header stats-perf">World Team Cup</td>
-	<td th:text="${careerPerf.worldTeamCupMatches.WL}" class="stats">456-167</td>
-	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).worldTeamCupMatches.WL}" class="stats">456-167</td>
+	<td class="stats-header stats-perf">Team Cups</td>
+	<td th:text="${careerPerf.teamCupsMatches.WL}" class="stats">456-167</td>
+	<td th:each="season : ${seasons}" th:text="${seasonsPerf.get(season).teamCupsMatches.WL}" class="stats">456-167</td>
 </tr>
 </th:block>
 <th:block th:unless="${careerPerf.bestOf3Matches.empty}">

@@ -107,6 +107,9 @@ abstract class BaseATPTourTournamentLoader {
 				(season >= 2018 && (
 					name.startsWith('New York') ||
 					(name.startsWith('Tokyo') && season == 2018)
+				)) ||
+				(season >= 2019 && (
+					name.startsWith('Davis Cup Finals')
 				))
 			case 'C': return (season >= 2018 && (
 					name.startsWith('Sao Paulo')
@@ -289,25 +292,30 @@ abstract class BaseATPTourTournamentLoader {
 		try {
 			pool.submit {
 				matches.parallelStream().forEach { match ->
-					def statsUrl = match.statsUrl
-					def forcedUrl = false
-					// ATP Web site strips in-match stats links for GS tournaments for one month (probably some legal issue with ITF), but stats are there, just links are stripped!
-					if (!statsUrl && season > 1991 && match.tournament_level == 'G') {
-						statsUrl = matchStatsUrl(season, extId, String.format('%03d', match.match_num))
-						forcedUrl = true
-					}
-					if (statsUrl) {
-						def statsDoc = retriedGetDoc(statsUrl)
-						if (forcedUrl) {
-							def title = statsDoc.select('div.modal-scores-header h3.section-title').text()
-							if (title) {
-								match = findMatch(matches, title, nameProperty1, nameProperty2)
-								if (!match)
-									println "\nMatch '$title' cannot be found"
-							}
+					try {
+						def statsUrl = match.statsUrl
+						def forcedUrl = false
+						// ATP Web site strips in-match stats links for GS tournaments for one month (probably some legal issue with ITF), but stats are there, just links are stripped!
+						if (!statsUrl && season > 1991 && match.tournament_level == 'G') {
+							statsUrl = matchStatsUrl(season, extId, String.format('%03d', match.match_num))
+							forcedUrl = true
 						}
-						if (match)
-							setMatchStatsParams(match, statsDoc, prefix1, prefix2, nameProperty1, nameProperty2, progress)
+						if (statsUrl) {
+							def statsDoc = retriedGetDoc(statsUrl)
+							if (forcedUrl) {
+								def title = statsDoc.select('div.modal-scores-header h3.section-title').text()
+								if (title) {
+									match = findMatch(matches, title, nameProperty1, nameProperty2)
+									if (!match)
+										println "\nMatch '$title' cannot be found"
+								}
+							}
+							if (match)
+								setMatchStatsParams(match, statsDoc, prefix1, prefix2, nameProperty1, nameProperty2, progress)
+						}
+					}
+					catch (Exception ex) {
+						ex.printStackTrace()
 					}
 				}
 			}

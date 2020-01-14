@@ -2,7 +2,6 @@ package org.strangeforest.tcb.dataload
 
 import org.junit.jupiter.api.*
 import org.testcontainers.containers.*
-import org.testcontainers.utility.MountableFile
 
 import static org.junit.jupiter.api.MethodOrderer.*
 import static org.junit.jupiter.api.TestInstance.*

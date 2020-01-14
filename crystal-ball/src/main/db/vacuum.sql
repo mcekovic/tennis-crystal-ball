@@ -58,6 +58,7 @@ VACUUM FULL VERBOSE ANALYSE player_weeks_at_no1;
 
 VACUUM FULL VERBOSE ANALYSE player_tournament_event_result;
 VACUUM FULL VERBOSE ANALYSE player_titles;
+VACUUM FULL VERBOSE ANALYSE player_team_titles;
 VACUUM FULL VERBOSE ANALYSE player_season_goat_points;
 VACUUM FULL VERBOSE ANALYSE player_goat_points;
 VACUUM FULL VERBOSE ANALYSE player_surface_goat_points;

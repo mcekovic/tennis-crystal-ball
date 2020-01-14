@@ -112,6 +112,7 @@ public class PlayerProfileController extends PageController {
 		Integer bestSeason = playerService.getPlayerBestSeason(playerId);
 		BootgridTable<PlayerTournamentEvent> lastEvent = tournamentService.getPlayerTournamentEventsTable(playerId, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
 		Map<String, Integer> surfaceTitles = performanceService.getPlayerSurfaceTitles(playerId);
+		Map<String, Integer> teamTitles = performanceService.getPlayerTeamTitles(playerId);
 		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
 		ModelMap modelMap = new ModelMap();
@@ -126,6 +127,7 @@ public class PlayerProfileController extends PageController {
 		}
 		modelMap.addAttribute("performance", performance);
 		modelMap.addAttribute("surfaceTitles", surfaceTitles);
+		modelMap.addAttribute("teamTitles", teamTitles);
 		modelMap.addAttribute("playerH2H", playerH2H);
 		return new ModelAndView("playerProfileTab", modelMap);
 	}

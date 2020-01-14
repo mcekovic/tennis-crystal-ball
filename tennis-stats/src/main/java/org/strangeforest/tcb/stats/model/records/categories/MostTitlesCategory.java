@@ -1,10 +1,15 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class MostTitlesCategory extends TournamentResultsCategory {
+
+	private static final String RESULTS_WIDTH = "120";
 
 	public MostTitlesCategory() {
 		super("Most Titles");
@@ -20,6 +25,8 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostTitles(ATP_500));
 		register(mostTitles(ATP_250));
 		register(mostTitles(SMALL_TOURNAMENTS));
+		register(mostTeamTitles(DAVIS_CUP));
+		register(mostTeamTitles(TEAM_CUPS));
 		register(mostTitles(HARD_TOURNAMENTS));
 		register(mostTitles(CLAY_TOURNAMENTS));
 		register(mostTitles(GRASS_TOURNAMENTS));
@@ -88,5 +95,21 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 
 	private static Record mostDifferentTournamentSlotTitles(RecordDomain domain) {
 		return mostDifferentTournamentSlotResults(domain.id + "SlotTitles", suffix(domain.name, " ") + "Slot Titles", domain, TITLES, RESULT_TITLE);
+	}
+
+	private static Record mostTeamTitles(RecordDomain domain) {
+		return new Record<>(
+			domain.id + "Titles", "Most " + domain.name + " Titles",
+			/* language=SQL */
+			"SELECT player_id, count(DISTINCT e.season) AS value, max(e.date) AS last_date, count(m.p_matches) AS matches_won\n" +
+			"FROM player_match_for_stats_v m\n" +
+			"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+			"INNER JOIN team_tournament_event_winner tw ON tw.season = e.season AND tw.level = e.level AND tw.winner_id = m.player_country_id\n" +
+			"WHERE m." + domain.condition + "\n" +
+         "GROUP BY player_id",
+			"r.value", "r.value DESC", "r.value DESC, r.last_date, r.matches_won DESC",
+			IntegerRecordDetail.class, null,
+			List.of(new RecordColumn("value", "numeric", null, RESULTS_WIDTH, "right", domain.name))
+		);
 	}
 }

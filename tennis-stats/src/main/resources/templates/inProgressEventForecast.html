@@ -285,7 +285,7 @@
 							<td colspan="2" class="hidden-xs"></td>
 							</th:block>
 							<td th:if="${playerForecastStat.odd && showH2H}" rowspan="2" class="player-h2h">
-								<a th:href="@{/headToHead(playerId1=${playerForecast.id}, playerId2=${otherPlayer.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, indoor=${inProgressEvent.indoor}, round=${current ? forecast.maxResult : baseResult}, date=${#temporals.format(inProgressEvent.completed ? inProgressEvent.date : #temporals.createToday(), 'dd-MM-yyyy')}, tournamentId=${inProgressEvent.tournamentId})}" class="player-h2h" title="Show Head-to-Head Hypothetical Matchup">H<br/>2<br/>H</a>
+								<a th:href="@{/headToHead(playerId1=${playerForecast.id}, playerId2=${otherPlayer.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, indoor=${inProgressEvent.indoor}, round=${current ? forecast.maxResult : baseResult}, date=${#temporals.format(inProgressEvent.completed ? inProgressEvent.date : #temporals.createToday(), 'dd-MM-yyyy')}, tournamentId=${inProgressEvent.tournamentId}, tournamentEventId=${inProgressEvent.id})}" class="player-h2h" title="Show Head-to-Head Hypothetical Matchup">H<br/>2<br/>H</a>
 							</td>
 							<td th:unless="${showH2H}" class="player-noh2h"></td>
 							<td th:each="result : ${playersForecast.results}" th:with="probability=${playerForecast.getProbability(result)}, price=${priceFormat != null ? playerForecast.getPrice(result, priceFormat) : null}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${price != null ? 'Odds ' + price : _}">58.2%</td>

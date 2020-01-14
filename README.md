@@ -15,7 +15,7 @@
 
 - 'GOAT' List - Best players of Open Era ranked by 'GOAT' points with customizable weights (overall and by surface)
 - Player Profile - Player information, season summary, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics with charts, 'GOAT' points breakdown and records
-- Timelines - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, World Team Cup, Top Rankings and Surface timeline
+- Timelines - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, Team Cups, Top Rankings and Surface timeline
 - Head-to-Head - Head-to-head between two players with H2H matches, season summary, performance and statistics comparison, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on the Neural Network Match Prediction Algorithm
 - Heads-to-Heads - Heads-to-heads clusters among several players (i.e. among 'Big 4')
 - Greatest Rivalries - Explore greatest rivalries, overall or by season, tournament level, surface or round
@@ -36,7 +36,7 @@
 - Tournaments Events - Browse all Open Era tournament events, see tournament event draw, performance, statistics, historical winners and records
 - Tournament Forecasts - Tournament Event Forecasts for in-progress tournaments driven by Neural Network Match Prediction Algorithm
 - Records Book - Various match, tournament result and ranking records, famous and infamous (the best player that never...)
-- Live Scores - Live Scores via [Livescore.in](https://www.livescore.in)
+- Live Scores - Live Scores via [Enetscores](https://www.enetscores.com) by Enetpulse
 
 ### Technology
 

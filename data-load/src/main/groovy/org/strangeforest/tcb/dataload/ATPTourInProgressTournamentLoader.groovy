@@ -24,9 +24,9 @@ class ATPTourInProgressTournamentLoader extends BaseATPTourTournamentLoader {
 	boolean forceForecast
 
 	static final String LOAD_EVENT_SQL = //language=SQL
-		'{call load_in_progress_event(' +
+		'CALL load_in_progress_event(' +
 			':ext_tournament_id, :date, :name, :tournament_level, :surface, :indoor, :draw_type, :draw_size' +
-		')}'
+		')'
 
 	static final String FETCH_EVENT_HASH_SQL = //language=SQL
 		'SELECT matches_hash FROM in_progress_event\n' +
@@ -34,14 +34,14 @@ class ATPTourInProgressTournamentLoader extends BaseATPTourTournamentLoader {
 		'WHERE ext_tournament_id = :extId'
 
 	static final String LOAD_MATCH_SQL = //language=SQL
-		'{call load_in_progress_match(' +
+		'CALL load_in_progress_match(' +
 			':ext_tournament_id, :match_num, :prev_match_num1, :prev_match_num2, :date, :surface, :indoor, :round, :best_of, ' +
 			':player1_name, :player1_country_id, :player1_seed, :player1_entry, ' +
 			':player2_name, :player2_country_id, :player2_seed, :player2_entry, ' +
 			':winner, :score, :outcome, :p1_sets, :p2_sets, :p1_games, :p2_games, :p1_tbs, :p2_tbs, :p1_set_games, :p2_set_games, :p1_set_tb_pt, :p2_set_tb_pt, :minutes, ' +
 			':p1_ace, :p1_df, :p1_sv_pt, :p1_1st_in, :p1_1st_won, :p1_2nd_won, :p1_sv_gms, :p1_bp_sv, :p1_bp_fc, ' +
 			':p2_ace, :p2_df, :p2_sv_pt, :p2_1st_in, :p2_1st_won, :p2_2nd_won, :p2_sv_gms, :p2_bp_sv, :p2_bp_fc' +
-		')}'
+		')'
 
 	static final String UPDATE_EVENT_SQL = //language=SQL
 		'UPDATE in_progress_event SET matches_hash = :matchesHash, court_speed = :courtSpeed\n' +
@@ -69,9 +69,9 @@ class ATPTourInProgressTournamentLoader extends BaseATPTourTournamentLoader {
 		'WHERE in_progress_match_id = :in_progress_match_id'
 
 	static final String LOAD_PLAYER_RESULT_SQL = //language=SQL
-		'{call load_player_in_progress_result(' +
+		'CALL load_player_in_progress_result(' +
 			':in_progress_event_id, :player_id, :base_result, :result, :probability, :avg_draw_probability::REAL, :no_draw_probability::REAL' +
-		')}'
+		')'
 
 	static final String DELETE_PLAYER_PROGRESS_RESULTS_SQL = //language=SQL
 		'DELETE FROM player_in_progress_result\n' +

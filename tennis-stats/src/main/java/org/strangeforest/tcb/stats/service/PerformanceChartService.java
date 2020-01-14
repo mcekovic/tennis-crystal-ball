@@ -14,6 +14,7 @@ import com.google.common.collect.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class PerformanceChartService {
@@ -22,7 +23,7 @@ public class PerformanceChartService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	public enum PerformanceChartType {
-		WON_LOST_PCT("Winning %", "CASE WHEN %1$s_won + %1$s_lost > 0 THEN %1$s_won::REAL / (%1$s_won + %1$s_lost) ELSE NULL END"),
+		WON_LOST_PCT("Winning %", "CASE WHEN %1$s_won + %1$s_lost > 0 THEN %1$s_won::REAL / (%1$s_won + %1$s_lost) END"),
 		WON("Won", "%1$s_won"),
 		LOST("Lost", "%1$s_lost"),
 		PLAYED("Played", "%1$s_won + %1$s_lost");
@@ -118,12 +119,12 @@ public class PerformanceChartService {
 
 	private static Number getValue(ResultSet rs, PerformanceChartType chartType) throws SQLException {
 		switch (chartType) {
-			case WON_LOST_PCT: return round(rs.getDouble("value"), 10000.0);
-			default: return rs.getInt("value");
+			case WON_LOST_PCT: return round(getDouble(rs, "value"), 10000.0);
+			default: return getInteger(rs, "value");
 		}
 	}
 
-	private static double round(double value, double by) {
-		return Math.round(value * by) / by;
+	private static Double round(Double value, double by) {
+		return value != null ? Math.round(value * by) / by : null;
 	}
 }

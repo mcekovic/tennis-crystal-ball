@@ -8,6 +8,7 @@
 <!--/*@thymesVar id="surfaces" type="java.util.Map<String, String>"*/-->
 <!--/*@thymesVar id="performance" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <!--/*@thymesVar id="surfaceTitles" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
+<!--/*@thymesVar id="teamTitles" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="playerH2H" type="org.strangeforest.tcb.stats.model.core.WonDrawLost"*/-->
 <script type="text/javascript">
 	$(function() {
@@ -23,7 +24,7 @@
 	});
 </script>
 <style type="text/css">
-	a.player-title {
+	.player-title {
 		vertical-align: text-top;
 	}
 </style>
@@ -154,7 +155,15 @@
 				<th>Olympics</th>
 				<td><a class="label label-success player-title" th:text="${player.olympics}" th:href="@{/playerProfile(playerId=${player.id}, tab=events, level=O, result=W)}" title="Show Olympics titles">1</a> <i class="fa fa-trophy fa-b text-success"></i></td>
 			</tr>
-			<tr th:if="${player.titles > 0}"><td colspan="2">&nbsp;</td></tr>
+			<tr th:if="${teamTitles['D'] > 0}">
+				<th>Davis Cups</th>
+				<td><span class="label label-D player-title" th:text="${teamTitles['D']}">1</span> <i class="fa fa-trophy fa-b text-danger2"></i></td>
+			</tr>
+			<tr th:if="${teamTitles['T'] > 0}">
+				<th>Team Cups</th>
+				<td><span class="label label-T player-title" th:text="${teamTitles['T']}">1</span> <i class="fa fa-trophy fa-b text-danger2"></i></td>
+			</tr>
+			<tr th:if="${player.titles > 0 || !teamTitles.empty}"><td colspan="2">&nbsp;</td></tr>
 			<!--/* Ranking */-->
 			<tr th:if="${player.currentRank > 0}">
 				<th>Current Rank</th>

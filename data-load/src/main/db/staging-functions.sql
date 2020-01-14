@@ -1,13 +1,13 @@
 -- stage_player
 
-CREATE OR REPLACE FUNCTION stage_player(
+CREATE OR REPLACE PROCEDURE stage_player(
 	p_player_id INTEGER,
 	p_first_name TEXT,
 	p_last_name TEXT,
 	p_hand TEXT,
 	p_dob DATE,
 	p_country TEXT
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
 	BEGIN
 		INSERT INTO staging_player
@@ -25,12 +25,12 @@ $$ LANGUAGE plpgsql;
 
 -- stage_ranking
 
-CREATE OR REPLACE FUNCTION stage_ranking(
+CREATE OR REPLACE PROCEDURE stage_ranking(
 	p_rank_date DATE,
 	p_rank INTEGER,
 	p_player_id INTEGER,
 	p_rank_points INTEGER
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
 	BEGIN
 		INSERT INTO staging_ranking
@@ -48,7 +48,7 @@ $$ LANGUAGE plpgsql;
 
 -- stage_match
 
-CREATE OR REPLACE FUNCTION stage_match(
+CREATE OR REPLACE PROCEDURE stage_match(
 	p_tourney_id TEXT,
 	p_tourney_name TEXT,
 	p_surface TEXT,
@@ -98,7 +98,7 @@ CREATE OR REPLACE FUNCTION stage_match(
 	p_l_SvGms INTEGER,
 	p_l_bpSaved INTEGER,
 	p_l_bpFaced INTEGER
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
 	BEGIN
 		INSERT INTO staging_match

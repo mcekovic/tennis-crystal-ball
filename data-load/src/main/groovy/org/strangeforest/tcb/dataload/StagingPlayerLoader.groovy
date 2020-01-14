@@ -13,7 +13,7 @@ class StagingPlayerLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call stage_player(:player_id, :first_name, :last_name, :hand, :dob, :country)}'
+		'CALL stage_player(:player_id, :first_name, :last_name, :hand, :dob, :country)'
 	}
 
 	int batchSize() { 500 }

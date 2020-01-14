@@ -58,14 +58,14 @@ $$ LANGUAGE plpgsql;
 
 -- load_player
 
-CREATE OR REPLACE FUNCTION load_player(
+CREATE OR REPLACE PROCEDURE load_player(
 	p_ext_player_id INTEGER,
 	p_first_name TEXT,
 	p_last_name TEXT,
 	p_dob DATE,
 	p_country_id TEXT,
 	p_hand TEXT
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_player_id INTEGER;
 BEGIN
@@ -115,12 +115,12 @@ $$ LANGUAGE plpgsql;
 
 -- load_ranking
 
-CREATE OR REPLACE FUNCTION load_ranking(
+CREATE OR REPLACE PROCEDURE load_ranking(
 	p_rank_date DATE,
 	p_ext_player_id INTEGER,
 	p_rank INTEGER,
 	p_rank_points INTEGER
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_player_id INTEGER;
 BEGIN
@@ -140,12 +140,12 @@ $$ LANGUAGE plpgsql;
 
 -- load_ranking
 
-CREATE OR REPLACE FUNCTION load_ranking(
+CREATE OR REPLACE PROCEDURE load_ranking(
 	p_rank_date DATE,
 	p_player_name TEXT,
 	p_rank INTEGER,
 	p_rank_points INTEGER
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_player_id INTEGER;
 BEGIN
@@ -282,13 +282,13 @@ $$ LANGUAGE plpgsql;
 
 -- merge_player
 
-CREATE OR REPLACE FUNCTION merge_player(
+CREATE OR REPLACE PROCEDURE merge_player(
 	p_player_id INTEGER,
 	p_country_id TEXT,
 	p_name TEXT,
 	p_height SMALLINT,
 	p_hand TEXT
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
 	IF p_country_id IS NOT NULL THEN
 		UPDATE player
@@ -316,7 +316,7 @@ $$ LANGUAGE plpgsql;
 
 -- load_match
 
-CREATE OR REPLACE FUNCTION load_match(
+CREATE OR REPLACE PROCEDURE load_match(
 	p_ext_tournament_id TEXT,
 	p_season SMALLINT,
 	p_tournament_date DATE,
@@ -385,7 +385,7 @@ CREATE OR REPLACE FUNCTION load_match(
 	p_l_sv_gms SMALLINT,
 	p_l_bp_sv SMALLINT,
 	p_l_bp_fc SMALLINT
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_tournament_event_id INTEGER;
 	l_winner_id INTEGER;
@@ -417,8 +417,8 @@ BEGIN
 	END IF;
 
 	-- merge players
-	PERFORM merge_player(l_winner_id, p_winner_country_id, p_winner_name, p_winner_height, p_winner_hand);
-	PERFORM merge_player(l_loser_id, p_loser_country_id, p_loser_name, p_loser_height, p_loser_hand);
+	CALL merge_player(l_winner_id, p_winner_country_id, p_winner_name, p_winner_height, p_winner_hand);
+	CALL merge_player(l_loser_id, p_loser_country_id, p_loser_name, p_loser_height, p_loser_hand);
 
 	-- add data if missing
 	IF p_winner_rank IS NULL OR p_winner_rank_points IS NULL THEN
@@ -519,7 +519,7 @@ $$ LANGUAGE plpgsql;
 
 -- load_in_progress_event
 
-CREATE OR REPLACE FUNCTION load_in_progress_event(
+CREATE OR REPLACE PROCEDURE load_in_progress_event(
 	p_ext_tournament_id TEXT,
 	p_date DATE,
 	p_name TEXT,
@@ -528,7 +528,7 @@ CREATE OR REPLACE FUNCTION load_in_progress_event(
 	p_indoor BOOLEAN,
 	p_draw_type TEXT,
 	p_draw_size SMALLINT
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_tournament_id INTEGER;
 	l_in_progress_event_id INTEGER;
@@ -592,7 +592,7 @@ $$ LANGUAGE plpgsql;
 
 -- load_in_progress_match
 
-CREATE OR REPLACE FUNCTION load_in_progress_match(
+CREATE OR REPLACE PROCEDURE load_in_progress_match(
 	p_ext_tournament_id TEXT,
 	p_match_num SMALLINT,
 	p_prev_match_num1 SMALLINT,
@@ -642,7 +642,7 @@ CREATE OR REPLACE FUNCTION load_in_progress_match(
 	p_p2_sv_gms SMALLINT,
 	p_p2_bp_sv SMALLINT,
 	p_p2_bp_fc SMALLINT
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_in_progress_event_id INTEGER;
 	l_player1_id INTEGER;
@@ -742,7 +742,7 @@ $$ LANGUAGE plpgsql;
 
 -- load_player_in_progress_result
 
-CREATE OR REPLACE FUNCTION load_player_in_progress_result(
+CREATE OR REPLACE PROCEDURE load_player_in_progress_result(
 	p_in_progress_event_id INTEGER,
 	p_player_id INTEGER,
 	p_base_result TEXT,
@@ -750,7 +750,7 @@ CREATE OR REPLACE FUNCTION load_player_in_progress_result(
 	p_probability REAL,
 	p_avg_draw_probability REAL,
 	p_no_draw_probability REAL
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
 	INSERT INTO player_in_progress_result
 	(in_progress_event_id, player_id, base_result, result, probability, avg_draw_probability, no_draw_probability)
@@ -788,12 +788,12 @@ $$ LANGUAGE plpgsql;
 
 -- merge_match_prices
 
-CREATE OR REPLACE FUNCTION merge_match_prices(
+CREATE OR REPLACE PROCEDURE merge_match_prices(
 	p_match_id BIGINT,
 	p_source TEXT,
 	p_winner_price REAL,
 	p_loser_price REAL
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
 	IF p_winner_price IS NOT NULL AND p_loser_price IS NOT NULL THEN
 		IF p_winner_price > 0.0 AND p_loser_price > 0.0 AND 1.0 / p_winner_price + 1.0 / p_loser_price > 1 THEN
@@ -813,7 +813,7 @@ $$ LANGUAGE plpgsql;
 
 -- load_match_prices
 
-CREATE OR REPLACE FUNCTION load_match_prices(
+CREATE OR REPLACE PROCEDURE load_match_prices(
 	p_season SMALLINT,
 	p_location TEXT,
 	p_tournament TEXT,
@@ -830,7 +830,7 @@ CREATE OR REPLACE FUNCTION load_match_prices(
 	p_LBL REAL,
 	p_PSW REAL,
 	p_PSL REAL
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_tournament_event_id INTEGER;
 	l_winner_ids INTEGER[];
@@ -869,15 +869,15 @@ BEGIN
 	SELECT match_id INTO l_match_id FROM match
 	WHERE tournament_event_id = l_tournament_event_id
 	AND (round = p_round::match_round OR (round IN ('R128', 'R64', 'R32', 'R16') AND p_round IS NULL))
-   AND winner_id = ANY(l_winner_ids)
-   AND loser_id = ANY(l_loser_ids);
+	AND winner_id = ANY(l_winner_ids)
+	AND loser_id = ANY(l_loser_ids);
 
 	-- merge match prices
 	IF l_match_id IS NOT NULL THEN
-		PERFORM merge_match_prices(l_match_id, 'B365', p_B365W, p_B365L);
-		PERFORM merge_match_prices(l_match_id, 'EX', p_EXW, p_EXL);
-		PERFORM merge_match_prices(l_match_id, 'LB', p_LBW, p_LBL);
-		PERFORM merge_match_prices(l_match_id, 'PS', p_PSW, p_PSL);
+		CALL merge_match_prices(l_match_id, 'B365', p_B365W, p_B365L);
+        CALL merge_match_prices(l_match_id, 'EX', p_EXW, p_EXL);
+        CALL merge_match_prices(l_match_id, 'LB', p_LBW, p_LBL);
+        CALL merge_match_prices(l_match_id, 'PS', p_PSW, p_PSL);
 	ELSE
 		RAISE WARNING 'Match between % and % at % (%) not found', p_winner, p_loser, p_tournament, p_location;
 	END IF;
@@ -887,12 +887,12 @@ $$ LANGUAGE plpgsql;
 
 -- create_player
 
-CREATE OR REPLACE FUNCTION create_player(
+CREATE OR REPLACE PROCEDURE create_player(
 	p_first_name TEXT,
 	p_last_name TEXT,
 	p_dob DATE,
 	p_country_id TEXT
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
 	IF (NOT EXISTS(SELECT player_id FROM player WHERE first_name = p_first_name AND last_name = p_last_name AND (dob = p_dob OR (dob IS NULL AND p_dob IS NULL)))) THEN
 		INSERT INTO player
@@ -906,10 +906,10 @@ $$ LANGUAGE plpgsql;
 
 -- fix_rank_points
 
-CREATE OR REPLACE FUNCTION fix_rank_points(
+CREATE OR REPLACE PROCEDURE fix_rank_points(
   p_date DATE,
 	p_from_date DATE
-) RETURNS VOID AS $$
+) AS $$
 BEGIN
   WITH prev_rank_points AS (
       SELECT player_id, rank_points
@@ -925,13 +925,13 @@ $$ LANGUAGE plpgsql;
 
 -- set_tournament_map_properties
 
-CREATE OR REPLACE FUNCTION set_tournament_map_properties(
+CREATE OR REPLACE PROCEDURE set_tournament_map_properties(
 	p_ext_tournament_id TEXT,
 	p_from_season INTEGER,
 	p_to_season INTEGER,
 	p_seasons INTEGER[],
 	p_map_properties JSON
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_tournament_id INTEGER;
 BEGIN
@@ -954,12 +954,12 @@ $$ LANGUAGE plpgsql;
 
 -- set_tournament_event_surface
 
-CREATE OR REPLACE FUNCTION set_tournament_event_surface(
+CREATE OR REPLACE PROCEDURE set_tournament_event_surface(
 	p_season INTEGER,
 	p_name TEXT,
 	p_surface TEXT,
 	p_indoor BOOLEAN
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_tournament_event_id INTEGER;
 BEGIN
@@ -987,10 +987,10 @@ $$ LANGUAGE plpgsql;
 
 -- link_tournament
 
-CREATE OR REPLACE FUNCTION link_tournament(
+CREATE OR REPLACE PROCEDURE link_tournament(
 	p_ext_tournament_id TEXT,
 	p_to_ext_tournament_id TEXT
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_tournament_id INTEGER;
 	l_to_tournament_id INTEGER;
@@ -1017,11 +1017,11 @@ $$ LANGUAGE plpgsql;
 
 -- set_player_matches_country
 
-CREATE OR REPLACE FUNCTION set_player_matches_country(
+CREATE OR REPLACE PROCEDURE set_player_matches_country(
 	p_name TEXT,
 	p_country_id TEXT,
 	p_to_date DATE
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_player_id INTEGER;
 	l_to_date DATE;
@@ -1044,11 +1044,11 @@ $$ LANGUAGE plpgsql;
 
 -- split_careers
 
-CREATE OR REPLACE FUNCTION split_careers(
+CREATE OR REPLACE PROCEDURE split_careers(
 	p_name1 TEXT,
 	p_name2 TEXT,
 	p_split_date DATE
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
 	l_player1_id NUMERIC;
 	l_player2_id NUMERIC;
@@ -1070,10 +1070,10 @@ $$ LANGUAGE plpgsql;
 
 -- merge_careers
 
-CREATE OR REPLACE FUNCTION merge_careers(
+CREATE OR REPLACE PROCEDURE merge_careers(
     p_name1 TEXT,
     p_name2 TEXT
-) RETURNS VOID AS $$
+) AS $$
 DECLARE
     l_player1_id NUMERIC;
     l_player2_id NUMERIC;

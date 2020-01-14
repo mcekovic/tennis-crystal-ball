@@ -14,6 +14,8 @@ public class GameOutcome extends DiffOutcome {
 
 	public GameOutcome(double pServe, GameRules rules) {
 		super(rules.getPoints(), rules.getPointsDiff());
+		if (pServe < 0.0 || pServe > 1.0)
+			throw new IllegalArgumentException("Invalid pServe: " + pServe);
 		this.pServe = pServe;
 	}
 

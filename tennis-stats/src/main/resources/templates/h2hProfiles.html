@@ -15,6 +15,8 @@
 <!--/*@thymesVar id="performance2" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <!--/*@thymesVar id="surfaceTitles1" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="surfaceTitles2" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
+<!--/*@thymesVar id="teamTitles1" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
+<!--/*@thymesVar id="teamTitles2" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="playerH2H1" type="org.strangeforest.tcb.stats.model.core.WonDrawLost"*/-->
 <!--/*@thymesVar id="playerH2H2" type="org.strangeforest.tcb.stats.model.core.WonDrawLost"*/-->
 <!--/*@thymesVar id="h2h" type="org.strangeforest.tcb.stats.model.H2H"*/-->
@@ -40,7 +42,7 @@
 		.progress-bar > a {
 			color: white;
 		}
-		a.player-title {
+		.player-title {
 			vertical-align: text-top;
 		}
 		th.performance-bar {
@@ -258,7 +260,33 @@
 			</div>
 		</td>
 	</tr>
-	<tr th:if="${player1.titles > 0 || player2.titles > 0}"><td colspan="5">&nbsp;</td></tr>
+	<tr th:if="${teamTitles1['D'] > 0 || teamTitles2['D'] > 0}">
+		<td class="text-right" colspan="2">
+			<div th:if="${teamTitles1['D'] > 0}">
+				<i class="fa fa-trophy fa-b text-danger2"></i> <span class="label label-D player-title" th:text="${teamTitles1['D']}">1</span>
+			</div>
+		</td>
+		<th class="text-center">Davis Cups</th>
+		<td class="text-left" colspan="2">
+			<div th:if="${teamTitles2['D'] > 0}">
+				<a class="label label-D player-title" th:text="${teamTitles2['D']}">1</a> <i class="fa fa-trophy fa-b text-danger2"></i>
+			</div>
+		</td>
+	</tr>
+	<tr th:if="${teamTitles1['T'] > 0 || teamTitles2['T'] > 0}">
+		<td class="text-right" colspan="2">
+			<div th:if="${teamTitles1['T'] > 0}">
+				<i class="fa fa-trophy fa-b text-danger2"></i> <span class="label label-T player-title" th:text="${teamTitles1['T']}">1</span>
+			</div>
+		</td>
+		<th class="text-center">Team Cups</th>
+		<td class="text-left" colspan="2">
+			<div th:if="${teamTitles2['T'] > 0}">
+				<a class="label label-T player-title" th:text="${teamTitles2['T']}">1</a> <i class="fa fa-trophy fa-b text-danger2"></i>
+			</div>
+		</td>
+	</tr>
+	<tr th:if="${player1.titles > 0 || player2.titles > 0 || !teamTitles1.empty || !teamTitles2.empty}"><td colspan="5">&nbsp;</td></tr>
 	<!--/* Ranking */-->
 	<tr th:if="${player1.currentRank > 0 || player2.currentRank > 0}">
 		<td class="text-right" colspan="2" th:text="${player1.currentRank > 0 ? player1.currentRank + ' (' + player1.currentRankPoints + ')' : _}">10 (3000)</td>

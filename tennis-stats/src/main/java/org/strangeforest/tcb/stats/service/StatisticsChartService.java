@@ -17,6 +17,7 @@ import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 import static org.strangeforest.tcb.util.EnumUtil.*;
 
 @Service
@@ -75,18 +76,18 @@ public class StatisticsChartService {
 	private static Object getStatsValue(ResultSet rs, StatsCategory category) throws SQLException {
 		Type type = category.getType();
 		switch (type) {
-			case COUNT: return rs.getInt("value");
-			case PERCENTAGE: return round(rs.getDouble("value"), 10000.0);
-			case RATIO1: return round(rs.getDouble("value"), 10.0);
-			case RATIO2: return round(rs.getDouble("value"), 100.0);
-			case RATIO3: return round(rs.getDouble("value"), 1000.0);
-			case TIME: return rs.getInt("value");
+			case COUNT: return getInteger(rs, "value");
+			case PERCENTAGE: return round(getDouble(rs, "value"), 10000.0);
+			case RATIO1: return round(getDouble(rs, "value"), 10.0);
+			case RATIO2: return round(getDouble(rs, "value"), 100.0);
+			case RATIO3: return round(getDouble(rs, "value"), 1000.0);
+			case TIME: return getInteger(rs, "value");
 			default: throw unknownEnum(type);
 		}
 	}
 
-	private static double round(double value, double by) {
-		return Math.round(value * by) / by;
+	private static Double round(Double value, double by) {
+		return value != null ? Math.round(value * by) / by : null;
 	}
 
 	private static void addColumns(DataTable table, IndexedPlayers players, StatsCategory category, String surface, boolean byAge) {

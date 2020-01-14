@@ -13,7 +13,7 @@ class StagingRankingLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call stage_ranking(:rank_date, :rank, :player_id, :rank_points)}'
+		'CALL stage_ranking(:rank_date, :rank, :player_id, :rank_points)'
 	}
 
 	int batchSize() { 500 }

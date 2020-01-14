@@ -33,7 +33,7 @@ class ATPTourRankingsLoader {
 		}
 		if (paramsBatch) {
 			withTx sql, { Sql s ->
-				s.withBatch('{call load_ranking(:rank_date, :player_name, :rank, :rank_points)}') { ps ->
+				s.withBatch('CALL load_ranking(:rank_date, :player_name, :rank, :rank_points)') { ps ->
 					paramsBatch.each { params ->
 						ps.addBatch(params)
 					}

@@ -110,40 +110,36 @@ VALUES
    ('Yaraslav Shyla', 'Yaraslau Shyla'),
    ('Yuya Kibi', 'Yuuya Kibi');
 
-DO $$ BEGIN
-
-PERFORM create_player('Alan', 'Koth', NULL, '???');
-PERFORM create_player('Ashley', 'Hewitt', NULL, 'GBR');
-PERFORM create_player('B', 'Kin', NULL, 'KOR');
-PERFORM create_player('Bruno', 'Chimenti', DATE '1942-01-02', 'ITA');
-PERFORM create_player('C', 'Diederichs', NULL, 'RSA');
-PERFORM create_player('Cecil', 'Pedlow', NULL, 'IRL');
-PERFORM create_player('Colin', 'Rees', NULL, 'RSA');
-PERFORM create_player('Cole', 'Gromley', '1999-12-26', 'USA');
-PERFORM create_player('Dennis', 'Foley', NULL, 'IRL');
-PERFORM create_player('Don', 'Bitler', NULL, 'USA');
-PERFORM create_player('Douglas', 'Irvine', NULL, 'ZIM');
-PERFORM create_player('Francesco', 'Forti', DATE '1999-07-26', 'ITA');
-PERFORM create_player('Giuseppe', 'Belli', DATE '1951-01-08', 'ITA');
-PERFORM create_player('Harry', 'Barniville', NULL, 'IRL');
-PERFORM create_player('Ivan', 'Mikysa', NULL, 'USA');
-PERFORM create_player('Jack', 'Lowe', NULL, 'USA');
-PERFORM create_player('Jim', 'Oescher', NULL, 'USA');
-PERFORM create_player('Jiri', 'Medonos', NULL, 'CZE');
-PERFORM create_player('Lewis', 'Sylvester', DATE '1941-11-04', 'RSA');
-PERFORM create_player('Lornie', 'Kuhle', NULL, 'RSA');
-PERFORM create_player('Louis', 'Pretorius', NULL, 'RSA');
-PERFORM create_player('Mauro', 'Rezzonico', DATE '1944-12-23', 'ITA');
-PERFORM create_player('Milan', 'Vopicka', NULL, 'CZE');
-PERFORM create_player('Norman', 'Schellenger', NULL, 'USA');
-PERFORM create_player('Omar', 'Alawadhi', DATE '1982-01-16', 'UAE');
-PERFORM create_player('Peter', 'Rigg', DATE '1948-10-25', 'AUS');
-PERFORM create_player('Philip', 'Holton', NULL, 'AUS');
-PERFORM create_player('Ryoichi', 'Miyake', NULL, 'JPN');
-PERFORM create_player('V', 'Rudj', NULL, 'RUS');
-PERFORM create_player('William', 'Lloyd', DATE '1949-05-07', 'AUS');
-PERFORM create_player('Win', 'Irwin', NULL, 'USA');
-
-END $$;
+CALL create_player('Alan', 'Koth', NULL, '???');
+CALL create_player('Ashley', 'Hewitt', NULL, 'GBR');
+CALL create_player('B', 'Kin', NULL, 'KOR');
+CALL create_player('Bruno', 'Chimenti', DATE '1942-01-02', 'ITA');
+CALL create_player('C', 'Diederichs', NULL, 'RSA');
+CALL create_player('Cecil', 'Pedlow', NULL, 'IRL');
+CALL create_player('Colin', 'Rees', NULL, 'RSA');
+CALL create_player('Cole', 'Gromley', '1999-12-26', 'USA');
+CALL create_player('Dennis', 'Foley', NULL, 'IRL');
+CALL create_player('Don', 'Bitler', NULL, 'USA');
+CALL create_player('Douglas', 'Irvine', NULL, 'ZIM');
+CALL create_player('Francesco', 'Forti', DATE '1999-07-26', 'ITA');
+CALL create_player('Giuseppe', 'Belli', DATE '1951-01-08', 'ITA');
+CALL create_player('Harry', 'Barniville', NULL, 'IRL');
+CALL create_player('Ivan', 'Mikysa', NULL, 'USA');
+CALL create_player('Jack', 'Lowe', NULL, 'USA');
+CALL create_player('Jim', 'Oescher', NULL, 'USA');
+CALL create_player('Jiri', 'Medonos', NULL, 'CZE');
+CALL create_player('Lewis', 'Sylvester', DATE '1941-11-04', 'RSA');
+CALL create_player('Lornie', 'Kuhle', NULL, 'RSA');
+CALL create_player('Louis', 'Pretorius', NULL, 'RSA');
+CALL create_player('Mauro', 'Rezzonico', DATE '1944-12-23', 'ITA');
+CALL create_player('Milan', 'Vopicka', NULL, 'CZE');
+CALL create_player('Norman', 'Schellenger', NULL, 'USA');
+CALL create_player('Omar', 'Alawadhi', DATE '1982-01-16', 'UAE');
+CALL create_player('Peter', 'Rigg', DATE '1948-10-25', 'AUS');
+CALL create_player('Philip', 'Holton', NULL, 'AUS');
+CALL create_player('Ryoichi', 'Miyake', NULL, 'JPN');
+CALL create_player('V', 'Rudj', NULL, 'RUS');
+CALL create_player('William', 'Lloyd', DATE '1949-05-07', 'AUS');
+CALL create_player('Win', 'Irwin', NULL, 'USA');
 
 COMMIT;

@@ -26,7 +26,7 @@ public class DataService {
 	@Autowired private ApplicationContext appContext;
 	@Autowired private JdbcTemplate jdbcTemplate;
 	@Autowired private CacheManager cacheManager;
-	@Autowired(required = false)  private CacheMetricsRegistrar cacheMetricsRegistrar;
+	@Autowired(required = false) private CacheMetricsRegistrar cacheMetricsRegistrar;
 	@Autowired private MatchPredictionService matchPredictionService;
 
 	private static final String DB_SERVER_VERSION_QUERY = "SELECT version()";
