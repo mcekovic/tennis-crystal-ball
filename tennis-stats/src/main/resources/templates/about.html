@@ -53,7 +53,7 @@
 			<h1 style="margin-top: 0; margin-bottom: 20px"><a href="/" title="Home"><img src="/images/uts-logo.png" class="uts-logo" alt="UTS"/> <th:block th:include="fragments/promotion :: logo"/></a></h1>
 			<h4 class="text-nowrap"><i class="fa fa-home"></i> Introduction</h4>
 			<p>
-				<th:block th:include="fragments/promotion :: logo"/> aims to become the ultimate tennis statistics destination for the die-hard tennis fans.
+				<img src="/favicon.ico" width="16" height="16" alt="UTS" style="vertical-align: text-bottom"/> <th:block th:include="fragments/promotion :: logo"/> aims to become the ultimate tennis statistics destination for the die-hard tennis fans.
 				It tries to provide all kind of tennis statistics in the <a href="https://en.wikipedia.org/wiki/History_of_tennis#Open_Era" target="_blank" rel="noopener noreferrer" class="external">Open Era</a> men's tennis with simple yet effective web GUI.
 				If you have any suggestions for additional features or tweaks to the current features, please e-mail me at <a href="mailto:mcekovic@gmail.com" target="_blank" rel="noopener noreferrer">mcekovic@gmail.com</a> or log a <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank" rel="noopener noreferrer" class="external">GitHub issue</a>.
 			</p>
@@ -69,11 +69,12 @@
 				<li><a href="/greatestMatches"><i class="fa fa-signing"></i> Greatest Matches</a> - Explore greatest matches ranked by special Match Greatness Score formula</li>
 				<li><a href="/rankingsTable"><i class="fa fa-list-ol"></i> Ranking Tables</a> - Player weekly ranking tables</li>
 				<li><a href="/eloRatings"><i class="fa fa-sort-amount-desc"></i> Elo Ratings</a> - Player weekly <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" rel="noopener noreferrer" class="external">Elo rating</a> tables (overall, by surface, outdoor or indoor, set or game) using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">Elo rating formula</a></li>
-				<li><a href="/rankingsChart"><i class="fa fa-bar-chart"></i> Ranking Charts</a> - Player ranking and ranking point charts (including Elo rating), compare players by constructing custom charts</li>
+				<li><a href="/rankingsChart"><i class="fa fa-area-chart"></i> Ranking Charts</a> - Player ranking and ranking point charts (including Elo rating), compare players by constructing custom charts</li>
 				<li><a href="/peakEloRatings"><i class="fa fa-tachometer"></i> Peak Elo Ratings</a><sup class="cool-feature"></sup> - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie-break)</li>
 				<li><a href="/topPerformers"><i class="fa fa-tasks"></i> Top Performers</a> - Find top performers in both performance and pressure situations categories</li>
 				<li><a href="/performanceChart"><i class="fa fa-bar-chart"></i> Performance Charts</a> - Performance charts for various performance categories, filtered by seasons</li>
-				<li><a href="/resultsChart"><i class="fa fa-trophy"></i> Titles and Results Charts</a><sup class="new-feature"></sup> - Titles and results charts, filtered by level, surface and seasons</li>
+				<li><a href="/titlesAndResults"><i class="fa fa-trophy"></i> Titles and Results</a><sup class="new-feature"></sup> - Titles and other results, filtered by various filters</li>
+				<li><a href="/resultsChart"><i class="fa fa-area-chart"></i> Titles and Results Charts</a><sup class="new-feature"></sup> - Titles and results charts, filtered by level, surface and seasons</li>
 				<li><a href="/statsLeaders"><span class="glyphicon glyphicon-stats"></span> Statistics Leaders</a> - Find statistics leaders in various statistical categories (100+), including dominance and break points ratios</li>
 				<li><a href="/topMatchStats"><i class="fa fa-thermometer"></i> Top Match Stats</a><sup class="new-feature"></sup> - Top single match statistics figures filtered by various filters</li>
 				<li><a href="/statsChart"><i class="fa fa-bar-chart"></i> Statistics Charts</a> - Statistics charts for various statistical categories, filtered by seasons and surface</li>
@@ -120,7 +121,7 @@
 					<li>
 						Separation of ATP 500/Championship Series vs ATP 250/World Series for seasons 1990 and onwards is as per ATP.
 						For seasons before 1990, 11 tournaments per season with the strongest participation based on player ranks are considered ATP 500 tournaments.
-						For seasons 1968 and 1969, in order to compensate lack of Tour Finals and Masters tournaments, 25 strongest tournaments per season are considered ATP 500 tournaments.
+						For seasons 1968 and 1969, in order to compensate for the lack of Tour Finals and Masters tournaments, 25 strongest tournaments per season are considered ATP 500 tournaments.
 						In addition, <a href="https://en.wikipedia.org/wiki/Pepsi_Grand_Slam" target="_blank" rel="noopener noreferrer" class="external">Pepsi Grand Slam</a> (1976-1981), <a href="https://en.wikipedia.org/wiki/WCT_Challenge_Cup" target="_blank" rel="noopener noreferrer" class="external">WCT Challenge Cup</a> (1976-1980) and <a href="https://en.wikipedia.org/wiki/WCT_Finals#Seasonal_finals_events" target="_blank" rel="noopener noreferrer" class="external">Seasonal WCT Finals</a> (1972, 1982) are also considered as ATP 500.
 					</li>
 				</ul>
@@ -146,7 +147,7 @@
 			</p>
 			<h4 id="goatPoints" class="text-nowrap" style="margin-top: 25px"><i class="fa fa-flag"></i> 'GOAT' Points Formula</h4>
 			<p>
-				A lot of content on this site is based on 'GOAT' Points formula, which is a formula to quantify tennis player achievements throughout their careers and to compare players from different eras.
+				A lot of content on this website is based on 'GOAT' Points formula, which is a formula to quantify tennis player achievements throughout their careers and to compare players from different eras.
 				'GOAT' Points formula is based on assigning 'GOAT' points to players for tournament results, ATP and Elo rankings and various important achievements.
 				For a visual description of the 'GOAT' Points formula please click:
 			</p>

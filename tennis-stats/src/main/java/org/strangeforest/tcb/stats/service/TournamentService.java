@@ -316,7 +316,7 @@ public class TournamentService {
 		List<String> levelList = sortKeysByValuesDesc(levels, comparing(TournamentLevel::decode));
 		List<String> surfaceList = sortKeysByValuesDesc(surfaces, comparing(Surface::decode));
 		Map<String, Integer> avgSpeeds = speeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
-			(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().getAsDouble())
+			(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().orElseThrow())
 		));
 		int eventCount = seasons.size();
 		String formattedSeasons = formatSeasons(seasons);
@@ -628,7 +628,7 @@ public class TournamentService {
 					throw new SQLException(ex);
 				}
 				Map<String, Integer> avgSpeeds = speeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
-					(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().getAsDouble())
+					(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().orElseThrow())
 				));
 				return new PlayerTournament(
 					rs.getInt("tournament_id"),

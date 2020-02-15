@@ -39,7 +39,7 @@ class ATPTourRankingsLoader {
 					}
 				}
 			}
-			println "$rankDate: $paramsBatch.size rankings loaded in $stopwatch"
+			println "$rankDate: ${paramsBatch.size()} rankings loaded in $stopwatch"
 		}
 		else
 			println "No rankings found for date $rankDate"

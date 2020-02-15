@@ -1,0 +1,6 @@
+src
+lib
+build
+!build/distributions/*.tar
+classes
+out

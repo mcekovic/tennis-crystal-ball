@@ -15,10 +15,10 @@ import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 
 	static final String SELECT_SEASON_EVENT_EXT_IDS_SQL = //language=SQL
-		'SELECT ext_tournament_id FROM tournament_event\n' +
-		'INNER JOIN tournament_mapping USING (tournament_id)\n' +
-		'WHERE season = :season\n' +
-		'ORDER BY ext_tournament_id'
+		'SELECT m.ext_tournament_id FROM tournament_event e\n' +
+		'INNER JOIN tournament_mapping m ON m.tournament_id IN (e.tournament_id, e.original_tournament_id)\n' +
+		'WHERE e.season = :season\n' +
+		'ORDER BY m.ext_tournament_id'
 
 	static final String DELETE_TOURNAMENT_EVENT_SQL = //language=SQL
 		'DELETE FROM tournament_event\n' +
@@ -48,7 +48,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 				}
 			}
 		}
-		println "$matches.size matches loaded in $stopwatch"
+		println "${matches.size()} matches loaded in $stopwatch"
 	}
 
 	def scrapeResults(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, Collection<String> skipRounds, overrideExtId, extId) {

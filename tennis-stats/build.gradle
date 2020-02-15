@@ -93,7 +93,7 @@ dependencies {
 	}
 	runtimeOnly files ('lib/GeoLite2-Country.zip')
 	implementation ("eu.bitwalker:UserAgentUtils:$userAgentUtilsVersion")
-	runtimeOnly ("io.micrometer:micrometer-registry-prometheus:$micrometerPrometeusVersion")
+	runtimeOnly ("io.micrometer:micrometer-registry-prometheus:$micrometerPrometheusVersion")
 
 	testImplementation ('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.apache.logging.log4j'

@@ -16,7 +16,7 @@
 		var $topPerformersTable = $("#topPerformersTable");
 		var device = detectDevice();
 		setBootgridColumnsVisible($topPerformersTable, ["won", "lost", "played"], deviceGreaterOrEqual(device, "sm"));
-		setBootgridColumnsWidths($topPerformersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
+		setBootgridColumnsWidths($topPerformersTable, ["name"], [device === "xs" ? 200 : (device === "sm" ? 250 : (device === "md" ? 300 : 400))]);
 		$topPerformersTable.bootgrid({
 			ajax: true,
 			ajaxSettings: {
@@ -140,7 +140,7 @@
 	}
 	function perfOpponentChanged() {
 		var opponent = $("#perfOpponent").val();
-		setPerfCategoriesVisible("topn-category", opponent != "NO_1" && !opponent.startsWith("TOP_"));
+		setPerfCategoriesVisible("topn-category", opponent !== "NO_1" && !opponent.startsWith("TOP_"));
 	}
 	function setPerfCategoriesVisible(cssClass, visible) {
 		var $category = $("#perfCategory");

@@ -13,7 +13,7 @@
 
 ## Features
 
-- 'GOAT' List - Best players of Open Era ranked by 'GOAT' points with customizable weights (overall and by surface)
+- 'GOAT' List - A.k.a. 'GOATometer' - Best players of Open Era ranked by 'GOAT' points with customizable weights (overall and by surface)
 - Player Profile - Player information, season summary, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics with charts, 'GOAT' points breakdown and records
 - Timelines - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, Team Cups, Top Rankings and Surface timeline
 - Head-to-Head - Head-to-head between two players with H2H matches, season summary, performance and statistics comparison, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on the Neural Network Match Prediction Algorithm
@@ -26,6 +26,7 @@
 - Peak Elo Ratings - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie-break)
 - Top Performers - Find top performers in both performance and pressure situations categories
 - Performance Charts - Performance charts for various performance categories, filtered by seasons
+- Titles and Results - Titles and other results, filtered by various filters</li>
 - Titles and Results Charts - Titles and results charts, filtered by level, surface and seasons
 - Statistics Leaders - Find statistics leaders in different statistical categories (100+), including dominance and break points ratios
 - Top Match Stats - Top single match statistics figures filtered by various filters

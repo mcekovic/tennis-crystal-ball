@@ -12,10 +12,12 @@ import org.springframework.transaction.annotation.*;
 
 import static eu.bitwalker.useragentutils.BrowserType.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.MethodOrderer.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = VisitorITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 @Transactional
+@TestMethodOrder(OrderAnnotation.class)
 class VisitorManagerIT {
 
 	@Autowired private VisitorManager manager;
@@ -26,11 +28,11 @@ class VisitorManagerIT {
 		manager.clearCache();
 	}
 
-	@Test
+	@Test @Order(1)
 	void firstVisitCreatesVisitor() {
 		String ipAddress = "178.148.80.189";
 
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getCountryId()).isEqualTo("SRB");
@@ -38,12 +40,12 @@ class VisitorManagerIT {
 		assertThat(visitor.getHits()).isEqualTo(1);
 	}
 
-	@Test
+	@Test @Order(2)
 	void secondVisitIncrementHitsButDoesNotSaveVisitor() {
 		String ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, WEB_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
 		assertThat(visitor.getCountryId()).isEqualTo("SRB");
 		assertThat(visitor.getHits()).isEqualTo(2);
 
@@ -53,13 +55,13 @@ class VisitorManagerIT {
 		assertThat(savedVisitor.getHits()).isEqualTo(1);
 	}
 
-	@Test
+	@Test @Order(3)
 	void thirdVisitIncrementHitsButAndSaveVisitor() {
 		String ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, WEB_BROWSER.name());
 		manager.visit(ipAddress, WEB_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
 		assertThat(visitor.getHits()).isEqualTo(3);
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
@@ -68,12 +70,12 @@ class VisitorManagerIT {
 		assertThat(savedVisitor.getHits()).isEqualTo(3);
 	}
 
-	@Test
+	@Test @Order(4)
 	void visitorsAreSavedOnExit() throws InterruptedException {
 		String ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, MOBILE_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress, MOBILE_BROWSER.name());
+		Visitor visitor = manager.visit(ipAddress, MOBILE_BROWSER.name()).visitor;
 		assertThat(visitor.getHits()).isEqualTo(2);
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);

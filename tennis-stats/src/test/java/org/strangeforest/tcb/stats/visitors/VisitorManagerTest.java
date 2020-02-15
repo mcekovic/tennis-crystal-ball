@@ -34,9 +34,9 @@ class VisitorManagerTest extends BaseVisitorManagerTest {
 		String ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
+		Visit visit = manager.visit(ipAddress, WEB_BROWSER.name());
 
-		assertThat(visitor.getHits()).isEqualTo(2);
+		assertThat(visit.visitor.getHits()).isEqualTo(2);
 
 		verifyNoMoreInteractions(repository);
 		verifyNoMoreInteractions(geoIPService);
@@ -49,9 +49,9 @@ class VisitorManagerTest extends BaseVisitorManagerTest {
 
 		visitAndVerifyFirstVisit(ipAddress);
 		manager.visit(ipAddress, WEB_BROWSER.name());
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
+		Visit visit = manager.visit(ipAddress, WEB_BROWSER.name());
 
-		assertThat(visitor.getHits()).isEqualTo(3);
+		assertThat(visit.visitor.getHits()).isEqualTo(3);
 
 		verify(repository).save(visitorCaptor.capture());
 		assertThat(visitorCaptor.getValue().getIpAddress()).isEqualTo(ipAddress);

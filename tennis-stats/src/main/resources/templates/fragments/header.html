@@ -84,7 +84,7 @@
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/rankingsTable' ? 'active' : _}"><a href="/rankingsTable"><i class="fa fa-list-ol fa-fw"></i> Rankings Table</a></li>
 							<li th:class="${path == '/eloRatings' ? 'active' : _}"><a href="/eloRatings"><i class="fa fa-sort-amount-desc fa-fw"></i> Elo Ratings</a></li>
-							<li th:class="${path == '/rankingsChart' ? 'active' : _}"><a href="/rankingsChart"><i class="fa fa-bar-chart fa-fw"></i> Rankings Chart</a></li>
+							<li th:class="${path == '/rankingsChart' ? 'active' : _}"><a href="/rankingsChart"><i class="fa fa-area-chart fa-fw"></i> Rankings Chart</a></li>
 							<li th:class="${path == '/peakEloRatings' ? 'active' : _}"><a href="/peakEloRatings"><i class="fa fa-tachometer fa-fw"></i> Peak Elo Ratings<sup class="cool-feature"></sup></a></li>
 						</ul>
 					</li>
@@ -93,7 +93,8 @@
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/topPerformers' ? 'active' : _}"><a href="/topPerformers"><i class="fa fa-tasks fa-fw"></i> Top Performers</a></li>
 							<li th:class="${path == '/performanceChart' ? 'active' : _}"><a href="/performanceChart"><i class="fa fa-bar-chart fa-fw"></i> Performance Chart</a></li>
-							<li th:class="${path == '/resultsChart' ? 'active' : _}"><a href="/resultsChart"><i class="fa fa-trophy fa-fw"></i> Titles and Results Chart<sup class="new-feature"></sup></a></li>
+							<li th:class="${path == '/titlesAndResults' ? 'active' : _}"><a href="/titlesAndResults"><i class="fa fa-trophy fa-fw"></i> Titles and Results<sup class="new-feature"></sup></a></li>
+							<li th:class="${path == '/resultsChart' ? 'active' : _}"><a href="/resultsChart"><i class="fa fa-area-chart fa-fw"></i> Titles and Results Chart<sup class="new-feature"></sup></a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/statsLeaders' || path == '/topMatchStats' || path == '/statsChart' ? 'active dropdown' : 'dropdown'}">

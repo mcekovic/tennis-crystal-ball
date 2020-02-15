@@ -28,8 +28,10 @@ class VisitorRepositoryIT {
 		String agentType = WEB_BROWSER.name();
 		Visitor visitor = repository.create(ipAddress, countryId, country, agentType);
 
+		assertThat(visitor.getId()).isPositive();
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getHits()).isEqualTo(1);
+		assertThat(visitor.getFirstHit()).isNotNull();
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();

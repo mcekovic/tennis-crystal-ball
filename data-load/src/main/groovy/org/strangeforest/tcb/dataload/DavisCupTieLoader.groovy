@@ -132,7 +132,7 @@ class DavisCupTieLoader extends BaseATPTourTournamentLoader {
 //				}
 //			}
 //		}
-		println "$matches.size matches loaded in $stopwatch"
+		println "${matches.size()} matches loaded in $stopwatch"
 	}
 
 	def setScoreParams(Map params, MatchScore matchScore) {

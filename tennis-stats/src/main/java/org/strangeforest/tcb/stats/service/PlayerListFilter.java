@@ -42,6 +42,10 @@ public class PlayerListFilter {
 		return active != null;
 	}
 
+	public boolean hasSearchPhrase() {
+		return !isNullOrEmpty(searchPhrase);
+	}
+
 	public String getCriteria() {
 		StringBuilder criteria = new StringBuilder();
 		appendCriteria(criteria);

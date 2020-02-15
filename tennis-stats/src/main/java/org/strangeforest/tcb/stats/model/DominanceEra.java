@@ -10,7 +10,7 @@ public class DominanceEra {
 
 	public DominanceEra(List<DominanceSeason> seasons) {
 		seasonCount = seasons.size();
-		dominanceRatio = seasons.stream().mapToDouble(DominanceSeason::getDominanceRatio).average().getAsDouble();
+		dominanceRatio = seasons.stream().mapToDouble(DominanceSeason::getDominanceRatio).average().orElseThrow();
 		player = seasons.get(0).getEraPlayer();
 	}
 

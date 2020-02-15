@@ -40,10 +40,11 @@ abstract class BaseVisitorManagerTest {
 		when(repository.find(ipAddress)).thenReturn(Optional.empty());
 		when(repository.create(any(), any(), any(), any())).thenAnswer(invocation -> {
 			Object[] args = invocation.getArguments();
-			return new Visitor(1L, (String)args[0], (String)args[1], (String)args[2], (String)args[3], 1, Instant.now());
+			Instant now = Instant.now();
+			return new Visitor(1L, (String)args[0], (String)args[1], (String)args[2], (String)args[3], 1, now, now);
 		});
 
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getHits()).isEqualTo(1);

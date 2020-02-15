@@ -34,6 +34,7 @@ import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.stats.service.MatchPredictionService.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
+import static org.strangeforest.tcb.util.UserAgentUtil.*;
 
 @Controller
 public class RivalriesController extends PageController {
@@ -71,6 +72,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "rankType", required = false) String rankType
 	) {
 		Player player1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : null);
@@ -94,6 +96,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		modelMap.addAttribute("outcome", outcome);
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("headToHead", modelMap);
@@ -223,13 +226,14 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "indoor", required = false) Boolean indoor,
       @RequestParam(name = "speed", required = false) String speed,
       @RequestParam(name = "round", required = false) String round,
-		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "outcome", required = false) String outcome
    ) {
 		Player player1 = playerService.getPlayer(playerId1);
 		Player player2 = playerService.getPlayer(playerId2);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, null, null));
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, null));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
@@ -253,6 +257,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("speed", speed);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentId", tournamentId);
+		modelMap.addAttribute("outcome", outcome);
 		return new ModelAndView("h2hMatches", modelMap);
 	}
 
@@ -521,7 +526,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "inMatch", defaultValue = F) boolean inMatch,
       HttpServletRequest httpRequest
    ) {
-		rejectRobots(httpRequest);
+		rejectAgents(httpRequest, ROBOTS_AND_UNKNOWN);
 		if (sets1 > 10 || sets2 > 10 || games1 > 100 || games2 > 100 || points1 > 100 || points2 > 100)
 			throw new InvalidArgumentException("Invalid current score");
 		Player player1 = playerService.getPlayer(playerId1);

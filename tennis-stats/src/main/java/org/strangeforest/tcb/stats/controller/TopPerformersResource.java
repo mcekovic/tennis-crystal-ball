@@ -92,4 +92,34 @@ public class TopPerformersResource {
 		TopPerformersView view = new TopPerformersView(category, filter).optimize();
 		return topPerformersService.getTopPerformersMinEntries(view.getCategory(), view.getFilter(), minEntries);
 	}
+
+	private static Map<String, String> TITLES_ORDER_MAP = Map.of("count", "count");
+	private static final OrderBy[] TITLES_DEFAULT_ORDERS = new OrderBy[] {desc("count"), asc("last_date")};
+
+	@GetMapping("/titlesAndResultsTable")
+	public BootgridTable<PlayerTitlesRow> titlesAndResultsTable(
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "speed", required = false) String speed,
+		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "active", required = false) Boolean active,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
+		@RequestParam Map<String, String> requestParams
+	) {
+		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
+		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, null, surface, indoor, speedRange, null, result, tournamentId, null, null, null);
+		int playerCount = topPerformersService.getTitlesAndResultsPlayerCount(filter);
+
+		String orderBy = BootgridUtil.getOrderBy(requestParams, TITLES_ORDER_MAP, TITLES_DEFAULT_ORDERS);
+		int pageSize = rowCount > 0 ? rowCount : playerCount;
+		return topPerformersService.getTitlesAndResultsTable(playerCount, filter, orderBy, pageSize, current);
+	}
 }

@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
+import javax.servlet.http.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -14,6 +15,8 @@ import org.strangeforest.tcb.stats.model.price.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
+
+import static org.strangeforest.tcb.util.UserAgentUtil.*;
 
 @Controller
 public class TournamentController extends PageController {
@@ -258,8 +261,10 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
 		@RequestParam(name = "playerId", required = false) Integer playerId,
 		@RequestParam(name = "eloType", defaultValue = "OVERALL") ForecastEloType eloType,
-		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
+		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat,
+      HttpServletRequest httpRequest
 	) {
+		rejectAgents(httpRequest, ROBOTS_AND_UNKNOWN);
 		ProbableMatches probableMatches = forecastService.getInProgressEventProbableMatches(inProgressEventId, playerId);
 
 		ModelMap modelMap = new ModelMap();
@@ -277,8 +282,10 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
 		@RequestParam(name = "playerId", required = false) Integer playerId,
 		@RequestParam(name = "eloType", defaultValue = "OVERALL") ForecastEloType eloType,
-		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
+		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat,
+      HttpServletRequest httpRequest
 	) {
+		rejectAgents(httpRequest, ROBOTS_AND_UNKNOWN);
 		PlayerPath playerPath = forecastService.getInProgressEventPlayerPath(inProgressEventId, playerId);
 
 		ModelMap modelMap = new ModelMap();
@@ -295,8 +302,10 @@ public class TournamentController extends PageController {
 	public ModelAndView inProgressEventFavorites(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
 		@RequestParam(name = "eloType", defaultValue = "OVERALL") ForecastEloType eloType,
-		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
+		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat,
+      HttpServletRequest httpRequest
 	) {
+		rejectAgents(httpRequest, ROBOTS_AND_UNKNOWN);
 		InProgressEventFavorites favorites = forecastService.getInProgressEventFavorites(inProgressEventId, 10, eloType);
 
 		ModelMap modelMap = new ModelMap();

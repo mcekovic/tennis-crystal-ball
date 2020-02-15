@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.Map<org.strangeforest.tcb.stats.model.core.TournamentLevel, List<org.strangeforest.tcb.stats.model.core.TournamentItem>>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
+	<title>Titles and Results</title>
+	<template>
+	<meta name="description" content="Tournament titles and other results filtered by various filters"/>
+	<script type="text/javascript">
+		$(function() {
+			var $titlesAndResultsTable = $("#titlesAndResultsTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($titlesAndResultsTable, ["lastDate"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsWidths($titlesAndResultsTable, ["name"], [device === "xs" ? 200 : (device === "sm" ? 250 : (device === "md" ? 300 : 400))]);
+			$titlesAndResultsTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/titlesAndResultsTable",
+				requestHandler: function(request) {
+					request.season = $("#season").val();
+					request.fromDate = $("#fromDate").val();
+					request.toDate = $("#toDate").val();
+					request.level = $("#level").val();
+					request.surface = $("#surface").val();
+					request.indoor = $("#indoor").val();
+					request.speed = $("#speed").val();
+					request.result = $("#result").val();
+					request.tournamentId = $("#tournament").val();
+					var active = $("#active").prop("checked");
+					if (active)
+						request.active = active;
+					return request;
+				},
+				rowCount: [20, 50, 100, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"country": countryFormatter,
+					"player": playerFormatter,
+					"count": function(column, row) {
+						return "<a href='" + titlesAndResultsPlayerEventsUrl(row.playerId) + "' title='Show tournament events'>" + row.count + "</a>";
+					},
+					"lastDate": function(column, row) {
+						return formatDate(row.lastDate);
+					}
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No titles/results found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+			var $search = $("#titlesAndResultsTable-header").find("div.search");
+			$search.before($("#activeDiv").remove());
+			$search.after($("#clearDiv").remove());
+			addBootgridCsvDownload("titlesAndResultsTable", "TitlesAndResults.csv", ["playerId", "country_code"]);
+			dateRangePicker("fromDate", "toDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function reloadTitlesAndResults() {
+			$("#titlesAndResultsTable").bootgrid("reload");
+		}
+		function dateFilterChanged() {
+			var $active = $("#active");
+			var hasDateFilter = $("#season").val() || $("#fromDate").val() || $("#toDate").val();
+			if (hasDateFilter)
+				$active.prop("checked", false);
+			$active.prop("disabled", hasDateFilter);
+		}
+		function clearTitlesAndResultsFilter() {
+			$("#season").val("");
+			$("#fromDate").val("");
+			$("#toDate").val(""); dateFilterChanged();
+			$("#level").val("");
+			$("#surface").val("");
+			$("#indoor").val("");
+			$("#speed").val("");
+			$("#result").val("W");
+			$("#tournament").val("");
+			$("#active").prop("checked", false);
+			$("#titlesAndResultsTable").bootgrid("search", "");
+			reloadTitlesAndResults();
+		}
+		function titlesAndResultsPlayerEventsUrl(playerId) {
+			var url = "/playerProfile?playerId=" + playerId + "&tab=events";
+			var season = paramValue("season");
+			if (season) url += "&season=" + season;
+			var fromDate = paramValue("fromDate");
+			if (fromDate) url += "&fromDate=" + fromDate;
+			var toDate = paramValue("toDate");
+			if (toDate) url += "&toDate=" + toDate;
+			var level = paramValue("level");
+			if (level) url += "&level=" + level;
+			var surface = paramValue("surface");
+			if (surface) url += "&surface=" + surface;
+			var indoor = paramValue("indoor");
+			if (indoor) url += "&indoor=" + indoor;
+			var speed = paramValue("speed");
+			if (speed) url += "&speed=" + speed;
+			var result = paramValue("result");
+			if (result) url += "&result=" + encodeURIComponent(result);
+			var tournament = paramValue("tournament");
+			if (tournament) url += "&tournamentId=" + tournament;
+			return url;
+		}
+	</script>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
+	<div class="row margin-top">
+		<div class="col-md-8">
+			<h3 class="text-nowrap" style="display: inline"><i class="fa fa-trophy"></i> Titles and Results</h3>
+		</div>
+	</div>
+	<div class="row margin-top">
+		<div class="col-md-2">
+			<select id="result" class="form-control" onchange="reloadTitlesAndResults()" data-toggle="tooltip" data-placement="top" title="Filter by tournament result">
+				<option th:each="aResult : ${results}" th:if="${aResult.order <= 6 && aResult.order != 3}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}">Win</option>
+				<option value="">Entry</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="season" class="form-control" onchange="dateFilterChanged(); reloadTitlesAndResults()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
+				<option value="">Career</option>
+				<option value="-1">Last 52 weeks</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="level" class="form-control" onchange="reloadTitlesAndResults()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}">Big Tournaments</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" onchange="reloadTitlesAndResults()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="tournament" class="form-control" onchange="reloadTitlesAndResults()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<optgroup th:each="lts : ${tournaments}" th:if="${lts.key.code != 'D' && lts.key.code != 'T'}" th:label="${lts.key.text}" label="Grand Slam" th:class="'bg-level-' + ${lts.key.code}">
+					<option th:each="tournament : ${lts.value}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+				</optgroup>
+			</select>
+		</div>
+		<div class="col-md-1">
+			<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
+					Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="advancedFilter" class="collapse">
+		<div class="row margin-top">
+			<div class="col-md-4">
+				<div id="dateRange" class="input-group">
+					<label for="fromDate" class="input-group-addon">From:</label>
+					<input id="fromDate" type="text" maxlength="10" class="form-control" onchange="dateFilterChanged(); reloadTitlesAndResults()"/>
+					<label for="toDate" class="input-group-addon">To:</label>
+					<input id="toDate" type="text" maxlength="10" class="form-control" onchange="dateFilterChanged(); reloadTitlesAndResults()"/>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<select id="speed" class="form-control" onchange="reloadTitlesAndResults()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+					<option value="">All speeds</option>
+					<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="indoor" class="form-control" onchange="reloadTitlesAndResults()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+					<option value="">Outdoor / Indoor</option>
+					<option value="false">Outdoor</option>
+					<option value="true">Indoor</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div id="activeDiv" class="btn-group margin-right">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+				<input id="active" type="checkbox" onchange="reloadTitlesAndResults()"/> Active
+			</label>
+		</div>
+	</div>
+	<div id="clearDiv" class="btn-group margin-right">
+		<button type="button" class="btn btn-default" onclick="clearTitlesAndResultsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<i class="fa fa-eraser"></i>
+		</button>
+	</div>
+	<table id="titlesAndResultsTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
+			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
+			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
+			<th data-column-id="lastDate" data-formatter="lastDate" data-sortable="false" data-width="100">Last Date</th>
+			<th data-column-id="count" data-formatter="count" data-order="desc" data-width="75" data-align="right" data-header-align="right">Count</th>
+		</tr>
+		</thead>
+	</table>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

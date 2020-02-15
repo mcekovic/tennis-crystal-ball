@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 public enum EventResult implements CodedEnum {
 
-	W("W", "Win", 1),
+	W("W", "Title", 1),
 	F(Round.F, 2),
 	F_PLUS("F+", "Final +", 2),
 	SF(Round.SF, 4),

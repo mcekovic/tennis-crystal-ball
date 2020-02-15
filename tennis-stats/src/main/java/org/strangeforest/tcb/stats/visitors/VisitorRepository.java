@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.visitors;
 
 import java.math.*;
 import java.sql.*;
+import java.sql.Date;
 import java.time.*;
 import java.util.*;
 
@@ -24,20 +25,23 @@ public class VisitorRepository {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String FIND = // language=SQL
-		"SELECT visitor_id, country_id, country, agent_type, hits, last_hit FROM visitor\n" +
+		"SELECT visitor_id, country_id, country, agent_type, hits, first_hit, last_hit FROM visitor\n" +
 		"WHERE ip_address = :ipAddress AND active ORDER BY last_hit DESC";
 
 	private static final String FIND_ALL = // language=SQL
-		"SELECT max(visitor_id) AS visitor_id, ip_address, country_id, country, agent_type, sum(hits) AS hits, max(last_hit) AS last_hit FROM visitor\n" +
+		"SELECT max(visitor_id) AS visitor_id, ip_address, country_id, country, agent_type, sum(hits) AS hits, min(first_hit) AS first_hit, max(last_hit) AS last_hit FROM visitor\n" +
 		"WHERE active GROUP by ip_address, country_id, country, agent_type";
 
 	private static final String CREATE = // language=SQL
 		"INSERT INTO visitor (ip_address, country_id, country, agent_type, hits, last_hit)\n" +
-		"VALUES (:ipAddress, :countryId, :country, :agentType, :hits, :lastHit)";
+		"VALUES (:ipAddress, :countryId, :country, :agentType, :hits, :lastHit)\n" +
+		"RETURNING visitor_id, first_hit";
 
-	private static final String SAVE = // language=SQL
+	private static final String SAVE_TEMPLATE = // language=SQL
 		"UPDATE visitor SET hits = :hits, last_hit = :lastHit%1$s\n" +
 		"WHERE visitor_id = :visitorId";
+	private static final String SAVE = String.format(SAVE_TEMPLATE, "");
+	private static final String SAVE_AND_EXPIRE = String.format(SAVE_TEMPLATE, ", active = FALSE");
 
 	private static final String STATS_QUERY = // language=SQL
 		"SELECT %1$s AS value FROM visitor\n" +
@@ -72,6 +76,7 @@ public class VisitorRepository {
 			rs.getString("country"),
 			getInternedString(rs, "agent_type"),
 			rs.getInt("hits"),
+			rs.getTimestamp("first_hit").toInstant(),
 			rs.getTimestamp("last_hit").toInstant()
 		);
 	}
@@ -87,8 +92,11 @@ public class VisitorRepository {
 				.addValue("agentType", agentType)
 				.addValue("hits", hits)
 				.addValue("lastHit", Timestamp.from(lastHit)),
-		keyHolder, new String[] {"visitor_id"});
-		return new Visitor(keyHolder.getKey().longValue(), ipAddress, countryId, country, agentType, hits, lastHit);
+		keyHolder, new String[] {"visitor_id", "first_hit"});
+		Map<String, Object> keys = keyHolder.getKeys();
+		long visitorId = ((Number)keys.get("visitor_id")).longValue();
+		Timestamp firstHit = (Timestamp)keys.get("first_hit");
+		return new Visitor(visitorId, ipAddress, countryId, country, agentType, hits, firstHit.toInstant(), lastHit);
 	}
 
 	public void save(Visitor visitor) {
@@ -100,12 +108,11 @@ public class VisitorRepository {
 	}
 
 	private void save(Visitor visitor, boolean expire) {
-		jdbcTemplate.update(format(SAVE, expire ? ", active = FALSE" : ""), saveVisitorParams(visitor));
+		jdbcTemplate.update(expire ? SAVE_AND_EXPIRE : SAVE, saveVisitorParams(visitor));
 	}
 
 	public void saveAll(Collection<Visitor> visitors) {
-		jdbcTemplate.batchUpdate(
-			format(SAVE, ""),
+		jdbcTemplate.batchUpdate(SAVE,
 			visitors.stream().map(VisitorRepository::saveVisitorParams).collect(toList()).toArray(new SqlParameterSource[visitors.size()])
 		);
 	}

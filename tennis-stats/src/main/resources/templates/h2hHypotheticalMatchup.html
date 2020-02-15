@@ -227,7 +227,7 @@
 	</div>
 	<div class="col-md-3">
 		<select id="predictionTournament" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select tournament">
-			<option value="">All tournaments</option>
+			<option value="">Unknown tournament</option>
 			<optgroup th:each="lts : ${tournaments}" th:label="${lts.key.text}" label="Grand Slam" th:class="'bg-level-' + ${lts.key.code}">
 				<option th:each="tournament : ${lts.value}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 			</optgroup>

@@ -4,6 +4,9 @@ import java.util.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
 
+import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
+
 public final class H2H {
 
 	public static final H2H EMPTY = new H2H(0.0, 0.0);
@@ -39,6 +42,26 @@ public final class H2H {
 
 	public double getWon2() {
 		return won2;
+	}
+
+	public double getWonPct1() {
+		return pct(won1, getTotal());
+	}
+
+	public double getWonPct2() {
+		return pct(won2, getTotal());
+	}
+
+	public String getWonPctStr1() {
+		return formatPct(getWonPct1(), 1);
+	}
+
+	public String getWonPctStr2() {
+		return formatPct(getWonPct2(), 1);
+	}
+
+	private static String formatPct(double pct, int decimals) {
+		return format("%." + decimals + "f%%", pct);
 	}
 
 	public double getTotal() {

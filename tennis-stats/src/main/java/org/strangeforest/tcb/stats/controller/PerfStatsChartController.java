@@ -89,7 +89,6 @@ public class PerfStatsChartController extends PageController {
 		modelMap.addAttribute("bySeason", bySeason);
 		modelMap.addAttribute("byAge", byAge);
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
-		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());

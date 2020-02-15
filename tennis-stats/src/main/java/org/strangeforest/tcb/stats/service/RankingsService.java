@@ -62,11 +62,15 @@ public class RankingsService {
 		"  FROM %1$s r\n" +
 		"  WHERE r.rank_date BETWEEN (SELECT pd.prev_rank_date FROM prev_date pd) AND :date\n" +
 		"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
+		"), ranking_ex2 AS (\n" +
+		"  SELECT r.rank, player_id, p.name, p.country_id, r.points, r.rank_diff, r.points_diff\n" +
+		"  FROM ranking_ex r\n" +
+		"  INNER JOIN player_v p USING (player_id)\n" +
+		"  WHERE r.rank_date = :date%4$s\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, r.points, r.rank_diff, r.points_diff, %4$s AS best_rank, %5$s AS best_rank_date, %6$s AS best_points\n" +
-		"FROM ranking_ex r\n" +
-		"INNER JOIN player_v p USING (player_id)%7$s\n" +
-		"WHERE r.rank_date = :date%8$s\n" +
+		"SELECT r.rank, player_id, r.name, r.country_id, r.points, r.rank_diff, r.points_diff, %5$s AS best_rank, %6$s AS best_rank_date, %7$s AS best_points\n" +
+		"FROM ranking_ex2 r\n" +
+		"INNER JOIN player_v p USING (player_id)%8$s\n" +
 		"ORDER BY %9$s OFFSET :offset";
 
 	private static final String BEST_ELO_JOIN = //language=SQL
@@ -249,11 +253,11 @@ public class RankingsService {
 		boolean specificElo = rankType.category == ELO && rankType != ELO_RANK;
 		jdbcTemplate.query(
 			format(
-				RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType),
+				RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType), filter.getCriteria(),
 				(specificElo ? "k." : "p.") + bestRankColumn(rankType),
 				(specificElo ? "k." : "p.") + bestRankDateColumn(rankType),
 				(specificElo ? "t." : "p.") + bestPointsColumn(rankType),
-				specificElo ? BEST_ELO_JOIN : "", filter.getCriteria(), orderBy
+				specificElo ? BEST_ELO_JOIN : "", orderBy
 			),
 			getTableParams(filter, date, offset),
 			rs -> {

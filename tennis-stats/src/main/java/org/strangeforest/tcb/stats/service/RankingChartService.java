@@ -301,7 +301,7 @@ public class RankingChartService {
 			if (bySeason) {
 				return format(referenceRank ? PLAYER_SEASON_RANKINGS_REFERENCE_RANK_QUERY : PLAYER_SEASON_RANKINGS_QUERY,
 					byAge ? ", extract(YEAR FROM age(make_date(r.season, 12, 31), p.dob)) AS age" : "",
-					rankColumnBySeason(rankType), rankingTableBySeason(rankType), playerJoin, rangeFilter(seasonRange, "r.season", "season"), orderBy, rankColumnBySeason(rankType.rankType)
+					rankColumnBySeason(rankType, referenceRank), rankingTableBySeason(rankType, referenceRank), playerJoin, rangeFilter(seasonRange, "r.season", "season"), orderBy, rankColumnBySeason(rankType.rankType, referenceRank)
 				);
 			}
 			else {
@@ -347,38 +347,42 @@ public class RankingChartService {
 		}
 	}
 
-	private String rankColumnBySeason(RankType rankType) {
+	private String rankColumnBySeason(RankType rankType, boolean referenceRank) {
 		switch (rankType) {
 			case RANK:
 			case ELO_RANK: return "r.year_end_rank";
 			case POINTS: return "r.year_end_rank_points";
-			case ELO_RATING: return "r.best_elo_rating";
+			case ELO_RATING: return "r." + eloRankColumnType(referenceRank) + "_elo_rating";
 			case RECENT_ELO_RANK: return "r.recent_year_end_rank";
-			case RECENT_ELO_RATING: return "r.recent_best_elo_rating";
+			case RECENT_ELO_RATING: return "r.recent_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case HARD_ELO_RANK: return "r.hard_year_end_rank";
-			case HARD_ELO_RATING: return "r.hard_best_elo_rating";
+			case HARD_ELO_RATING: return "r.hard_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case CLAY_ELO_RANK: return "r.clay_year_end_rank";
-			case CLAY_ELO_RATING: return "r.clay_best_elo_rating";
+			case CLAY_ELO_RATING: return "r.clay_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case GRASS_ELO_RANK: return "r.grass_year_end_rank";
-			case GRASS_ELO_RATING: return "r.grass_best_elo_rating";
+			case GRASS_ELO_RATING: return "r.grass_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case CARPET_ELO_RANK: return "r.carpet_year_end_rank";
-			case CARPET_ELO_RATING: return "r.carpet_best_elo_rating";
+			case CARPET_ELO_RATING: return "r.carpet_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case OUTDOOR_ELO_RANK: return "r.outdoor_year_end_rank";
-			case OUTDOOR_ELO_RATING: return "r.outdoor_best_elo_rating";
+			case OUTDOOR_ELO_RATING: return "r.outdoor_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case INDOOR_ELO_RANK: return "r.indoor_year_end_rank";
-			case INDOOR_ELO_RATING: return "r.indoor_best_elo_rating";
+			case INDOOR_ELO_RATING: return "r.indoor_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case SET_ELO_RANK: return "r.set_year_end_rank";
-			case SET_ELO_RATING: return "r.set_best_elo_rating";
+			case SET_ELO_RATING: return "r.set_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case GAME_ELO_RANK: return "r.game_year_end_rank";
-			case GAME_ELO_RATING: return "r.game_best_elo_rating";
+			case GAME_ELO_RATING: return "r.game_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case SERVICE_GAME_ELO_RANK: return "r.service_game_year_end_rank";
-			case SERVICE_GAME_ELO_RATING: return "r.service_game_best_elo_rating";
+			case SERVICE_GAME_ELO_RATING: return "r.service_game_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case RETURN_GAME_ELO_RANK: return "r.return_game_year_end_rank";
-			case RETURN_GAME_ELO_RATING: return "r.return_game_best_elo_rating";
+			case RETURN_GAME_ELO_RATING: return "r.return_game_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			case TIE_BREAK_ELO_RANK: return "r.tie_break_year_end_rank";
-			case TIE_BREAK_ELO_RATING: return "r.tie_break_best_elo_rating";
+			case TIE_BREAK_ELO_RATING: return "r.tie_break_" + eloRankColumnType(referenceRank) + "_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
+	}
+
+	private String eloRankColumnType(boolean referenceRank) {
+		return referenceRank ? "year_end" : "best";
 	}
 
 	private String rankingTable(RankType rankType) {
@@ -389,10 +393,10 @@ public class RankingChartService {
 		}
 	}
 
-	private String rankingTableBySeason(RankType rankType) {
+	private String rankingTableBySeason(RankType rankType, boolean referenceRank) {
 		switch (rankType.category) {
 			case ATP: return "player_year_end_rank";
-			case ELO: return rankType.points ? "player_season_best_elo_rating" : "player_year_end_elo_rank";
+			case ELO: return rankType.points && !referenceRank ? "player_season_best_elo_rating" : "player_year_end_elo_rank";
 			default: throw unknownEnum(rankType.category);
 		}
 	}

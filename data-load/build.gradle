@@ -39,8 +39,12 @@ dependencies {
 	implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 	implementation ("commons-cli:commons-cli:$commonsCliVersion")
 	implementation ("org.slf4j:slf4j-simple:$slf4jVersion")
-	testImplementation ("org.mockito:mockito-core:$mockitoVersion")
+	testImplementation ("org.codehaus.groovy:groovy-test:$groovyVersion")
 	testImplementation ("org.testcontainers:postgresql:$testContainersVersion")
+}
+
+test {
+	exclude '**/*IT.class'
 }
 
 task quickDeployToDigitalOcean {

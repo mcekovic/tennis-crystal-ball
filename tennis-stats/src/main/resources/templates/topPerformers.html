@@ -23,7 +23,7 @@
 			var device = detectDevice();
 			setBootgridColumnsVisible($topPerformersTable, ["played"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($topPerformersTable, ["won", "lost"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsWidths($topPerformersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
+			setBootgridColumnsWidths($topPerformersTable, ["name"], [device === "xs" ? 200 : (device === "sm" ? 250 : (device === "md" ? 300 : 400))]);
 			$topPerformersTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -146,7 +146,7 @@
 		}
 		function opponentChanged() {
 			var opponent = $("#opponent").val();
-			setCategoriesVisible("topn-category", opponent != "NO_1" && !opponent.startsWith("TOP_"));
+			setCategoriesVisible("topn-category", opponent !== "NO_1" && !opponent.startsWith("TOP_"));
 		}
 		function setCategoriesVisible(cssClass, visible) {
 			var $category = $("#category");

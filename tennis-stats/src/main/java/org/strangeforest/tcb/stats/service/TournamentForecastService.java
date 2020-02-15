@@ -385,6 +385,8 @@ public class TournamentForecastService {
 				boolean isLoser = loser != null && loser.getId() == playerId;
 				if (isWinner || isLoser) {
 					PlayersForecast roundForecast = forecast.getPlayersForecast(match.getRound());
+					if (roundForecast == null)
+						roundForecast = forecast.getCurrentForecast();
 					PlayerForecast winnerForecast = roundForecast.getPlayerForecast(winner.getId());
 					PlayerForecast	loserForecast = loser != null ? roundForecast.getPlayerForecast(loser.getId()) : null;
 					completed.addMatch(new TournamentEventMatch(

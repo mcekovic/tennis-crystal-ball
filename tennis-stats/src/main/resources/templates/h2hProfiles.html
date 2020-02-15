@@ -55,26 +55,76 @@
 		<th class="text-center" width="20%">vs</th>
 		<th class="text-left" colspan="2" width="40%"><a th:href="@{/playerProfile(playerId=${player2.id})}" th:text="${player2.name}">Rafael Nadal</a></th>
 	</tr>
-	<tr>
-		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(h2h.won1, 1, 0)}">15</th>
-		<th class="text-center">H2H</th>
-		<th class="text-left" colspan="2" th:text="${#numbers.formatDecimal(h2h.won2, 1, 0)}">9</th>
-	</tr>
 	<th:block th:unless="${h2h.empty}">
 	<tr>
-		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(adjustedH2H.won1, 1, 1)}">15.1</th>
+		<th class="text-right" colspan="2">
+			<div class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${h2h.wonPct1 > 50 ? '-w' : (h2h.wonPct1 < 50 ? '-l' : _)}" role="progressbar" th:style="|width: ${h2h.wonPctStr1}|" th:attr="aria-valuenow=${h2h.wonPct1}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/headToHead(playerId1=${player1.id}, playerId2=${player2.id}, tab=matches, outcome=played)}" th:text="|${#numbers.formatDecimal(h2h.won1, 1, 0)} (${h2h.wonPctStr1})|" title="Show H2H matches">11 (55.0%)</a>
+				</div>
+			</div>
+		</th>
+		<th class="text-center">H2H</th>
+		<th class="text-left" colspan="2">
+			<div class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${h2h.wonPct2 > 50 ? '-w' : (h2h.wonPct2 < 50 ? '-l' : _)}" role="progressbar" th:style="|width: ${h2h.wonPctStr2}|" th:attr="aria-valuenow=${h2h.wonPct2}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/headToHead(playerId1=${player1.id}, playerId2=${player2.id}, tab=matches, outcome=played)}" th:text="|${#numbers.formatDecimal(h2h.won2, 1, 0)} (${h2h.wonPctStr2})|" title="Show H2H matches">9 (45.0%)</a>
+				</div>
+			</div>
+		</th>
+	</tr>
+	</th:block>
+	<th:block th:if="${h2h.total > 1}">
+	<tr>
+		<th class="text-right" colspan="2">
+			<div class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${adjustedH2H.wonPct1 > 50 ? '-w' : (adjustedH2H.wonPct1 < 50 ? '-l' : _)}" role="progressbar" th:style="|width: ${adjustedH2H.wonPctStr1}|" th:attr="aria-valuenow=${adjustedH2H.wonPct1}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/headToHead(playerId1=${player1.id}, playerId2=${player2.id}, tab=matches, outcome=played)}" th:text="|${#numbers.formatDecimal(adjustedH2H.won1, 1, 1)} (${adjustedH2H.wonPctStr1})|" title="Show H2H matches">11 (55.0%)</a>
+				</div>
+			</div>
+		</th>
 		<th class="text-center" th:title="#{h2h.adjustedH2H.title}">Adjusted H2H</th>
-		<th class="text-left" colspan="2" th:text="${#numbers.formatDecimal(adjustedH2H.won2, 1, 1)}">9.7</th>
+		<th class="text-left" colspan="2">
+			<div class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${adjustedH2H.wonPct2 > 50 ? '-w' : (adjustedH2H.wonPct2 < 50 ? '-l' : _)}" role="progressbar" th:style="|width: ${adjustedH2H.wonPctStr2}|" th:attr="aria-valuenow=${adjustedH2H.wonPct2}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/headToHead(playerId1=${player1.id}, playerId2=${player2.id}, tab=matches, outcome=played)}" th:text="|${#numbers.formatDecimal(adjustedH2H.won2, 1, 1)} (${adjustedH2H.wonPctStr2})|" title="Show H2H matches">9 (45.0%)</a>
+				</div>
+			</div>
+		</th>
 	</tr>
 	<tr>
-		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(surfaceAdjH2H.won1, 1, 1)}">15.1</th>
+		<th class="text-right" colspan="2">
+			<div class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${surfaceAdjH2H.wonPct1 > 50 ? '-w' : (surfaceAdjH2H.wonPct1 < 50 ? '-l' : _)}" role="progressbar" th:style="|width: ${surfaceAdjH2H.wonPctStr1}|" th:attr="aria-valuenow=${surfaceAdjH2H.wonPct1}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/headToHead(playerId1=${player1.id}, playerId2=${player2.id}, tab=matches, outcome=played)}" th:text="|${#numbers.formatDecimal(surfaceAdjH2H.won1, 1, 1)} (${surfaceAdjH2H.wonPctStr1})|" title="Show H2H matches">11 (55.0%)</a>
+				</div>
+			</div>
+		</th>
 		<th class="text-center" th:title="#{h2h.surfaceAdjustedH2H.title}">Surface Adj. H2H</th>
-		<th class="text-left" colspan="2" th:text="${#numbers.formatDecimal(surfaceAdjH2H.won2, 1, 1)}">9.7</th>
+		<th class="text-left" colspan="2">
+			<div class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${surfaceAdjH2H.wonPct2 > 50 ? '-w' : (surfaceAdjH2H.wonPct2 < 50 ? '-l' : _)}" role="progressbar" th:style="|width: ${surfaceAdjH2H.wonPctStr2}|" th:attr="aria-valuenow=${surfaceAdjH2H.wonPct2}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/headToHead(playerId1=${player1.id}, playerId2=${player2.id}, tab=matches, outcome=played)}" th:text="|${#numbers.formatDecimal(surfaceAdjH2H.won2, 1, 1)} (${surfaceAdjH2H.wonPctStr2})|" title="Show H2H matches">9 (45.0%)</a>
+				</div>
+			</div>
+		</th>
 	</tr>
 	<tr>
-		<th class="text-right" colspan="2" th:text="${#numbers.formatDecimal(importanceAdjH2H.won1, 1, 1)}">15.1</th>
+		<th class="text-right" colspan="2">
+			<div class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${importanceAdjH2H.wonPct1 > 50 ? '-w' : (importanceAdjH2H.wonPct1 < 50 ? '-l' : _)}" role="progressbar" th:style="|width: ${importanceAdjH2H.wonPctStr1}|" th:attr="aria-valuenow=${importanceAdjH2H.wonPct1}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/headToHead(playerId1=${player1.id}, playerId2=${player2.id}, tab=matches, outcome=played)}" th:text="|${#numbers.formatDecimal(importanceAdjH2H.won1, 1, 1)} (${importanceAdjH2H.wonPctStr1})|" title="Show H2H matches">11 (55.0%)</a>
+				</div>
+			</div>
+		</th>
 		<th class="text-center" th:title="#{h2h.importanceAdjustedH2H.title}">Import. Adj. H2H</th>
-		<th class="text-left" colspan="2" th:text="${#numbers.formatDecimal(importanceAdjH2H.won2, 1, 1)}">9.7</th>
+		<th class="text-left" colspan="2">
+			<div class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${importanceAdjH2H.wonPct2 > 50 ? '-w' : (importanceAdjH2H.wonPct2 < 50 ? '-l' : _)}" role="progressbar" th:style="|width: ${importanceAdjH2H.wonPctStr2}|" th:attr="aria-valuenow=${importanceAdjH2H.wonPct2}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/headToHead(playerId1=${player1.id}, playerId2=${player2.id}, tab=matches, outcome=played)}" th:text="|${#numbers.formatDecimal(importanceAdjH2H.won2, 1, 1)} (${importanceAdjH2H.wonPctStr2})|" title="Show H2H matches">9 (45.0%)</a>
+				</div>
+			</div>
+		</th>
 	</tr>
 	<tr><td colspan="5">&nbsp;</td></tr>
 	</th:block>

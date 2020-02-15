@@ -26,8 +26,8 @@ class PredictionIT {
 
 	@Test
 	void novakDjokovicVsRafaelNadalPotentialRolandGarrosFinalPrediction() {
-		int playerId1 = playerService.findPlayerId("Novak Djokovic").get();
-		int playerId2 = playerService.findPlayerId("Rafael Nadal").get();
+		int playerId1 = playerService.findPlayerId("Novak Djokovic").orElseThrow();
+		int playerId2 = playerService.findPlayerId("Rafael Nadal").orElseThrow();
 
 		MatchPrediction prediction = predictionService.predictMatch(playerId1, playerId2, LocalDate.now(), false, CLAY, false, GRAND_SLAM, F);
 

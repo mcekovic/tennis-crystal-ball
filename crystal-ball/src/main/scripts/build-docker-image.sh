@@ -2,7 +2,7 @@ docker build -t uts/database .
 docker run -p 5432:5432 -d --name uts-database uts/database
 cd ..
 gradlew.bat assemble
-unzip data-load/build/distributions/data-load-1.0-SNAPSHOT.zip
+powershell Expand-Archive data-load/build/distributions/data-load-1.0-SNAPSHOT.zip .
 cd data-load-1.0-SNAPSHOT/bin
 data-load.bat -ie -u postgres -p postgres
 data-load.bat -cd

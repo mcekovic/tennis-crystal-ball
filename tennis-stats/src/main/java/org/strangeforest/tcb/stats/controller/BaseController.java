@@ -54,8 +54,8 @@ public abstract class BaseController {
 		return googleAdSenseClientId;
 	}
 
-	protected static void rejectRobots(HttpServletRequest httpRequest) {
-		if (UserAgentUtil.getAgentType(httpRequest) == BrowserType.ROBOT)
-			throw new ForbiddenException("Not accessible by robots");
+	protected static void rejectAgents(HttpServletRequest httpRequest, EnumSet<BrowserType> agentTypes) {
+		if (agentTypes.contains(UserAgentUtil.getAgentType(httpRequest)))
+			throw new ForbiddenException("Not accessible");
 	}
 }

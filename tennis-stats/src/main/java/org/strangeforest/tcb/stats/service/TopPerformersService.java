@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -13,7 +14,7 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.getInternedString;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class TopPerformersService {
@@ -62,6 +63,30 @@ public class TopPerformersService {
 
 	private static final String OPPONENT_JOIN = //language=SQL
 	 	"\n  INNER JOIN player_v o ON o.player_id = m.opponent_id";
+
+	private static final String TITLES_AND_RESULTS_COUNT_QUERY = //language=SQL
+		"SELECT count(player_id) AS player_count FROM player_tournament_event_result r\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)%1$s\n" +
+		"WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')%2$s";
+
+	private static final String TITLES_AND_RESULTS_QUERY = //language=SQL
+		"WITH results AS (\n" +
+		"  SELECT r.player_id, count(r.result) AS count, max(e.date) AS last_date\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)%1$s\n" +
+		"  WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')%2$s\n" +
+		"  GROUP BY r.player_id\n" +
+		"), results_ranked AS (\n" +
+		"  SELECT rank() OVER (ORDER BY count DESC) AS rank, player_id, count, last_date\n" +
+		"  FROM results\n" +
+		")\n" +
+		"SELECT rank, player_id, name, country_id, active, count, last_date\n" +
+		"FROM results_ranked\n" +
+		"INNER JOIN player_v p USING (player_id)%3$s\n" +
+		"ORDER BY %4$s OFFSET :offset LIMIT :limit";
+
+	private static final String PLAYER_JOIN = //language=SQL
+		"\n  INNER JOIN player_v p USING (player_id)";
 
 
 	@Cacheable(value = "Global", key = "'PerformanceSeasons'")
@@ -142,5 +167,51 @@ public class TopPerformersService {
 
 	private int getMinEntries(PerformanceCategory category, PerfStatsFilter filter, Integer minEntriesOverride) {
 		return minEntriesOverride == null ? minEntries.getFilteredMinEntries(category.getMinEntries(), filter) : minEntriesOverride;
+	}
+
+
+	// Titles and Results
+
+	@Cacheable("TitlesAndResults.Count")
+	public int getTitlesAndResultsPlayerCount(PerfStatsFilter filter) {
+		filter.withPrefix("p.");
+		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
+			format(TITLES_AND_RESULTS_COUNT_QUERY, getTitlesAndResultsJoin(filter), filter.getCriteria()),
+			filter.getParams(),
+			Integer.class
+		));
+	}
+
+	@Cacheable("TitlesAndResults.Table")
+	public BootgridTable<PlayerTitlesRow> getTitlesAndResultsTable(int playerCount, PerfStatsFilter filter, String orderBy, int pageSize, int currentPage) {
+		BootgridTable<PlayerTitlesRow> table = new BootgridTable<>(currentPage, playerCount);
+		int offset = (currentPage - 1) * pageSize;
+		filter.withPrefix("p.");
+		jdbcTemplate.query(
+			format(TITLES_AND_RESULTS_QUERY, getTitlesAndResultsJoin(filter), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy),
+			filter.getParams()
+				.addValue("offset", offset)
+				.addValue("limit", pageSize),
+			rs -> {
+				int rank = rs.getInt("rank");
+				int playerId = rs.getInt("player_id");
+				String name = rs.getString("name");
+				String countryId = getInternedString(rs, "country_id");
+				Boolean active = !filter.hasActive() && !filter.isTimeLocalized() ? rs.getBoolean("active") : null;
+				int count = rs.getInt("count");
+				LocalDate lastDate = getLocalDate(rs, "last_date");
+				table.addRow(new PlayerTitlesRow(rank, playerId, name, countryId, active, count, lastDate));
+			}
+		);
+		return table;
+	}
+
+	private static String getTitlesAndResultsJoin(PerfStatsFilter filter) {
+		StringBuilder sb = new StringBuilder();
+		if (filter.hasActive() || filter.hasSearchPhrase())
+			sb.append(PLAYER_JOIN);
+		if (filter.hasSpeedRange())
+			sb.append(EVENT_STATS_JOIN);
+		return sb.toString();
 	}
 }

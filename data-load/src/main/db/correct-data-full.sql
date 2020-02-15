@@ -33,6 +33,7 @@ COMMIT;
 
 CALL split_careers('Alexander Zverev Sr', 'Alexander Zverev', '2000-01-01');
 CALL split_careers('Ramanathan Krishnan', 'Ramesh Krishnan', '1976-11-01');
+CALL split_careers('Anatoli Volkov', 'Alexander Volkov', '1985-01-01');
 
 COMMIT;
 
@@ -60,6 +61,7 @@ CALL link_tournament('468', '7290'); -- Estoril
 CALL link_tournament('820', '405'); -- Houston
 CALL link_tournament('1727', '663'); -- Louisville
 CALL link_tournament('2050', '315'); -- Newport
+CALL link_tournament('8998', '339'); -- Adelaide
 
 COMMIT;
 

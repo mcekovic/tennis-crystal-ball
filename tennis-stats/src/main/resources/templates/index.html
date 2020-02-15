@@ -216,9 +216,10 @@
 			</div>
 			<h4 class="text-nowrap" style="margin-top: 10px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature"></sup></h4>
 			<ul>
+				<li>Browse players with most <a href="/titlesAndResults">Titles or other results</a>, filtered by various filters</li>
 				<li>Only for computer geeks, Docker image <a href="https://hub.docker.com/r/mcekovic/uts-database" target="_blank" rel="noopener noreferrer" class="external">mcekovic/uts-database</a> with PostgreSQL database pre-populated with ATP tennis data as of season 2019 (more info at <a href="https://github.com/mcekovic/tennis-crystal-ball/issues/337" target="_blank" rel="noopener noreferrer" class="external">#337</a>)</li>
 				<li>Reference rank in <a href="/rankingsChart">Rankings Charts</a> like <a href="/rankingsChart?players=Roger%20Federer,%20Rafael%20Nadal,%20Novak%20Djokovic&rankType=POINTS&refRank=1&compensatePoints=true">Compare Big 3 ATP Points with ATP No. 1 ATP Points</a> to see how much Big 3 had more ATP Points than average ATP No. 1</li>
-				<li><a href="/resultsChart">Titles and Results Charts</a> like <a href="/resultsChart?players=Roger%20Federer,%20Rafael%20Nadal,%20Novak%20Djokovic&result=W&level=G&byAge=true">Big 3 Grand Slam Title race by age</a> or <a href="/resultsChart?players=Dominic%20Thiem,%20Alexander%20Zverev,%20Nick%20Kyrgios,%20Lucas%20Pouille,%20Stefanos%20Tsitsipas,%20Karen%20Khachanov,%20Daniil%20Medvedev,%20Borna%20Coric,%20Alex%20De%20Minaur,%20Matteo%20Berrettini&result=W&byAge=true">The Next Gen Title race by age</a></li>
+				<li><a href="/resultsChart">Titles and Results Charts</a> like <a href="/resultsChart?players=Roger%20Federer,%20Rafael%20Nadal,%20Novak%20Djokovic&result=W&level=G&byAge=true">Big 3 Grand Slam Title race by age</a> or <a href="/resultsChart?players=Dominic%20Thiem,%20Alexander%20Zverev,%20Nick%20Kyrgios,%20Lucas%20Pouille,%20Stefanos%20Tsitsipas,%20Karen%20Khachanov,%20Daniil%20Medvedev,%20Borna%20Coric,%20Alex%20De%20Minaur,%20Matteo%20Berrettini,%20Andrey%20Rublev&result=W&byAge=true">The Next Gen Title race by age</a></li>
 				<li>Past forecasts for the completed tournaments are available at <a href="/inProgressEventsForecasts">Tournament Forecasts</a> by checking the 'Completed' checkbox</li>
 				<li>Easy CSV download in the most of the data grids (click <button type="button" disabled="disabled" class="btn btn-default btn-xs" style="vertical-align: bottom"><i class="fa fa-file-excel-o"></i></button> button in the upper-right grid corner)</li>
 				<li>New statistics categories across the site (<a href="/statsLeaders">Statistics Leaders</a>, <a href="/topMatchStats">Top Match Stats</a>, <a href="/statsChart">Statistics Chart</a>...): <span th:title="#{stats.firstServeEff.title}">First Serve Effectiveness</span>, <span th:title="#{stats.serveRating.title}">Serve Rating</span>, <span th:title="#{stats.returnRating.title}">Return Rating</span>, <span th:title="#{stats.totalSSIPPointsWonPct.title}">Total 2nd Serve In-play Points Won %</span>, <span th:title="#{stats.ipPointsDominanceRatio.title}">In-play Points Dominance Ratio</span>, <span th:title="#{stats.ssIPPointsDominanceRatio.title}">2nd Serve In-play Points Dominance Ratio</span> (details at <a href="/glossary#statsCategories">Glossary</a> page)</li>
@@ -232,9 +233,13 @@
 			<th:block th:include="fragments/ads :: responsive"/>
 		</div>
 		<div class="col-lg-2 col-md-3">
+			<div class="panel panel-default component text-center text-nowrap">
+				<i class="fa fa-calendar-check-o"></i> <a href="https://www.flashscore.co.uk/tennis" title="Live Tennis Results by FlashScore.co.uk" target="_blank" rel="noopener noreferrer" class="external">Tennis Results</a> by<br/>
+				FlashScore.co.uk
+			</div>
 			<div id="rankingTopN"></div>
 			<div class="panel panel-default component text-center text-nowrap">
-				<a href="/liveScores" title="Live scores"><strong>Live Scores</strong> <img src="/images/active.png" style="vertical-align: -5%" width="12" height="12"/></a> via<br/>
+				<img src="/images/active.png" style="vertical-align: -5%" width="12" height="12"/> <a href="/liveScores" title="Live scores"><strong>Live Scores</strong></a> via<br/>
 				<a href="https://www.enetscores.com" title="Enetscores by Enetpulse" target="_blank" rel="noopener noreferrer" class="external">Enetscores</a>
 			</div>
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>

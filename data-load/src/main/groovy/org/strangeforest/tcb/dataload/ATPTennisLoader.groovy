@@ -114,7 +114,7 @@ class ATPTennisLoader {
 			atpTourMatchLoader.loadTournament(1968, 'london', 311, false, 'B')
 			atpTourMatchLoader.loadTournament(1968, 'dublin', 2029, false, 'B', 'G', null, ['R32'])
 			atpTourMatchLoader.loadTournament(1968, 'buenos-aires', 303, false, 'B', null, null, ['R32', 'R64'])
-			atpTourMatchLoader.loadTournament(1969, 'perth', 243, false, 'B', 'G', null, ['R16', 'R32'])
+			atpTourMatchLoader.loadTournament(1969, 'perth', 243, false, 'B', 'G', '1968-12-30', ['R16', 'R32'])
 			atpTourMatchLoader.loadTournament(1969, 'hobart', 713, false, 'B', 'G')
 			atpTourMatchLoader.loadTournament(1969, 'new-york', 2058, false, 'B', 'P')
 			atpTourMatchLoader.loadTournament(1969, 'durban', 260, false, 'B', null, null, ['R32', 'R64'])

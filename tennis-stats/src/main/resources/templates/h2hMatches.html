@@ -19,6 +19,8 @@
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="speed" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
+<!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
 <script type="text/javascript">
 	var device = detectDevice();
 	$(function() {
@@ -412,14 +414,14 @@
 <div id="matchesOutcomeDiv" class="btn-group pull-left margin-right">
 	<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
 		<option value="">All matches</option>
-		<option value="played">Played</option>
-		<option value="finished">Finished</option>
-		<option value="notFinished">Not finished</option>
-		<option value="RET">Retirement</option>
-		<option value="W/O">Walkover</option>
-		<option value="DEF">Defaulting</option>
-		<option value="ABD">Abandoned</option>
-		<option value="notPlayed">Not played</option>
+		<option value="played" th:selected="${outcome == 'played'}">Played</option>
+		<option value="finished" th:selected="${outcome == 'finished'}">Finished</option>
+		<option value="notFinished" th:selected="${outcome == 'notFinished'}">Not finished</option>
+		<option value="RET" th:selected="${outcome == 'RET'}">Retirement</option>
+		<option value="W/O" th:selected="${outcome == 'W/O'}">Walkover</option>
+		<option value="DEF" th:selected="${outcome == 'DEF'}">Defaulting</option>
+		<option value="ABD" th:selected="${outcome == 'ABD'}">Abandoned</option>
+		<option value="notPlayed" th:selected="${outcome == 'notPlayed'}">Not played</option>
 	</select>
 </div>
 <button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left no-margin-left margin-right" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'right', event, false)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">

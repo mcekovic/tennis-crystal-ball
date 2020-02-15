@@ -21,6 +21,6 @@ class ContentServiceIT {
 			RecordOfTheDay recordOfTheDay = contentService.getRecordOfTheDay(day);
 			records.compute(recordOfTheDay.getRecord(), (r, c) -> c != null ? c + 1 : 1);
 		}
-		assertThat(records.values().stream().mapToInt(c -> c).max().getAsInt()).isLessThanOrEqualTo(13);
+		assertThat(records.values().stream().mapToInt(c -> c).max().orElseThrow()).isLessThanOrEqualTo(13);
 	}
 }

@@ -91,11 +91,11 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	}
 
 	private final Supplier<TournamentLevel> maxLevel = Memoizer.of(
-		() -> levels.keySet().stream().map(TournamentLevel::decode).min(naturalOrder()).get()
+		() -> levels.keySet().stream().map(TournamentLevel::decode).min(naturalOrder()).orElseThrow()
 	);
 
 	private final Supplier<MonthDay> endDay = Memoizer.of(
-		() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(LocalDate::getDayOfYear).average().getAsDouble()))
+		() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(LocalDate::getDayOfYear).average().orElseThrow()))
 	);
 
 	private static final int REFERENCE_YEAR = 2000;
