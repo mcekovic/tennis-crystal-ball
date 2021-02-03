@@ -36,8 +36,8 @@ public class VisitorManager {
 	@Value("${tennis-stats.visitors.cache-size:1000}")
 	private int cacheSize = 1000;
 
-	@Value("#{${tennis-stats.visitors.max-hits:{TOOL: 10000, APP: 10000, UNKNOWN: 1000}}}")
-	private Map<String, Integer> maxHits = Map.of("TOOL", 10000, "APP", 10000, "UNKNOWN", 1000);
+	@Value("#{${tennis-stats.visitors.max-hits:{WEB_BROWSER: 5000, MOBILE_BROWSER: 5000, TEXT_BROWSER: 2000, TOOL: 2000, APP: 2000, UNKNOWN: 1000}}}")
+	private Map<String, Integer> maxHits = Map.of("WEB_BROWSER", 5000, "MOBILE_BROWSER", 5000, "TEXT_BROWSER", 2000, "TOOL", 2000, "APP", 2000, "UNKNOWN", 1000);
 
 	@Value("${tennis-stats.visitors.max-hit-rate:10.0}")
 	private Double maxHitRate = 10.0;
@@ -62,7 +62,7 @@ public class VisitorManager {
 			.build(repository::find);
 		visitors.putAll(repository.findAll().stream().collect(toMap(Visitor::getIpAddress, Optional::of)));
 		visitorExpirer = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("Visitor Expirer"));
-		long period = expiryCheckPeriod.getSeconds();
+		var period = expiryCheckPeriod.getSeconds();
 		visitorExpirerFuture = visitorExpirer.scheduleAtFixedRate(this::expire, period, period, TimeUnit.SECONDS);
 	}
 
@@ -107,24 +107,24 @@ public class VisitorManager {
 
 	private Visit doVisit(String ipAddress, String agentType) throws Exception {
 		return lockManager.withLock(ipAddress, () -> {
-			Optional<Visitor> optionalVisitor = visitors.get(ipAddress);
+			var optionalVisitor = visitors.get(ipAddress);
 			if (optionalVisitor.isEmpty()) {
-				Optional<Country> optionalCountry = geoIPService.getCountry(ipAddress);
+				var optionalCountry = geoIPService.getCountry(ipAddress);
 				String countryId = null;
 				String countryName = null;
 				if (optionalCountry.isPresent()) {
-					Country country = optionalCountry.get();
-					CountryCode code = CountryCode.getByCode(country.getIsoCode());
+					var country = optionalCountry.get();
+					var code = CountryCode.getByCode(country.getIsoCode());
 					if (code != null)
 						countryId = code.getAlpha3();
 					countryName = country.getName();
 				}
-				Visitor visitor = repository.create(ipAddress, countryId, countryName, agentType);
+				var visitor = repository.create(ipAddress, countryId, countryName, agentType);
 				visitors.put(ipAddress, Optional.of(visitor));
 				return new Visit(visitor);
 			}
 			else {
-				Visitor visitor = optionalVisitor.get();
+				var visitor = optionalVisitor.get();
 				visitor.visit();
 				if (visitor.isMaxHitsBreached(maxHits.get(agentType))) {
 					visitor.unvisit();

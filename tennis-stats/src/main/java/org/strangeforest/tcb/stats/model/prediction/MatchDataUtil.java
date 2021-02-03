@@ -91,7 +91,7 @@ public abstract class MatchDataUtil {
 	public static final Predicate<MatchData> ALWAYS_TRUE = m -> Boolean.TRUE;
 
 	public static Predicate<MatchData> isRecent(LocalDate date, Period period) {
-		LocalDate afterDate = date.minus(period);
+		var afterDate = date.minus(period);
 		return match -> match.getDate().compareTo(afterDate) >= 0;
 	}
 
@@ -126,7 +126,7 @@ public abstract class MatchDataUtil {
 	public static Predicate<MatchData> isOpponentRankInRange(Range<Integer> rankRange) {
 		return match -> {
 			if (rankRange != null) {
-				Integer opponentRank = match.getOpponentRank();
+				var opponentRank = match.getOpponentRank();
 				return opponentRank != null && rankRange.contains(opponentRank);
 			}
 			else

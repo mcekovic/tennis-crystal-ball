@@ -1,0 +1,12 @@
+<br/>
+<th:block xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="recordGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<div class="row">
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('GOAT Points', ${recordGOATPoints})"/>
+	</div>
+</div>
+<p>
+	<em>* Tournament and Big Wins GOAT Points are included</em>
+</p>
+</th:block>

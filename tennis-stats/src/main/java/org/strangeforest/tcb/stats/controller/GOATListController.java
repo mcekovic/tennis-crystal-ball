@@ -64,13 +64,13 @@ public class GOATListController extends PageController {
 		@RequestParam(name = "performanceFactor", defaultValue = "1") int performanceFactor,
 		@RequestParam(name = "statisticsFactor", defaultValue = "1") int statisticsFactor
 	) {
-		GOATListConfig config = new GOATListConfig(
+		var config = new GOATListConfig(
 			oldLegends, extrapolate, tournamentFactor, rankingFactor, achievementsFactor, parseIntProperties(levelFactors), parseIntProperties(resultFactors),
 			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
 			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
 		);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("countries", goatListService.getCountries());
 		modelMap.addAttribute("surface", surface);
@@ -107,13 +107,13 @@ public class GOATListController extends PageController {
 		@RequestParam(name = "performanceFactor", defaultValue = "1") int performanceFactor,
 		@RequestParam(name = "statisticsFactor", defaultValue = "1") int statisticsFactor
 	) {
-		GOATListConfig config = new GOATListConfig(
+		var config = new GOATListConfig(
 			true, false, tournamentFactor, rankingFactor, achievementsFactor, parseIntProperties(levelFactors), parseIntProperties(resultFactors),
 			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
 			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
 		);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("surface", Surface.safeDecode(surface));
 		modelMap.addAttribute("forSeason", forSeason);
 		modelMap.addAttribute("config", config);
@@ -124,13 +124,13 @@ public class GOATListController extends PageController {
 		modelMap.addAttribute("bestRankGOATPoints", applyRankFactor(surface, goatLegendService.getBestRankGOATPoints(), config.getBestRankTotalFactor()));
 		modelMap.addAttribute("weeksAtNo1ForGOATPoint", goatLegendService.getWeeksAtNo1ForGOATPoint());
 		modelMap.addAttribute("weeksAtEloTopNForGOATPoint", goatLegendService.getWeeksAtEloTopNGOATPoint());
-		int bestEloRatingTotalFactor = config.getBestEloRatingTotalFactor();
+		var bestEloRatingTotalFactor = config.getBestEloRatingTotalFactor();
 		modelMap.addAttribute("bestEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		modelMap.addAttribute("bestSurfaceEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestSurfaceEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		modelMap.addAttribute("bestIndoorEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestIndoorEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		modelMap.addAttribute("bestInMatchEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestInMatchEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		// Achievements
-		int grandSlamTotalFactor = config.getGrandSlamTotalFactor();
+		var grandSlamTotalFactor = config.getGrandSlamTotalFactor();
 		modelMap.addAttribute("careerGrandSlamGOATPoints", goatLegendService.getCareerGrandSlamGOATPoints() * grandSlamTotalFactor);
 		modelMap.addAttribute("seasonGrandSlamGOATPoints", goatLegendService.getSeasonGrandSlamGOATPoints() * grandSlamTotalFactor);
 		modelMap.addAttribute("season3GrandSlamGOATPoints", goatLegendService.getSeason3GrandSlamGOATPoints() * grandSlamTotalFactor);
@@ -168,7 +168,7 @@ public class GOATListController extends PageController {
 	}
 
 	private static List<TournamentGOATPoints> applyConfig(List<TournamentGOATPoints> tournamentPoints, GOATListConfig config) {
-		int factor = config.getTournamentFactor();
+		var factor = config.getTournamentFactor();
 		if (factor == 0 || (factor == 1 && config.hasDefaultTournamentFactors()))
 			return tournamentPoints;
 		else
@@ -176,7 +176,7 @@ public class GOATListController extends PageController {
 	}
 
 	private static List<RankGOATPoints> applyRankFactor(String surface, List<RankGOATPoints> rankPoints, int factor) {
-		double fact = isNullOrEmpty(surface) ? factor : factor / 2.0;
+		var fact = isNullOrEmpty(surface) ? factor : factor / 2.0;
 		if (fact == 0.0 || fact == 1.0)
 			return rankPoints;
 		else

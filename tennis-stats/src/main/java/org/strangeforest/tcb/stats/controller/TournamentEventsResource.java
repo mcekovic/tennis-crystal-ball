@@ -21,7 +21,7 @@ public class TournamentEventsResource {
 
 	private static final int MAX_TOURNAMENT_EVENTS = 5000;
 
-	private static Map<String, String> ORDER_MAP = Map.of(
+	private static final Map<String, String> ORDER_MAP = Map.of(
 		"date", "date",
 		"name", "name",
 		"surface", "surface",
@@ -47,10 +47,10 @@ public class TournamentEventsResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		TournamentEventFilter filter = new TournamentEventFilter(season, null, level, surface, indoor, speedRange, tournamentId, null, searchPhrase);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENT_EVENTS;
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = new TournamentEventFilter(season, null, level, surface, indoor, speedRange, tournamentId, null, searchPhrase);
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENT_EVENTS;
 		return tournamentService.getTournamentEventsTable(filter, orderBy, pageSize, current);
 	}
 }

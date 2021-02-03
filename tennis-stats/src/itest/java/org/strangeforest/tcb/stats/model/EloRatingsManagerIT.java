@@ -26,14 +26,14 @@ class EloRatingsManagerIT {
 
 	@Test @Disabled
 	void tuneEloRatingsManager() throws InterruptedException {
-		EloRatingsManager eloRatingsManager = new EloRatingsManager(dataSource);
-		double maxValue = 0.0;
+		var eloRatingsManager = new EloRatingsManager(dataSource);
+		var maxValue = 0.0;
 		PredictionResult maxResult = null;
-		for (double tuningValue = 0.0; tuningValue <= 1.0; tuningValue += 0.1) {
+		for (var tuningValue = 0.0; tuningValue <= 1.0; tuningValue += 0.1) {
 //			EloCalculator.tuningValue = tuningValue;
 			System.out.println("\nTuning value: " + tuningValue);
-			Map<String, PredictionResult> results = eloRatingsManager.compute(false, false, null, 0);
-			PredictionResult result = results.get("E");
+			var results = eloRatingsManager.compute(false, false, null, 0);
+			var result = results.get("E");
 			if (maxResult == null || result.getScore() > maxResult.getScore()) {
 				System.out.println("***** New Best Result!");
 				maxValue = tuningValue;

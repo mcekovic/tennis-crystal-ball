@@ -65,11 +65,11 @@ public class GOATListService {
 		"ORDER BY %18$s OFFSET :offset LIMIT :limit";
 
 	private static final String RESULT_FACTOR = //language=SQL
-		"CASE r.result WHEN 'W' THEN :resultWFactor WHEN 'F' THEN :resultFFactor WHEN 'SF' THEN :resultSFFactor WHEN 'QF' THEN :resultQFFactor WHEN 'RR' THEN :resultRRFactor WHEN 'BR' THEN :resultBRFactor ELSE NULL END";
+		"CASE r.result WHEN 'W' THEN :resultWFactor WHEN 'F' THEN :resultFFactor WHEN 'SF' THEN :resultSFFactor WHEN 'QF' THEN :resultQFFactor WHEN 'RR' THEN :resultRRFactor WHEN 'BR' THEN :resultBRFactor END";
 
 	private static final String TOURNAMENT_GOAT_POINTS = //language=SQL
 		" tournament_goat_points AS (\n" +
-		"  SELECT player_id, coalesce(sum(r.goat_points * CASE re.level WHEN 'G' THEN :levelGFactor WHEN 'F' THEN :levelFFactor WHEN 'L' THEN :levelLFactor WHEN 'M' THEN :levelMFactor WHEN 'O' THEN :levelOFactor WHEN 'A' THEN :levelAFactor WHEN 'B' THEN :levelBFactor WHEN 'D' THEN :levelDFactor WHEN 'T' THEN :levelTFactor ELSE NULL END * " + RESULT_FACTOR + "), 0) AS tournament_goat_points,\n" +
+		"  SELECT player_id, coalesce(sum(r.goat_points * CASE re.level WHEN 'G' THEN :levelGFactor WHEN 'F' THEN :levelFFactor WHEN 'L' THEN :levelLFactor WHEN 'M' THEN :levelMFactor WHEN 'O' THEN :levelOFactor WHEN 'A' THEN :levelAFactor WHEN 'B' THEN :levelBFactor WHEN 'D' THEN :levelDFactor WHEN 'T' THEN :levelTFactor END * " + RESULT_FACTOR + "), 0) AS tournament_goat_points,\n" +
 		"    coalesce(sum(r.goat_points * :levelGFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'G'), 0) AS tournament_g_goat_points,\n" +
 		"    coalesce(sum(r.goat_points * :levelFFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'F'), 0) +\n" +
 		"    coalesce(sum(r.goat_points * :levelLFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'L'), 0) AS tournament_fl_goat_points,\n" +
@@ -128,12 +128,12 @@ public class GOATListService {
 			GOAT_TOP_N_QUERY,
 			params("playerCount", playerCount),
 			(rs, rowNum) -> {
-				int goatRank = rs.getInt("goat_rank");
-				int playerId = rs.getInt("player_id");
-				String name = rs.getString("last_name");
-				String countryId = getInternedString(rs, "country_id");
-				boolean active = rs.getBoolean("active");
-				int goatPoints = rs.getInt("goat_points");
+				var goatRank = rs.getInt("goat_rank");
+				var playerId = rs.getInt("player_id");
+				var name = rs.getString("last_name");
+				var countryId = getInternedString(rs, "country_id");
+				var active = rs.getBoolean("active");
+				var goatPoints = rs.getInt("goat_points");
 				return new PlayerRanking(goatRank, playerId, name, countryId, active, goatPoints);
 			}
 		);
@@ -146,7 +146,7 @@ public class GOATListService {
 
 	@Cacheable("GOATList.Count")
 	public int getPlayerCount(String surface, PlayerListFilter filter, GOATListConfig config) {
-		Surface aSurface = Surface.safeDecode(surface);
+		var aSurface = Surface.safeDecode(surface);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
 			format(GOAT_COUNT_QUERY,
 				config.hasDefaultTournamentFactors() ? "" : "WITH " + getTournamentGOATPointsTable(aSurface), getTableName(aSurface), config.hasDefaultTournamentFactors() ? "" : TOURNAMENT_GOAT_POINTS_JOIN,
@@ -159,10 +159,10 @@ public class GOATListService {
 
 	@Cacheable("GOATList.Table")
 	public BootgridTable<GOATListRow> getGOATListTable(int playerCount, String surface, PlayerListFilter filter, GOATListConfig config, String orderBy, int pageSize, int currentPage) {
-		boolean overall = isNullOrEmpty(surface);
-		Surface aSurface = Surface.safeDecode(surface);
-		BootgridTable<GOATListRow> table = new BootgridTable<>(currentPage, playerCount);
-		int offset = (currentPage - 1) * pageSize;
+		var overall = isNullOrEmpty(surface);
+		var aSurface = Surface.safeDecode(surface);
+		var table = new BootgridTable<GOATListRow>(currentPage, playerCount);
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY,
 				config.hasDefaultTournamentFactors() ? "" : getTournamentGOATPointsTable(aSurface) + ",", getGOATPointsExpression(aSurface, config), getTournamentGOATPointsExpression(config), getRankingGOATPointsExpression(aSurface, config), getAchievementsGOATPointsExpression(aSurface, config), getGOATPointsAreas(aSurface, config),
@@ -174,17 +174,17 @@ public class GOATListService {
 				.addValue("offset", offset)
 				.addValue("limit", pageSize),
 			rs -> {
-				int goatRank = rs.getInt("goat_rank");
-				int playerId = rs.getInt("player_id");
-				String name = rs.getString("name");
-				String countryId = getInternedString(rs, "country_id");
-				Boolean active = !filter.hasActive() ? rs.getBoolean("active") : null;
-				LocalDate dob = getLocalDate(rs, "dob");
-				int goatPoints = rs.getInt("goat_points");
-				int tournamentGoatPoints = rs.getInt("tournament_goat_points");
-				int rankingGoatPoints = rs.getInt("ranking_goat_points");
-				int achievementsGoatPoints = rs.getInt("achievements_goat_points");
-				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, active, dob, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
+				var goatRank = rs.getInt("goat_rank");
+				var playerId = rs.getInt("player_id");
+				var name = rs.getString("name");
+				var countryId = getInternedString(rs, "country_id");
+				var active = !filter.hasActive() ? rs.getBoolean("active") : null;
+				var dob = getLocalDate(rs, "dob");
+				var goatPoints = rs.getInt("goat_points");
+				var tournamentGoatPoints = rs.getInt("tournament_goat_points");
+				var rankingGoatPoints = rs.getInt("ranking_goat_points");
+				var achievementsGoatPoints = rs.getInt("achievements_goat_points");
+				var row = new GOATListRow(goatRank, playerId, name, countryId, active, dob, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
 				// GOAT points items
 				row.settGPoints(rs.getInt("tournament_g_goat_points"));
 				row.settFLPoints(rs.getInt("tournament_fl_goat_points"));
@@ -236,7 +236,7 @@ public class GOATListService {
 	}
 
 	private static MapSqlParameterSource getParams(Surface surface, PlayerListFilter filter, GOATListConfig config) {
-		MapSqlParameterSource params = filter.getParams();
+		var params = filter.getParams();
 		if (surface != null)
 			params.addValue("surface", surface.getCode());
 		if (!config.hasDefaultFactors()) {
@@ -244,9 +244,9 @@ public class GOATListService {
 			params.addValue("rankingFactor", config.getRankingFactor());
 			params.addValue("achievementsFactor", config.getAchievementsFactor());
 			if (!config.hasDefaultTournamentFactors()) {
-				for (String level : GOATListConfig.TOURNAMENT_LEVELS)
+				for (var level : GOATListConfig.TOURNAMENT_LEVELS)
 					params.addValue("level" + level + "Factor", config.getLevelTotalFactor(level));
-				for (String result : GOATListConfig.TOURNAMENT_RESULTS)
+				for (var result : GOATListConfig.TOURNAMENT_RESULTS)
 					params.addValue("result" + result + "Factor", config.getResultFactor(result));
 			}
 			if (!config.hasDefaultRankingFactors()) {
@@ -304,7 +304,7 @@ public class GOATListService {
 	}
 
 	private static String getTournamentGOATPointsAreaExpression(GOATListConfig config, List<String> levels) {
-		String columnName = "tournament_" + levelsString(levels) + "_goat_points";
+		var columnName = "tournament_" + levelsString(levels) + "_goat_points";
 		if (config.hasDefaultFactors())
 			return "g." + columnName;
 		else if (config.hasDefaultTournamentFactors())
@@ -323,7 +323,7 @@ public class GOATListService {
 		else if (config.hasDefaultRankingFactors())
 			return "g.ranking_goat_points * :rankingFactor";
 		else {
-			StringBuilder sb = new StringBuilder(200);
+			var sb = new StringBuilder(200);
 			if (surface == null)
 				sb.append("g.year_end_rank_goat_points * :yearEndRankFactor + ");
 			sb.append("g.best_rank_goat_points * :bestRankFactor + ");
@@ -341,7 +341,7 @@ public class GOATListService {
 		else if (config.hasDefaultAchievementsFactors())
 			return "g.achievements_goat_points * :achievementsFactor";
 		else {
-			StringBuilder sb = new StringBuilder(200);
+			var sb = new StringBuilder(200);
 			if (surface == null)
 				sb.append("g.grand_slam_goat_points * :grandSlamFactor + ");
 			sb.append("g.big_wins_goat_points * :bigWinsFactor + ");

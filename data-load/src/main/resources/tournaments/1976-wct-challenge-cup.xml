@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="1976" tournament-name="WCT Challenge Cup" name="WCT Challenge Cup" date="1976-12-02" ext-id="3934">
+    <level>A</level>
+    <surface>H</surface>
+    <indoor>true</indoor>
+    <draw-type>KO</draw-type>
+    <draw-size>4</draw-size>
+    <player name="Ilie Nastase" country="ROU" />
+    <player name="Jimmy Connors" country="USA" />
+    <player name="Manuel Orantes" country="ESP" />
+    <player name="Vitas Gerulaitis" country="USA" />
+    <!-- SF -->
+    <match match-num="1" round="SF" best-of="5" winner="Jimmy Connors" loser="Vitas Gerulaitis" score="5-7 7-6 7-6 6-1" />
+    <match match-num="2" round="SF" best-of="5" winner="Ilie Nastase" loser="Manuel Orantes" score="3-6 7-6 6-4 7-5" />
+    <!-- F -->
+    <match match-num="3" round="F" best-of="5" winner="Ilie Nastase" loser="Jimmy Connors" score="3-6 7-6 6-4 7-5" />
+  </tournament>
+</tournament-data>

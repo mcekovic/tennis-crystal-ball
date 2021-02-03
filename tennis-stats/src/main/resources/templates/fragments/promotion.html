@@ -12,7 +12,7 @@
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 	</script>
-	<div class="fb-like text-center" style="width: 100%; min-height: 20px" data-href="https://www.ultimatetennisstatistics.com" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+	<div class="fb-like text-center" style="width: 100%; min-height: 20px" data-href="https://www.ultimatetennisstatistics.com" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true"></div>
 </th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="twitter(url)">
 	<div style="text-align: center; margin-top: 20px; min-height: 25px">
@@ -28,9 +28,7 @@
 			<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 		</form>
 		<p style="font-size: x-small">
-			If you like this website and want to support it, please consider a small donation to support the project.<br/>
-			All donations will be used only for paying the web hosting bill.<br/>
-			Thank You!
+			If you like the <th:block th:include="fragments/promotion :: logo"/> website and want to support it, please consider a small donation to support the project. Thank You!
 		</p>
 	</div>
 </th:block>

@@ -13,14 +13,14 @@ class BestOf5No5thSetTBMatchOutcomeTest {
 
 	@Test
 	void testEqualP() {
-		MatchOutcome match = new MatchOutcome(0.7, 0.3, BEST_OF_5_NO_5TH_SET_TB_MATCH);
+		var match = new MatchOutcome(0.7, 0.3, BEST_OF_5_NO_5TH_SET_TB_MATCH);
 
 		assertThat(match.pWin()).isEqualTo(0.5, OFFSET);
 	}
 
 	@Test
 	void testFinalStep() {
-		MatchOutcome match = new MatchOutcome(0.8, 0.4, BEST_OF_5_NO_5TH_SET_TB_MATCH);
+		var match = new MatchOutcome(0.8, 0.4, BEST_OF_5_NO_5TH_SET_TB_MATCH);
 
 		assertThat(match.pWin(3, 0)).isEqualTo(1.0);
 		assertThat(match.pWin(3, 1)).isEqualTo(1.0);
@@ -32,8 +32,8 @@ class BestOf5No5thSetTBMatchOutcomeTest {
 
 	@Test
 	void testTBpDiff() {
-		MatchOutcome bestOf5 = new MatchOutcome(0.7, 0.35, BEST_OF_5_MATCH);
-		MatchOutcome bestOf5NoTB = new MatchOutcome(0.7, 0.35, BEST_OF_5_NO_5TH_SET_TB_MATCH);
+		var bestOf5 = new MatchOutcome(0.7, 0.35, BEST_OF_5_MATCH);
+		var bestOf5NoTB = new MatchOutcome(0.7, 0.35, BEST_OF_5_NO_5TH_SET_TB_MATCH);
 
 		assertThat(bestOf5.pWin()).isEqualTo(0.7734624402, OFFSET);
 		assertThat(bestOf5NoTB.pWin()).isEqualTo(0.7792698753, OFFSET);
@@ -41,7 +41,7 @@ class BestOf5No5thSetTBMatchOutcomeTest {
 
 	@Test
 	void testSymmetry() {
-		MatchOutcome match = new MatchOutcome(0.8, 0.4, BEST_OF_5_NO_5TH_SET_TB_MATCH);
+		var match = new MatchOutcome(0.8, 0.4, BEST_OF_5_NO_5TH_SET_TB_MATCH);
 
 		assertThat(match.pWin(0, 0)).isEqualTo(match.pWin(0, 0, 0, 0, 0, 0, true).getPMatch(), OFFSET);
 		assertThat(match.pWin(0, 0, 0, 0, 0, 0, true).getPMatch()).isEqualTo(match.pWin(0, 0, 0, 0, 0, 0, false).getPMatch(), OFFSET);

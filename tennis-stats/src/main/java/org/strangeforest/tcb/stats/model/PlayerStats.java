@@ -482,7 +482,7 @@ public class PlayerStats {
 	// Totals
 
 	public int getMatches() {
-		int matches = matchesWon + getMatchesLost();
+		var matches = matchesWon + getMatchesLost();
 		if (total)
 			matches /= 2;
 		return matches;
@@ -493,7 +493,7 @@ public class PlayerStats {
 	}
 
 	public int getSets() {
-		int sets = setsWon + getSetsLost();
+		var sets = setsWon + getSetsLost();
 		if (total)
 			sets /= 2;
 		return sets;
@@ -504,7 +504,7 @@ public class PlayerStats {
 	}
 
 	public int getTotalGames() {
-		int games = gamesWon + getTotalGamesLost();
+		var games = gamesWon + getTotalGamesLost();
 		if (total)
 			games /= 2;
 		return games;
@@ -515,7 +515,7 @@ public class PlayerStats {
 	}
 
 	public int getTieBreaks() {
-		int tieBreaks = tieBreaksWon + getTieBreaksLost();
+		var tieBreaks = tieBreaksWon + getTieBreaksLost();
 		if (total)
 			tieBreaks /= 2;
 		return tieBreaks;
@@ -526,14 +526,21 @@ public class PlayerStats {
 	}
 
 	public int getTotalPoints() {
-		int points = servicePoints + getReturnPoints();
+		var points = servicePoints + getReturnPoints();
 		if (total)
 			points /= 2;
 		return points;
 	}
 
 	public int getTotalSecondServeInPlayPoints() {
-		int points = getInPlaySecondServes() + opponentStats.getInPlaySecondServes();
+		var points = getInPlaySecondServes() + opponentStats.getInPlaySecondServes();
+		if (total)
+			points /= 2;
+		return points;
+	}
+
+	public int getTotalBreakPoints() {
+		var points = breakPointsFaced + opponentStats.breakPointsFaced;
 		if (total)
 			points /= 2;
 		return points;
@@ -547,12 +554,20 @@ public class PlayerStats {
 		return secondServesWon + opponentStats.getSecondServeInPlayPointsLost();
 	}
 
-	public double getTotalSecondServeInPlayPointsWonPct() {
-		return pct(getTotalSecondServeInPlayPointsWon(), getTotalSecondServeInPlayPoints());
+	public int getTotalBreakPointsWon() {
+		return breakPointsSaved + getBreakPointsWon();
 	}
 
 	public double getTotalPointsWonPct() {
 		return pct(getTotalPointsWon(), getTotalPoints());
+	}
+
+	public double getTotalSecondServeInPlayPointsWonPct() {
+		return pct(getTotalSecondServeInPlayPointsWon(), getTotalSecondServeInPlayPoints());
+	}
+
+	public double getTotalBreakPointsWonPct() {
+		return pct(getTotalBreakPointsWon(), getTotalBreakPoints());
 	}
 
 	public double getReturnToServicePointsRatio() {
@@ -682,7 +697,7 @@ public class PlayerStats {
 	}
 
 	public int getUpsets() {
-		int upsets = upsetsScored + getUpsetsAgainst();
+		var upsets = upsetsScored + getUpsetsAgainst();
 		if (total)
 			upsets /= 2;
 		return upsets;
@@ -754,7 +769,7 @@ public class PlayerStats {
 	public static final PlayerStats EMPTY = empty();
 
 	private static PlayerStats empty() {
-		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		var empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		empty.crossLinkOpponentStats(empty);
 		return empty;
 	}

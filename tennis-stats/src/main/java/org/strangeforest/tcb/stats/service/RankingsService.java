@@ -96,9 +96,9 @@ public class RankingsService {
 		"), best_elo_rating_ordered2 AS (\n" +
 		"  SELECT r.rank, r.player_id, r.name, r.country_id, r.active, r.best_elo_rating, r.best_elo_rating_date, r.best_elo_rating_age,\n" +
 		"  CASE WHEN r.best_elo_rating_date IS NOT NULL THEN (\n" +
-		"    SELECT tournament_event_id FROM player_tournament_event_result er INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"    WHERE er.player_id = r.player_id AND e.date < r.best_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1\n" +
-		"  ) ELSE NULL END AS best_elo_rating_event_id\n" +
+		"    SELECT tournament_event_id FROM player_match_for_stats_v m INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"    WHERE m.player_id = r.player_id AND m.date < r.best_elo_rating_date - INTERVAL '2 day' ORDER BY m.date DESC LIMIT 1\n" +
+		"  ) END AS best_elo_rating_event_id\n" +
 		"  FROM best_elo_rating_ordered r\n" +
 		")\n" +
 		"SELECT r.rank, player_id, r.name, r.country_id, r.active, r.best_elo_rating AS points, r.best_elo_rating_date AS best_rating_date, r.best_elo_rating_age AS best_rating_age, k.%3$s AS best_rank, k.%4$s AS best_rank_date,\n" +
@@ -207,18 +207,18 @@ public class RankingsService {
 
 	@Cacheable("RankingsTable.CurrentDate")
 	public LocalDate getCurrentRankingDate(RankType rankType) {
-		String sql = format(CURRENT_RANKING_DATE_QUERY, rankingTable(rankType));
+		var sql = format(CURRENT_RANKING_DATE_QUERY, rankingTable(rankType));
 		return jdbcTemplate.getJdbcOperations().queryForObject(sql, LocalDate.class);
 	}
 
 	private LocalDate getSeasonEndRankingDate(RankType rankType, int season) {
-		String sql = format(SEASON_END_RANKING_DATE_QUERY, rankingTable(rankType));
+		var sql = format(SEASON_END_RANKING_DATE_QUERY, rankingTable(rankType));
 		return jdbcTemplate.queryForObject(sql, params("season", season), LocalDate.class);
 	}
 
 	@Cacheable("RankingsTable.SeasonDates")
 	public List<LocalDate> getSeasonRankingDates(RankType rankType, int season) {
-		String sql = format(RANKING_SEASON_DATES_QUERY, rankingTable(rankType));
+		var sql = format(RANKING_SEASON_DATES_QUERY, rankingTable(rankType));
 		return jdbcTemplate.queryForList(sql, params("season", season), LocalDate.class);
 	}
 
@@ -233,11 +233,11 @@ public class RankingsService {
 			format(RANKING_TOP_N_QUERY, rankColumn(rankType), pointsColumn(rankType), rankingTable(rankType)),
 			params("date", date).addValue("playerCount", playerCount),
 			(rs, rowNum) -> {
-				int goatRank = rs.getInt("rank");
-				int playerId = rs.getInt("player_id");
-				String name = shortenName(rs.getString("last_name"));
-				String countryId = getInternedString(rs, "country_id");
-				int goatPoints = rs.getInt("points");
+				var goatRank = rs.getInt("rank");
+				var playerId = rs.getInt("player_id");
+				var name = shortenName(rs.getString("last_name"));
+				var countryId = getInternedString(rs, "country_id");
+				var goatPoints = rs.getInt("points");
 				return new PlayerRanking(goatRank, playerId, name, countryId, null, goatPoints);
 			}
 		);
@@ -247,10 +247,10 @@ public class RankingsService {
 	public BootgridTable<PlayerDiffRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		checkRankingTableRankType(rankType);
 
-		BootgridTable<PlayerDiffRankingsRow> table = new BootgridTable<>(currentPage);
-		AtomicInteger players = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
-		boolean specificElo = rankType.category == ELO && rankType != ELO_RANK;
+		var table = new BootgridTable<PlayerDiffRankingsRow>(currentPage);
+		var players = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
+		var specificElo = rankType.category == ELO && rankType != ELO_RANK;
 		jdbcTemplate.query(
 			format(
 				RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType), filter.getCriteria(),
@@ -261,20 +261,20 @@ public class RankingsService {
 			),
 			getTableParams(filter, date, offset),
 			rs -> {
-				int rank = rs.getInt("rank");
+				var rank = rs.getInt("rank");
 				if (rs.wasNull() || players.incrementAndGet() > pageSize)
 					return;
-				int playerId = rs.getInt("player_id");
-				String name = rs.getString("name");
-				String countryId = getInternedString(rs, "country_id");
-				int points = rs.getInt("points");
-				int bestRank = rs.getInt("best_rank");
-				LocalDate bestRankDate = getLocalDate(rs, "best_rank_date");
-				Integer rankDiff = getInteger(rs, "rank_diff");
-				Integer pointsDiff = getInteger(rs, "points_diff");
+				var playerId = rs.getInt("player_id");
+				var name = rs.getString("name");
+				var countryId = getInternedString(rs, "country_id");
+				var points = rs.getInt("points");
+				var bestRank = rs.getInt("best_rank");
+				var bestRankDate = getLocalDate(rs, "best_rank_date");
+				var rankDiff = getInteger(rs, "rank_diff");
+				var pointsDiff = getInteger(rs, "points_diff");
 				if (pointsDiff != null && pointsDiff == points)
 					pointsDiff = null;
-				int bestPoints = rs.getInt("best_points");
+				var bestPoints = rs.getInt("best_points");
 				table.addRow(new PlayerDiffRankingsRow(rank, playerId, name, countryId, points, bestRank, bestRankDate, rankDiff, pointsDiff, bestPoints));
 			}
 		);
@@ -302,23 +302,23 @@ public class RankingsService {
 			throw new IllegalArgumentException("Peak Elo Ratings is not supported for rankType: " + rankType);
 
 		rankType = rankType.rankType;
-		BootgridTable<PlayerPeakEloRankingsRow> table = new BootgridTable<>(currentPage, playerCount);
-		int offset = (currentPage - 1) * pageSize;
+		var table = new BootgridTable<PlayerPeakEloRankingsRow>(currentPage, playerCount);
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(PEAK_ELO_RATING_TABLE_QUERY, bestPointsColumn(rankType), where(filter.withPrefix("p.").getCriteria()), bestRankColumn(rankType), bestRankDateColumn(rankType)),
 			getPeakEloTableParams(filter, offset, pageSize),
 			rs -> {
-				int rank = rs.getInt("rank");
-				int playerId = rs.getInt("player_id");
-				String name = rs.getString("name");
-				String countryId = getInternedString(rs, "country_id");
-				Boolean active = !filter.hasActive() ? rs.getBoolean("active") : null;
-				int points = rs.getInt("points");
-				int bestRank = rs.getInt("best_rank");
-				LocalDate bestRankDate = getLocalDate(rs, "best_rank_date");
-				LocalDate bestRatingDate = getLocalDate(rs, "best_rating_date");
-				Integer bestRatingAge = getInteger(rs, "best_rating_age");
-				TournamentEventItem tournamentEvent = mapTournamentEvent(rs);
+				var rank = rs.getInt("rank");
+				var playerId = rs.getInt("player_id");
+				var name = rs.getString("name");
+				var countryId = getInternedString(rs, "country_id");
+				var active = !filter.hasActive() ? rs.getBoolean("active") : null;
+				var points = rs.getInt("points");
+				var bestRank = rs.getInt("best_rank");
+				var bestRankDate = getLocalDate(rs, "best_rank_date");
+				var bestRatingDate = getLocalDate(rs, "best_rating_date");
+				var bestRatingAge = getInteger(rs, "best_rating_age");
+				var tournamentEvent = mapTournamentEvent(rs);
 				table.addRow(new PlayerPeakEloRankingsRow(rank, playerId, name, countryId, active, points, bestRatingDate, bestRank, bestRankDate, tournamentEvent, bestRatingAge));
 			}
 		);
@@ -326,13 +326,13 @@ public class RankingsService {
 	}
 
 	private MapSqlParameterSource getTableParams(PlayerListFilter filter, LocalDate date, int offset) {
-		MapSqlParameterSource params = filter.getParams();
+		var params = filter.getParams();
 		params.addValue("date", date);
 		return params.addValue("offset", offset);
 	}
 
 	private MapSqlParameterSource getPeakEloTableParams(PlayerListFilter filter, int offset, int limit) {
-		MapSqlParameterSource params = filter.getParams();
+		var params = filter.getParams();
 		params.addValue("offset", offset);
 		return params.addValue("limit", limit);
 	}
@@ -447,7 +447,7 @@ public class RankingsService {
 	}
 
 	private TournamentEventItem mapTournamentEvent(ResultSet rs) throws SQLException {
-		int tournamentEventId = rs.getInt("tournament_event_id");
+		var tournamentEventId = rs.getInt("tournament_event_id");
 		if (rs.wasNull())
 			return null;
 		return new TournamentEventItem(
@@ -462,7 +462,7 @@ public class RankingsService {
 	// Ranking Timeline
 
 	public RankingTimeline getPlayerRankingTimeline(int playerId) {
-		RankingTimeline timeline = new RankingTimeline();
+		var timeline = new RankingTimeline();
 		jdbcTemplate.query(PLAYER_RANKING_TIMELINE_QUERY, params("playerId", playerId), rs -> {
 			timeline.processWeeksAt(rs.getInt("season"), rs.getInt("rank"), rs.getDouble("weeks"), rs.getDouble("season_weeks"), rs.getDouble("next_season_weeks"));
 		});
@@ -470,7 +470,7 @@ public class RankingsService {
 	}
 
 	public RankingTimeline getPlayerEloRankingTimeline(int playerId, RankType rankType) {
-		RankingTimeline timeline = new RankingTimeline();
+		var timeline = new RankingTimeline();
 		jdbcTemplate.query(
 			format(PLAYER_ELO_RANKING_TIMELINE_QUERY, rankColumn(rankType)),
 			params("playerId", playerId),
@@ -485,8 +485,8 @@ public class RankingsService {
 	// Ranking Highlights
 
 	public RankingHighlights getRankingHighlights(int playerId) {
-		RankingHighlights highlights = new RankingHighlights();
-		MapSqlParameterSource params = params("playerId", playerId);
+		var highlights = new RankingHighlights();
+		var params = params("playerId", playerId);
 
 		jdbcTemplate.query(PLAYER_RANKING_QUERY, params, rs -> {
 			highlights.setCurrentRank(rs.getInt("current_rank"));
@@ -523,13 +523,13 @@ public class RankingsService {
 		});
 
 		jdbcTemplate.query(PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY, params, rs -> {
-			int rank = rs.getInt("rank");
-			double weeks = rs.getDouble("weeks");
+			var rank = rs.getInt("rank");
+			var weeks = rs.getDouble("weeks");
 			highlights.processWeeksAt(rank, weeks);
 		});
 
 		jdbcTemplate.query(PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY, params, rs -> {
-			int rank = rs.getInt("year_end_rank");
+			var rank = rs.getInt("year_end_rank");
 			highlights.processYearEndRank(rank);
 		});
 
@@ -551,8 +551,8 @@ public class RankingsService {
 	// Top Rankings Timeline
 
 	public TopRankingsTimeline getTopRankingsTimeline(RankType rankType) {
-		TopRankingsTimeline timeline = new TopRankingsTimeline(TOP_RANKS_FOR_TIMELINE);
-		MapSqlParameterSource params = params("topRanks", TOP_RANKS_FOR_TIMELINE);
+		var timeline = new TopRankingsTimeline(TOP_RANKS_FOR_TIMELINE);
+		var params = params("topRanks", TOP_RANKS_FOR_TIMELINE);
 		if (rankType.category == RankCategory.GOAT && rankType.surface != null)
 			params.addValue("surface", rankType.surface.getCode());
 		jdbcTemplate.query(
@@ -560,7 +560,7 @@ public class RankingsService {
 			format(TOP_RANKINGS_TIMELINE_QUERY, yearEndRankColumn(rankType), yearEndRankingTable(rankType)),
 			params,
 			rs -> {
-				int season = rs.getInt("season");
+				var season = rs.getInt("season");
 				if (timeline.getTopPlayerCount(season) < TOP_RANKS_FOR_TIMELINE) {
 					timeline.addSeasonTopPlayer(season, new TopRankingsPlayer(
 						rs.getInt("year_end_rank"),

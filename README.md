@@ -24,10 +24,11 @@
 - EloRatings - Player weekly [Elo rating](https://en.wikipedia.org/wiki/Elo_rating_system) tables (overall, by surface, outdoor or indoor, set or game) using customized Elo rating formula
 - Ranking Charts - Player ranking and ranking point charts, compare players by constructing custom charts
 - Peak Elo Ratings - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie-break)
+- Titles and Results - Titles and other results, filtered by various filters
+- Titles and Results Charts - Titles and results charts, filtered by level, surface and seasons
 - Top Performers - Find top performers in both performance and pressure situations categories
 - Performance Charts - Performance charts for various performance categories, filtered by seasons
-- Titles and Results - Titles and other results, filtered by various filters</li>
-- Titles and Results Charts - Titles and results charts, filtered by level, surface and seasons
+- Mental Toughness - Compare players by mental toughness using special mental toughness formula, filtered by various filters
 - Statistics Leaders - Find statistics leaders in different statistical categories (100+), including dominance and break points ratios
 - Top Match Stats - Top single match statistics figures filtered by various filters
 - Statistics Charts - Statistics charts for various statistical categories, including dominance and break points ratios

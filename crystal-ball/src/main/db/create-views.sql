@@ -1987,7 +1987,7 @@ WITH acePct_leaders AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM secondServeWonPct_leaders
 ), breakPointsSavedPct_leaders AS (
-	SELECT player_id, CASE WHEN p_bp_fc > 0 THEN p_bp_sv::REAL / p_bp_fc ELSE NULL END AS value
+	SELECT player_id, CASE WHEN p_bp_fc > 0 THEN p_bp_sv::REAL / p_bp_fc END AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('breakPointsSavedPct')
 ), breakPointsSavedPct_leaders_ranked AS (
@@ -2023,7 +2023,7 @@ WITH acePct_leaders AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM secondServeReturnWonPct_leaders
 ), breakPointsPct_leaders AS (
-	SELECT player_id, CASE WHEN o_bp_fc > 0 THEN (o_bp_fc - o_bp_sv)::REAL / o_bp_fc ELSE NULL END AS value
+	SELECT player_id, CASE WHEN o_bp_fc > 0 THEN (o_bp_fc - o_bp_sv)::REAL / o_bp_fc END AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('breakPointsPct')
 ), breakPointsPct_leaders_ranked AS (
@@ -2059,7 +2059,7 @@ WITH acePct_leaders AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM gamesDominanceRatio_leaders
 ), breakPointsRatio_leaders AS (
-	SELECT player_id, CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN ((o_bp_fc - o_bp_sv)::REAL / o_bp_fc) / ((p_bp_fc - p_bp_sv)::REAL / p_bp_fc) ELSE NULL END AS value
+	SELECT player_id, CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN ((o_bp_fc - o_bp_sv)::REAL / o_bp_fc) / ((p_bp_fc - p_bp_sv)::REAL / p_bp_fc) END AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('breakPointsRatio')
 ), breakPointsRatio_leaders_ranked AS (
@@ -2578,6 +2578,32 @@ WHERE goat_points > 0;
 CREATE MATERIALIZED VIEW player_surface_goat_points AS SELECT * FROM player_surface_goat_points_v;
 
 CREATE UNIQUE INDEX ON player_surface_goat_points (surface, player_id);
+
+
+-- player_tournament_goat_points_v
+
+CREATE OR REPLACE VIEW player_tournament_goat_points_v AS
+WITH tournament_goat_points AS (
+    SELECT r.player_id, e.tournament_id, sum(r.goat_points) AS goat_points, max(e.season) AS last_season
+    FROM player_tournament_event_result r
+    INNER JOIN tournament_event e USING (tournament_event_id)
+    WHERE r.goat_points > 0
+    GROUP BY r.player_id, e.tournament_id
+    UNION ALL
+    SELECT w.player_id, e.tournament_id, round(sum(w.goat_points))::INTEGER AS goat_points, max(w.season)
+    FROM player_big_wins_v w
+    INNER JOIN match m USING (match_id)
+    INNER JOIN tournament_event e USING (tournament_event_id)
+    GROUP BY w.player_id, e.tournament_id
+)
+SELECT player_id, tournament_id, sum(goat_points) AS goat_points, max(last_season) AS last_season, rank() OVER (PARTITION BY tournament_id ORDER BY sum(goat_points) DESC) AS rank
+FROM tournament_goat_points
+WHERE goat_points > 0
+GROUP BY player_id, tournament_id;
+
+CREATE MATERIALIZED VIEW player_tournament_goat_points AS SELECT * FROM player_tournament_goat_points_v;
+
+CREATE INDEX ON player_tournament_goat_points (tournament_id);
 
 
 -- player_v

@@ -28,7 +28,7 @@ public class TuningContext {
 	}
 
 	public void initialResult(PredictionVerificationResult verificationResult) {
-		PredictionResult result = verificationResult.getResult();
+		var result = verificationResult.getResult();
 		addResult(result);
 		bestResult = result;
 		System.out.println("***** Initial result: " + bestResult);
@@ -71,9 +71,9 @@ public class TuningContext {
 	}
 
 	private PredictionConfig stepWeight(PredictionConfig config, Weighted weighted, double step) {
-		double weight = weighted.getWeight(config) + step;
+		var weight = weighted.getWeight(config) + step;
 		if (weight >= weighted.minWeight() && weight <= weighted.maxWeight()) {
-			PredictionConfig newConfig = weighted.setWeight(config, weight);
+			var newConfig = weighted.setWeight(config, weight);
 			if (newConfig.isAnyAreaEnabled() && !results.containsKey(newConfig))
 				return newConfig;
 		}
@@ -86,9 +86,9 @@ public class TuningContext {
 	 * @return true if new result is the best one
 	 */
 	public boolean nextResult(PredictionVerificationResult verificationResult) {
-		PredictionResult result = verificationResult.getResult();
+		var result = verificationResult.getResult();
 		addResult(result);
-		boolean best = false;
+		var best = false;
 		if (resultComparator.compare(result, bestResult) > 0) {
 			bestResult = result;
 			best = true;

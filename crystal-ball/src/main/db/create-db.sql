@@ -1,3 +1,4 @@
+-- As postgres user
 CREATE DATABASE tcb
   WITH
   OWNER = postgres

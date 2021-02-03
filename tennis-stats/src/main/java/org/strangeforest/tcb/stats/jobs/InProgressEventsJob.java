@@ -33,7 +33,7 @@ public class InProgressEventsJob {
 
 	private void clearCaches() {
 		dataService.evictGlobal("InProgressEvents");
-		int cacheCount = dataService.clearCaches("InProgressEvent.*");
+		var cacheCount = dataService.clearCaches("InProgressEvent.*");
 		LOGGER.info("{} cache(s) cleared.", cacheCount);
 	}
 }

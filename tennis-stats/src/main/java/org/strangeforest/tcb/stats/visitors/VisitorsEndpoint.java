@@ -25,12 +25,12 @@ public class VisitorsEndpoint {
 		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval,
 		@RequestParam(name = "robots", defaultValue = F) boolean robots
 	) {
-		Map<String, BigDecimal> countriesMap = repository.getVisitorsByCountry(stat, interval, robots);
-		List<Object[]> countries = mapToDataArray(countriesMap, "Country", stat.getCaption());
-		Map<String, BigDecimal> agentTypeMap = repository.getVisitorsByAgentType(stat, interval, robots);
-		List<Object[]> agentTypes = mapToDataArray(agentTypeMap, "Agent Type", stat.getCaption());
+		var countriesMap = repository.getVisitorsByCountry(stat, interval, robots);
+		var countries = mapToDataArray(countriesMap, "Country", stat.getCaption());
+		var agentTypeMap = repository.getVisitorsByAgentType(stat, interval, robots);
+		var agentTypes = mapToDataArray(agentTypeMap, "Agent Type", stat.getCaption());
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.put("versions", BaseController.VERSIONS);
 		modelMap.put("stat", stat);
 		modelMap.put("interval", interval);

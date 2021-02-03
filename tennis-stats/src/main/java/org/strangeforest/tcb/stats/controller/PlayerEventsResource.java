@@ -25,7 +25,7 @@ public class PlayerEventsResource {
 
 	private static final int MAX_TOURNAMENTS = 1000;
 
-	private static Map<String, String> ORDER_MAP = Map.of(
+	private static final Map<String, String> ORDER_MAP = Map.of(
 		"season", "season",
 		"date", "date",
 		"name", "name",
@@ -59,12 +59,12 @@ public class PlayerEventsResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		StatsFilter statsFilter = StatsFilter.forTournaments(statsCategory, statsFrom, statsTo);
-		TournamentEventResultFilter filter = new TournamentEventResultFilter(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, statsFilter, searchPhrase);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var statsFilter = StatsFilter.forTournaments(statsCategory, statsFrom, statsTo);
+		var filter = new TournamentEventResultFilter(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, statsFilter, searchPhrase);
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return tournamentService.getPlayerTournamentEventsTable(playerId, filter, orderBy, pageSize, current);
 	}
 
@@ -83,10 +83,10 @@ public class PlayerEventsResource {
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, StatsFilter.ALL, searchPhrase);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, StatsFilter.ALL, searchPhrase);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
 		return StatsCategory.get(statsCategory).getStat(stats);
 	}
 }

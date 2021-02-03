@@ -33,14 +33,14 @@ public class PerfStatsChartResource {
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "byAge", defaultValue = F) boolean byAge
 	) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(category);
-		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		var perfCategory = PerformanceCategory.get(category);
+		var seasonRange = RangeUtil.toRange(fromSeason, toSeason);
 		if (!seasonRange.equals(Range.all()))
 			byAge = false;
 		if (playerId != null && playerId.length > 0)
 			return perfChartService.getPerformanceDataTable(playerId, perfCategory, chartType, seasonRange, byAge);
 		else {
-			List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+			var players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 			return perfChartService.getPerformanceDataTable(players, perfCategory, chartType, seasonRange, byAge);
 		}
 	}
@@ -55,14 +55,14 @@ public class PerfStatsChartResource {
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "byAge", defaultValue = F) boolean byAge
 	) {
-		StatsCategory statsCategory = StatsCategory.get(category);
-		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		var statsCategory = StatsCategory.get(category);
+		var seasonRange = RangeUtil.toRange(fromSeason, toSeason);
 		if (!seasonRange.equals(Range.all()))
 			byAge = false;
 		if (playerId != null && playerId.length > 0)
 			return statsChartService.getStatisticsDataTable(playerId, statsCategory, surface, seasonRange, byAge);
 		else {
-			List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+			var players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 			return statsChartService.getStatisticsDataTable(players, statsCategory, surface, seasonRange, byAge);
 		}
 	}
@@ -80,12 +80,12 @@ public class PerfStatsChartResource {
 		@RequestParam(name = "bySeason", defaultValue = F) boolean bySeason,
 		@RequestParam(name = "byAge", defaultValue = F) boolean byAge
 	) {
-		Range<LocalDate> dateRange = DateUtil.toDateRange(fromSeason, toSeason);
-		TournamentEventResultFilter filter = new TournamentEventResultFilter(null, dateRange, level, surface, indoor, null, result, null, null, null);
+		var dateRange = DateUtil.toDateRange(fromSeason, toSeason);
+		var filter = new TournamentEventResultFilter(null, dateRange, level, surface, indoor, null, result, null, null, null);
 		if (playerId != null && playerId.length > 0)
 			return resultsChartService.getResultsDataTable(playerId, filter, bySeason, byAge);
 		else {
-			List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+			var inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 			return resultsChartService.getResultsDataTable(inputPlayers, filter, bySeason, byAge);
 		}
 	}

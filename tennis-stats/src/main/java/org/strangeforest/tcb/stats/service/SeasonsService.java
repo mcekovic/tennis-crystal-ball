@@ -162,9 +162,9 @@ public class SeasonsService {
 
 	@Cacheable("Seasons")
 	public BootgridTable<Season> getSeasons(String orderBy, int pageSize, int currentPage) {
-		BootgridTable<Season> table = new BootgridTable<>(currentPage);
-		AtomicInteger seasons = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
+		var table = new BootgridTable<Season>(currentPage);
+		var seasons = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(SEASONS_QUERY, orderBy),
 			params("offset", offset),
@@ -230,8 +230,8 @@ public class SeasonsService {
 	}
 
 	public List<RecordDetailRow> getSeasonGOATPoints(int season, String surface, String pointsColumnPrefix, int maxPlayers) {
-		boolean overall = isNullOrEmpty(surface);
-		MapSqlParameterSource params = params("season", season)
+		var overall = isNullOrEmpty(surface);
+		var params = params("season", season)
 			.addValue("maxPlayers", maxPlayers);
 		if (!overall)
 			params.addValue("surface", surface);
@@ -254,7 +254,7 @@ public class SeasonsService {
 			getInternedString(rs, "country_id"),
 			null,
 			new IntegerRecordDetail(rs.getInt("value")), (playerId, recordDetail) -> {
-				String url = format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, season);
+			var url = format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, season);
 				if (!isNullOrEmpty(surface))
 					url += "&surface=" + surface;
 				return url;
@@ -265,8 +265,8 @@ public class SeasonsService {
 
 	@Cacheable("BestSeasons.Count")
 	public int getBestSeasonCount(String surface, PlayerListFilter filter) {
-		boolean overall = isNullOrEmpty(surface);
-		MapSqlParameterSource params = filter.getParams().addValue("minPoints", getMinSeasonGOATPoints(surface));
+		var overall = isNullOrEmpty(surface);
+		var params = filter.getParams().addValue("minPoints", getMinSeasonGOATPoints(surface));
 		if (!overall)
 			params.addValue("surface", surface);
 		return Math.min(MAX_BEST_SEASON_COUNT, jdbcTemplate.queryForObject(
@@ -282,12 +282,12 @@ public class SeasonsService {
 
 	@Cacheable("BestSeasons.Table")
 	public BootgridTable<BestSeasonRow> getBestSeasonsTable(int seasonCount, String surface, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
-		boolean overall = isNullOrEmpty(surface);
-		Surface aSurface = Surface.safeDecode(surface);
-		BootgridTable<BestSeasonRow> table = new BootgridTable<>(currentPage, seasonCount);
-		int offset = (currentPage - 1) * pageSize;
+		var overall = isNullOrEmpty(surface);
+		var aSurface = Surface.safeDecode(surface);
+		var table = new BootgridTable<BestSeasonRow>(currentPage, seasonCount);
+		var offset = (currentPage - 1) * pageSize;
 		int currentSeason = dataService.getLastSeason();
-		MapSqlParameterSource params = filter.getParams()
+		var params = filter.getParams()
 			.addValue("minPoints", getMinSeasonGOATPoints(surface))
 			.addValue("offset", offset)
 			.addValue("limit", pageSize);
@@ -306,16 +306,16 @@ public class SeasonsService {
 			),
 			params,
 			rs -> {
-				int seasonRank = rs.getInt("season_rank");
-				int playerId = rs.getInt("player_id");
-				String name = rs.getString("name");
-				int playerSeasonRank = rs.getInt("player_season_rank");
+				var seasonRank = rs.getInt("season_rank");
+				var playerId = rs.getInt("player_id");
+				var name = rs.getString("name");
+				var playerSeasonRank = rs.getInt("player_season_rank");
 				if (playerSeasonRank > 1)
 					name += " (" + playerSeasonRank + ')';
-				String countryId = getInternedString(rs, "country_id");
-				int season = rs.getInt("season");
-				int goatPoints = rs.getInt("goat_points");
-				BestSeasonRow row = new BestSeasonRow(seasonRank, playerId, name, countryId, season, season == currentSeason, goatPoints);
+				var countryId = getInternedString(rs, "country_id");
+				var season = rs.getInt("season");
+				var goatPoints = rs.getInt("goat_points");
+				var row = new BestSeasonRow(seasonRank, playerId, name, countryId, season, season == currentSeason, goatPoints);
 				// GOAT points items
 				row.setTournamentGoatPoints(rs.getInt("tournament_goat_points"));
 				if (overall) {

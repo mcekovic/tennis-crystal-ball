@@ -55,9 +55,9 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public MatchPrediction predictMatch() {
-		Period matchRecentPeriod = getMatchRecentPeriod();
-		Period setRecentPeriod = getSetRecentPeriod();
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
+		var matchRecentPeriod = getMatchRecentPeriod();
+		var setRecentPeriod = getSetRecentPeriod();
+		var prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
 		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
@@ -98,23 +98,23 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, WinningPctPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2) {
-		double itemWeight = config.getItemWeight(item);
+		var itemWeight = config.getItemWeight(item);
 		if (itemWeight > 0.0) {
 			ToIntFunction<MatchData> wonDimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
 			ToIntFunction<MatchData> lostDimension = item.isForSet() ? MatchData::getOSets : MatchData::getOMatches;
-			WL wonLost1 = matchData1.stream().filter(filter1).map(m -> new WL(wonDimension.applyAsInt(m), lostDimension.applyAsInt(m))).reduce(new WL(), WL::add);
-			WL wonLost2 = matchData2.stream().filter(filter2).map(m -> new WL(wonDimension.applyAsInt(m), lostDimension.applyAsInt(m))).reduce(new WL(), WL::add);
-			int total1 = wonLost1.total();
-			int total2 = wonLost2.total();
+			var wonLost1 = matchData1.stream().filter(filter1).map(m -> new WL(wonDimension.applyAsInt(m), lostDimension.applyAsInt(m))).reduce(new WL(), WL::add);
+			var wonLost2 = matchData2.stream().filter(filter2).map(m -> new WL(wonDimension.applyAsInt(m), lostDimension.applyAsInt(m))).reduce(new WL(), WL::add);
+			var total1 = wonLost1.total();
+			var total2 = wonLost2.total();
 			if (total1 > 0 && total2 > 0) {
-				double weight = itemWeight * weight(total1, total2);
-				double p1 = 1.0 * wonLost1.won / total1;
-				double p2 = 1.0 * wonLost2.won / total2;
+				var weight = itemWeight * weight(total1, total2);
+				var p1 = 1.0 * wonLost1.won / total1;
+				var p2 = 1.0 * wonLost2.won / total2;
 				if (p1 + p2 > 0.0) {
 					p1 = pow(E, 4.0 * p1) - 1.0;
 					p2 = pow(E, 4.0 * p2) - 1.0;
-					double p12 = p1 + p2;
-					DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
+					var p12 = p1 + p2;
+					var probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
 					prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(p1 / p12));
 					prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(p2 / p12));
 				}

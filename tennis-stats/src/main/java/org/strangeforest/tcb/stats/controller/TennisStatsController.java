@@ -35,14 +35,14 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/")
 	public ModelAndView index() {
-		boolean hasInProgressEvents = forecastService.getInProgressEventsTable(InProgressEventFilter.ALL_IN_PROGRESS, null, FORECAST_ORDER_BY, 20, 1).getTotal() > 0;
-		PlayerOfTheWeek playerOfTheWeek = contentService.getPlayerOfTheWeek();
-		RecordOfTheDay recordOfTheDay = contentService.getRecordOfTheDay();
-		FeaturedContent featuredBlogPost = contentService.getFeaturedBlogPost();
-		FeaturedContent featuredPage = contentService.getFeaturedPage();
-		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		var hasInProgressEvents = forecastService.getInProgressEventsTable(InProgressEventFilter.ALL_IN_PROGRESS, null, FORECAST_ORDER_BY, 20, 1).getTotal() > 0;
+		var playerOfTheWeek = contentService.getPlayerOfTheWeek();
+		var recordOfTheDay = contentService.getRecordOfTheDay();
+		var featuredBlogPost = contentService.getFeaturedBlogPost();
+		var featuredPage = contentService.getFeaturedPage();
+		var goatTopN = goatListService.getGOATTopN(10);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("hasInProgressEvents", hasInProgressEvents);
 		modelMap.addAttribute("currentSeason", dataService.getLastSeason());
 		modelMap.addAttribute("playerOfTheWeek", playerOfTheWeek);
@@ -59,9 +59,9 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/about")
 	public ModelAndView about() {
-		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		var goatTopN = goatListService.getGOATTopN(10);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("speeds", CourtSpeed.SPEEDS);
 		modelMap.addAttribute("goatTopN", goatTopN);
 		return new ModelAndView("about", modelMap);
@@ -69,19 +69,19 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/glossary")
 	public ModelAndView glossary() {
-		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		var goatTopN = goatListService.getGOATTopN(10);
 		return new ModelAndView("glossary", "goatTopN", goatTopN);
 	}
 
 	@GetMapping("/tips")
 	public ModelAndView tips() {
-		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		var goatTopN = goatListService.getGOATTopN(10);
 		return new ModelAndView("tips", "goatTopN", goatTopN);
 	}
 
 	@GetMapping("/contact")
 	public ModelAndView contact() {
-		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		var goatTopN = goatListService.getGOATTopN(10);
 		return new ModelAndView("contact", "goatTopN", goatTopN);
 	}
 
@@ -95,10 +95,10 @@ public class TennisStatsController extends PageController {
 	) {
 		response.setHeader(CACHE_CONTROL, MAX_AGE_1_HOUR);
 
-		LocalDate date = rankingsService.getCurrentRankingDate(rankType);
-		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, count);
+		var date = rankingsService.getCurrentRankingDate(rankType);
+		var rankingTopN = rankingsService.getRankingsTopN(rankType, date, count);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("rankTypes", RankType.values());
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("count", count);
@@ -115,7 +115,7 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/donationThankYou")
 	public ModelAndView donationThankYou() {
-		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		var goatTopN = goatListService.getGOATTopN(10);
 		return new ModelAndView("donationThankYou", "goatTopN", goatTopN);
 	}
 

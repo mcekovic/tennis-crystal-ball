@@ -4,6 +4,8 @@ DROP VIEW match_price_v;
 
 DROP VIEW player_v;
 
+DROP MATERIALIZED VIEW player_tournament_goat_points;
+DROP VIEW player_tournament_goat_points_v;
 DROP MATERIALIZED VIEW player_surface_goat_points;
 DROP VIEW player_surface_goat_points_v;
 DROP VIEW player_surface_best_season_goat_points_v;

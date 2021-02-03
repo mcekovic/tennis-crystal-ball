@@ -120,20 +120,20 @@ public class StatsLeadersService {
 	}
 
 	private BootgridTable<StatsLeaderRow> getStatsLeadersTable(String category, boolean inProgress, int playerCount, PerfStatsFilter filter, Integer minEntries, String orderBy, int pageSize, int currentPage) {
-		StatsCategory statsCategory = StatsCategory.get(category);
-		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
+		var statsCategory = StatsCategory.get(category);
+		var table = new BootgridTable<StatsLeaderRow>(currentPage, playerCount);
 		filter.withPrefix("p.");
-		int offset = (currentPage - 1) * pageSize;
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			getTableSQL(statsCategory, inProgress, filter, orderBy),
 			filter.getParams().addValue("minEntries", getMinEntries(statsCategory, filter, minEntries)).addValue("offset", offset).addValue("limit", pageSize),
 			rs -> {
-				int rank = rs.getInt("rank");
-				int playerId = rs.getInt("player_id");
-				String name = rs.getString("name");
-				String countryId = getInternedString(rs, "country_id");
-				Boolean active = !filter.hasActive() && !filter.isTimeLocalized() && !inProgress ? rs.getBoolean("active") : null;
-				double value = rs.getDouble("value");
+				var rank = rs.getInt("rank");
+				var playerId = rs.getInt("player_id");
+				var name = rs.getString("name");
+				var countryId = getInternedString(rs, "country_id");
+				var active = !filter.hasActive() && !filter.isTimeLocalized() && !inProgress ? rs.getBoolean("active") : null;
+				var value = rs.getDouble("value");
 				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, active, value, statsCategory.getType()));
 			}
 		);
@@ -141,19 +141,19 @@ public class StatsLeadersService {
 	}
 
 	public String getStatsLeadersMinEntries(String category, PerfStatsFilter filter, Integer minEntries) {
-		StatsCategory statsCategory = StatsCategory.get(category);
+		var statsCategory = StatsCategory.get(category);
 		return getMinEntries(statsCategory, filter, minEntries) + " " + (statsCategory.getItem().getText());
 	}
 
 	private String getTableSQL(StatsCategory statsCategory, boolean inProgress, PerfStatsFilter filter, String orderBy) {
-		boolean summed = filter.isEmptyOrForSeasonOrSurface();
+		var summed = filter.isEmptyOrForSeasonOrSurface();
 		return summed && !filter.hasSurfaceGroup()
 	       ? format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(inProgress, filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy)
 	       : format(SUMMED_STATS_LEADERS_QUERY, summed ? statsCategory.getPartiallySummedExpression() : statsCategory.getSummedExpression(), statsTableName(inProgress, filter), getStatsLeadersJoin(filter), filter.getBaseCriteria(), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy);
 	}
 
 	private static String getStatsLeadersJoin(PerfStatsFilter filter) {
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 		if (filter.hasSpeedRange())
 			sb.append(EVENT_STATS_JOIN);
 		if (filter.hasResult())

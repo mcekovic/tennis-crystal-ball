@@ -27,7 +27,7 @@ public class PlayerRivalriesResource {
 
 	private static final int MAX_RIVALRIES = 1000;
 
-	private static Map<String, String> ORDER_MAP = Map.of(
+	private static final Map<String, String> ORDER_MAP = Map.of(
 		"bestRank", "best_rank",
 		"matches", "matches",
 		"won", "won",
@@ -58,13 +58,13 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		RivalryFilter rivalryFilter = new RivalryFilter(season, seasonRange, level, bestOf, surface, indoor, speedRange, round, tournamentId);
-		RivalrySeriesFilter rivalrySeriesFilter = new RivalrySeriesFilter(opponent, matchesService.getSameCountryIds(countryId), h2h, matches);
-		RivalryPlayerListFilter filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
-		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
+		var seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var rivalryFilter = new RivalryFilter(season, seasonRange, level, bestOf, surface, indoor, speedRange, round, tournamentId);
+		var rivalrySeriesFilter = new RivalrySeriesFilter(opponent, matchesService.getSameCountryIds(countryId), h2h, matches);
+		var filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
+		var pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
 		return rivalriesService.getPlayerRivalriesTable(playerId, filter, rivalrySeriesFilter, orderBy, pageSize, current);
 	}
 
@@ -85,9 +85,9 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "outcome", required = false) String outcome
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, score));
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, score));
 		return List.of(stats1.getMatchesWon(), stats1.getMatchesLost());
 	}
 }

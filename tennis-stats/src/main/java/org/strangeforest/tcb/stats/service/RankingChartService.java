@@ -201,19 +201,19 @@ public class RankingChartService {
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
 	public DataTable getRankingDataTable(int[] playerIds, int[] refRanks, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
-		IndexedPlayers indexedRefRanks = getIndexedReferenceRanks(rankType, refRanks);
-		IndexedPlayers indexedAll = indexedRefRanks.union(indexedPlayers);
-		DataTable table = fetchRankingsDataTable(indexedAll, indexedPlayers.getPlayerIds(), indexedRefRanks.getPlayerIds(), rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+		var indexedPlayers = playerService.getIndexedPlayers(playerIds);
+		var indexedRefRanks = getIndexedReferenceRanks(rankType, refRanks);
+		var indexedAll = indexedRefRanks.union(indexedPlayers);
+		var table = fetchRankingsDataTable(indexedAll, indexedPlayers.getPlayerIds(), indexedRefRanks.getPlayerIds(), rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		addColumns(table, indexedAll, rankType, bySeason, byAge);
 		return table;
 	}
 
 	public DataTable getRankingsDataTable(List<String> players, int[] refRanks, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(players);
-		IndexedPlayers indexedRefRanks = getIndexedReferenceRanks(rankType, refRanks);
-		IndexedPlayers indexedAll = indexedRefRanks.union(indexedPlayers);
-		DataTable table = fetchRankingsDataTable(indexedAll, indexedPlayers.getPlayerIds(), indexedRefRanks.getPlayerIds(), rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+		var indexedPlayers = playerService.getIndexedPlayers(players);
+		var indexedRefRanks = getIndexedReferenceRanks(rankType, refRanks);
+		var indexedAll = indexedRefRanks.union(indexedPlayers);
+		var table = fetchRankingsDataTable(indexedAll, indexedPlayers.getPlayerIds(), indexedRefRanks.getPlayerIds(), rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		if (!table.getRows().isEmpty())
 			addColumns(table, indexedAll, rankType, bySeason, byAge);
 		else {
@@ -224,27 +224,27 @@ public class RankingChartService {
 	}
 
 	private static IndexedPlayers getIndexedReferenceRanks(RankType rankType, int[] refRanks) {
-		IndexedPlayers indexedRefRanks = new IndexedPlayers();
-		for (int index = 0; index < refRanks.length; index++) {
-			int refRank = refRanks[index];
+		var indexedRefRanks = new IndexedPlayers();
+		for (var index = 0; index < refRanks.length; index++) {
+			var refRank = refRanks[index];
 			indexedRefRanks.addPlayer(-refRank, rankType.rankType.shortText + " No. " + refRank, index);
 		}
 		return indexedRefRanks;
 	}
 
 	private DataTable fetchRankingsDataTable(IndexedPlayers ranksAndPlayers, Collection<Integer> playerIds, Collection<Integer> refRankIds, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
-		DataTable table = new DataTable();
+		var table = new DataTable();
 		if (ranksAndPlayers.isEmpty())
 			return table;
 		RowCursor rowCursor = bySeason ? new IntegerRowCursor(table, ranksAndPlayers) : (byAge ? new DoubleRowCursor(table, ranksAndPlayers) : new DateRowCursor(table, ranksAndPlayers));
-		boolean compensate = compensatePoints && rankType == POINTS;
+		var compensate = compensatePoints && rankType == POINTS;
 		jdbcTemplate.query(
 			getSQL(rankType, !refRankIds.isEmpty(), bySeason, dateRange, seasonRange, byAge),
 			getParams(playerIds, refRankIds, bySeason, dateRange, seasonRange, rankType.category == RankCategory.GOAT ? rankType.surface : null),
 			rs -> {
 				Object x;
-				int playerId = rs.getInt("player_id");
-				int y =  rs.getInt("rank_value");
+				var playerId = rs.getInt("player_id");
+				var y =  rs.getInt("rank_value");
 				if (rs.wasNull())
 					return;
 				if (bySeason) {
@@ -254,7 +254,7 @@ public class RankingChartService {
 					x = byAge ? rs.getInt("age") : season;
 				}
 				else {
-					LocalDate date = getLocalDate(rs, "date");
+					var date = getLocalDate(rs, "date");
 					if (compensate)
 						y = compensateRankingPoints(date, y);
 					x = byAge ? getYears(rs, "age") : date;
@@ -273,15 +273,15 @@ public class RankingChartService {
 			table.addColumn("number", "Season");
 		else
 			table.addColumn("date", "Date");
-		for (String player : players.getPlayers())
+		for (var player : players.getPlayers())
 			table.addColumn("number", player + " " + rankType.text);
 	}
 
 	private String getSQL(RankType rankType, boolean referenceRank, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
-		String playerJoin = byAge ? PLAYER_JOIN : "";
-		String orderBy = byAge ? "age" : (bySeason ? "season" : "date");
+		var playerJoin = byAge ? PLAYER_JOIN : "";
+		var orderBy = byAge ? "age" : (bySeason ? "season" : "date");
 		if (rankType.category == RankCategory.GOAT) {
-			boolean bySurface = rankType.surface != null;
+			var bySurface = rankType.surface != null;
 			if (bySeason) {
 				return format(PLAYER_SEASON_GOAT_POINTS_QUERY,
 					bySurface ? PLAYER_SURFACE_SEASON_GOAT_POINTS : PLAYER_SEASON_GOAT_POINTS,
@@ -402,7 +402,7 @@ public class RankingChartService {
 	}
 
 	private MapSqlParameterSource getParams(Collection<Integer> playerIds, Collection<Integer> refRankIds, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, Surface surface) {
-		MapSqlParameterSource params = params("playerIds", playerIds);
+		var params = params("playerIds", playerIds);
 		if (!refRankIds.isEmpty())
 			params.addValue("refRanks", refRankIds);
 		if (bySeason)

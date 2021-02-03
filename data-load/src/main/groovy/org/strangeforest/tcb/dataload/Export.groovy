@@ -47,14 +47,14 @@ def exportRankings(Sql sql) {
 
 def exportAllTournaments(Sql sql) {
 	def exporter = new XMLTournamentExporter(sql)
-	sql.rows('SELECT season, ext_tournament_id FROM tournament_event INNER JOIN tournament_mapping USING (tournament_id) ORDER BY date').each {
-		exporter.exportTournament(it.ext_tournament_id, it.season, 'M:/TennisData/tournaments')
+	sql.rows('SELECT tournament_event_id FROM tournament_event INNER JOIN tournament_mapping USING (tournament_id) ORDER BY date').each {
+		exporter.exportTournamentEvent(it.tournament_event_id, getPath() + '/tournaments')
 	}
 }
 
 def export(Sql sql, String fileName, String query, Map params = [:]) {
 	print "Exporting to $fileName"
-	def filePath = 'M:/TennisData/' + fileName
+	def filePath = getPath() + File.separator + fileName
 	new File(filePath).parentFile.mkdirs()
 	def file = new File(filePath)
 	file.delete()
@@ -67,6 +67,10 @@ def export(Sql sql, String fileName, String query, Map params = [:]) {
 	})
 	file << ']'
 	println()
+}
+
+private static String getPath() {
+	System.getProperty('tcb.export.path', 'uts-data')
 }
 
 private static String formatDate(Date date) {

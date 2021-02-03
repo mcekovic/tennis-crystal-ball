@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.time.*;
+
 import org.assertj.core.data.*;
 import org.junit.jupiter.api.*;
 
@@ -11,7 +13,7 @@ class EloCalculatorTest {
 
 	@Test
 	void startRatingIsCalculatedCorrectly() {
-		Offset<Double> offset = Offset.offset(1.0);
+		var offset = Offset.offset(1.0);
 
 		assertThat(startRating(   1)).isCloseTo(2405, offset);
 		assertThat(startRating(   2)).isCloseTo(2336, offset);
@@ -32,7 +34,7 @@ class EloCalculatorTest {
 
 	@Test
 	void kFactorIsCalculatedCorrectly() {
-		Offset<Double> offset = Offset.offset(0.01);
+		var offset = Offset.offset(0.01);
 
 		assertThat(kFactor("G",    "F", (short)5, null)).isCloseTo(32.00, offset);
 		assertThat(kFactor("G",   "SF", (short)5, null)).isCloseTo(28.80, offset);
@@ -87,7 +89,7 @@ class EloCalculatorTest {
 
 	@Test
 	void kFunctionIsCalculatedCorrectly() {
-		Offset<Double> offset = Offset.offset(0.001);
+		var offset = Offset.offset(0.001);
 
 		assertThat(kFunction(1500)).isCloseTo(10.000, offset);
 		assertThat(kFunction(1600)).isCloseTo(5.495, offset);
@@ -99,7 +101,7 @@ class EloCalculatorTest {
 
 	@Test
 	void ratingIsCappedCorrectly() {
-		Offset<Double> offset = Offset.offset(0.1);
+		var offset = Offset.offset(0.1);
 
 		assertThat(newRating(2000.0,   30.0, "E")).isCloseTo(2032.2, offset);
 		assertThat(newRating(2000.0,  230.0, "E")).isCloseTo(2200.0, offset);
@@ -109,7 +111,7 @@ class EloCalculatorTest {
 
 	@Test
 	void ratingAdjustmentIsCalculatedCorrectly() {
-		Offset<Double> offset = Offset.offset(0.1);
+		var offset = Offset.offset(0.1);
 
 		assertThat(adjustRating(2000.0,  30, "E")).isCloseTo(2000.0, offset);
 		assertThat(adjustRating(2000.0,  60, "E")).isCloseTo(1999.7, offset);
@@ -138,21 +140,34 @@ class EloCalculatorTest {
 
 	@Test
 	void deltaRatingIsCalculatedAsExpected() {
-		Offset<Double> offset = Offset.offset(0.1);
+		var offset = Offset.offset(0.1);
 
-		double delta1 = deltaRating(2450, 2350, "G", "F", (short)5, null);
+		var delta1 = deltaRating(2450, 2350, "G", "F", (short)5, null);
 		assertThat(delta1).isCloseTo(11.5, offset);
 		assertThat(kFunction(2450) * delta1).isCloseTo(11.5, offset);
 		assertThat(kFunction(2350) * -delta1).isCloseTo(-11.5, offset);
 
-		double delta2 = deltaRating(2000, 2350, "M", "SF", (short)3, null);
+		var delta2 = deltaRating(2000, 2350, "M", "SF", (short)3, null);
 		assertThat(delta2).isCloseTo(19.4, offset);
 		assertThat(kFunction(2000) * delta2).isCloseTo(20.9, offset);
 		assertThat(kFunction(2350) * -delta2).isCloseTo(-19.4, offset);
 
-		double delta3 = deltaRating(2250, 1800, "B", "R32", (short)3, null);
+		var delta3 = deltaRating(2250, 1800, "B", "R32", (short)3, null);
 		assertThat(delta3).isCloseTo(1.1, offset);
 		assertThat(kFunction(2250) * delta3).isCloseTo(1.1, offset);
 		assertThat(kFunction(1800) * -delta3).isCloseTo(-1.8, offset);
+	}
+
+	@Test
+	void daysBetweenTest() {
+		// Outside of frozen period
+		assertThat(daysBetween(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1))).isEqualTo(365);
+		// Inside frozen period
+		assertThat(daysBetween(LocalDate.of(2020, 5, 1), LocalDate.of(2020, 6, 1))).isEqualTo(0);
+		// Across frozen period
+		assertThat(daysBetween(LocalDate.of(2020, 1, 1), LocalDate.of(2021, 1, 1))).isEqualTo(212);
+		// Intersects frozen Period
+		assertThat(daysBetween(LocalDate.of(2020, 3, 1), LocalDate.of(2020, 4, 1))).isEqualTo(22);
+		assertThat(daysBetween(LocalDate.of(2020, 8, 1), LocalDate.of(2020, 9, 1))).isEqualTo(8);
 	}
 }

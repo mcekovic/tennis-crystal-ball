@@ -22,13 +22,13 @@ public class DataTable {
 	}
 
 	public TableRow addRow(String value) {
-		TableRow row = new TableRow(value);
+		var row = new TableRow(value);
 		rows.add(row);
 		return row;
 	}
 
 	public TableRow addRow(String... values) {
-		TableRow row = new TableRow(values);
+		var row = new TableRow(values);
 		rows.add(row);
 		return row;
 	}

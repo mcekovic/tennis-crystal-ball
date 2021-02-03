@@ -77,7 +77,7 @@ class WikipediaPlayerDataLoader {
 		def playerData = [:]
 		playerData['wikipedia'] = url
 
-		def doc = retriedGetDoc(url)
+		def doc = retriedGetDoc(url, false)
 		def vcard = doc.select('table.infobox.vcard > tbody')
 
 //		// Birthplace
@@ -157,7 +157,7 @@ class WikipediaPlayerDataLoader {
 		try {
 			i ? i.toInteger() : null
 		}
-		catch (Exception ex) {
+		catch (ignored) {
 			null
 		}
 	}
@@ -182,7 +182,7 @@ class WikipediaPlayerDataLoader {
 			def year = Integer.parseInt(d.substring(sep2, sep3))
 			LocalDate.of(year, month, day)
 		}
-		catch (Exception ex) {
+		catch (ignored) {
 			null
 		}
 	}
@@ -195,7 +195,7 @@ class WikipediaPlayerDataLoader {
 			if (sep2 <= 0) return null
 			LocalDate.parse(d.substring(sep1, sep2))
 		}
-		catch (Exception ex) {
+		catch (ignored) {
 			null
 		}
 	}

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="1968" tournament-name="Paris Masters" name="Paris Indoor" date="1968-02-09" ext-id="352">
+    <level>B</level>
+    <surface>P</surface>
+    <indoor>true</indoor>
+    <draw-type>KO</draw-type>
+    <draw-size>64</draw-size>
+    <player name="Alain Bouteleux" country="FRA" />
+    <player name="Andrzej Licis" country="POL" />
+    <player name="B Moreau" country="FRA" />
+    <player name="Bob Carmichael" country="AUS" />
+    <player name="Christian Duxin" country="FRA" />
+    <player name="Daniel Contet" country="FRA" />
+    <player name="David Lloyd" country="GBR" />
+    <player name="Denis Grozdanovitch" country="FRA" />
+    <player name="Eric Derasse" country="FRA" />
+    <player name="Eric Drossart" country="BEL" />
+    <player name="Francois Matheu" country="FRA" />
+    <player name="Frantisek Pala" country="CZE" />
+    <player name="Georges Goven" country="FRA" />
+    <player name="Gerald Battrick" country="GBR" />
+    <player name="Gerald Pilet" country="FRA" />
+    <player name="Henri Pellizza" country="FRA" />
+    <player name="Ismail El Shafei" country="EGY" />
+    <player name="Jacques Thamin" country="FRA" />
+    <player name="Jean Baptiste Chanfreau" country="FRA" />
+    <player name="Jean Claude Barclay" country="FRA" />
+    <player name="Jean Courcol" country="FRA" />
+    <player name="Jean Louis Thiebaut" country="FRA" />
+    <player name="Jean Loup Rouyer" country="FRA" />
+    <player name="Jean Paul Meyer" country="FRA" />
+    <player name="Jean Pierre Olivier" country="FRA" />
+    <player name="John Barrett" country="GBR" />
+    <player name="John Clifton" country="GBR" />
+    <player name="John De Mendoza" country="GBR" />
+    <player name="John Paish" country="GBR" />
+    <player name="Ken Weatherley" country="GBR" />
+    <player name="Lance Lumsden" country="JAM" />
+    <player name="Michele Leclercq" country="FRA" />
+    <player name="Milan Holecek" country="CZE" />
+    <player name="Nicholas Kalogeropoulos" country="GRE" />
+    <player name="Patrice Beust" country="FRA" />
+    <player name="Patrice Dominguez" country="FRA" />
+    <player name="Patrick Hombergen" country="BEL" />
+    <player name="Patrick Proisy" country="FRA" />
+    <player name="Paul Hutchins" country="GBR" />
+    <player name="Pierre Darmon" country="FRA" />
+    <player name="Pierre Dufour" country="CAN" />
+    <player name="Pierre Joly" country="FRA" />
+    <player name="Thierry Bernasconi" country="FRA" />
+    <player name="U Unknown" country="???" />
+    <!-- R64 -->
+    <match match-num="1" round="R64" best-of="3" winner="Jean Pierre Olivier" loser="B Moreau" score="W/O" outcome="W/O" />
+    <match match-num="2" round="R64" best-of="5" winner="Ken Weatherley" loser="Alain Bouteleux" score="4-6 6-1 1-6 6-3 6-4" />
+    <match match-num="3" round="R64" best-of="5" winner="Patrice Beust" loser="U Unknown" score="6-2 6-4 6-2" />
+    <match match-num="4" round="R64" best-of="5" winner="U Unknown" loser="Thierry Bernasconi" score="3-6 4-6 7-5 7-5 6-0" />
+    <match match-num="5" round="R64" best-of="5" winner="Patrice Dominguez" loser="Jacques Thamin" score="6-2 4-6 6-2 6-4" />
+    <match match-num="6" round="R64" best-of="5" winner="John Clifton" loser="Patrick Proisy" score="3-6 6-2 6-3 6-2" />
+    <match match-num="7" round="R64" best-of="5" winner="Christian Duxin" loser="U Unknown" score="6-4 6-0 6-3" />
+    <match match-num="8" round="R64" best-of="5" winner="Pierre Joly" loser="David Lloyd" score="8-6 6-3 6-2" />
+    <match match-num="9" round="R64" best-of="5" winner="Jean Loup Rouyer" loser="Jean Louis Thiebaut" score="3-6 6-2 6-2 4-6 6-1" />
+    <match match-num="10" round="R64" best-of="5" winner="Francois Matheu" loser="Henri Pellizza" score="6-4 6-3 6-4" />
+    <match match-num="11" round="R64" best-of="5" winner="U Unknown" loser="Gerald Pilet" score="2-6 10-8 6-3 6-4" />
+    <match match-num="12" round="R64" best-of="5" winner="Eric Derasse" loser="John De Mendoza" score="8-6 6-4 6-4" />
+    <match match-num="13" round="R64" best-of="3" winner="Jean Paul Meyer" loser="Lance Lumsden" score="W/O" outcome="W/O" />
+    <match match-num="14" round="R64" best-of="5" winner="U Unknown" loser="Pierre Dufour" score="6-3 6-4 4-6 6-3" />
+    <match match-num="15" round="R64" best-of="3" winner="Denis Grozdanovitch" loser="Georges Goven" score="4-6 4-6 4-5 ABD" outcome="ABD" />
+    <match match-num="16" round="R64" best-of="5" winner="John Paish" loser="Andrzej Licis" score="6-1 7-5 6-2" />
+    <!-- R32 -->
+    <match match-num="17" round="R32" best-of="5" winner="Jean Courcol" loser="Jean Pierre Olivier" score="6-1 6-0 6-2" />
+    <match match-num="18" round="R32" best-of="5" winner="Paul Hutchins" loser="Ken Weatherley" score="6-3 6-2 6-3" />
+    <match match-num="19" round="R32" best-of="5" winner="Patrice Beust" loser="Jean Baptiste Chanfreau" score="6-2 6-4 6-2" />
+    <match match-num="20" round="R32" best-of="5" winner="U Unknown" loser="Pierre Darmon" score="6-2 3-6 6-2 3-6 6-4" />
+    <match match-num="21" round="R32" best-of="3" winner="Patrice Dominguez" loser="Eric Drossart" score="W/O" outcome="W/O" />
+    <match match-num="22" round="R32" best-of="5" winner="Daniel Contet" loser="John Clifton" score="3-6 6-3 6-1 10-8" />
+    <match match-num="23" round="R32" best-of="3" winner="Christian Duxin" loser="Jean Claude Barclay" score="W/O" outcome="W/O" />
+    <match match-num="24" round="R32" best-of="5" winner="Milan Holecek" loser="Pierre Joly" score="6-3 6-0 7-5" />
+    <match match-num="25" round="R32" best-of="5" winner="Michele Leclercq" loser="Jean Loup Rouyer" score="6-3 6-1 6-2" />
+    <match match-num="26" round="R32" best-of="5" winner="Nicholas Kalogeropoulos" loser="Francois Matheu" score="7-5 5-7 13-15 8-6 6-4" />
+    <match match-num="27" round="R32" best-of="5" winner="John Barrett" loser="U Unknown" score="6-4 6-3 6-1" />
+    <match match-num="28" round="R32" best-of="5" winner="Bob Carmichael" loser="Eric Derasse" score="8-6 6-4 4-6 6-3" />
+    <match match-num="29" round="R32" best-of="5" winner="Gerald Battrick" loser="Jean Paul Meyer" score="6-1 6-4 6-4" />
+    <match match-num="30" round="R32" best-of="5" winner="Patrick Hombergen" loser="U Unknown" score="6-4 6-4 6-4" />
+    <match match-num="31" round="R32" best-of="5" winner="Frantisek Pala" loser="Denis Grozdanovitch" score="6-2 9-11 6-2 6-1" />
+    <match match-num="32" round="R32" best-of="5" winner="Ismail El Shafei" loser="John Paish" score="8-6 6-4 6-2" />
+    <!-- R16 -->
+    <match match-num="33" round="R16" best-of="5" winner="Jean Courcol" loser="Paul Hutchins" score="6-0 6-1 6-2" />
+    <match match-num="34" round="R16" best-of="5" winner="Patrice Beust" loser="U Unknown" score="6-1 6-3 6-1" />
+    <match match-num="35" round="R16" best-of="5" winner="Daniel Contet" loser="Patrice Dominguez" score="6-2 6-3 6-2" />
+    <match match-num="36" round="R16" best-of="5" winner="Milan Holecek" loser="Christian Duxin" score="7-9 6-3 6-1 6-2" />
+    <match match-num="37" round="R16" best-of="5" winner="Michele Leclercq" loser="Nicholas Kalogeropoulos" score="6-3 6-3 6-2" />
+    <match match-num="38" round="R16" best-of="5" winner="Bob Carmichael" loser="John Barrett" score="7-5 6-3 6-1" />
+    <match match-num="39" round="R16" best-of="5" winner="Gerald Battrick" loser="Patrick Hombergen" score="6-0 5-7 6-3 6-2" />
+    <match match-num="40" round="R16" best-of="5" winner="Ismail El Shafei" loser="Frantisek Pala" score="10-8 6-2 9-11 6-3" />
+    <!-- QF -->
+    <match match-num="41" round="QF" best-of="5" winner="Patrice Beust" loser="Jean Courcol" score="6-1 4-6 7-9 10-8 6-4" />
+    <match match-num="42" round="QF" best-of="5" winner="Milan Holecek" loser="Daniel Contet" score="6-1 6-4 6-2" />
+    <match match-num="43" round="QF" best-of="5" winner="Bob Carmichael" loser="Michele Leclercq" score="4-6 7-5 6-3 6-2" />
+    <match match-num="44" round="QF" best-of="5" winner="Ismail El Shafei" loser="Gerald Battrick" score="3-6 4-6 8-6 7-5 6-1" />
+    <!-- SF -->
+    <match match-num="45" round="SF" best-of="5" winner="Milan Holecek" loser="Patrice Beust" score="4-6 2-6 6-1 6-4 6-2" />
+    <match match-num="46" round="SF" best-of="5" winner="Bob Carmichael" loser="Ismail El Shafei" score="2-6 6-1 6-4 6-4" />
+    <!-- F -->
+    <match match-num="47" round="F" best-of="5" winner="Milan Holecek" loser="Bob Carmichael" score="6-4 10-8 3-6 6-3" />
+  </tournament>
+</tournament-data>

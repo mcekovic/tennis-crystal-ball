@@ -90,9 +90,9 @@ public class HighestOpponentRankCategory extends RecordCategory {
 	}
 
 	private static Record highestOpponentRank(RecordType type, RankingType rankingType, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
-		int minEntries = perfCategory.getMinEntries();
-		String desc = desc(type.orderDesc ^ rankingType.orderDesc);
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var minEntries = perfCategory.getMinEntries();
+		var desc = desc(type.orderDesc ^ rankingType.orderDesc);
 		return new Record<>(
 			type.name + domain.id + "Opponent" + rankingType.id, suffix(type.name, " ") + suffix(domain.name, " ") + " Mean Opponent " + rankingType.name,
 			/* language=SQL */
@@ -112,9 +112,9 @@ public class HighestOpponentRankCategory extends RecordCategory {
 	}
 
 	private static Record highestSeasonOpponentRank(RecordType type, RankingType rankingType, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
-		int minEntries = perfCategory.getMinEntries() / 10;
-		String desc = desc(type.orderDesc ^ rankingType.orderDesc);
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var minEntries = perfCategory.getMinEntries() / 10;
+		var desc = desc(type.orderDesc ^ rankingType.orderDesc);
 		return new Record<>(
 			type.name + "Season" + domain.id + "Opponent" + rankingType.id, suffix(type.name, " ") + suffix(domain.name, " ") + " Mean Opponent " + rankingType.name + " in Single Season",
 			/* language=SQL */
@@ -137,8 +137,8 @@ public class HighestOpponentRankCategory extends RecordCategory {
 	}
 
 	private static Record highestTitleOpponentRank(RecordType type, RankingType rankingType, RecordDomain domain) {
-		int minEntries = 3;
-		String desc = desc(type.orderDesc ^ rankingType.orderDesc);
+		var minEntries = 3;
+		var desc = desc(type.orderDesc ^ rankingType.orderDesc);
 		return new Record<>(
 			type.name + "Title" + domain.id + "Opponent" + rankingType.id, type.name +  " Mean Opponent " + rankingType.name + " Winning " + suffix(domain.name, " ") + "Title",
 			/* language=SQL */
@@ -164,8 +164,8 @@ public class HighestOpponentRankCategory extends RecordCategory {
 	}
 
 	private static Record highestTitlesOpponentRank(RecordType type, RankingType rankingType, RecordDomain domain) {
-		int minEntries = 10;
-		String desc = desc(type.orderDesc ^ rankingType.orderDesc);
+		var minEntries = 10;
+		var desc = desc(type.orderDesc ^ rankingType.orderDesc);
 		return new Record<>(
 			type.name + "Titles" + domain.id + "Opponent" + rankingType.id, type.name + " Mean Opponent " + rankingType.name + " Winning " + suffix(domain.name, " ") + "Titles",
 			/* language=SQL */

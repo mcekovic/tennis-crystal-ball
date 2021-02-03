@@ -81,9 +81,9 @@ ORDER BY visits DESC;
 INSERT INTO visitor_summary
 SELECT date, country_id, agent_type, visits, hits, visit_duration
 FROM visitor_summary_v
-WHERE date < DATE '2017-04-01';
+WHERE date < DATE '2021-01-01';
 DELETE FROM visitor
-WHERE first_hit < DATE '2017-04-01';
+WHERE first_hit < DATE '2021-01-01';
 COMMIT;
-VACUUM FULL ANALYSE VERBOSE visitor;
-VACUUM FULL ANALYSE VERBOSE visitor_summary;
+VACUUM FULL VERBOSE ANALYSE visitor;
+VACUUM FULL VERBOSE ANALYSE visitor_summary;

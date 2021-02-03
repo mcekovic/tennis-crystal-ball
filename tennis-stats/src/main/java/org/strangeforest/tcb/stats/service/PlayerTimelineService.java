@@ -60,7 +60,7 @@ public class PlayerTimelineService {
 
 
 	public PlayerTimeline getPlayerTimeline(int playerId) {
-		PlayerTimeline timeline = new PlayerTimeline(tournamentService.getAllTournamentSeasons());
+		var timeline = new PlayerTimeline(tournamentService.getAllTournamentSeasons());
 		jdbcTemplate.query(
 			TIMELINE_QUERY, params("playerId", playerId),
 			rs -> {
@@ -112,8 +112,8 @@ public class PlayerTimelineService {
 		jdbcTemplate.query(
 			query, params("playerId", playerId),
 			rs -> {
-				Integer season = getInteger(rs, "season");
-				int value = rs.getInt(column);
+				var season = getInteger(rs, "season");
+				var value = rs.getInt(column);
 				if (value > 0)
 					seasonValues.put(season, value);
 			}

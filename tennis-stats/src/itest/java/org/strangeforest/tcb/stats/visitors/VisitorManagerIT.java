@@ -30,9 +30,9 @@ class VisitorManagerIT {
 
 	@Test @Order(1)
 	void firstVisitCreatesVisitor() {
-		String ipAddress = "178.148.80.189";
+		var ipAddress = "178.148.80.189";
 
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
+		var visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getCountryId()).isEqualTo("SRB");
@@ -42,45 +42,45 @@ class VisitorManagerIT {
 
 	@Test @Order(2)
 	void secondVisitIncrementHitsButDoesNotSaveVisitor() {
-		String ipAddress = "178.148.80.189";
+		var ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, WEB_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
+		var visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
 		assertThat(visitor.getCountryId()).isEqualTo("SRB");
 		assertThat(visitor.getHits()).isEqualTo(2);
 
-		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
+		var optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
-		Visitor savedVisitor = optionalSavedVisitor.get();
+		var savedVisitor = optionalSavedVisitor.get();
 		assertThat(savedVisitor.getHits()).isEqualTo(1);
 	}
 
 	@Test @Order(3)
 	void thirdVisitIncrementHitsButAndSaveVisitor() {
-		String ipAddress = "178.148.80.189";
+		var ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, WEB_BROWSER.name());
 		manager.visit(ipAddress, WEB_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
+		var visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
 		assertThat(visitor.getHits()).isEqualTo(3);
 
-		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
+		var optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
-		Visitor savedVisitor = optionalSavedVisitor.get();
+		var savedVisitor = optionalSavedVisitor.get();
 		assertThat(savedVisitor.getHits()).isEqualTo(3);
 	}
 
 	@Test @Order(4)
 	void visitorsAreSavedOnExit() throws InterruptedException {
-		String ipAddress = "178.148.80.189";
+		var ipAddress = "178.148.80.189";
 		manager.visit(ipAddress, MOBILE_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress, MOBILE_BROWSER.name()).visitor;
+		var visitor = manager.visit(ipAddress, MOBILE_BROWSER.name()).visitor;
 		assertThat(visitor.getHits()).isEqualTo(2);
 
-		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
+		var optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
-		Visitor savedVisitor = optionalSavedVisitor.get();
+		var savedVisitor = optionalSavedVisitor.get();
 		assertThat(savedVisitor.getHits()).isEqualTo(1);
 
 		manager.destroy();

@@ -18,15 +18,15 @@ public class RequestURLLoggingHandlerInterceptor extends HandlerInterceptorAdapt
 	}
 
 	private static String getRequestURL(HttpServletRequest request) {
-		StringBuffer url = request.getRequestURL();
-		String params = request.getQueryString();
+		var url = request.getRequestURL();
+		var params = request.getQueryString();
 		if (!Strings.isNullOrEmpty(params))
 			url.append('?').append(replacePatternBreakingChars(params));
 		return replacePatternBreakingChars(url.toString());
 	}
 
 	private String getUserAgent(HttpServletRequest request) {
-		String userAgent = request.getHeader("User-Agent");
+		var userAgent = request.getHeader("User-Agent");
 		return !Strings.isNullOrEmpty(userAgent) ? replacePatternBreakingChars(userAgent) : "N/A";
 	}
 

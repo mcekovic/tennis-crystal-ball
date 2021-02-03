@@ -28,13 +28,13 @@ public class RestartEndpoint {
 	public String restartConnector() {
 		if (tomcat instanceof SSLTomcatServletWebServerFactory) {
 			try {
-				SSLTomcatServletWebServerFactory sslTomcat = (SSLTomcatServletWebServerFactory)tomcat;
+				var sslTomcat = (SSLTomcatServletWebServerFactory)tomcat;
 				sslTomcat.restartConnector();
 				sslTomcat.restartRedirectConnector();
 				return "HTTP and HTTPS connectors restarted";
 			}
 			catch (Exception ex) {
-				String message = "Error restarting connector: " + Throwables.getRootCause(ex).getMessage();
+				var message = "Error restarting connector: " + Throwables.getRootCause(ex).getMessage();
 				LOGGER.error(message, ex);
 				return message;
 			}

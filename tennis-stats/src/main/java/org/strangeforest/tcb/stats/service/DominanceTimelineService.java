@@ -73,10 +73,10 @@ public class DominanceTimelineService {
 
 	@Cacheable("DominanceTimeline")
 	public DominanceTimeline getDominanceTimeline(Surface surface) {
-		boolean overall = surface == null;
-		DominanceTimeline timeline = new DominanceTimeline(surface);
-		AtomicInteger rank = new AtomicInteger();
-		MapSqlParameterSource params = params("minGOATPoints", getMinGOATPoints(surface));
+		var overall = surface == null;
+		var timeline = new DominanceTimeline(surface);
+		var rank = new AtomicInteger();
+		var params = params("minGOATPoints", getMinGOATPoints(surface));
 		if (!overall)
 			params.addValue("surface", surface.getCode());
 		jdbcTemplate.query(
@@ -87,10 +87,10 @@ public class DominanceTimelineService {
 			),
 			params,
 			rs -> {
-				PlayerDominanceTimeline player = mapPlayer(surface, rank, rs);
-				Object[] seasonsPoints = (Object[])rs.getArray("seasons_points").getArray();
-				for (Object seasonsPoint : seasonsPoints) {
-					SeasonPoints seasonPoints = mapSeasonPoints(surface, seasonsPoint.toString());
+				var player = mapPlayer(surface, rank, rs);
+				var seasonsPoints = (Object[])rs.getArray("seasons_points").getArray();
+				for (var seasonsPoint : seasonsPoints) {
+					var seasonPoints = mapSeasonPoints(surface, seasonsPoint.toString());
 					if (surface == CARPET && seasonPoints.getSeason() > 2007)
 						return;
 					player.addSeasonPoints(seasonPoints);
@@ -104,8 +104,8 @@ public class DominanceTimelineService {
 			format(PREDICTABILITY_QUERY, overall ? "" : SURFACE_CRITERIA),
 			params,
 			rs -> {
-				int season = rs.getInt("season");
-				DominanceSeason dominanceSeason = timeline.getDominanceSeason(season);
+				var season = rs.getInt("season");
+				var dominanceSeason = timeline.getDominanceSeason(season);
 				if (dominanceSeason != null) {
 					dominanceSeason.setPredictability(pct(rs.getDouble("predicted"), rs.getDouble("predictable")));
 					dominanceSeason.setEloPredictability(pct(rs.getDouble("elo_predicted"), rs.getDouble("elo_predictable")));
@@ -115,10 +115,10 @@ public class DominanceTimelineService {
 		jdbcTemplate.query(
 			format(AVERAGE_ELO_RATINGS_QUERY, overall ? "" : surface.getLowerCaseText() + '_'),
 			rs -> {
-				int season = rs.getInt("season");
+				var season = rs.getInt("season");
 				if (surface == CARPET && season > 2007)
 					return;
-				DominanceSeason dominanceSeason = timeline.getDominanceSeason(season);
+				var dominanceSeason = timeline.getDominanceSeason(season);
 				if (dominanceSeason != null) {
 					dominanceSeason.addAverageEloRating(1, rs.getInt("average_no1_elo_rating"));
 					dominanceSeason.addAverageEloRating(2, rs.getInt("average_top2_elo_rating"));
@@ -140,22 +140,22 @@ public class DominanceTimelineService {
 	}
 
 	private PlayerDominanceTimeline mapPlayer(Surface surface, AtomicInteger rank, ResultSet rs) throws SQLException {
-		int playerId = rs.getInt("player_id");
-		String name = rs.getString("name");
-		String lastName = rs.getString("last_name");
-		String countryId = getInternedString(rs, "country_id");
-		boolean active = rs.getBoolean("active");
-		LocalDate dob = getLocalDate(rs, "dob");
-		int goatPoints = rs.getInt("goat_points");
+		var playerId = rs.getInt("player_id");
+		var name = rs.getString("name");
+		var lastName = rs.getString("last_name");
+		var countryId = getInternedString(rs, "country_id");
+		var active = rs.getBoolean("active");
+		var dob = getLocalDate(rs, "dob");
+		var goatPoints = rs.getInt("goat_points");
 		return new PlayerDominanceTimeline(rank.incrementAndGet(), playerId, name, lastName, countryId, active, dob, surface, goatPoints);
 	}
 
 	private SeasonPoints mapSeasonPoints(Surface surface, String seasonPoints) {
 		// (season,points)
-		int pos = seasonPoints.indexOf(',');
-		int season = Integer.valueOf(seasonPoints.substring(1, pos));
-		String pointsStr = seasonPoints.substring(pos + 1, seasonPoints.length() - 1);
-		int points = pointsStr.isEmpty() ? 0 : Integer.valueOf(pointsStr);
+		var pos = seasonPoints.indexOf(',');
+		var season = Integer.parseInt(seasonPoints.substring(1, pos));
+		var pointsStr = seasonPoints.substring(pos + 1, seasonPoints.length() - 1);
+		var points = pointsStr.isEmpty() ? 0 : Integer.parseInt(pointsStr);
 		return new SeasonPoints(season, surface, points);
 	}
 }

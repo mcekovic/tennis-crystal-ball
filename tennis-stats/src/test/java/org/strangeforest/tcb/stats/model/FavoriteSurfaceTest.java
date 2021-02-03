@@ -14,7 +14,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void notEnoughMatchesNoFavoriteSurface() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 1),
 			new WonLost(1, 1),
 			new WonLost(1, 1),
@@ -27,7 +27,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void similarSurfacesPercentageIsAllRounder() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(50, 50), // 50%
 			new WonLost(51, 49), // 51%
 			new WonLost(52, 48), // 52%
@@ -41,7 +41,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void singleSurfaceIsAlwaysFavorite() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 0),
 			new WonLost(5, 5), // 50%
 			new WonLost(0, 0),
@@ -55,7 +55,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void fromTwoSurfacesBetterIsFavorite() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 0),
 			new WonLost(5, 5),  // 50%
 			new WonLost(15, 5), // 75%
@@ -69,7 +69,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void fromTwoSurfacesNoOneIsFavorite() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 0),
 			new WonLost(5, 5),  // 50%
 			new WonLost(11, 9), // 55%
@@ -83,7 +83,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void oneBestSurfaceIsFavorite() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(15, 5), // 75%
 			new WonLost(8, 5),  // 61.5%
 			new WonLost(5, 5),  // 50%
@@ -97,7 +97,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void oneBestSurfaceIsFavoriteIfBestSurfaceGapIsOverThreshold() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(40, 10), // 80%
 			new WonLost(20, 30), // 40%
 			new WonLost(45, 5),  // 90%
@@ -111,7 +111,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void oneBestSurfaceIsFavoriteIfBestSurfaceGapIsOverThresholdAndGreaterThanSecondBestSurfaceGapMultipliedByFactor() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(60, 40), // 60%
 			new WonLost(54, 46), // 55%
 			new WonLost(52, 48), // 52%
@@ -125,7 +125,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void surfaceGroupIsFavorite() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(5, 5),  // 50%
 			new WonLost(20, 5), // 80%
 			new WonLost(16, 5), // 76.2%
@@ -139,7 +139,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void surfaceGroupForAndyMurrayIsGrass() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(434, 116), // 78.9%
 			new WonLost(105, 46),  // 69.6%
 			new WonLost(106, 19),  // 84.8%
@@ -153,7 +153,7 @@ class FavoriteSurfaceTest {
 
 	@Test
 	void surfaceGroupForIvanLendlIsNonGrass() {
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+		var favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(394, 83), // 82.6%
 			new WonLost(329, 77), // 81.0%
 			new WonLost(81, 27),  // 75.0%
@@ -166,7 +166,7 @@ class FavoriteSurfaceTest {
 	}
 
 	private static PlayerPerformance performance(WonLost hard, WonLost clay, WonLost grass, WonLost carpet) {
-		PlayerPerformance performance = new PlayerPerformance();
+		var performance = new PlayerPerformance();
 		performance.setMatches(hard.add(clay).add(grass).add(carpet));
 		performance.setHardMatches(hard);
 		performance.setClayMatches(clay);

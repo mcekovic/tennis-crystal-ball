@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
   <tournament season="1968" tournament-name="Beckenham" name="Beckenham" date="1968-06-10" ext-id="7310">
-    <level>A</level>
+    <level>B</level>
     <surface>G</surface>
     <indoor>false</indoor>
     <draw-type>KO</draw-type>

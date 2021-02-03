@@ -23,7 +23,7 @@ public class RecordsController extends PageController {
 	public ModelAndView records(
 		@RequestParam(name = "category", required = false) String category
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("recordCount", Records.getRecordCount());
 		modelMap.addAttribute("recordCategoryClasses", Records.getRecordCategoryClasses());
 		modelMap.addAttribute("infamousRecordCategoryClasses", Records.getInfamousRecordCategoryClasses());
@@ -38,10 +38,10 @@ public class RecordsController extends PageController {
 		@RequestParam(name = "recordId") String recordId,
 		@RequestParam(name = "active", required = false, defaultValue = F) boolean active
 	) {
-		List<RankGOATPoints> goatPoints = goatLegendService.getRecordGOATPoints(recordId);
+		var goatPoints = goatLegendService.getRecordGOATPoints(recordId);
 
-		ModelMap modelMap = new ModelMap();
-		Record record = Records.getRecord(recordId);
+		var modelMap = new ModelMap();
+		var record = Records.getRecord(recordId);
 		modelMap.addAttribute("record", record);
 		modelMap.addAttribute("active", active);
 		modelMap.addAttribute("goatPoints", goatPoints);

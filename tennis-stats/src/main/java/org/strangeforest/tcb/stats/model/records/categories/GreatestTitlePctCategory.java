@@ -77,7 +77,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 	}
 
 	private static Record greatestFinalPct(RecordType type) {
-		int minEntries = PerformanceCategory.get("finals").getMinEntries() / 2;
+		var minEntries = PerformanceCategory.get("finals").getMinEntries() / 2;
 		return new Record<>(
 			"Final" + type.name + "Pct", "Greatest Final " + type.name + " Pct.",
 			/* language=SQL */
@@ -96,7 +96,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 	}
 
 	private static Record greatestFinalPct(RecordType type, RecordDomain domain) {
-		int minEntries = Math.max(2, PerformanceCategory.get(domain.perfCategory).getMinEntries() * PerformanceCategory.get("finals").getMinEntries() / PerformanceCategory.get("matches").getMinEntries());
+		var minEntries = Math.max(2, PerformanceCategory.get(domain.perfCategory).getMinEntries() * PerformanceCategory.get("finals").getMinEntries() / PerformanceCategory.get("matches").getMinEntries());
 		return new Record<>(
 			domain.id + "Final" + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + "Final " + type.name + " Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
@@ -117,7 +117,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 	}
 
 	private static Record greatestTitlePct(RecordDomain domain) {
-		int minEntries = PerformanceCategory.get(domain.perfCategory).getMinEntries() / 5;
+		var minEntries = PerformanceCategory.get(domain.perfCategory).getMinEntries() / 5;
 		return new Record<>(
 			domain.id + "TitleWinningPct", "Greatest " + suffix(domain.name, " ") + "Title / Entry Winning Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */

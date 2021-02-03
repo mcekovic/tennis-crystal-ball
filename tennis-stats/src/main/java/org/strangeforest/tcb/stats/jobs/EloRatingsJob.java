@@ -23,7 +23,7 @@ public class EloRatingsJob {
 	}
 
 	private void clearCaches() {
-		int cacheCount = dataService.clearCaches("Rankings.*");
+		var cacheCount = dataService.clearCaches("Rankings.*");
 		LOGGER.info("{} cache(s) cleared.", cacheCount);
 	}
 }

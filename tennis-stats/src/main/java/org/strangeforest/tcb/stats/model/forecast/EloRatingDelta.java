@@ -28,7 +28,7 @@ public class EloRatingDelta {
 	public Integer getEloRatingDelta() {
 		if (nextEloRating == null)
 			return null;
-		int delta = nextEloRating - ensureEloRating(eloRating);
+		var delta = nextEloRating - ensureEloRating(eloRating);
 		return delta != 0 ? delta : null;
 	}
 

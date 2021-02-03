@@ -81,10 +81,10 @@ public class Visitor {
 	public boolean isHitRateBreached(Double maxHitRate, Duration maxHitRateDelay) {
 		if (maxHitRate == null)
 			return false;
-		Duration age = getAge();
+		var age = getAge();
 		if (maxHitRateDelay != null && age.compareTo(maxHitRateDelay) <= 0)
 			return false;
-		return 1000.0 * hits / age.toMillis() > maxHitRate;
+		return (double)hits / age.toSeconds() > maxHitRate;
 	}
 
 	public synchronized boolean isDirty() {

@@ -23,9 +23,9 @@ class VisitorManagerTimedIT extends BaseVisitorManagerTest {
 
 	@Test
 	void whenVisitorIsExpiredVisitBySameIPAddressCreatesNewVisitor() throws InterruptedException {
-		String ipAddress = "192.168.1.1";
+		var ipAddress = "192.168.1.1";
 
-		Visitor visitor = visitAndVerifyFirstVisit(ipAddress);
+		var visitor = visitAndVerifyFirstVisit(ipAddress);
 
 		when(repository.findAll()).thenReturn(List.of(visitor));
 		Thread.sleep(2000L);

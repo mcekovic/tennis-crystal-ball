@@ -22,7 +22,7 @@ public class TopMatchStatsResource {
 	@Autowired private TopMatchStatsService topMatchStatsService;
 	@Autowired private MatchesService matchesService;
 
-	private static Map<String, String> ORDER_MAP = Collections.singletonMap("value", "value");
+	private static final Map<String, String> ORDER_MAP = Collections.singletonMap("value", "value");
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("name");
 
 	@GetMapping("/topMatchStatsTable")
@@ -49,15 +49,15 @@ public class TopMatchStatsResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
-		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter);
-		int playerCount = topMatchStatsService.getPlayerCount(category, filter);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		var outcomeFilter = OutcomeFilter.forStats(outcome);
+		var filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter);
+		var playerCount = topMatchStatsService.getPlayerCount(category, filter);
 
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : playerCount;
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : playerCount;
 		return topMatchStatsService.getTopMatchStatsTable(category, playerCount, filter, orderBy, pageSize, current);
 	}
 }

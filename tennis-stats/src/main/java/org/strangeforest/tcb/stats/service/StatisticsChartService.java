@@ -36,15 +36,15 @@ public class StatisticsChartService {
 
 
 	public DataTable getStatisticsDataTable(int[] playerIds, StatsCategory category, String surface, Range<Integer> seasonRange, boolean byAge) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
-		DataTable table = fetchStatisticsDataTable(indexedPlayers, category, surface, seasonRange, byAge);
+		var indexedPlayers = playerService.getIndexedPlayers(playerIds);
+		var table = fetchStatisticsDataTable(indexedPlayers, category, surface, seasonRange, byAge);
 		addColumns(table, indexedPlayers, category, surface, byAge);
 		return table;
 	}
 
 	public DataTable getStatisticsDataTable(List<String> players, StatsCategory category, String surface, Range<Integer> seasonRange, boolean byAge) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(players);
-		DataTable table = fetchStatisticsDataTable(indexedPlayers, category, surface, seasonRange, byAge);
+		var indexedPlayers = playerService.getIndexedPlayers(players);
+		var table = fetchStatisticsDataTable(indexedPlayers, category, surface, seasonRange, byAge);
 		if (!table.getRows().isEmpty())
 			addColumns(table, indexedPlayers, category, surface, byAge);
 		else {
@@ -55,7 +55,7 @@ public class StatisticsChartService {
 	}
 
 	private DataTable fetchStatisticsDataTable(IndexedPlayers players, StatsCategory category, String surface, Range<Integer> seasonRange, boolean byAge) {
-		DataTable table = new DataTable();
+		var table = new DataTable();
 		if (players.isEmpty())
 			return table;
 		RowCursor rowCursor = new IntegerRowCursor(table, players);
@@ -64,8 +64,8 @@ public class StatisticsChartService {
 			getParams(players, surface, seasonRange),
 			rs -> {
 				Object x = byAge ? rs.getInt("age") : rs.getInt("season");
-				int playerId = rs.getInt("player_id");
-				Object y = getStatsValue(rs, category);
+				var playerId = rs.getInt("player_id");
+				var y = getStatsValue(rs, category);
 				rowCursor.next(x, playerId, y);
 			}
 		);
@@ -74,7 +74,7 @@ public class StatisticsChartService {
 	}
 
 	private static Object getStatsValue(ResultSet rs, StatsCategory category) throws SQLException {
-		Type type = category.getType();
+		var type = category.getType();
 		switch (type) {
 			case COUNT: return getInteger(rs, "value");
 			case PERCENTAGE: return round(getDouble(rs, "value"), 10000.0);
@@ -95,8 +95,8 @@ public class StatisticsChartService {
 			table.addColumn("number", "Age");
 		else
 			table.addColumn("number", "Season");
-		for (String player : players.getPlayers()) {
-			String label = player + " " + category.getTitle();
+		for (var player : players.getPlayers()) {
+			var label = player + " " + category.getTitle();
 			if (!isNullOrEmpty(surface))
 				label += " on " + (surface.length() == 1 ? Surface.decode(surface).getText() : CodedEnum.joinTexts(Surface.class, surface));
 			table.addColumn("number", label);
@@ -104,8 +104,8 @@ public class StatisticsChartService {
 	}
 
 	private String getSQL(StatsCategory category, String surface, Range<Integer> seasonRange, boolean byAge) {
-		boolean bySurface = !isNullOrEmpty(surface);
-		boolean bySurfaceGroup = bySurface && surface.length() > 1;
+		var bySurface = !isNullOrEmpty(surface);
+		var bySurfaceGroup = bySurface && surface.length() > 1;
 		return format(PLAYER_SEASON_STATISTICS_QUERY,
 			byAge ? "extract(YEAR FROM age(make_date(s.season, 12, 31), p.dob)) AS age" : "s.season",
 			bySurfaceGroup ? category.getPartiallySummedExpression() : category.getExpression(),
@@ -119,7 +119,7 @@ public class StatisticsChartService {
 	}
 
 	private MapSqlParameterSource getParams(IndexedPlayers players, String surface, Range<Integer> seasonRange) {
-		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
+		var params = params("playerIds", players.getPlayerIds());
 		if (!isNullOrEmpty(surface)) {
 			if (surface.length() == 1)
 				params.addValue("surface", surface);

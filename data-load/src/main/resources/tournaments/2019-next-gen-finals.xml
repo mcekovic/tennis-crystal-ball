@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="2019" tournament-name="Next Gen Finals" name="Next Gen Finals" date="2019-11-05" ext-id="7696">
+    <level>H</level>
+    <surface>H</surface>
+    <indoor>true</indoor>
+    <draw-type>RR</draw-type>
+    <draw-size>8</draw-size>
+    <player seed="1" name="Alex De Minaur" country="AUS" />
+    <player seed="2" name="Frances Tiafoe" country="USA" />
+    <player seed="3" name="Ugo Humbert" country="FRA" />
+    <player seed="4" name="Casper Ruud" country="NOR" />
+    <player seed="5" name="Miomir Kecmanovic" country="SRB" />
+    <player seed="6" name="Mikael Ymer" country="SWE" />
+    <player seed="7" name="Alejandro Davidovich Fokina" country="ESP" />
+    <player seed="8" name="Jannik Sinner" country="ITA" />
+    <!-- RR -->
+    <match match-num="4" round="RR" best-of="3" winner="Frances Tiafoe" loser="Mikael Ymer" score="4-2 4-2 4-2 RET" outcome="RET" minutes="67">
+      <winner-stats ace="2" df="0" sv-pt="52" fst-in="37" fst-won="27" snd-won="9" sv-gms="9" bp-sv="4" bp-fc="4" />
+      <loser-stats ace="6" df="0" sv-pt="46" fst-in="34" fst-won="23" snd-won="7" sv-gms="9" bp-sv="3" bp-fc="6" />
+    </match>
+    <match match-num="5" round="RR" best-of="3" winner="Ugo Humbert" loser="Jannik Sinner" score="4-3(5) 3-4(3) 4-2 4-2 RET" outcome="RET" minutes="103">
+      <winner-stats ace="11" df="3" sv-pt="77" fst-in="46" fst-won="34" snd-won="19" sv-gms="12" bp-sv="3" bp-fc="4" />
+      <loser-stats ace="4" df="0" sv-pt="75" fst-in="46" fst-won="36" snd-won="16" sv-gms="12" bp-sv="1" bp-fc="4" />
+    </match>
+    <match match-num="6" round="RR" best-of="3" winner="Alex De Minaur" loser="Casper Ruud" score="4-1 4-0 4-2 RET" outcome="RET" minutes="61">
+      <winner-stats ace="3" df="0" sv-pt="35" fst-in="21" fst-won="18" snd-won="10" sv-gms="7" bp-sv="2" bp-fc="2" />
+      <loser-stats ace="2" df="0" sv-pt="51" fst-in="38" fst-won="21" snd-won="4" sv-gms="8" bp-sv="7" bp-fc="12" />
+    </match>
+    <match match-num="7" round="RR" best-of="3" winner="Miomir Kecmanovic" loser="Alejandro Davidovich Fokina" score="4-1 4-1 4-3(6) RET" outcome="RET" minutes="58">
+      <winner-stats ace="2" df="0" sv-pt="43" fst-in="35" fst-won="32" snd-won="6" sv-gms="8" bp-sv="0" bp-fc="0" />
+      <loser-stats ace="4" df="3" sv-pt="56" fst-in="40" fst-won="26" snd-won="5" sv-gms="8" bp-sv="5" bp-fc="8" />
+    </match>
+    <match match-num="8" round="RR" best-of="3" winner="Frances Tiafoe" loser="Ugo Humbert" score="4-2 4-3(5) 3-4(4) 4-1 RET" outcome="RET" minutes="103">
+      <winner-stats ace="1" df="1" sv-pt="75" fst-in="54" fst-won="39" snd-won="12" sv-gms="11" bp-sv="3" bp-fc="3" />
+      <loser-stats ace="9" df="5" sv-pt="78" fst-in="39" fst-won="31" snd-won="18" sv-gms="12" bp-sv="5" bp-fc="8" />
+    </match>
+    <match match-num="9" round="RR" best-of="3" winner="Jannik Sinner" loser="Mikael Ymer" score="4-0 4-2 4-1 RET" outcome="RET" minutes="57">
+      <winner-stats ace="4" df="2" sv-pt="44" fst-in="32" fst-won="27" snd-won="5" sv-gms="8" bp-sv="5" bp-fc="5" />
+      <loser-stats ace="2" df="3" sv-pt="44" fst-in="30" fst-won="15" snd-won="6" sv-gms="7" bp-sv="4" bp-fc="8" />
+    </match>
+    <match match-num="10" round="RR" best-of="3" winner="Alex De Minaur" loser="Miomir Kecmanovic" score="4-1 4-3(4) 1-4 4-0 RET" outcome="RET" minutes="85">
+      <winner-stats ace="5" df="1" sv-pt="49" fst-in="29" fst-won="22" snd-won="13" sv-gms="9" bp-sv="2" bp-fc="4" />
+      <loser-stats ace="2" df="5" sv-pt="72" fst-in="33" fst-won="20" snd-won="17" sv-gms="11" bp-sv="12" bp-fc="17" />
+    </match>
+    <match match-num="11" round="RR" best-of="3" winner="Casper Ruud" loser="Alejandro Davidovich Fokina" score="3-4(2) 4-3(2) 4-2 3-4(2) 4-1 RET" outcome="RET" minutes="136">
+      <winner-stats ace="9" df="0" sv-pt="91" fst-in="68" fst-won="46" snd-won="14" sv-gms="14" bp-sv="5" bp-fc="7" />
+      <loser-stats ace="4" df="3" sv-pt="100" fst-in="58" fst-won="39" snd-won="21" sv-gms="15" bp-sv="5" bp-fc="10" />
+    </match>
+    <match match-num="12" round="RR" best-of="3" winner="Jannik Sinner" loser="Frances Tiafoe" score="3-4(4) 4-2 4-2 4-2 RET" outcome="RET" minutes="86">
+      <winner-stats ace="14" df="4" sv-pt="71" fst-in="44" fst-won="37" snd-won="14" sv-gms="12" bp-sv="4" bp-fc="4" />
+      <loser-stats ace="7" df="0" sv-pt="69" fst-in="47" fst-won="37" snd-won="10" sv-gms="12" bp-sv="2" bp-fc="5" />
+    </match>
+    <match match-num="13" round="RR" best-of="3" winner="Mikael Ymer" loser="Ugo Humbert" score="4-3(2) 1-4 4-2 4-1 RET" outcome="RET" minutes="102">
+      <winner-stats ace="4" df="2" sv-pt="63" fst-in="38" fst-won="30" snd-won="13" sv-gms="11" bp-sv="3" bp-fc="5" />
+      <loser-stats ace="5" df="3" sv-pt="64" fst-in="34" fst-won="23" snd-won="18" sv-gms="11" bp-sv="1" bp-fc="4" />
+    </match>
+    <match match-num="14" round="RR" best-of="3" winner="Alex De Minaur" loser="Alejandro Davidovich Fokina" score="4-2 3-4(5) 4-1 4-1 RET" outcome="RET" minutes="91">
+      <winner-stats ace="3" df="0" sv-pt="65" fst-in="40" fst-won="31" snd-won="15" sv-gms="11" bp-sv="2" bp-fc="3" />
+      <loser-stats ace="1" df="4" sv-pt="68" fst-in="29" fst-won="14" snd-won="24" sv-gms="11" bp-sv="1" bp-fc="6" />
+    </match>
+    <match match-num="15" round="RR" best-of="3" winner="Miomir Kecmanovic" loser="Casper Ruud" score="4-3(5) 4-3(5) 4-2 RET" outcome="RET" minutes="76">
+      <winner-stats ace="3" df="1" sv-pt="57" fst-in="37" fst-won="34" snd-won="11" sv-gms="9" bp-sv="0" bp-fc="0" />
+      <loser-stats ace="12" df="0" sv-pt="59" fst-in="41" fst-won="32" snd-won="8" sv-gms="9" bp-sv="0" bp-fc="1" />
+    </match>
+    <!-- SF -->
+    <match match-num="2" round="SF" best-of="3" winner="Alex De Minaur" loser="Frances Tiafoe" score="4-2 4-1 0-4 4-2 RET" outcome="RET" minutes="73">
+      <winner-stats ace="8" df="0" sv-pt="55" fst-in="37" fst-won="26" snd-won="10" sv-gms="10" bp-sv="2" bp-fc="4" />
+      <loser-stats ace="6" df="0" sv-pt="59" fst-in="45" fst-won="30" snd-won="6" sv-gms="11" bp-sv="0" bp-fc="4" />
+    </match>
+    <match match-num="3" round="SF" best-of="3" winner="Jannik Sinner" loser="Miomir Kecmanovic" score="2-4 4-1 4-2 4-2 RET" outcome="RET" minutes="76">
+      <winner-stats ace="5" df="2" sv-pt="65" fst-in="36" fst-won="27" snd-won="19" sv-gms="12" bp-sv="8" bp-fc="9" />
+      <loser-stats ace="2" df="1" sv-pt="58" fst-in="40" fst-won="28" snd-won="10" sv-gms="11" bp-sv="5" bp-fc="8" />
+    </match>
+    <!-- F -->
+    <match match-num="1" round="F" best-of="3" winner="Jannik Sinner" loser="Alex De Minaur" score="4-2 4-1 4-2 RET" outcome="RET" minutes="65">
+      <winner-stats ace="2" df="1" sv-pt="52" fst-in="35" fst-won="26" snd-won="10" sv-gms="9" bp-sv="9" bp-fc="9" />
+      <loser-stats ace="2" df="1" sv-pt="41" fst-in="28" fst-won="19" snd-won="3" sv-gms="8" bp-sv="5" bp-fc="8" />
+    </match>
+  </tournament>
+</tournament-data>

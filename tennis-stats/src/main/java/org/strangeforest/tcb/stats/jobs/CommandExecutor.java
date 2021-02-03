@@ -14,13 +14,13 @@ public abstract class CommandExecutor {
 	public static int execute(String name, String... command) {
 		try {
 			LOGGER.info("Executing {} [{}]", name, String.join(" ", command));
-			Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-				StringBuilder sb = new StringBuilder(200);
+			var process = new ProcessBuilder(command).redirectErrorStream(true).start();
+			try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				var sb = new StringBuilder(200);
 				sb.append(name).append(" output:");
 				while (!process.waitFor(1L, TimeUnit.SECONDS))
 					readOutput(reader, sb);
-				int exitCode = process.waitFor();
+				var exitCode = process.waitFor();
 				readOutput(reader, sb);
 				LOGGER.info(sb.toString());
 				if (exitCode == 0)
@@ -40,7 +40,7 @@ public abstract class CommandExecutor {
 
 	private static void readOutput(BufferedReader reader, StringBuilder sb) throws IOException {
 		while (true) {
-			String line = reader.readLine();
+			var line = reader.readLine();
 			if (line == null)
 				break;
 			sb.append('\n').append(line);

@@ -25,8 +25,8 @@ public final class H2H {
 
 	public H2H(int playerId1, int playerId2, List<Match> matches) {
 		int won1 = 0, won2 = 0;
-		for (Match match : matches) {
-			int winnerId = match.getWinner().getId();
+		for (var match : matches) {
+			var winnerId = match.getWinner().getId();
 			if (winnerId == playerId1)
 				won1++;
 			if (winnerId == playerId2)

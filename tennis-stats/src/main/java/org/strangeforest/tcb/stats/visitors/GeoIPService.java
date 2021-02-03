@@ -36,7 +36,7 @@ public class GeoIPService {
 	public void destroy() {
 		if (db == null)
 			return;
-		try (InputStream ignored = db) {
+		try (var ignored = db) {
 			if (reader != null)
 				reader.close();
 		}
@@ -48,7 +48,7 @@ public class GeoIPService {
 	public Optional<Country> getCountry(String ipAddress) {
 		if (reader != null) {
 			try {
-				CountryResponse country = reader.country(InetAddress.getByName(ipAddress));
+				var country = reader.country(InetAddress.getByName(ipAddress));
 				if (country != null)
 					return Optional.of(country.getCountry());
 			}

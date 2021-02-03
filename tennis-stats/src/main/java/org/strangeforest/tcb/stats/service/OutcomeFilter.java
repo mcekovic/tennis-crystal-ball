@@ -52,12 +52,12 @@ public class OutcomeFilter {
 		if (!isNullOrEmpty(outcome)) {
 			if (outcome.startsWith(WON)) {
 				this.won = Boolean.TRUE;
-				String out = outcome.substring(WON.length());
+				var out = outcome.substring(WON.length());
 				this.outcome = out.isEmpty() ? NOT_ABANDONED : out;
 			}
 			else if (outcome.startsWith(LOST)) {
 				this.won = Boolean.FALSE;
-				String out = outcome.substring(LOST.length());
+				var out = outcome.substring(LOST.length());
 				this.outcome = out.isEmpty() ? NOT_ABANDONED : out;
 			}
 			else {
@@ -118,7 +118,7 @@ public class OutcomeFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof OutcomeFilter)) return false;
-		OutcomeFilter filter = (OutcomeFilter)o;
+		var filter = (OutcomeFilter)o;
 		return Objects.equals(won, filter.won) && stringsEqual(outcome, filter.outcome);
 	}
 

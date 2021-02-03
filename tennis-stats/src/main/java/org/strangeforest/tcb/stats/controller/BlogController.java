@@ -22,9 +22,9 @@ public class BlogController extends PageController {
 	public ModelAndView blog(
 		@RequestParam(name = "post", defaultValue = DEFAULT_BLOG_SECTION) String post
 	) {
-		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(20);
-		
-		ModelMap modelMap = new ModelMap();
+		var goatTopN = goatListService.getGOATTopN(20);
+
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("post", post);
 		modelMap.addAttribute("goatTopN", goatTopN);
 		return new ModelAndView("blog/blog", modelMap);

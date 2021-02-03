@@ -20,9 +20,9 @@ public class GradientDescent<V, C extends Comparable<C>> {
 	}
 
 	public VectorCost<V, C> minimizeCost(V startVector, int maxSteps) {
-		VectorCost<V, C> vectorCost = new VectorCost<>(startVector, cost.apply(startVector));
-		for (int i = 1; i <= maxSteps; i++) {
-			VectorCost<V, C> newVectorHost = doStep(vectorCost);
+		var vectorCost = new VectorCost<V, C>(startVector, cost.apply(startVector));
+		for (var i = 1; i <= maxSteps; i++) {
+			var newVectorHost = doStep(vectorCost);
 			if (completed.apply(newVectorHost.cost, vectorCost.cost))
 				return newVectorHost;
 			vectorCost = newVectorHost;
@@ -31,8 +31,8 @@ public class GradientDescent<V, C extends Comparable<C>> {
 	}
 
 	private VectorCost<V, C> doStep(VectorCost<V, C> vectorCost) {
-		List<VectorCost<V, C>> variationsCosts = variations.apply(vectorCost.vector).stream().map(v -> new VectorCost<>(v, cost.apply(v))).collect(toList());
-		V newVector = step.apply(vectorCost, variationsCosts);
+		var variationsCosts = variations.apply(vectorCost.vector).stream().map(v -> new VectorCost<>(v, cost.apply(v))).collect(toList());
+		var newVector = step.apply(vectorCost, variationsCosts);
 		return new VectorCost<>(newVector, cost.apply(newVector));
 	}
 }

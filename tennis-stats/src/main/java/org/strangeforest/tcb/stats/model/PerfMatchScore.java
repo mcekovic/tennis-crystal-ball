@@ -25,7 +25,7 @@ public class PerfMatchScore implements Comparable<PerfMatchScore> {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		PerfMatchScore score = (PerfMatchScore)o;
+		var score = (PerfMatchScore)o;
 		return bestOf == score.bestOf && wSets == score.wSets && lSets == score.lSets;
 	}
 
@@ -34,7 +34,7 @@ public class PerfMatchScore implements Comparable<PerfMatchScore> {
 	}
 
 	@Override public int compareTo(PerfMatchScore score) {
-		int result = Integer.compare(bestOf, score.bestOf);
+		var result = Integer.compare(bestOf, score.bestOf);
 		if (result != 0)
 			return result;
 		result = Integer.compare(wSets, score.wSets);

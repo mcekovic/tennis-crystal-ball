@@ -43,14 +43,14 @@ public class MatchOutcome extends DiffOutcome {
 	}
 
 	public MatchProbabilities pWin(int sets1, int sets2, int games1, int games2, int points1, int points2, boolean serve) {
-		int set = sets1 + sets2 + 1;
-		int sets = rules.getSets();
+		var set = sets1 + sets2 + 1;
+		var sets = rules.getSets();
 		if (sets1 >= sets)
 			return MatchProbabilities.WON;
 		if (sets2 >= sets)
 			return MatchProbabilities.LOST;
-		SetProbabilities setProbs = getSetOutcome(rules.getSet(set)).pWin(games1, games2, points1, points2, serve);
-		double pSetWin = setProbs.getPSet();
+		var setProbs = getSetOutcome(rules.getSet(set)).pWin(games1, games2, points1, points2, serve);
+		var pSetWin = setProbs.getPSet();
 		if (rules.isDecidingSet(set))
 			return new MatchProbabilities(setProbs, pSetWin);
 		else

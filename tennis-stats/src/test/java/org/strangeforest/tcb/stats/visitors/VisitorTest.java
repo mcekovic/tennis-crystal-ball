@@ -11,8 +11,8 @@ class VisitorTest {
 
 	@Test
 	void checkIfMaxHitsIsBreached() {
-		Instant now = Instant.now();
-		Visitor visitor = new Visitor(1L, "192.168.1.1", "SRB", "Serbia", WEB_BROWSER.name(), 100, now, now);
+		var now = Instant.now();
+		var visitor = new Visitor(1L, "192.168.1.1", "SRB", "Serbia", WEB_BROWSER.name(), 100, now, now);
 
 		assertThat(visitor.isMaxHitsBreached(null)).isFalse();
 		assertThat(visitor.isMaxHitsBreached(1000)).isFalse();
@@ -21,8 +21,8 @@ class VisitorTest {
 
 	@Test
 	void checkIfMaxHitRateIsBreached() {
-		Instant now = Instant.now();
-		Visitor visitor = new Visitor(1L, "192.168.1.1", "SRB", "Serbia", WEB_BROWSER.name(), 200, now, now.plus(Duration.ofMinutes(2)));
+		var now = Instant.now();
+		var visitor = new Visitor(1L, "192.168.1.1", "SRB", "Serbia", WEB_BROWSER.name(), 200, now, now.plus(Duration.ofMinutes(2)));
 
 		assertThat(visitor.isHitRateBreached(null, null)).isFalse();
 		assertThat(visitor.isHitRateBreached(1.0, null)).isTrue();

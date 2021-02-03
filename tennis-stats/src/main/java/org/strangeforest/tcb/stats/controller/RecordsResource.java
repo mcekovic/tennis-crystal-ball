@@ -24,8 +24,8 @@ public class RecordsResource {
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
-		int pageSize = rowCount > 0 ? rowCount : MAX_RECORDS;
-		RecordFilter filter = new RecordFilter(category, searchPhrase, infamous);
+		var pageSize = rowCount > 0 ? rowCount : MAX_RECORDS;
+		var filter = new RecordFilter(category, searchPhrase, infamous);
 		return recordsService.getRecordsTable(filter, pageSize, current);
 	}
 
@@ -38,8 +38,8 @@ public class RecordsResource {
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
-		int pageSize = rowCount > 0 ? rowCount : MAX_RECORDS;
-		RecordFilter filter = new RecordFilter(category, searchPhrase, infamous);
+		var pageSize = rowCount > 0 ? rowCount : MAX_RECORDS;
+		var filter = new RecordFilter(category, searchPhrase, infamous);
 		return recordsService.getPlayerRecordsTable(filter, playerId, pageSize, current);
 	}
 
@@ -50,7 +50,7 @@ public class RecordsResource {
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount
 	) {
-		int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
+		var pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
 		return recordsService.getRecordTable(recordId, active, pageSize, current);
 	}
 }

@@ -56,7 +56,7 @@ public class TournamentEventFilter {
 	}
 
 	public String getCriteria() {
-		StringBuilder criteria = new StringBuilder();
+		var criteria = new StringBuilder();
 		appendCriteria(criteria);
 		return criteria.toString();
 	}
@@ -83,7 +83,7 @@ public class TournamentEventFilter {
 	}
 
 	public MapSqlParameterSource getParams() {
-		MapSqlParameterSource params = new MapSqlParameterSource();
+		var params = new MapSqlParameterSource();
 		addParams(params);
 		return params;
 	}
@@ -171,7 +171,7 @@ public class TournamentEventFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof TournamentEventFilter)) return false;
-		TournamentEventFilter filter = (TournamentEventFilter)o;
+		var filter = (TournamentEventFilter)o;
 		return Objects.equals(season, filter.season) &&	last52Weeks == filter.last52Weeks && dateRange.equals(filter.dateRange) &&
 			stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) && speedRange.equals(filter.speedRange) &&
 			Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) &&

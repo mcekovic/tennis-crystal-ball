@@ -61,7 +61,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 
 	public List<PlayerTimelineItem> getItems() {
 		return timeline.getSeasons().stream().map(season -> {
-			PlayerTimelineItem item = items.get(season);
+			var item = items.get(season);
 			return item != null ? item : new PlayerTimelineItem(tournamentId, season, timeline.hasSeason(tournamentId, season) ? ABSENT : null);
 		}).collect(toList());
 	}
@@ -71,7 +71,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 			name = item.getTournamentName();
 		items.put(item.getSeason(), item);
 		levels.put(item.getLevel(), item.getName());
-		String surface = item.getSurface();
+		var surface = item.getSurface();
 		if (surface != null)
 			surfaces.add(new TimelineSurface(surface, item.isIndoor()));
 		dates.add(item.getDate());
@@ -86,7 +86,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	}
 
 	@Override public int compareTo(PlayerTournamentTimeline tournament) {
-		int result = maxLevel().compareTo(tournament.maxLevel());
+		var result = maxLevel().compareTo(tournament.maxLevel());
 		return result != 0 ? result : endDay.get().compareTo(tournament.endDay.get());
 	}
 
@@ -126,7 +126,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		@Override public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
-			TimelineSurface that = (TimelineSurface)o;
+			var that = (TimelineSurface)o;
 			return Objects.equals(surface, that.surface) && indoor == that.indoor;
 		}
 

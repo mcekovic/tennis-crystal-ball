@@ -22,20 +22,20 @@ class VisitorRepositoryIT {
 
 	@Test
 	void visitorIsCreatedAndFound() {
-		String ipAddress = "192.168.1.1";
-		String countryId = "SRB";
-		String country = "Serbia";
-		String agentType = WEB_BROWSER.name();
-		Visitor visitor = repository.create(ipAddress, countryId, country, agentType);
+		var ipAddress = "192.168.1.1";
+		var countryId = "SRB";
+		var country = "Serbia";
+		var agentType = WEB_BROWSER.name();
+		var visitor = repository.create(ipAddress, countryId, country, agentType);
 
 		assertThat(visitor.getId()).isPositive();
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getHits()).isEqualTo(1);
 		assertThat(visitor.getFirstHit()).isNotNull();
 
-		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
+		var optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
-		Visitor savedVisitor = optionalSavedVisitor.get();
+		var savedVisitor = optionalSavedVisitor.get();
 		assertThat(savedVisitor.getCountryId()).isEqualTo(countryId);
 		assertThat(savedVisitor.getCountry()).isEqualTo(country);
 		assertThat(savedVisitor.getAgentType()).isEqualTo(agentType);
@@ -44,21 +44,21 @@ class VisitorRepositoryIT {
 
 	@Test
 	void visitorIsNotFound() {
-		String ipAddress = "192.168.1.1";
-		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
+		var ipAddress = "192.168.1.1";
+		var optionalVisitor = repository.find(ipAddress);
 
 		assertThat(optionalVisitor).isEmpty();
 	}
 
 	@Test
 	void visitorsAreAllFound() {
-		int existingVisitors = getExistingVisitors();
-		String ipAddress1 = "192.168.1.1";
+		var existingVisitors = getExistingVisitors();
+		var ipAddress1 = "192.168.1.1";
 		repository.create(ipAddress1, "SRB", "Serbia", WEB_BROWSER.name());
-		String ipAddress2 = "192.168.1.2";
+		var ipAddress2 = "192.168.1.2";
 		repository.create(ipAddress2, "USA", "United States", MOBILE_BROWSER.name());
 
-		List<Visitor> visitors = repository.findAll();
+		var visitors = repository.findAll();
 
 		assertThat(visitors).hasSize(existingVisitors + 2);
 		assertThat(visitors).extracting(Visitor::getIpAddress).contains(ipAddress1, ipAddress2);
@@ -66,45 +66,45 @@ class VisitorRepositoryIT {
 
 	@Test
 	void visitorIsSaved() {
-		String ipAddress = "192.168.1.1";
-		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia", WEB_BROWSER.name());
+		var ipAddress = "192.168.1.1";
+		var visitor = repository.create(ipAddress, "SRB", "Serbia", WEB_BROWSER.name());
 
 		visitor.visit();
 		repository.save(visitor);
 
-		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
+		var optionalVisitor = repository.find(ipAddress);
 		assertThat(optionalVisitor).isNotEmpty();
 		assertThat(optionalVisitor.get().getHits()).isEqualTo(2);
 	}
 
 	@Test
 	void allVisitorAreSaved() {
-		int existingVisitors = getExistingVisitors();
-		String ipAddress1 = "192.168.1.1";
-		Visitor visitor1 = repository.create(ipAddress1, "SRB", "Serbia", WEB_BROWSER.name());
-		String ipAddress2 = "192.168.1.2";
-		Visitor visitor2 = repository.create(ipAddress2, "USA", "United States", MOBILE_BROWSER.name());
+		var existingVisitors = getExistingVisitors();
+		var ipAddress1 = "192.168.1.1";
+		var visitor1 = repository.create(ipAddress1, "SRB", "Serbia", WEB_BROWSER.name());
+		var ipAddress2 = "192.168.1.2";
+		var visitor2 = repository.create(ipAddress2, "USA", "United States", MOBILE_BROWSER.name());
 
 		visitor1.visit();
 		visitor2.visit();
 		visitor2.visit();
 		repository.saveAll(List.of(visitor1, visitor2));
 
-		List<Visitor> visitors = repository.findAll();
+		var visitors = repository.findAll();
 		assertThat(visitors).hasSize(existingVisitors + 2);
 		assertThat(visitors).extracting(Visitor::getHits).contains(2, 3);
 	}
 
 	@Test
 	void visitorIsExpired() {
-		String ipAddress = "192.168.1.1";
-		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia", WEB_BROWSER.name());
-		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
+		var ipAddress = "192.168.1.1";
+		var visitor = repository.create(ipAddress, "SRB", "Serbia", WEB_BROWSER.name());
+		var optionalVisitor = repository.find(ipAddress);
 		assertThat(optionalVisitor).isNotEmpty();
 
 		repository.expire(visitor);
 
-		Optional<Visitor> optionalExpiredVisitor = repository.find(ipAddress);
+		var optionalExpiredVisitor = repository.find(ipAddress);
 		assertThat(optionalExpiredVisitor).isEmpty();
 	}
 

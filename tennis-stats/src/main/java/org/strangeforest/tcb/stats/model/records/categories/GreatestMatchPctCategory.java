@@ -107,7 +107,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	}
 
 	private static Record greatestMatchPct(RecordType type, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
 		return new Record<>(
 			domain.id + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + type.name + " Pct.",
 			/* language=SQL */
@@ -126,7 +126,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	}
 
 	private static Record greatestMatchPctVs(RecordType type, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
 		return new Record<>(
 			type.name + "PctVs" + domain.id, "Greatest " + type.name + " Pct. Vs " + domain.name,
 			/* language=SQL */
@@ -145,8 +145,8 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	}
 
 	private static Record greatestSeasonMatchPct(RecordType type, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
-		int minEntries = perfCategory.getMinEntries() / 10;
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var minEntries = perfCategory.getMinEntries() / 10;
 		return new Record<>(
 			"Season" + domain.id + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + type.name + " Pct. in Single Season",
 			/* language=SQL */
@@ -166,8 +166,8 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	}
 
 	private static Record greatestTournamentMatchPct(RecordType type, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get("matches");
-		int minEntries = perfCategory.getMinEntries() / 10;
+		var perfCategory = PerformanceCategory.get("matches");
+		var minEntries = perfCategory.getMinEntries() / 10;
 		return new Record<>(
 			"Tournament" + domain.id + type.name + "Pct", "Greatest " + type.name + " Pct. at Single " + suffix(domain.name, " ") + "Tournament",
 			/* language=SQL */
@@ -188,7 +188,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	}
 
 	private static Record greatestPeakMatchPct(RecordType type, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
 		return new Record<>(
 			domain.id + "Peak" + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + "Peak " + type.name + " Pct.",
 			/* language=SQL */
@@ -219,7 +219,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	}
 
 	private static Record greatestPeakMatchPctVs(RecordType type, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
 		return new Record<>(
 			"Peak" + type.name + "PctVs" + domain.id, "Greatest Peak " + type.name + " Pct. Vs " + domain.name,
 			/* language=SQL */

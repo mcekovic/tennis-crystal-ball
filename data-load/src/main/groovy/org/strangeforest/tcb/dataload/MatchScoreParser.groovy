@@ -5,7 +5,7 @@ import static java.lang.Integer.*
 class MatchScoreParser {
 
 	static MatchScore parse(String score) {
-		if (!score)
+		if (!score || score == 'UNK')
 			return null
 		List sets = score.tokenize(' ')
 		short w_sets = 0
@@ -19,6 +19,12 @@ class MatchScoreParser {
 		for (String set in sets) {
 			if (set.startsWith('[') && set.endsWith(']'))
 				set = set.substring(1, set.length() - 1)
+			if (set == '?-?') {
+				print('?')
+				continue
+			}
+			if (set.contains('?'))
+				set = set.replace('?', ' ').trim()
 			int pos = set.indexOf('-')
 			if (pos > 0) {
 				try {

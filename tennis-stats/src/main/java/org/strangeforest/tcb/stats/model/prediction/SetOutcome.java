@@ -55,11 +55,11 @@ public class SetOutcome extends DiffOutcome {
 
 	public SetProbabilities pWin(int games1, int games2, int points1, int points2, boolean serve) {
 		if (rules.isTieBreak(games1, games2)) {
-			double pTBWin = new TieBreakOutcome(pServe, pReturn, rules.getTieBreak()).pWin(points1, points2, serve);
+			var pTBWin = new TieBreakOutcome(pServe, pReturn, rules.getTieBreak()).pWin(points1, points2, serve);
 			return new SetProbabilities(pTBWin, pTBWin);
 		}
 		else {
-			double pGameWin = getGameOutcome(serve ? pServe : pReturn).pWin(points1, points2);
+			var pGameWin = getGameOutcome(serve ? pServe : pReturn).pWin(points1, points2);
 			return new SetProbabilities(pGameWin, pGameWin * pWin(games1 + 1, games2, !serve) + (1.0 - pGameWin) * pWin(games1, games2 + 1, !serve));
 		}
 	}

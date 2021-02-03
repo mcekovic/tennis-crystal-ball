@@ -60,11 +60,11 @@ public class ContentService implements HasCache {
 	}
 
 	private PlayerOfTheWeek doGetPlayerOfTheWeek() {
-		FeaturedContent playerContent = getFeaturedContent(Type.PLAYER);
-		String playerId = playerContent.getValue();
+		var playerContent = getFeaturedContent(Type.PLAYER);
+		var playerId = playerContent.getValue();
 		if (playerId != null) {
-			String eventId = playerContent.getContent();
-			TournamentEvent event = !isNullOrEmpty(eventId) ? tournamentService.getTournamentEvent(Integer.parseInt(eventId)) : null;
+			var eventId = playerContent.getContent();
+			var event = !isNullOrEmpty(eventId) ? tournamentService.getTournamentEvent(Integer.parseInt(eventId)) : null;
 			return new PlayerOfTheWeek(playerService.getPlayer(Integer.parseInt(playerId)), event);
 		}
 		else
@@ -72,12 +72,12 @@ public class ContentService implements HasCache {
 	}
 
 	private PlayerOfTheWeek findPlayerOfTheWeek() {
-		Integer[] playerIdEventId = jdbcTemplate.query(PLAYER_OF_THE_WEEK_QUERY, rs ->
+		var playerIdEventId = jdbcTemplate.query(PLAYER_OF_THE_WEEK_QUERY, rs ->
 			rs.next() ? new Integer [] {rs.getInt("player_id"), rs.getInt("tournament_event_id")} : null
 		);
 		if (playerIdEventId != null)
 			return new PlayerOfTheWeek(playerService.getPlayer(playerIdEventId[0]), tournamentService.getTournamentEvent(playerIdEventId[1]));
-		List<PlayerRanking> rankingsTopN = rankingsService.getRankingsTopN(RankType.RANK, 1);
+		var rankingsTopN = rankingsService.getRankingsTopN(RankType.RANK, 1);
 		if (rankingsTopN.size() < 1)
 			throw new NotFoundException("PlayerOfTheWeek", null);
 		return new PlayerOfTheWeek(playerService.getPlayer(rankingsTopN.get(0).getPlayerId()));
@@ -88,8 +88,8 @@ public class ContentService implements HasCache {
 	}
 	
 	private RecordOfTheDay doGetRecordOfTheDay() {
-		FeaturedContent recordContent = getFeaturedContent(Type.RECORD);
-		String recordId = recordContent.getValue();
+		var recordContent = getFeaturedContent(Type.RECORD);
+		var recordId = recordContent.getValue();
 		if (recordId != null)
 			return recordOfTheDay(recordId);
 		else
@@ -97,16 +97,16 @@ public class ContentService implements HasCache {
 	}
 
 	public RecordOfTheDay getRecordOfTheDay(int currentDay) {
-		Map<Record, Integer> recordWeights = getRecordWeights(null);
-		for (Surface surface : Surface.values())
+		var recordWeights = getRecordWeights(null);
+		for (var surface : Surface.values())
 			recordWeights.putAll(getRecordWeights(surface.getCode()));
-		int totalWeight = recordWeights.values().stream().mapToInt(v -> v).sum();
-		int weightPoint = new Random(currentDay).nextInt(totalWeight);
-		int weight = 0;
-		for (Map.Entry<Record, Integer> recordWeight : recordWeights.entrySet()) {
+		var totalWeight = recordWeights.values().stream().mapToInt(v -> v).sum();
+		var weightPoint = new Random(currentDay).nextInt(totalWeight);
+		var weight = 0;
+		for (var recordWeight : recordWeights.entrySet()) {
 			weight += recordWeight.getValue();
 			if (weight >= weightPoint) {
-				Record record = recordWeight.getKey();
+				var record = recordWeight.getKey();
 				LOGGER.info("Record of the Day [{}, Records: {}, Total weight: {}, Current day: {}, Weight point: {}]", record.getName(), recordWeights.size(), totalWeight, currentDay, weightPoint);
 				return recordOfTheDay(record);
 			}
@@ -117,8 +117,8 @@ public class ContentService implements HasCache {
 	private Map<Record, Integer> getRecordWeights(String surface) {
 		Map<Record, String> records = goatLegendService.getRecordsGOATPoints(surface).values().stream().collect(Collector.of(LinkedHashMap::new, Map::putAll, (a, i) -> { a.putAll(i); return a;	}));
 		return records.entrySet().stream().collect(toMap(Map.Entry::getKey, e -> {
-			String v = e.getValue();
-			int pos = v.indexOf(',');
+			var v = e.getValue();
+			var pos = v.indexOf(',');
 			if (pos > 0)
 				v = v.substring(0, pos);
 			return Integer.parseInt(v);
@@ -130,9 +130,9 @@ public class ContentService implements HasCache {
 	}
 
 	private RecordOfTheDay recordOfTheDay(Record record) {
-		List<RecordDetailRow> rows = recordsService.getRecordTable(record.getId(), false, 10, 1).getRows();
-		int holders = 0;
-		for (RecordDetailRow row : rows) {
+		var rows = recordsService.getRecordTable(record.getId(), false, 10, 1).getRows();
+		var holders = 0;
+		for (var row : rows) {
 			if (row.getRank() == 1)
 				holders++;
 			else

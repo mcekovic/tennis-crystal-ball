@@ -26,7 +26,7 @@ public class PlayerMatchesResource {
 
 	private static final int MAX_MATCHES = 10000;
 
-	private static Map<String, String> ORDER_MAP = Map.of(
+	private static final Map<String, String> ORDER_MAP = Map.of(
 		"date", "date",
 		"tournament", "tournament",
 		"surface", "surface",
@@ -35,7 +35,7 @@ public class PlayerMatchesResource {
 		"wonLost", "CASE WHEN outcome = 'ABD' THEN 0 WHEN pw.player_id = :playerId THEN 1 ELSE -1 END",
 		"bestOf", "best_of"
 	);
-	private static Map<String, String> ORDER_MAP_BIG_WINS = ImmutableMap.<String, String>builder()
+	private static final Map<String, String> ORDER_MAP_BIG_WINS = ImmutableMap.<String, String>builder()
 		.putAll(ORDER_MAP)
 		.put("bigWinPoints", "big_win_points")
 	.build();
@@ -70,15 +70,15 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent, matchesService.getSameCountryIds(countryId));
-		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
-		ScoreFilter scoreFilter = ScoreFilter.forMatches(score);
-		StatsFilter statsFilter = StatsFilter.forMatches(statsCategory, statsFrom, statsTo);
-		MatchFilter filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, bigWin ? ORDER_MAP_BIG_WINS : ORDER_MAP, DEFAULT_ORDERS);
-		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter = OpponentFilter.forMatches(opponent, matchesService.getSameCountryIds(countryId));
+		var outcomeFilter = OutcomeFilter.forMatches(outcome);
+		var scoreFilter = ScoreFilter.forMatches(score);
+		var statsFilter = StatsFilter.forMatches(statsCategory, statsFrom, statsTo);
+		var filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
+		var orderBy = BootgridUtil.getOrderBy(requestParams, bigWin ? ORDER_MAP_BIG_WINS : ORDER_MAP, DEFAULT_ORDERS);
+		var pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getPlayerMatchesTable(playerId, filter, h2h, orderBy, pageSize, current);
 	}
 	
@@ -105,13 +105,13 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
-		ScoreFilter scoreFilter = ScoreFilter.forStats(score);
-		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, StatsFilter.ALL, bigWin, searchPhrase);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		var outcomeFilter = OutcomeFilter.forStats(outcome);
+		var scoreFilter = ScoreFilter.forStats(score);
+		var filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, StatsFilter.ALL, bigWin, searchPhrase);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
 		return StatsCategory.get(statsCategory).getStat(stats);
 	}
 }

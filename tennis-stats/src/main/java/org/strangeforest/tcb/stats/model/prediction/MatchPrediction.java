@@ -19,7 +19,7 @@ public final class MatchPrediction {
 	}
 
 	private static MatchPrediction prediction(double winProbability1, short bestOf) {
-		MatchPrediction prediction = new MatchPrediction(1.0, bestOf);
+		var prediction = new MatchPrediction(1.0, bestOf);
 		prediction.addItemProbability1(RankingPredictionItem.RANK, 1.0, winProbability1);
 		prediction.addItemProbability2(RankingPredictionItem.RANK, 1.0, 1.0 - winProbability1);
 		return prediction;
@@ -67,10 +67,10 @@ public final class MatchPrediction {
 	}
 
 	private double weightAverage(List<WeightedProbability> weightedProbabilities) {
-		double weightProbabilitySum = 0.0;
-		double weightSum = 0.0;
-		for (WeightedProbability itemProbability : weightedProbabilities) {
-			double weight = itemProbability.getWeight();
+		var weightProbabilitySum = 0.0;
+		var weightSum = 0.0;
+		for (var itemProbability : weightedProbabilities) {
+			var weight = itemProbability.getWeight();
 			weightProbabilitySum += weight * itemProbability.getProbability();
 			weightSum += weight;
 		}
@@ -177,7 +177,7 @@ public final class MatchPrediction {
 	}
 
 	public MatchPrediction swap() {
-		MatchPrediction swapped = new MatchPrediction(totalAreaWeight, bestOf);
+		var swapped = new MatchPrediction(totalAreaWeight, bestOf);
 		swapped.itemProbabilities1 = List.copyOf(itemProbabilities2);
 		swapped.itemProbabilities2 = List.copyOf(itemProbabilities1);
 		swapped.winProbability1 = winProbability2;

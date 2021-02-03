@@ -60,7 +60,7 @@ public enum CourtSpeed implements CodedEnum {
 	}
 
 	public static CourtSpeed forSpeed(Integer speed) {
-		for (CourtSpeed courtSpeed : values()) {
+		for (var courtSpeed : values()) {
 			if (courtSpeed.speedRange.contains(speed))
 				return courtSpeed;
 		}
@@ -68,7 +68,7 @@ public enum CourtSpeed implements CodedEnum {
 	}
 
 	public static CourtSpeed forSpeedRange(Range<Integer> speedRange) {
-		for (CourtSpeed courtSpeed : values()) {
+		for (var courtSpeed : values()) {
 			if (courtSpeed.speedRange.equals(speedRange))
 				return courtSpeed;
 		}
@@ -76,7 +76,7 @@ public enum CourtSpeed implements CodedEnum {
 	}
 
 	public static Range<Integer> toSpeedRange(String code) {
-		CourtSpeed speed = CodedEnum.safeDecode(CourtSpeed.class, code);
+		var speed = CodedEnum.safeDecode(CourtSpeed.class, code);
 		return speed != null ? speed.getSpeedRange() : Range.all();
 	}
 }

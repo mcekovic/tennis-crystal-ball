@@ -27,8 +27,8 @@ public class RivalryPlayer implements Comparable<RivalryPlayer> {
 	}
 
 	public String getInitials() {
-		StringBuilder sb = new StringBuilder();
-		for (String word : name.split(" "))
+		var sb = new StringBuilder();
+		for (var word : name.split(" "))
 			sb.append(word.charAt(0));
 		return sb.toString();
 	}
@@ -51,7 +51,7 @@ public class RivalryPlayer implements Comparable<RivalryPlayer> {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof RivalryPlayer)) return false;
-		RivalryPlayer player = (RivalryPlayer)o;
+		var player = (RivalryPlayer)o;
 		return playerId == player.playerId;
 	}
 

@@ -21,7 +21,7 @@ public class GreatestMatchesResource {
 
 	private static final int MAX_MATCHES = 1000;
 
-	private static Map<String, String> ORDER_MAP = Map.of(
+	private static final Map<String, String> ORDER_MAP = Map.of(
 		"date", "date",
 		"tournament", "tournament",
 		"surface", "surface",
@@ -49,12 +49,12 @@ public class GreatestMatchesResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<LocalDate> dateRange = DateUtil.toDateRange(fromSeason, toSeason);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		MatchFilter filter = MatchFilter.forMatches(dateRange, level, bestOf, surface, indoor, speedRange, tournamentId, round, searchPhrase);
+		var dateRange = DateUtil.toDateRange(fromSeason, toSeason);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = MatchFilter.forMatches(dateRange, level, bestOf, surface, indoor, speedRange, tournamentId, round, searchPhrase);
 
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getGreatestMatchesTable(filter, bestRank, orderBy, pageSize, current);
 	}
 }

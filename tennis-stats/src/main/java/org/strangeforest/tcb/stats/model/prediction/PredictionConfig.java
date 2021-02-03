@@ -43,9 +43,9 @@ public class PredictionConfig {
 	}
 
 	private static PredictionConfig loadConfig(String configName) {
-		Properties props = new Properties();
+		var props = new Properties();
 		try {
-			InputStream in = PredictionConfig.class.getResourceAsStream(configName);
+			var in = PredictionConfig.class.getResourceAsStream(configName);
 			if (in == null)
 				throw new TennisStatsException("Cannot load find prediction config: " + configName);
 			props.load(in);
@@ -89,7 +89,7 @@ public class PredictionConfig {
 	}
 
 	public PredictionConfig(double areaWeight, double itemWeight) {
-		for (PredictionArea area : PredictionArea.values())
+		for (var area : PredictionArea.values())
 			setAreaWeights(area, areaWeight, itemWeight);
 		calculateAreaTotalAndAdjustedWeights();
 	}
@@ -105,7 +105,7 @@ public class PredictionConfig {
 
 	private void setAreaWeights(PredictionArea area, double areaWeight, double itemWeight) {
 		areaWeights.put(area, areaWeight);
-		for (PredictionItem item : area.getItems())
+		for (var item : area.getItems())
 			itemWeights.put(item, itemWeight);
 	}
 
@@ -136,13 +136,13 @@ public class PredictionConfig {
 	}
 
 	private void calculateAreaTotalAndAdjustedWeights() {
-		for (PredictionArea area : PredictionArea.values())
+		for (var area : PredictionArea.values())
 			areaAdjustedWeights.put(area, calculateAreaAdjustedWeight(area));
 		totalAreasWeight = Stream.of(PredictionArea.values()).mapToDouble(this::getAreaWeight).sum();
 	}
 
 	private double calculateAreaAdjustedWeight(PredictionArea area) {
-		double areaItemWeights = Stream.of(area.getItems()).mapToDouble(this::getItemWeight).sum();
+		var areaItemWeights = Stream.of(area.getItems()).mapToDouble(this::getItemWeight).sum();
 		return areaItemWeights > 0.0 ? getAreaWeight(area) / areaItemWeights : 0.0;
 	}
 
@@ -167,7 +167,7 @@ public class PredictionConfig {
 	}
 
 	public boolean isAnyAreaEnabled() {
-		for (PredictionArea area : PredictionArea.values()) {
+		for (var area : PredictionArea.values()) {
 			if (isAreaEnabled(area))
 				return true;
 		}
@@ -187,10 +187,10 @@ public class PredictionConfig {
 	}
 
 	public Properties asProperties() {
-		Properties config = new Properties();
-		for (PredictionArea area : PredictionArea.values()) {
+		var config = new Properties();
+		for (var area : PredictionArea.values()) {
 			config.setProperty("area." + area, String.valueOf(getAreaWeight(area)));
-			for (PredictionItem item : area.getItems())
+			for (var item : area.getItems())
 				config.setProperty("item." + area + '.' + item, String.valueOf(getItemWeight(item)));
 		}
 		return config;
@@ -198,13 +198,13 @@ public class PredictionConfig {
 
 	public void save(PrintStream out) {
 		out.println("# Areas");
-		int maxAreaLength = maxLength(PredictionArea.values()) + 1;
-		for (PredictionArea area : PredictionArea.values())
+		var maxAreaLength = maxLength(PredictionArea.values()) + 1;
+		for (var area : PredictionArea.values())
 			out.printf("area.%1$-" + maxAreaLength + "s%2$2.0f\n", area + "=", getAreaWeight(area));
-		for (PredictionArea area : PredictionArea.values()) {
+		for (var area : PredictionArea.values()) {
 			out.printf("\n# %1$s Items\n", area);
-			int maxItemLength = maxLength(area.getItems()) + 1;
-			for (PredictionItem item : area.getItems())
+			var maxItemLength = maxLength(area.getItems()) + 1;
+			for (var item : area.getItems())
 				out.printf("item.%1$s.%2$-" + maxItemLength + "s%3$2.0f\n", area, item + "=", getItemWeight(item));
 		}
 	}
@@ -214,35 +214,35 @@ public class PredictionConfig {
 	}
 
 	private void fromProperties(Properties props) {
-		for (String name : props.stringPropertyNames()) {
-			String value = props.getProperty(name);
+		for (var name : props.stringPropertyNames()) {
+			var value = props.getProperty(name);
 			if (isNullOrEmpty(value))
 				continue;
 			if (AREA_PATTERN.matcher(name).matches()) {
-				String areaName = name.substring(5);
-				double weight = Double.parseDouble(value);
+				var areaName = name.substring(5);
+				var weight = Double.parseDouble(value);
 				areaWeights.put(PredictionArea.valueOf(areaName), weight);
 			}
 			else if (ITEM_PATTERN.matcher(name).matches()) {
-				int pos = name.indexOf('.', 5);
-				String areaName = name.substring(5, pos);
-				String itemName = name.substring(pos + 1);
-				double weight = Double.parseDouble(value);
+				var pos = name.indexOf('.', 5);
+				var areaName = name.substring(5, pos);
+				var itemName = name.substring(pos + 1);
+				var weight = Double.parseDouble(value);
 				itemWeights.put(PredictionArea.valueOf(areaName).getItem(itemName), weight);
 			}
 			else if (MATCH_RECENT_PERIOD_PATTERN.matcher(name).matches()) {
-				String areaName = name.substring(19);
-				int recentPeriod = Integer.parseInt(value);
+				var areaName = name.substring(19);
+				var recentPeriod = Integer.parseInt(value);
 				matchRecentPeriods.put(PredictionArea.valueOf(areaName), recentPeriod);
 			}
 			else if (SET_RECENT_PERIOD_PATTERN.matcher(name).matches()) {
-				String areaName = name.substring(17);
-				int recentPeriod = Integer.parseInt(value);
+				var areaName = name.substring(17);
+				var recentPeriod = Integer.parseInt(value);
 				setRecentPeriods.put(PredictionArea.valueOf(areaName), recentPeriod);
 			}
 			else if (LAST_MATCHES_COUNT_PATTERN.matcher(name).matches()) {
-				String areaName = name.substring(15);
-				int matchCount = Integer.parseInt(value);
+				var areaName = name.substring(15);
+				var matchCount = Integer.parseInt(value);
 				lastMatchesCounts.put(PredictionArea.valueOf(areaName), matchCount);
 			}
 		}
@@ -254,7 +254,7 @@ public class PredictionConfig {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		PredictionConfig config = (PredictionConfig)o;
+		var config = (PredictionConfig)o;
 		return areaWeights.equals(config.areaWeights) && itemWeights.equals(config.itemWeights)
 			&& matchRecentPeriods.equals(config.matchRecentPeriods) && setRecentPeriods.equals(config.setRecentPeriods) && lastMatchesCounts.equals(config.lastMatchesCounts);
 	}

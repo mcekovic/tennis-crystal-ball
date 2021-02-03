@@ -24,8 +24,8 @@ public class PlayerTournamentGOATPoints {
 
 	public String getLevel(String level, String result) {
 		if ("F".equals(level)) {
-			Integer tfResult = results.get(new LevelResult("F", result));
-			Integer afResult = results.get(new LevelResult("L", result));
+			var tfResult = results.get(new LevelResult("F", result));
+			var afResult = results.get(new LevelResult("L", result));
 			if (afResult != null)
 				return Objects.equals(afResult, tfResult) ? "L" : "FL";
 			else
@@ -36,22 +36,22 @@ public class PlayerTournamentGOATPoints {
 	}
 
 	void mergeTourFinals() {
-		for (Map.Entry<LevelResult, Integer> entry : results.entrySet()) {
-			LevelResult levelResult = entry.getKey();
+		for (var entry : results.entrySet()) {
+			var levelResult = entry.getKey();
 			if ("L".equals(levelResult.level)) {
-				LevelResult tfLevelResult = new LevelResult("F", levelResult.result);
-				Integer tfResultCount = results.get(tfLevelResult);
-				Integer afResultCount = entry.getValue();
+				var tfLevelResult = new LevelResult("F", levelResult.result);
+				var tfResultCount = results.get(tfLevelResult);
+				var afResultCount = entry.getValue();
 				results.put(tfLevelResult, tfResultCount != null ? tfResultCount + afResultCount : afResultCount);
 			}
 		}
 	}
 
 	void addAll(PlayerTournamentGOATPoints breakdown) {
-		for (Map.Entry<LevelResult, Integer> entry : breakdown.results.entrySet()) {
-			LevelResult levelResult = entry.getKey();
-			Integer allCount = results.get(levelResult);
-			Integer count = entry.getValue();
+		for (var entry : breakdown.results.entrySet()) {
+			var levelResult = entry.getKey();
+			var allCount = results.get(levelResult);
+			var count = entry.getValue();
 			results.put(levelResult, allCount != null ? allCount + count : count);
 		}
 	}
@@ -77,7 +77,7 @@ public class PlayerTournamentGOATPoints {
 		@Override public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
-			LevelResult that = (LevelResult)o;
+			var that = (LevelResult)o;
 			return Objects.equals(level, that.level) && Objects.equals(result, that.result);
 		}
 

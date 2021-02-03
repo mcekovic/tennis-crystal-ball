@@ -19,7 +19,7 @@ public class StatsLeadersController extends PageController {
 	public ModelAndView statsLeaders(
 		@RequestParam(name = "category", required = false) String category
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("category", category);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		modelMap.addAttribute("seasons", statisticsService.getSeasons());

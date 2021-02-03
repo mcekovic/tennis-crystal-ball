@@ -17,7 +17,7 @@ public class TraceServiceCallsAspect {
 
 	@Bean @Role(ROLE_INFRASTRUCTURE)
 	public Advice traceInterceptor() {
-		CustomizableTraceInterceptor traceInterceptor = new CustomizableTraceInterceptor();
+		var traceInterceptor = new CustomizableTraceInterceptor();
 		traceInterceptor.setUseDynamicLogger(true);
 		traceInterceptor.setEnterMessage("$[methodName]($[arguments])");
 		traceInterceptor.setExitMessage("~$[methodName]=$[returnValue] ($[invocationTime])");

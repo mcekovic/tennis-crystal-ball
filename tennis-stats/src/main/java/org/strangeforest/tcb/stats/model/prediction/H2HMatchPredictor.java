@@ -48,9 +48,9 @@ public class H2HMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public MatchPrediction predictMatch() {
-		Period matchRecentPeriod = getMatchRecentPeriod();
-		Period setRecentPeriod = getSetRecentPeriod();
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
+		var matchRecentPeriod = getMatchRecentPeriod();
+		var setRecentPeriod = getSetRecentPeriod();
+		var prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
 		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
@@ -85,15 +85,15 @@ public class H2HMatchPredictor implements MatchPredictor {
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, H2HPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2) {
-		double itemWeight = config.getItemWeight(item);
+		var itemWeight = config.getItemWeight(item);
 		if (itemWeight > 0.0) {
 			ToIntFunction<MatchData> dimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
-			int won1 = matchData1.stream().filter(filter1.and(isOpponent(playerId2))).mapToInt(dimension).sum();
-			int won2 = matchData2.stream().filter(filter2.and(isOpponent(playerId1))).mapToInt(dimension).sum();
-			int total = won1 + won2;
+			var won1 = matchData1.stream().filter(filter1.and(isOpponent(playerId2))).mapToInt(dimension).sum();
+			var won2 = matchData2.stream().filter(filter2.and(isOpponent(playerId1))).mapToInt(dimension).sum();
+			var total = won1 + won2;
 			if (total > 0) {
-				double weight = itemWeight * weight(total);
-				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
+				var weight = itemWeight * weight(total);
+				var probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
 				prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(1.0 * won1 / total));
 				prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(1.0 * won2 / total));
 			}

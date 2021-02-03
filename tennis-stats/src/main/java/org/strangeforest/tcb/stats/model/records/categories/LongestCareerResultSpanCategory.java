@@ -93,9 +93,9 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	}
 
 	private static Record matchCareerSpan(RecordDomain domain, boolean win) {
-		String match = win ? "Win" : "Match";
-		String column = win ? "winner_id" : "player_id";
-		String table = win ? "match_for_stats_v" : "player_match_for_stats_v";
+		var match = win ? "Win" : "Match";
+		var column = win ? "winner_id" : "player_id";
+		var table = win ? "match_for_stats_v" : "player_match_for_stats_v";
 		return new Record<>(
 			"Longest" + domain.id + match + "Span", "Longest " + suffix(domain.name, " ") + "First " + match + " to Last " + match,
 			/* language=SQL */

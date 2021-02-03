@@ -163,13 +163,13 @@ public class PerfStatsFilter extends PlayerListFilter {
 	}
 
 	public String getBaseCriteria() {
-		StringBuilder criteria = new StringBuilder();
+		var criteria = new StringBuilder();
 		appendBaseCriteria(criteria);
 		return criteria.toString();
 	}
 
 	public String getSearchCriteria() {
-		StringBuilder criteria = new StringBuilder();
+		var criteria = new StringBuilder();
 		super.appendCriteria(criteria);
 		return criteria.toString();
 	}
@@ -435,7 +435,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 		if (this == o) return true;
 		if (!(o instanceof PerfStatsFilter)) return false;
 		if (!super.equals(o)) return false;
-		PerfStatsFilter filter = (PerfStatsFilter)o;
+		var filter = (PerfStatsFilter)o;
 		return Objects.equals(season, filter.season) &&	last52Weeks == filter.last52Weeks && dateRange.equals(filter.dateRange) &&
 			stringsEqual(level, filter.level) && Objects.equals(bestOf, filter.bestOf) && stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) && speedRange.equals(filter.speedRange) &&
 			stringsEqual(round, filter.round) && stringsEqual(result, filter.result) && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && opponentFilter.equals(filter.opponentFilter) && outcomeFilter.equals(filter.outcomeFilter);

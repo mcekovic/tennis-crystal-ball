@@ -157,7 +157,7 @@ public abstract class FractionalPriceTable {
 	}
 
 	private static void addPrice(int up, int down) {
-		FractionalPrice price = new FractionalPrice(up, down, valueOf(up).divide(valueOf(down), PriceFormat.DECIMAL_VALUE_MATH_CONTEXT).add(ONE));
+		var price = new FractionalPrice(up, down, valueOf(up).divide(valueOf(down), PriceFormat.DECIMAL_VALUE_MATH_CONTEXT).add(ONE));
 		if (!PRICES.isEmpty())
 			checkPrice(price, PRICES.get(PRICES.size() - 1));
 		PRICES.add(price);
@@ -170,8 +170,8 @@ public abstract class FractionalPriceTable {
 
 	public static FractionalPrice toFractional(BigDecimal value) {
 		FractionalPrice prevPrice = null;
-		for (FractionalPrice price : PRICES) {
-			BigDecimal priceValue = price.decimal;
+		for (var price : PRICES) {
+			var priceValue = price.decimal;
 			if (value.compareTo(priceValue) <= 0 || closeTo(value, priceValue))
 				return price;
 			prevPrice = price;

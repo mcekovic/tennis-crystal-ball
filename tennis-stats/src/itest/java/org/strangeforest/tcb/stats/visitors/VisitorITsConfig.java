@@ -33,7 +33,7 @@ public class VisitorITsConfig {
 
 	@Bean
 	public static CustomEditorConfigurer customEditorConfigurer() {
-		CustomEditorConfigurer editorConfigurer = new CustomEditorConfigurer();
+		var editorConfigurer = new CustomEditorConfigurer();
 		editorConfigurer.setCustomEditors(singletonMap(Duration.class, DurationPropertyEditor.class));
 		return editorConfigurer;
 	}

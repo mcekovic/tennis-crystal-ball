@@ -24,17 +24,17 @@ class VisitorManagerTest extends BaseVisitorManagerTest {
 
 	@Test
 	void firstVisitCreatesVisitor() {
-		String ipAddress = "192.168.1.1";
+		var ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
 	}
 
 	@Test
 	void secondVisitDoesNothing() {
-		String ipAddress = "192.168.1.1";
+		var ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
-		Visit visit = manager.visit(ipAddress, WEB_BROWSER.name());
+		var visit = manager.visit(ipAddress, WEB_BROWSER.name());
 
 		assertThat(visit.visitor.getHits()).isEqualTo(2);
 
@@ -45,11 +45,11 @@ class VisitorManagerTest extends BaseVisitorManagerTest {
 	@Test
 	void thirdVisitSavesVisitor() {
 		setField(manager, "saveEveryHitCount", 3);
-		String ipAddress = "192.168.1.1";
+		var ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
 		manager.visit(ipAddress, WEB_BROWSER.name());
-		Visit visit = manager.visit(ipAddress, WEB_BROWSER.name());
+		var visit = manager.visit(ipAddress, WEB_BROWSER.name());
 
 		assertThat(visit.visitor.getHits()).isEqualTo(3);
 
@@ -61,8 +61,8 @@ class VisitorManagerTest extends BaseVisitorManagerTest {
 
 	@Test
 	void onlyUnsavedVisitorsAreSavedOnDestroy() throws InterruptedException {
-		String ipAddress1 = "192.168.1.1";
-		String ipAddress2 = "192.168.1.2";
+		var ipAddress1 = "192.168.1.1";
+		var ipAddress2 = "192.168.1.2";
 
 		visitAndVerifyFirstVisit(ipAddress1);
 		visitAndVerifyFirstVisit(ipAddress2);
@@ -74,7 +74,7 @@ class VisitorManagerTest extends BaseVisitorManagerTest {
 
 		verify(repository).saveAll(visitorsCaptor.capture());
 		verify(repository).findAll();
-		Collection<Visitor> visitors = visitorsCaptor.getValue();
+		var visitors = visitorsCaptor.getValue();
 		assertThat(visitors).hasSize(1);
 		assertThat(visitors).extracting(Visitor::getIpAddress).containsExactly(ipAddress1);
 		verifyNoMoreInteractions(repository);

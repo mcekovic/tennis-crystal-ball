@@ -15,12 +15,12 @@ class PlayerServiceIT {
 
 	@Test
 	void playerExists() {
-		for (String player : PlayersFixture.PLAYERS)
+		for (var player : PlayersFixture.PLAYERS)
 			playerExists(player);
 	}
 
 	private void playerExists(String playerName) {
-		Player player = playerService.getPlayer(playerName);
+		var player = playerService.getPlayer(playerName);
 
 		assertThat(player).withFailMessage("Player %1$s does not exist", playerName).isNotNull();
 	}

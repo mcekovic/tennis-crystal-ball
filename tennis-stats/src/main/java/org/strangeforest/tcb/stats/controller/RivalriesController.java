@@ -75,10 +75,10 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "rankType", required = false) String rankType
 	) {
-		Player player1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : null);
-		Player player2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : null);
+		var player1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : null);
+		var player2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : null);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("tab", tab);
@@ -107,33 +107,33 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId1") int playerId1,
 		@RequestParam(name = "playerId2") int playerId2
 	) {
-		Player player1 = playerService.getPlayer(playerId1);
-		Player player2 = playerService.getPlayer(playerId2);
-		PlayerPerformance performance1 = performanceService.getPlayerPerformance(playerId1);
-		PlayerPerformance performance2 = performanceService.getPlayerPerformance(playerId2);
-		FavoriteSurface favoriteSurface1 = new FavoriteSurface(performance1);
-		FavoriteSurface favoriteSurface2 = new FavoriteSurface(performance2);
-		int seasonCount1 = playerService.getPlayerSeasons(playerId1).size();
-		int seasonCount2 = playerService.getPlayerSeasons(playerId2).size();
-		Integer bestSeason1 = playerService.getPlayerBestSeason(playerId1);
-		Integer bestSeason2 = playerService.getPlayerBestSeason(playerId2);
-		BootgridTable<PlayerTournamentEvent> lastEvent1 = tournamentService.getPlayerTournamentEventsTable(playerId1, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
-		BootgridTable<PlayerTournamentEvent> lastEvent2 = tournamentService.getPlayerTournamentEventsTable(playerId2, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
-		Map<String, Integer> surfaceTitles1 = performanceService.getPlayerSurfaceTitles(playerId1);
-		Map<String, Integer> surfaceTitles2 = performanceService.getPlayerSurfaceTitles(playerId2);
-		Map<String, Integer> teamTitles1 = performanceService.getPlayerTeamTitles(playerId1);
-		Map<String, Integer> teamTitles2 = performanceService.getPlayerTeamTitles(playerId2);
-		WonDrawLost playerH2H1 = rivalriesService.getPlayerH2H(playerId1).orElse(null);
-		WonDrawLost playerH2H2 = rivalriesService.getPlayerH2H(playerId2).orElse(null);
+		var player1 = playerService.getPlayer(playerId1);
+		var player2 = playerService.getPlayer(playerId2);
+		var performance1 = performanceService.getPlayerPerformance(playerId1);
+		var performance2 = performanceService.getPlayerPerformance(playerId2);
+		var favoriteSurface1 = new FavoriteSurface(performance1);
+		var favoriteSurface2 = new FavoriteSurface(performance2);
+		var seasonCount1 = playerService.getPlayerSeasons(playerId1).size();
+		var seasonCount2 = playerService.getPlayerSeasons(playerId2).size();
+		var bestSeason1 = playerService.getPlayerBestSeason(playerId1);
+		var bestSeason2 = playerService.getPlayerBestSeason(playerId2);
+		var lastEvent1 = tournamentService.getPlayerTournamentEventsTable(playerId1, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
+		var lastEvent2 = tournamentService.getPlayerTournamentEventsTable(playerId2, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
+		var surfaceTitles1 = performanceService.getPlayerSurfaceTitles(playerId1);
+		var surfaceTitles2 = performanceService.getPlayerSurfaceTitles(playerId2);
+		var teamTitles1 = performanceService.getPlayerTeamTitles(playerId1);
+		var teamTitles2 = performanceService.getPlayerTeamTitles(playerId2);
+		var playerH2H1 = rivalriesService.getPlayerH2H(playerId1).orElse(null);
+		var playerH2H2 = rivalriesService.getPlayerH2H(playerId2).orElse(null);
 
-		List<Match> matches1 = matchesService.getPlayerMatchesTable(playerId1, MatchFilter.forOpponent(playerId2, OutcomeFilter.PLAYED), false, "match_id", 1000, 1).getRows();
-		PlayerPerformance perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2));
-		H2H h2h = new H2H(playerId1, playerId2, matches1);
-		H2H surfaceAdjH2H = AdjustedH2H.surfaceAdjustedH2H(perf1, performance1, performance2);
-		H2H importanceAdjH2H = AdjustedH2H.importanceAdjustedH2H(playerId1, playerId2, perf1, matches1, goatLegendService.getBigWinMatchFactors());
-		H2H adjustedH2H = surfaceAdjH2H.add(importanceAdjH2H).scale(0.5);
+		var matches1 = matchesService.getPlayerMatchesTable(playerId1, MatchFilter.forOpponent(playerId2, OutcomeFilter.PLAYED), false, "match_id", 1000, 1).getRows();
+		var perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2));
+		var h2h = new H2H(playerId1, playerId2, matches1);
+		var surfaceAdjH2H = AdjustedH2H.surfaceAdjustedH2H(perf1, performance1, performance2);
+		var importanceAdjH2H = AdjustedH2H.importanceAdjustedH2H(playerId1, playerId2, perf1, matches1, goatLegendService.getBigWinMatchFactors());
+		var adjustedH2H = surfaceAdjH2H.add(importanceAdjH2H).scale(0.5);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("favoriteSurface1", favoriteSurface1);
@@ -171,28 +171,28 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "season1", required = false) Integer season1,
 		@RequestParam(name = "season2", required = false) Integer season2
 	) {
-		SortedSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
-		int defaultSeason = !seasons.isEmpty() ? seasons.first() : Integer.valueOf(LocalDate.now().getYear());
-		int defaultSeasons = season != null && season >= 0 ? season : defaultSeason;
+		var seasons = getSeasonsUnion(playerId1, playerId2);
+		var defaultSeason = !seasons.isEmpty() ? seasons.first() : LocalDate.now().getYear();
+		var defaultSeasons = season != null && season >= 0 ? season : defaultSeason;
 		if (season == null)
 			season = season1 == null && season2 == null ? defaultSeason : -1;
 		if (season1 == null)
 			season1 = defaultSeasons;
 		if (season2 == null)
 			season2 = defaultSeasons;
-		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season1, 4);
-		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season2, 4);
-		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
-		PlayerPerformanceEx seasonPerf1 = performanceService.getPlayerPerformanceEx(playerId1, PerfStatsFilter.forSeason(season1));
-		PlayerPerformanceEx seasonPerf2 = performanceService.getPlayerPerformanceEx(playerId2, PerfStatsFilter.forSeason(season2));
-		Set<Surface> surfaces = union(seasonPerf1.getSurfaceMatches().keySet(), seasonPerf2.getSurfaceMatches().keySet());
-		Set<TournamentLevel> levels = union(seasonPerf1.getLevelMatches().keySet(), seasonPerf2.getLevelMatches().keySet());
-		Set<Opponent> oppositions = union(seasonPerf1.getOppositionMatches().keySet(), seasonPerf2.getOppositionMatches().keySet());
-		Set<Round> rounds = union(seasonPerf1.getRoundMatches().keySet(), seasonPerf2.getRoundMatches().keySet());
-		PlayerSeasonGOATPoints seasonGOATPoints1 = goatPointsService.getPlayerSeasonGOATPoints(playerId1, season1);
-		PlayerSeasonGOATPoints seasonGOATPoints2 = goatPointsService.getPlayerSeasonGOATPoints(playerId2, season2);
+		var seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season1, 4);
+		var seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season2, 4);
+		var eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
+		var seasonPerf1 = performanceService.getPlayerPerformanceEx(playerId1, PerfStatsFilter.forSeason(season1));
+		var seasonPerf2 = performanceService.getPlayerPerformanceEx(playerId2, PerfStatsFilter.forSeason(season2));
+		var surfaces = union(seasonPerf1.getSurfaceMatches().keySet(), seasonPerf2.getSurfaceMatches().keySet());
+		var levels = union(seasonPerf1.getLevelMatches().keySet(), seasonPerf2.getLevelMatches().keySet());
+		var oppositions = union(seasonPerf1.getOppositionMatches().keySet(), seasonPerf2.getOppositionMatches().keySet());
+		var rounds = union(seasonPerf1.getRoundMatches().keySet(), seasonPerf2.getRoundMatches().keySet());
+		var seasonGOATPoints1 = goatPointsService.getPlayerSeasonGOATPoints(playerId1, season1);
+		var seasonGOATPoints2 = goatPointsService.getPlayerSeasonGOATPoints(playerId2, season2);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
 		modelMap.addAttribute("playerId2", playerId2);
 		modelMap.addAttribute("season", season);
@@ -229,13 +229,13 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "outcome", required = false) String outcome
    ) {
-		Player player1 = playerService.getPlayer(playerId1);
-		Player player2 = playerService.getPlayer(playerId2);
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, null));
+		var player1 = playerService.getPlayer(playerId1);
+		var player2 = playerService.getPlayer(playerId2);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, null));
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("stats1", stats1);
@@ -266,9 +266,9 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId") int[] playerId,
 		@RequestParam(name = "rankType", required = false) String rankType
 	) {
-		List<Integer> seasons = playerService.getPlayersSeasons(playerId);
+		var seasons = playerService.getPlayersSeasons(playerId);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("rankCategories", RankCategory.values());
@@ -298,24 +298,24 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
-		List<String> countryIds = matchesService.getSameCountryIds(countryId);
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter1 = h2h ? OpponentFilter.forStats(playerId2) : OpponentFilter.forStats(opponent, countryIds);
-		OpponentFilter opponentFilter2 = h2h ? OpponentFilter.forStats(playerId1) : OpponentFilter.forStats(opponent, countryIds);
-		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter1));
-		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter2));
-		Set<Surface> perfSurfaces = union(perf1.getSurfaceMatches().keySet(), perf2.getSurfaceMatches().keySet());
-		Set<Boolean> perfIndoors = union(perf1.getOutdoorIndoorMatches().keySet(), perf2.getOutdoorIndoorMatches().keySet());
-		Set<CourtSpeed> perfSpeeds = union(perf1.getSpeedMatches().keySet(), perf2.getSpeedMatches().keySet());
-		Set<TournamentLevel> perfLevels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
-		Set<Integer> perfBestOfs = union(perf1.getBestOfMatches().keySet(), perf2.getBestOfMatches().keySet());
-		Set<Opponent> perfOppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
-		Set<PerfMatchScore> perfScores = union(perf1.getScoreCounts().keySet(), perf2.getScoreCounts().keySet());
-		Set<Round> perfRounds = union(perf1.getRoundMatches().keySet(), perf2.getRoundMatches().keySet());
-		Set<EventResult> perfResults = union(perf1.getResultCounts().keySet(), perf2.getResultCounts().keySet());
+		var countryIds = matchesService.getSameCountryIds(countryId);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter1 = h2h ? OpponentFilter.forStats(playerId2) : OpponentFilter.forStats(opponent, countryIds);
+		var opponentFilter2 = h2h ? OpponentFilter.forStats(playerId1) : OpponentFilter.forStats(opponent, countryIds);
+		var perf1 = performanceService.getPlayerPerformanceEx(playerId1, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter1));
+		var perf2 = performanceService.getPlayerPerformanceEx(playerId2, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter2));
+		var perfSurfaces = union(perf1.getSurfaceMatches().keySet(), perf2.getSurfaceMatches().keySet());
+		var perfIndoors = union(perf1.getOutdoorIndoorMatches().keySet(), perf2.getOutdoorIndoorMatches().keySet());
+		var perfSpeeds = union(perf1.getSpeedMatches().keySet(), perf2.getSpeedMatches().keySet());
+		var perfLevels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
+		var perfBestOfs = union(perf1.getBestOfMatches().keySet(), perf2.getBestOfMatches().keySet());
+		var perfOppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
+		var perfScores = union(perf1.getScoreCounts().keySet(), perf2.getScoreCounts().keySet());
+		var perfRounds = union(perf1.getRoundMatches().keySet(), perf2.getRoundMatches().keySet());
+		var perfResults = union(perf1.getResultCounts().keySet(), perf2.getResultCounts().keySet());
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
 		modelMap.addAttribute("playerId2", playerId2);
 		modelMap.addAttribute("seasons", getSeasonsUnion(playerId1, playerId2));
@@ -363,9 +363,9 @@ public class RivalriesController extends PageController {
 	public ModelAndView h2hPerformanceChart(
 		@RequestParam(name = "playerId") int[] playerId
 	) {
-		List<Integer> seasons = playerService.getPlayersSeasons(playerId);
+		var seasons = playerService.getPlayersSeasons(playerId);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
@@ -398,15 +398,15 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		List<String> countryIds = matchesService.getSameCountryIds(countryId);
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter1 = h2h ? OpponentFilter.forStats(playerId2) : OpponentFilter.forStats(opponent, countryIds);
-		OpponentFilter opponentFilter2 = h2h ? OpponentFilter.forStats(playerId1) : OpponentFilter.forStats(opponent, countryIds);
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter1));
-		PlayerStats stats2 = statisticsService.getPlayerStats(playerId2, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter2));
+		var countryIds = matchesService.getSameCountryIds(countryId);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter1 = h2h ? OpponentFilter.forStats(playerId2) : OpponentFilter.forStats(opponent, countryIds);
+		var opponentFilter2 = h2h ? OpponentFilter.forStats(playerId1) : OpponentFilter.forStats(opponent, countryIds);
+		var stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter1));
+		var stats2 = statisticsService.getPlayerStats(playerId2, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter2));
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
 		modelMap.addAttribute("playerId2", playerId2);
 		modelMap.addAttribute("seasons", getSeasonsUnion(playerId1, playerId2));
@@ -442,10 +442,10 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("stats2", stats2);
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
-			MatchFilter compareFilter1 = MatchFilter.forStats(compareSeason, compareLevel, compareSurface, h2h ? OpponentFilter.forStats(playerId2) : null);
-			MatchFilter compareFilter2 = MatchFilter.forStats(compareSeason, compareLevel, compareSurface, h2h ? OpponentFilter.forStats(playerId1) : null);
-			PlayerStats compareStats1 = statisticsService.getPlayerStats(playerId1, compareFilter1);
-			PlayerStats compareStats2 = statisticsService.getPlayerStats(playerId2, compareFilter2);
+			var compareFilter1 = MatchFilter.forStats(compareSeason, compareLevel, compareSurface, h2h ? OpponentFilter.forStats(playerId2) : null);
+			var compareFilter2 = MatchFilter.forStats(compareSeason, compareLevel, compareSurface, h2h ? OpponentFilter.forStats(playerId1) : null);
+			var compareStats1 = statisticsService.getPlayerStats(playerId1, compareFilter1);
+			var compareStats2 = statisticsService.getPlayerStats(playerId2, compareFilter2);
 			if (!compareStats1.isEmpty())
 				modelMap.addAttribute("compareStats1", compareStats1);
 			if (!compareStats2.isEmpty())
@@ -462,9 +462,9 @@ public class RivalriesController extends PageController {
 	public ModelAndView h2hStatsChart(
 		@RequestParam(name = "playerId") int[] playerId
 	) {
-		List<Integer> seasons = playerService.getPlayersSeasons(playerId);
+		var seasons = playerService.getPlayersSeasons(playerId);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -480,14 +480,14 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "surface", required = false) String surface
 	) {
-		Surface aSurface = Surface.safeDecode(surface);
-		PlayerGOATPoints goatPoints1 = goatPointsService.getPlayerGOATPoints(playerId1, aSurface, false);
-		PlayerGOATPoints goatPoints2 = goatPointsService.getPlayerGOATPoints(playerId2, aSurface, false);
+		var aSurface = Surface.safeDecode(surface);
+		var goatPoints1 = goatPointsService.getPlayerGOATPoints(playerId1, aSurface, false);
+		var goatPoints2 = goatPointsService.getPlayerGOATPoints(playerId2, aSurface, false);
 		Set<Integer> seasons = new TreeSet<>(reverseOrder());
 		seasons.addAll(goatPoints1.getPlayerSeasons());
 		seasons.addAll(goatPoints2.getPlayerSeasons());
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
 		modelMap.addAttribute("playerId2", playerId2);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -529,24 +529,24 @@ public class RivalriesController extends PageController {
 		rejectAgents(httpRequest, ROBOTS_AND_UNKNOWN);
 		if (sets1 > 10 || sets2 > 10 || games1 > 100 || games2 > 100 || points1 > 100 || points2 > 100)
 			throw new InvalidArgumentException("Invalid current score");
-		Player player1 = playerService.getPlayer(playerId1);
-		Player player2 = playerService.getPlayer(playerId2);
-		LocalDate aDate1 = dateForMatchup(dateSelector1, date1, date, player1);
-		LocalDate aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
-		LocalDate today = LocalDate.now();
-		boolean inProgress = abs(ChronoUnit.DAYS.between(aDate1, today)) <= IN_PROGRESS_DAYS_THRESHOLD && abs(ChronoUnit.DAYS.between(aDate2, today)) <= IN_PROGRESS_DAYS_THRESHOLD;
-		TournamentLevel tournamentLevel = TournamentLevel.safeDecode(level);
-		MatchPrediction prediction = matchPredictionService.predictMatch(
+		var player1 = playerService.getPlayer(playerId1);
+		var player2 = playerService.getPlayer(playerId2);
+		var aDate1 = dateForMatchup(dateSelector1, date1, date, player1);
+		var aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
+		var today = LocalDate.now();
+		var inProgress = abs(ChronoUnit.DAYS.between(aDate1, today)) <= IN_PROGRESS_DAYS_THRESHOLD && abs(ChronoUnit.DAYS.between(aDate2, today)) <= IN_PROGRESS_DAYS_THRESHOLD;
+		var tournamentLevel = TournamentLevel.safeDecode(level);
+		var prediction = matchPredictionService.predictMatch(
 			playerId1, playerId2, aDate1, aDate2, tournamentId, tournamentEventId, inProgress,
 			Surface.safeDecode(surface), indoor, tournamentLevel, Round.safeDecode(round)
       );
-		PlayerPerformance perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2, level, surface, indoor, round));
-		short bestOf = MatchDataUtil.defaultBestOf(tournamentLevel, null);
-		MatchRules matchRules = bestOf == 3 ? MatchRules.BEST_OF_3_MATCH : MatchRules.BEST_OF_5_MATCH;
-		SetRules setRules = matchRules.getSet(sets1 + sets2 + 1);
-		boolean tieBreak = setRules.isTieBreak(games1, games2);
+		var perf1 = performanceService.getPlayerPerformance(playerId1, PerfStatsFilter.forOpponent(playerId2, level, surface, indoor, round));
+		var bestOf = MatchDataUtil.defaultBestOf(tournamentLevel, null);
+		var matchRules = bestOf == 3 ? MatchRules.BEST_OF_3_MATCH : MatchRules.BEST_OF_5_MATCH;
+		var setRules = matchRules.getSet(sets1 + sets2 + 1);
+		var tieBreak = setRules.isTieBreak(games1, games2);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -579,7 +579,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("serve", serve);
 
 		if (inMatch) {
-			CurrentScore score = new CurrentScore(matchRules, sets1, sets2, games1, games2, points1, points2, serve);
+			var score = new CurrentScore(matchRules, sets1, sets2, games1, games2, points1, points2, serve);
 			if (!isNullOrEmpty(command)) {
 				switch (command) {
 					case "S1": score.incSets1(); break;
@@ -597,24 +597,24 @@ public class RivalriesController extends PageController {
 				points2 = score.getPoints2();
 				serve = score.getServe();
 			}
-			BaseProbabilities baseProbsH2H1 = toBaseProbabilities(statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2)));
-			BaseProbabilities baseProbsLast52w1 = toBaseProbabilities(statisticsService.getPlayerStats(playerId1, MatchFilter.forSeason(MatchFilter.LAST_52_WEEKS_SEASON)));
-			BaseProbabilities baseProbsLast52w2 = toBaseProbabilities(statisticsService.getPlayerStats(playerId2, MatchFilter.forSeason(MatchFilter.LAST_52_WEEKS_SEASON)));
-			BaseProbabilities baseProbs1 = baseProbsH2H1.combine(baseProbsLast52w1.combine(baseProbsLast52w2.swap())).defaultIfUnknown();
+			var baseProbsH2H1 = toBaseProbabilities(statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2)));
+			var baseProbsLast52w1 = toBaseProbabilities(statisticsService.getPlayerStats(playerId1, MatchFilter.forSeason(MatchFilter.LAST_52_WEEKS_SEASON)));
+			var baseProbsLast52w2 = toBaseProbabilities(statisticsService.getPlayerStats(playerId2, MatchFilter.forSeason(MatchFilter.LAST_52_WEEKS_SEASON)));
+			var baseProbs1 = baseProbsH2H1.combine(baseProbsLast52w1.combine(baseProbsLast52w2.swap())).defaultIfUnknown();
 			baseProbs1 = InMatchPredictor.normalize(prediction.getWinProbability1(), baseProbs1, matchRules);
-			BaseProbabilities baseProbs2 = baseProbs1.swap();
-			MatchOutcome matchOutcome = new MatchOutcome(baseProbs1.getPServe(), baseProbs1.getPReturn(), matchRules);
-			MatchProbabilities inMatchProbs = matchOutcome.pWin(sets1, sets2, games1, games2, points1, points2, serve == 1);
-			double pInMatch1 = inMatchProbs.getPMatch();
-			double pInMatch2 = 1.0 - pInMatch1;
-			double pInSet1 = inMatchProbs.getPSet();
-			double pInSet2 = 1.0 - pInSet1;
-			double pInGame1 = inMatchProbs.getPGame();
-			double pInGame2 = 1.0 - pInGame1;
-			double pSet1 = matchOutcome.getPSetWin();
-			SetOutcome setOutcome = matchOutcome.getSetOutcome();
-			double pSvcGame1 = setOutcome.getPServeWin();
-			double pRtnGame1 = setOutcome.getPReturnWin();
+			var baseProbs2 = baseProbs1.swap();
+			var matchOutcome = new MatchOutcome(baseProbs1.getPServe(), baseProbs1.getPReturn(), matchRules);
+			var inMatchProbs = matchOutcome.pWin(sets1, sets2, games1, games2, points1, points2, serve == 1);
+			var pInMatch1 = inMatchProbs.getPMatch();
+			var pInMatch2 = 1.0 - pInMatch1;
+			var pInSet1 = inMatchProbs.getPSet();
+			var pInSet2 = 1.0 - pInSet1;
+			var pInGame1 = inMatchProbs.getPGame();
+			var pInGame2 = 1.0 - pInGame1;
+			var pSet1 = matchOutcome.getPSetWin();
+			var setOutcome = matchOutcome.getSetOutcome();
+			var pSvcGame1 = setOutcome.getPServeWin();
+			var pRtnGame1 = setOutcome.getPReturnWin();
 
 			modelMap.addAttribute("sets1", sets1);
 			modelMap.addAttribute("sets2", sets2);
@@ -655,7 +655,7 @@ public class RivalriesController extends PageController {
 	}
 
 	private LocalDate selectDate(Player player, String dateSelector) {
-		int playerId = player.getId();
+		var playerId = player.getId();
 		switch (dateSelector) {
 			case "Today": return LocalDate.now();
 			case "CareerEnd": return playerService.getPlayerCareerEnd(playerId);
@@ -679,7 +679,7 @@ public class RivalriesController extends PageController {
 		if (player.isActive())
 			return LocalDate.now();
 		else {
-			LocalDate careerEndDate = playerService.getPlayerCareerEnd(player.getId());
+			var careerEndDate = playerService.getPlayerCareerEnd(player.getId());
 			return careerEndDate != null ? careerEndDate : LocalDate.now();
 		}
 	}
@@ -691,7 +691,7 @@ public class RivalriesController extends PageController {
 
 	@GetMapping("/headsToHeads")
 	public ModelAndView headsToHeads() {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
@@ -717,16 +717,16 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "statsVsAll") boolean statsVsAll,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
-		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
-		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		RivalryFilter filter = new RivalryFilter(seasonRange, level, bestOf, surface, indoor, speedRange, round, null);
+		var players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+		var seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = new RivalryFilter(seasonRange, level, bestOf, surface, indoor, speedRange, round, null);
 
-		List<Integer> playerIds = playerService.findPlayerIds(players);
-		HeadsToHeads headsToHeads = rivalriesService.getHeadsToHeads(playerIds, filter);
-		Map<Integer, PlayerStats> playersStats = statisticsService.getPlayersStats(playerIds, filter, statsVsAll);
+		var playerIds = playerService.findPlayerIds(players);
+		var headsToHeads = rivalriesService.getHeadsToHeads(playerIds, filter);
+		var playersStats = statisticsService.getPlayersStats(playerIds, filter, statsVsAll);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("fromSeason", fromSeason);
 		modelMap.addAttribute("toSeason", toSeason);
 		modelMap.addAttribute("level", level);
@@ -745,7 +745,7 @@ public class RivalriesController extends PageController {
 
 	@GetMapping("/greatestRivalries")
 	public ModelAndView greatestRivalries() {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
@@ -759,7 +759,7 @@ public class RivalriesController extends PageController {
 
 	@GetMapping("/greatestMatches")
 	public ModelAndView greatestMatches() {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);

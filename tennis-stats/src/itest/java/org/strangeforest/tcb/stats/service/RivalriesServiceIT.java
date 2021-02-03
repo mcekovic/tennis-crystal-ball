@@ -19,7 +19,7 @@ class RivalriesServiceIT {
 
 	@Test
 	void greatestRivalries() {
-		BootgridTable<GreatestRivalry> greatestRivalries = rivalriesService.getGreatestRivalriesTable(new RivalryFilter(null, "M", 3, "C", false, null, null, null), null, null, "rivalry_rank", 20, 1);
+		var greatestRivalries = rivalriesService.getGreatestRivalriesTable(new RivalryFilter(null, "M", 3, "C", false, null, null, null), null, null, "rivalry_rank", 20, 1);
 
 		assertThat(greatestRivalries.getRowCount()).isEqualTo(20);
 		assertThat(greatestRivalries.getTotal()).isGreaterThanOrEqualTo(50);
@@ -27,30 +27,30 @@ class RivalriesServiceIT {
 
 	@Test
 	void headsToHeads() {
-		List<Integer> playerIds = List.of(
+		var playerIds = List.of(
 			fixtures.getPlayerId("Roger Federer"),
 			fixtures.getPlayerId("Rafael Nadal"),
 			fixtures.getPlayerId("Novak Djokovic"),
 			fixtures.getPlayerId("Andy Murray")
 		);
 
-		HeadsToHeads headsToHeads = rivalriesService.getHeadsToHeads(playerIds, RivalryFilter.ALL);
+		var headsToHeads = rivalriesService.getHeadsToHeads(playerIds, RivalryFilter.ALL);
 
 		assertThat(headsToHeads.getRivalries()).hasSize(4);
 	}
 
 	@Test
 	void playerH2H() {
-		int playerId = fixtures.getPlayerId("Novak Djokovic");
-		
-		Optional<WonDrawLost> playerH2H = rivalriesService.getPlayerH2H(playerId);
+		var playerId = fixtures.getPlayerId("Novak Djokovic");
+
+		var playerH2H = rivalriesService.getPlayerH2H(playerId);
 
 		assertThat(playerH2H).isNotEmpty();
 	}
 
 	@Test
 	void playerRivalries() {
-		BootgridTable<PlayerRivalryRow> playerRivalries = rivalriesService.getPlayerRivalriesTable(1, RivalryPlayerListFilter.ALL, RivalrySeriesFilter.ALL, "matches", 10, 1);
+		var playerRivalries = rivalriesService.getPlayerRivalriesTable(1, RivalryPlayerListFilter.ALL, RivalrySeriesFilter.ALL, "matches", 10, 1);
 
 		assertThat(playerRivalries.getRowCount()).isPositive();
 		assertThat(playerRivalries.getTotal()).isPositive();

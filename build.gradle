@@ -10,6 +10,7 @@ allprojects {
 
 	repositories {
 		mavenCentral()
+		jcenter()
 	}
 }
 
@@ -57,7 +58,7 @@ subprojects {
 	dependencyUpdates.resolutionStrategy {
 		componentSelection { rules ->
 			rules.all { ComponentSelection selection ->
-				if (['alpha', 'beta', 'rc', 'cr', 'm', 'preview', 'b', 'ea'].any { qualifier -> selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-+]*/ })
+				if (['alpha', 'beta', 'rc', 'cr', 'm', 'preview', 'b', 'ea', '000000'].any { qualifier -> selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-+]*/ })
 					selection.reject('Release candidate')
 			}
 		}

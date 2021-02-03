@@ -50,28 +50,28 @@ public class PlayerForecast extends MatchPlayerEx {
 	// Forecast
 
 	public Double getProbability(String result) {
-		Double probability = rawProbability(result);
+		var probability = rawProbability(result);
 		return probability != null ? PCT * probability : null;
 	}
 
 	public double getRawProbability(String result) {
-		Double probability = rawProbability(result);
+		var probability = rawProbability(result);
 		return probability != null ? probability : 0.0;
 	}
 
 	public double getWinProbability() {
-		Double probability = rawProbability("W");
+		var probability = rawProbability("W");
 		return probability != null ? PCT * probability : 0.0;
 	}
 
 	public String getPrice(String result, String format) {
-		Double probability = rawProbability(result);
+		var probability = rawProbability(result);
 		return probability != null ? toFormattedPrice(probability, format) : null;
 	}
 
 	public Double getDrawLuck() {
-		Double probability = rawProbability("W");
-		Double avgDrawProbability = rawAvgDrawProbability("W");
+		var probability = rawProbability("W");
+		var avgDrawProbability = rawAvgDrawProbability("W");
 		if (probability == null || avgDrawProbability == null)
 			return null;
 		if (avgDrawProbability == 0.0)
@@ -80,8 +80,8 @@ public class PlayerForecast extends MatchPlayerEx {
 	}
 
 	public Double getDrawSeeding() {
-		Double avgDrawProbability = rawAvgDrawProbability("W");
-		Double noDrawProbability = rawNoDrawProbability("W");
+		var avgDrawProbability = rawAvgDrawProbability("W");
+		var noDrawProbability = rawNoDrawProbability("W");
 		if (avgDrawProbability == null || noDrawProbability == null)
 			return null;
 		if (noDrawProbability == 0.0)
@@ -90,8 +90,8 @@ public class PlayerForecast extends MatchPlayerEx {
 	}
 
 	public Double getDrawBonus() {
-		Double probability = rawProbability("W");
-		Double noDrawProbability = rawNoDrawProbability("W");
+		var probability = rawProbability("W");
+		var noDrawProbability = rawNoDrawProbability("W");
 		if (probability == null || noDrawProbability == null)
 			return null;
 		if (noDrawProbability == 0.0)
@@ -100,12 +100,12 @@ public class PlayerForecast extends MatchPlayerEx {
 	}
 
 	public double getAvgDrawWinProbability() {
-		Double probability = rawAvgDrawProbability("W");
+		var probability = rawAvgDrawProbability("W");
 		return probability != null ? PCT * probability : 0.0;
 	}
 
 	public double getNoDrawWinProbability() {
-		Double probability = rawNoDrawProbability("W");
+		var probability = rawNoDrawProbability("W");
 		return probability != null ? PCT * probability : 0.0;
 	}
 
@@ -150,7 +150,7 @@ public class PlayerForecast extends MatchPlayerEx {
 	boolean hasAnyResult(Iterable<String> results) {
 		if (isEmpty())
 			return false;
-		for (String result : results) {
+		for (var result : results) {
 			if (forecast.containsKey(result))
 				return true;
 		}

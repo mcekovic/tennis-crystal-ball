@@ -24,8 +24,8 @@ public enum PredictionArea implements Weighted {
 	}
 
 	public Weighted[] getAreaAndItems() {
-		PredictionItem[] items = itemClass.getEnumConstants();
-		Weighted[] w = new Weighted[items.length + 1];
+		var items = itemClass.getEnumConstants();
+		var w = new Weighted[items.length + 1];
 		w[0] = this;
 		System.arraycopy(items, 0, w, 1, items.length);
 		return w;

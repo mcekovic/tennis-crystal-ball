@@ -39,7 +39,7 @@ public class RingBuffer<T> {
 	}
 
 	public T pop() {
-		T item = peekFirst();
+		var item = peekFirst();
 		buffer[first] = null;
 		first = (first + 1) % buffer.length;
 		count--;
@@ -60,8 +60,8 @@ public class RingBuffer<T> {
 	}
 
 	public RingBuffer<T> copy() {
-		int length = this.buffer.length;
-		T[] buffer = (T[])new Object[length];
+		var length = this.buffer.length;
+		var buffer = (T[])new Object[length];
 		System.arraycopy(this.buffer, 0, buffer, 0, length);
 		return new RingBuffer<>(buffer, count, first, last);
 	}

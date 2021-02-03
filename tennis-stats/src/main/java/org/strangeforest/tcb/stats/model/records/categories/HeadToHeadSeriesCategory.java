@@ -100,7 +100,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 	}
 
 	private static Record mostH2HSeries(MostLeast mostLeast, RecordType type) {
-		int minSeries = 10;
+		var minSeries = 10;
 		return new Record<>(
 			mostLeast.name + "H2HSeries" + type.name, mostLeast.name + " Head-to-Head Series " + type.name,
 			/* language=SQL */
@@ -115,7 +115,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 	}
 
 	private static Record greatestH2HSeriesPct(PctRecordType type) {
-		int minSeries = 10;
+		var minSeries = 10;
 		return new Record<>(
 			"H2HSeries" + type.name + "Pct", "Greatest Head-to-Head Series " + type.name + " Pct.",
 			/* language=SQL */
@@ -136,7 +136,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 	}
 
 	private static Record mostH2HSeriesVs(MostLeast mostLeast, RecordType type, RecordDomain domain, String urlParam) {
-		int minSeries = minSeries(domain);
+		var minSeries = minSeries(domain);
 		return new Record<>(
 			mostLeast.name + "H2HSeries" + type.name + "Vs" + domain.id, mostLeast.name + " Head-to-Head Series " + type.name + " Vs Once " + domain.name,
 			/* language=SQL */
@@ -152,7 +152,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 	}
 
 	private static Record greatestH2HSeriesPctVs(PctRecordType type, RecordDomain domain, String urlParam) {
-		int minSeries = minSeries(domain);
+		var minSeries = minSeries(domain);
 		return new Record<>(
 			"H2HSeries" + type.name + "PctVs" + domain.id, "Greatest Head-to-Head Series " + type.name + " Pct. Vs Once " + domain.name,
 			/* language=SQL */

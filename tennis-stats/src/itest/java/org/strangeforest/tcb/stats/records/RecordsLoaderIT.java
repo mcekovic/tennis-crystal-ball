@@ -28,8 +28,8 @@ class RecordsLoaderIT {
 	}
 
 	private void loadRecords(List<RecordCategory> categories) {
-		for (RecordCategory recordCategory : categories) {
-			for (Record record : recordCategory.getRecords())
+		for (var recordCategory : categories) {
+			for (var record : recordCategory.getRecords())
 				recordsService.refreshRecord(record.getId(), false);
 		}
 	}

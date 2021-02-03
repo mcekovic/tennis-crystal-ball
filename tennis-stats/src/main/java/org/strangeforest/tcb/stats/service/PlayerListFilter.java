@@ -47,7 +47,7 @@ public class PlayerListFilter {
 	}
 
 	public String getCriteria() {
-		StringBuilder criteria = new StringBuilder();
+		var criteria = new StringBuilder();
 		appendCriteria(criteria);
 		return criteria.toString();
 	}
@@ -62,7 +62,7 @@ public class PlayerListFilter {
 	}
 
 	public MapSqlParameterSource getParams() {
-		MapSqlParameterSource params = new MapSqlParameterSource();
+		var params = new MapSqlParameterSource();
 		addParams(params);
 		return params;
 	}
@@ -87,7 +87,7 @@ public class PlayerListFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof PlayerListFilter)) return false;
-		PlayerListFilter filter = (PlayerListFilter)o;
+		var filter = (PlayerListFilter)o;
 		return Objects.equals(active, filter.active) && countryIds.equals(filter.countryIds) && stringsEqual(searchPhrase, filter.searchPhrase);
 	}
 

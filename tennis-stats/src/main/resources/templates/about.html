@@ -71,12 +71,13 @@
 				<li><a href="/eloRatings"><i class="fa fa-sort-amount-desc"></i> Elo Ratings</a> - Player weekly <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" rel="noopener noreferrer" class="external">Elo rating</a> tables (overall, by surface, outdoor or indoor, set or game) using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">Elo rating formula</a></li>
 				<li><a href="/rankingsChart"><i class="fa fa-area-chart"></i> Ranking Charts</a> - Player ranking and ranking point charts (including Elo rating), compare players by constructing custom charts</li>
 				<li><a href="/peakEloRatings"><i class="fa fa-tachometer"></i> Peak Elo Ratings</a><sup class="cool-feature"></sup> - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie-break)</li>
-				<li><a href="/topPerformers"><i class="fa fa-tasks"></i> Top Performers</a> - Find top performers in both performance and pressure situations categories</li>
-				<li><a href="/performanceChart"><i class="fa fa-bar-chart"></i> Performance Charts</a> - Performance charts for various performance categories, filtered by seasons</li>
 				<li><a href="/titlesAndResults"><i class="fa fa-trophy"></i> Titles and Results</a><sup class="new-feature"></sup> - Titles and other results, filtered by various filters</li>
 				<li><a href="/resultsChart"><i class="fa fa-area-chart"></i> Titles and Results Charts</a><sup class="new-feature"></sup> - Titles and results charts, filtered by level, surface and seasons</li>
+				<li><a href="/topPerformers"><i class="fa fa-tasks"></i> Top Performers</a> - Find top performers in both performance and pressure situations categories</li>
+				<li><a href="/performanceChart"><i class="fa fa-bar-chart"></i> Performance Charts</a> - Performance charts for various performance categories, filtered by seasons</li>
+				<li><a href="/mentalToughness"><i class="fa fa-heartbeat"></i> Mental Toughness</a><sup class="new-feature"></sup> - Compare players by mental toughness using special <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#mentalToughnessPopover">Mental Toughness formula</a>, filtered by various filters</li>
 				<li><a href="/statsLeaders"><span class="glyphicon glyphicon-stats"></span> Statistics Leaders</a> - Find statistics leaders in various statistical categories (100+), including dominance and break points ratios</li>
-				<li><a href="/topMatchStats"><i class="fa fa-thermometer"></i> Top Match Stats</a><sup class="new-feature"></sup> - Top single match statistics figures filtered by various filters</li>
+				<li><a href="/topMatchStats"><i class="fa fa-thermometer"></i> Top Match Stats</a> - Top single match statistics figures filtered by various filters</li>
 				<li><a href="/statsChart"><i class="fa fa-bar-chart"></i> Statistics Charts</a> - Statistics charts for various statistical categories, filtered by seasons and surface</li>
 				<li><a href="/seasons"><i class="fa fa-clone"></i> Seasons Browser</a> - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players</li>
 				<li><a href="/bestSeasons"><i class="fa fa-check-square-o"></i> Best Seasons</a> - Find which are the players' best seasons of the Open Era based on 'GOAT' points (overall and by surface)</li>
@@ -91,13 +92,20 @@
 			<p>Some useful tips can be found at <a href="/tips"><i class="fa fa-bullhorn"></i> Tips</a> page.</p>
 			<h4 id="data" class="text-nowrap" style="margin-top: 25px"><i class="fa fa-database"></i> Tennis Data</h4>
 			<p>
-				Data on which the statistics are based is from open source tennis data <a href="https://github.com/JeffSackmann/tennis_atp" target="_blank" rel="noopener noreferrer" class="external">repository</a> by <a href="https://github.com/JeffSackmann" target="_blank" rel="noopener noreferrer" class="external">Jeff Sackmann</a>, with some corrections and additions where data is wrong or lacking.
-				Even with these corrections and additions, there are still small errors and data missing, most notably for many tournaments between 1968 and 1972.
-				Rankings before official ATP rankings started in 1973 season are estimated and as well still not complete.<br/>
+				<b>Data Source</b><br>
+				Data on which the statistics are based is from the open source tennis data <a href="https://github.com/JeffSackmann/tennis_atp" target="_blank" rel="noopener noreferrer" class="external">repository</a> by <a href="https://github.com/JeffSackmann" target="_blank" rel="noopener noreferrer" class="external">Jeff Sackmann</a>, with some corrections and additions where data is wrong or lacking.
+				Even with these corrections and additions, there are certainly still some errors, most notably for tournaments and rankings in the sixties and seventies.
+				Rankings before official ATP rankings started in 1973 season are estimated and not complete.<br/>
+				<b>In-Match Statistics</b><br>
 				In-Match statistics data (Aces, DFs, Serve %...) started to be recorded from 1991 onward, and thus this data is available on UTS also only for seasons 1991 onward.<br/>
-				Data is updated every Monday morning with new rankings and newly completed tournaments, followed by re-computation of aggregated data and records. In-progress tournament forecasts are updated every 15 minutes.<br/>
+				<b>Data Update</b><br>
+				Data is updated every Monday morning with new rankings and newly completed tournaments, followed by re-computation of aggregated data and records. In-progress tournament forecasts are updated every 15 minutes. Data is realigned with Jeff's repository once a year in the tennis off-season.<br/>
+				<b>Non-APT Data</b><br>
 				Qualifying, Challengers and Futures matches are currently not included. They are in medium-to-remote plan to be included: <a href="https://github.com/mcekovic/tennis-crystal-ball/issues/328" target="_blank" rel="noopener noreferrer" class="external">#328</a><br/>
-				Woman tennis data is not included, for now it is only in the very remote plans: <a href="https://github.com/mcekovic/tennis-crystal-ball/issues/289" target="_blank" rel="noopener noreferrer" class="external">#289</a><br/>
+				Woman (WTA) tennis data is not included, for now it is only in the very remote plans: <a href="https://github.com/mcekovic/tennis-crystal-ball/issues/289" target="_blank" rel="noopener noreferrer" class="external">#289</a><br/>
+				<b>Raw Data</b><br>
+				For raw data please check out Jeff Sackmann tennis data repository or the <th:block th:include="fragments/promotion :: logo"/> pre-built database Docker image <a href="https://hub.docker.com/r/mcekovic/uts-database" target="_blank" rel="noopener noreferrer" class="external">mcekovic/uts-database</a>.<br>
+				<b>Data Feedback</b><br>
 				Please provide feedback on data as well at <a href="mailto:mcekovic@gmail.com" target="_blank" rel="noopener noreferrer">mcekovic@gmail.com</a> or <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank" rel="noopener noreferrer" class="external">GitHub</a>.
 			</p>
 			<h4 id="levels" class="text-nowrap" style="margin-top: 25px"><i class="fa fa-trophy"></i> Tournament Classification</h4>
@@ -109,30 +117,27 @@
 				<a href="/tournaments?level=O" class="label label-O" title="Show Olympics tournament">Olympics</a>
 				<a href="/tournaments?level=A" class="label label-A" title="Show ATP 500 tournaments">ATP 500</a>
 				<a href="/tournaments?level=B" class="label label-B" title="Show ATP 250 tournaments">ATP 250</a>
-				<ul>
-					<li>
-						Masters tournament classification is per Wikipedia's <a href="https://en.wikipedia.org/wiki/Tennis_Masters_Series_records_and_statistics" target="_blank" rel="noopener noreferrer" class="external">Tennis Masters Series records and statistics</a>.
-						This is not completely fair, as this classification starts from 1970 (there are no Masters tournaments in 1968 and 1969),
-						as well as classification from 1970 to 1978 is fuzzy and contradictory to the Wikipedia's <a href="https://en.wikipedia.org/wiki/Grand_Prix_Super_Series" target="_blank" rel="noopener noreferrer" class="external">Grand Prix Super Series</a>.
-					</li>
-					<li>
-						In addition to official <a href="https://en.wikipedia.org/wiki/ATP_Finals" target="_blank" rel="noopener noreferrer" class="external">Tour Finals</a> tournaments, <a href="https://en.wikipedia.org/wiki/WCT_Finals" target="_blank" rel="noopener noreferrer" class="external">Dallas WCT Finals</a> (1971-1989), <a href="https://en.wikipedia.org/wiki/Grand_Slam_Cup" target="_blank" rel="noopener noreferrer" class="external">Grand Slam Cup</a> (1990-1999) and Tennis Champions Classic (1970, 1971) are considered alternative Tour Finals and are weighted a little less than official Tour Finals, the same as Masters tournaments.
-					</li>
-					<li>
-						Separation of ATP 500/Championship Series vs ATP 250/World Series for seasons 1990 and onwards is as per ATP.
-						For seasons before 1990, 11 tournaments per season with the strongest participation based on player ranks are considered ATP 500 tournaments.
-						For seasons 1968 and 1969, in order to compensate for the lack of Tour Finals and Masters tournaments, 25 strongest tournaments per season are considered ATP 500 tournaments.
-						In addition, <a href="https://en.wikipedia.org/wiki/Pepsi_Grand_Slam" target="_blank" rel="noopener noreferrer" class="external">Pepsi Grand Slam</a> (1976-1981), <a href="https://en.wikipedia.org/wiki/WCT_Challenge_Cup" target="_blank" rel="noopener noreferrer" class="external">WCT Challenge Cup</a> (1976-1980) and <a href="https://en.wikipedia.org/wiki/WCT_Finals#Seasonal_finals_events" target="_blank" rel="noopener noreferrer" class="external">Seasonal WCT Finals</a> (1972, 1982) are also considered as ATP 500.
-					</li>
-				</ul>
+			</p>
+			<p>
+				<b>Masters</b><br>
+				Masters tournaments classification is per Wikipedia's <a href="https://en.wikipedia.org/wiki/Tennis_Masters_Series_records_and_statistics" target="_blank" rel="noopener noreferrer" class="external">Tennis Masters Series records and statistics</a>.
+				This is not completely fair, as this classification starts from 1970 (there are no Masters tournaments in 1968 and 1969),
+				as well as classification from 1970 to 1978 is fuzzy and contradictory to the Wikipedia's <a href="https://en.wikipedia.org/wiki/Grand_Prix_Super_Series" target="_blank" rel="noopener noreferrer" class="external">Grand Prix Super Series</a>.<br>
+				<b>Tour Finals and Alternative Tour Finals</b><br>
+				In addition to official <a href="https://en.wikipedia.org/wiki/ATP_Finals" target="_blank" rel="noopener noreferrer" class="external">Tour Finals</a> tournaments, <a href="https://en.wikipedia.org/wiki/WCT_Finals" target="_blank" rel="noopener noreferrer" class="external">Dallas WCT Finals</a> (1971-1989), <a href="https://en.wikipedia.org/wiki/Grand_Slam_Cup" target="_blank" rel="noopener noreferrer" class="external">Grand Slam Cup</a> (1990-1999) and Tennis Champions Classic (1970, 1971) are considered alternative Tour Finals and are weighted a little less than official Tour Finals, the same as Masters tournaments.<br>
+				<b>ATP 500 / 250</b><br>
+				Separation of ATP 500/Championship Series vs ATP 250/World Series for seasons 1990 and onwards is as per ATP.
+				For seasons before 1990, 11 tournaments per season with the strongest participation based on player ranks are considered ATP 500 tournaments.
+				For seasons 1968 and 1969, in order to compensate for the lack of Tour Finals and Masters tournaments, 25 strongest tournaments per season are considered ATP 500 tournaments.
+				In addition, <a href="https://en.wikipedia.org/wiki/Pepsi_Grand_Slam" target="_blank" rel="noopener noreferrer" class="external">Pepsi Grand Slam</a> (1976-1981), <a href="https://en.wikipedia.org/wiki/WCT_Challenge_Cup" target="_blank" rel="noopener noreferrer" class="external">WCT Challenge Cup</a> (1976-1980) and <a href="https://en.wikipedia.org/wiki/WCT_Finals#Seasonal_finals_events" target="_blank" rel="noopener noreferrer" class="external">Seasonal WCT Finals</a> (1972, 1982) are also considered as ATP 500.
 			</p>
 			<h4 id="surfaces" class="text-nowrap" style="margin-top: 25px"><i class="fa fa-paw"></i> Surfaces</h4>
-			<p>Outdoor:
+			<p><b>Outdoor:</b>
 			<a href="/tournamentEvents?surface=H" class="label label-primary" title="Show hard tournament events">Hard</a>
 			<a href="/tournamentEvents?surface=C" class="label label-danger" title="Show clay tournament events">Clay</a>
 			<a href="/tournamentEvents?surface=G" class="label label-success" title="Show grass tournament events">Grass</a>
 			</p>
-			<p>Indoor:
+			<p><b>Indoor:</b>
 			<a href="/tournamentEvents?surface=H&indoor=true" class="label label-primary" title="Show indoor hard tournament events">Hard (i)</a>
 			<a href="/tournamentEvents?surface=C&indoor=true" class="label label-danger" title="Show indoor clay tournament events">Clay (i)</a>
 			<a href="/tournamentEvents?surface=P" class="label label-warning" title="Show carpet tournament events">Carpet</a>
@@ -153,6 +158,14 @@
 			</p>
 			<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 			<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
+			<h4 id="crawling" class="text-nowrap" style="margin-top: 25px"><i class="fa fa-warning"></i> Crawling Considerations</h4>
+			<p>
+				Please do not perform massive parallel crawling of the <th:block th:include="fragments/promotion :: logo"/> web site!<br/>
+				This is a very efficient and optimized website. You can see by yourself that even the most complex pages with very complex tennis statistics data open very quickly.<br/>
+				However, it is hosted on very modest hardware (1 CPU Core, 2 GB RAM), hence massive parallel crawling will seriously hamper the browsing experience of the regular visitors.<br/>
+				This is a free website with a sort-of-premium content, please do not misuse it!<br/>
+				If you need raw data, please consider Jeff Sackmann's <a href="https://github.com/JeffSackmann/tennis_atp" target="_blank" rel="noopener noreferrer" class="external">repository</a> or Docker image <a href="https://hub.docker.com/r/mcekovic/uts-database" target="_blank" rel="noopener noreferrer" class="external">mcekovic/uts-database</a> of the <th:block th:include="fragments/promotion :: logo"/> pre-built database.
+			</p>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-thumbs-up"></i> Credits</h4>
 			<p><th:block th:include="fragments/promotion :: logo"/> is powered by the Open-Source Software:</p>
 			<table class="table table-condensed text-nowrap" style="text-align: center; width: 350px">
@@ -169,7 +182,7 @@
 					<td><a href="https://spring.io/projects/spring-boot" target="_blank" rel="noopener noreferrer" class="external">Spring Boot</a></td>
 				</tr>
 			</table>
-			<p><th:block th:include="fragments/promotion :: logo"/> logo <img src="/images/uts-logo.png" width="50" height="15"/> is courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank" rel="noopener noreferrer">crazysesirdzija@gmail.com</a>.</p>
+			<p><th:block th:include="fragments/promotion :: logo"/> logo <img src="/images/uts-logo.png" width="50" height="15"/> is a courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank" rel="noopener noreferrer">crazysesirdzija@gmail.com</a>.</p>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-legal"></i> License</h4>
 			<p>
 				<th:block th:include="fragments/promotion :: logo"/> and <th:block th:include="fragments/promotion :: tcb"/> source code is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener noreferrer" class="external">Apache 2.0 License</a>.
@@ -197,5 +210,6 @@
 	<div th:include="fragments/aboutElo :: aboutEloFormula"></div>
 	<div th:include="fragments/aboutForecast :: aboutTournamentForecast"></div>
 	<div th:include="fragments/aboutForecast :: aboutPrediction"></div>
+	<div th:include="fragments/aboutMentalToughness :: aboutMentalToughness"></div>
 </body>
 </html>

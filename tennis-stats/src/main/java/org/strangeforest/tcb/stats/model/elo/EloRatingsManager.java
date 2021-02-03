@@ -2,7 +2,6 @@ package org.strangeforest.tcb.stats.model.elo;
 
 import java.sql.*;
 import java.time.*;
-import java.time.temporal.*;
 import java.util.Objects;
 import java.util.*;
 import java.util.concurrent.*;
@@ -54,6 +53,7 @@ public class EloRatingsManager {
 		entry("R", 5), entry("H", 5), entry("C", 5), entry("G", 5), entry("P", 5), entry("O", 5), entry("I", 5),
 		entry("s", 5), entry("g", 2), entry("sg", 3), entry("rg", 3)
 	);
+	private static final int LAST_MATCHES_PERIOD = 365;
 	private static final int DEFAULT_MIN_MATCHES_PERIOD = 365;
 	private static final Map<String, Integer> MIN_MATCHES_PERIOD = Map.of("R", 122);
 	private static final int MIN_MATCHES_IN_PERIOD = 3;
@@ -123,8 +123,8 @@ public class EloRatingsManager {
 	}
 
 	public Map<String, PredictionResult> compute(boolean save, boolean fullSave, LocalDate saveFromDate, int saveThreads) throws InterruptedException {
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		for (String type : RATING_TYPES) {
+		var stopwatch = Stopwatch.createStarted();
+		for (var type : RATING_TYPES) {
 			playerRatings.put(type, new ConcurrentHashMap<>());
 			predictionResults.put(type, new PredictionResult());
 		}
@@ -141,15 +141,15 @@ public class EloRatingsManager {
 		else
 			System.out.println("Processing matches");
 
-		ProgressTicker newLineTicker = ProgressTicker.newLineTicker();
+		var newLineTicker = ProgressTicker.newLineTicker();
 		matchTicker = new ProgressTicker('.', MATCHES_PER_DOT).withDownstreamTicker(newLineTicker);
 		saveTicker = new ProgressTicker('+', SAVES_PER_PLUS).withDownstreamTicker(newLineTicker);
 		try {
-			AtomicReference<LocalDate> lastDateRef = new AtomicReference<>();
+			var lastDateRef = new AtomicReference<LocalDate>();
 			txTemplate.execute(s -> {
 				jdbcTemplate.query(MATCHES_QUERY, ps -> ps.setFetchSize(MATCHES_FETCH_SIZE), rs -> {
-					MatchForElo match = mapMatch(rs);
-					LocalDate lastDate = lastDateRef.get();
+					var match = mapMatch(rs);
+					var lastDate = lastDateRef.get();
 					if (lastDate != null && !lastDate.equals(match.endDate))
 						saveCurrentRatings(lastDate);
 					processMatch(match, "E");
@@ -181,7 +181,7 @@ public class EloRatingsManager {
 
 		if (save && fullSave && !dates.isEmpty()) {
 			System.out.printf("Deleting remaining dates: %1$d\n", dates.size());
-			for (LocalDate date : List.copyOf(dates)) {
+			for (var date : List.copyOf(dates)) {
 				deleteForDate(date);
 				System.out.println(date);
 			}
@@ -190,19 +190,18 @@ public class EloRatingsManager {
 		System.out.printf("Elo Ratings for %1$d matches computed in %2$s\n", matchTicker.getTicks(), stopwatch);
 		if (save)
 			System.out.printf("Saves: %1$d\n", saveTicker.getTicks());
-		PredictionResult bySurfaceResult = new PredictionResult().add(getPredictionResult("H")).add(getPredictionResult("C")).add(getPredictionResult("G")).add(getPredictionResult("P"));
-		for (String type : RATING_TYPES)
+		var bySurfaceResult = new PredictionResult().add(getPredictionResult("H")).add(getPredictionResult("C")).add(getPredictionResult("G")).add(getPredictionResult("P"));
+		for (var type : RATING_TYPES)
 			printPredictionResult(type, getPredictionResult(type));
 		printPredictionResult("S", bySurfaceResult);
 		return predictionResults;
 	}
 
 	public List<EloRating> getRatings(String type, int count, LocalDate date) {
-		LocalDate minDate = date.minusYears(1);
-		int minMatches = minMatches(type);
-		int minMatchesPeriod = minMatchesPeriod(type);
+		var minMatches = minMatches(type);
+		var minMatchesPeriod = minMatchesPeriod(type);
 		return getRatings(type).values().stream()
-			.filter(r -> r.rating >= START_RATING && r.matches >= minMatches && !r.getLastDate().isBefore(minDate) && r.getDaysSpan(date) <= minMatchesPeriod)
+			.filter(r -> r.rating >= START_RATING && r.matches >= minMatches && r.getDaysSinceLastMatch(date) <= LAST_MATCHES_PERIOD && r.getDaysSpan(date) <= minMatchesPeriod)
 			.map(r -> r.adjustRating(date))
 			.sorted(reverseOrder())
 			.limit(count)
@@ -228,10 +227,10 @@ public class EloRatingsManager {
 	private void processMatch(MatchForElo match, boolean forSurface, boolean forIndoor, String forType) {
 		if (forSurface && match.surface == null)
 			return;
-		int winnerId = match.winnerId;
-		int loserId = match.loserId;
-		int playerId1 = min(winnerId, loserId);
-		int playerId2 = max(winnerId, loserId);
+		var winnerId = match.winnerId;
+		var loserId = match.loserId;
+		var playerId1 = min(winnerId, loserId);
+		var playerId2 = max(winnerId, loserId);
 		String type;
 		if (forSurface)
 			type = match.surface;
@@ -239,23 +238,23 @@ public class EloRatingsManager {
 			type = match.indoor ? "I" : "O";
 		else
 			type = forType;
-		String loserType = loserType(type);
-		LocalDate date = match.endDate;
+		var loserType = loserType(type);
+		var date = match.endDate;
 		lockManager.runLocked(playerId1, playerId2, () -> {
-			EloRating winnerRating = getRating(type, winnerId, date);
-			EloRating loserRating = getRating(loserType, loserId, date);
-			EloRating winnerNextRating = winnerRating;
-			EloRating loserNextRating = loserRating;
+			var winnerRating = getRating(type, winnerId, date);
+			var loserRating = getRating(loserType, loserId, date);
+			var winnerNextRating = winnerRating;
+			var loserNextRating = loserRating;
 			if (!Objects.equals(match.outcome, "ABD")) {
 				getPredictionResult(type).newMatch(type, match, winnerRating.rating, loserRating.rating);
-				double delta = deltaRating(eloSurfaceFactors, winnerRating.rating, loserRating.rating, match, type);
+				var delta = deltaRating(eloSurfaceFactors, winnerRating.rating, loserRating.rating, match, type);
 				winnerNextRating = winnerRating.newRating(delta, date);
 				getRatings(type).put(winnerRating.playerId, winnerNextRating);
 				loserNextRating = loserRating.newRating(-delta, date);
 				getRatings(loserType).put(loserRating.playerId, loserNextRating);
 			}
 			if (saveExecutor != null && type.equals("E") && (saveFromDate == null || !match.endDate.isBefore(saveFromDate))) {
-				MatchEloRating matchEloRating = new MatchEloRating(match.matchId, winnerRating.rating, winnerNextRating.rating, loserRating.rating, loserNextRating.rating);
+				var matchEloRating = new MatchEloRating(match.matchId, winnerRating.rating, winnerNextRating.rating, loserRating.rating, loserNextRating.rating);
 				try {
 					matchRatingsForSave.put(matchEloRating);
 				}
@@ -271,13 +270,13 @@ public class EloRatingsManager {
 	}
 
 	private EloRating getRating(String type, int playerId, LocalDate date) {
-		EloRating rating = getRatings(type).get(playerId);
+		var rating = getRatings(type).get(playerId);
 		return rating != null ? rating.adjustRating(date) : new EloRating(playerId, type, getPlayerRank(playerId, date));
 	}
 
 	private Integer getPlayerRank(int playerId, LocalDate date) {
 		Map.Entry<LocalDate, Map<Integer, Integer>> prevRankingTable = null;
-		for (Map.Entry<LocalDate, Map<Integer, Integer>> rankingTable : rankingTables.entrySet()) {
+		for (var rankingTable : rankingTables.entrySet()) {
 			if (date.isBefore(rankingTable.getKey()))
 				break;
 			else
@@ -339,35 +338,35 @@ public class EloRatingsManager {
 			return matches;
 		}
 
-		private LocalDate getLastDate() {
-			return dates.peekLast();
-		}
-
 		private LocalDate getFirstDate() {
 			return dates.peekFirst();
 		}
 
-		private long getDaysSpan(LocalDate date) {
-			return ChronoUnit.DAYS.between(getFirstDate(), date);
+		private LocalDate getLastDate() {
+			return dates.peekLast();
+		}
+
+		private int getDaysSpan(LocalDate date) {
+			return daysBetween(getFirstDate(), date);
 		}
 
 		private int getDaysSinceLastMatch(LocalDate date) {
-			return (int)ChronoUnit.DAYS.between(getLastDate(), date);
+			return daysBetween(getLastDate(), date);
 		}
 
 		private EloRating newRating(double delta, LocalDate date) {
-			double newRating = EloCalculator.newRating(rating, delta, type);
-			RingBuffer<LocalDate> newDates = dates.copy();
+			var newRating = EloCalculator.newRating(rating, delta, type);
+			var newDates = dates.copy();
 			newDates.push(date);
 			return new EloRating(playerId, type, newRating, matches + 1, newDates);
 		}
 
 		private EloRating adjustRating(LocalDate date) {
 			if (!dates.isEmpty()) {
-				int daysSinceLastMatch = getDaysSinceLastMatch(date);
+				var daysSinceLastMatch = getDaysSinceLastMatch(date);
 				if (daysSinceLastMatch > INACTIVITY_ADJ_NO_PENALTY_PERIOD) {
 					if (daysSinceLastMatch <= INACTIVITY_RESET_PERIOD) {
-						double newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, type);
+						var newRating = EloCalculator.adjustRating(rating, daysSinceLastMatch, type);
 						return new EloRating(playerId, type, newRating, matches, dates.copy());
 					}
 					else
@@ -393,8 +392,8 @@ public class EloRatingsManager {
 
 	private List<LocalDate> fetchRankingDates() {
 		System.out.print("Fetching all Elo ranking dates");
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		List<LocalDate> dates = jdbcTemplate.queryForList(RANKING_DATES_QUERY, LocalDate.class);
+		var stopwatch = Stopwatch.createStarted();
+		var dates = jdbcTemplate.queryForList(RANKING_DATES_QUERY, LocalDate.class);
 		System.out.println(" " + stopwatch);
 		return dates;
 	}
@@ -408,16 +407,16 @@ public class EloRatingsManager {
 
 	private void loadRanks() {
 		System.out.print("Preloading ranks");
-		Stopwatch stopwatch = Stopwatch.createStarted();
+		var stopwatch = Stopwatch.createStarted();
 		rankingTables = new LinkedHashMap<>();
-		ProgressTicker ticker = new ProgressTicker('.', RANK_PRELOADS_PER_DOT).withDownstreamTicker(ProgressTicker.newLineTicker());
+		var ticker = new ProgressTicker('.', RANK_PRELOADS_PER_DOT).withDownstreamTicker(ProgressTicker.newLineTicker());
 		jdbcTemplate.query(PLAYER_RANKS_QUERY, ps -> {
 			ps.setInt(1, START_RATING_RANK);
 			ps.setFetchSize(RANK_PRELOAD_FETCH_SIZE);
 		}, rs -> {
-			LocalDate date = getLocalDate(rs, "rank_date");
-			int playerId = rs.getInt("player_id");
-			int rank = rs.getInt("rank");
+			var date = getLocalDate(rs, "rank_date");
+			var playerId = rs.getInt("player_id");
+			var rank = rs.getInt("rank");
 			rankingTables.computeIfAbsent(date, d -> new HashMap<>()).put(playerId, rank);
 			ticker.tick();
 		});
@@ -453,8 +452,8 @@ public class EloRatingsManager {
 	private void saveCurrentRatings(LocalDate date) {
 		if (saveExecutor != null && (saveFromDate == null || !date.isBefore(saveFromDate))) {
 			Map<Integer, EloRatingValue> playerRatingsForSave = new LinkedHashMap<>();
-			for (String type : RATING_TYPES) {
-				AtomicInteger rank = new AtomicInteger();
+			for (var type : RATING_TYPES) {
+				var rank = new AtomicInteger();
 				getRatings(type, type.equals("E") ? Integer.MAX_VALUE : PLAYERS_TO_SAVE, date).stream()
 					.map(e -> new EloRatingValue(e, rank.incrementAndGet())).forEach(e -> playerRatingsForSave.compute(e.playerId, (p, e2) -> {
 						if (e2 != null) {
@@ -465,7 +464,7 @@ public class EloRatingsManager {
 							return e;
 					}));
 			}
-			List<EloRatingValue> ratingsForSave = playerRatingsForSave.values().stream().filter(EloRatingValue::isForSave).collect(toList());
+			var ratingsForSave = playerRatingsForSave.values().stream().filter(EloRatingValue::isForSave).collect(toList());
 			saveExecutor.execute(() -> txTemplate.execute(s -> {
 				saveRatings(ratingsForSave, date);
 				return null;
@@ -479,9 +478,9 @@ public class EloRatingsManager {
 			return;
 		jdbcTemplate.batchUpdate(MERGE_ELO_RANKING, new BatchPreparedStatementSetter() {
 			@Override public void setValues(PreparedStatement ps, int i) throws SQLException {
-				EloRatingValue eloRating = eloRatings.get(i);
-				Map<String, Integer> ranks = eloRating.ranks;
-				Map<String, Double> ratings = eloRating.ratings;
+				var eloRating = eloRatings.get(i);
+				var ranks = eloRating.ranks;
+				var ratings = eloRating.ratings;
 				ps.setObject(1, date, Types.DATE);
 				ps.setInt(2, eloRating.playerId);
 				ps.setInt(3, ranks.get("E"));
@@ -494,7 +493,7 @@ public class EloRatingsManager {
 				setInteger(ps, 10, intRound(ratings.get("C")));
 				setInteger(ps, 11, ranks.get("G"));
 				setInteger(ps, 12, intRound(ratings.get("G")));
-				boolean isCarpetUsed = date.isBefore(CARPET_END);
+				var isCarpetUsed = date.isBefore(CARPET_END);
 				setInteger(ps, 13, isCarpetUsed ? ranks.get("P") : null);
 				setInteger(ps, 14, isCarpetUsed ? intRound(ratings.get("P")) : null);
 				setInteger(ps, 15, ranks.get("O"));
@@ -505,12 +504,12 @@ public class EloRatingsManager {
 				setInteger(ps, 20, intRound(ratings.get("s")));
 				setInteger(ps, 21, ranks.get("g"));
 				setInteger(ps, 22, intRound(ratings.get("g")));
-				boolean areStatsUsed = !date.isBefore(STATS_START);
+				var areStatsUsed = !date.isBefore(STATS_START);
 				setInteger(ps, 23, areStatsUsed ? ranks.get("sg") : null);
 				setInteger(ps, 24, areStatsUsed ? intRound(ratings.get("sg")) : null);
 				setInteger(ps, 25, areStatsUsed ? ranks.get("rg") : null);
 				setInteger(ps, 26, areStatsUsed ? intRound(ratings.get("rg")) : null);
-				boolean isTieBreakUsed = !date.isBefore(TIE_BREAK_START);
+				var isTieBreakUsed = !date.isBefore(TIE_BREAK_START);
 				setInteger(ps, 27, isTieBreakUsed ? ranks.get("tb") : null);
 				setInteger(ps, 28, isTieBreakUsed ? intRound(ratings.get("tb")) : null);
 			}
@@ -523,7 +522,7 @@ public class EloRatingsManager {
 		if (!matchRatingsBatch.isEmpty()) {
 			jdbcTemplate.batchUpdate(UPDATE_MATCH_ELO_RATINGS, new BatchPreparedStatementSetter() {
 				@Override public void setValues(PreparedStatement ps, int i) throws SQLException {
-					MatchEloRating m = matchRatingsBatch.get(i);
+					var m = matchRatingsBatch.get(i);
 					setInteger(ps, 1, m.winnerRating);
 					setInteger(ps, 2, m.winnerNextRating);
 					setInteger(ps, 3, m.loserRating);
@@ -563,7 +562,7 @@ public class EloRatingsManager {
 		private boolean isForSave() {
 			if (!ranks.containsKey("E"))
 				return false;
-			for (Integer rank : ranks.values()) {
+			for (var rank : ranks.values()) {
 				if (rank <= PLAYERS_TO_SAVE)
 					return true;
 			}
@@ -573,7 +572,7 @@ public class EloRatingsManager {
 		@Override public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
-			EloRatingValue value = (EloRatingValue)o;
+			var value = (EloRatingValue)o;
 			return playerId == value.playerId;
 		}
 
@@ -676,16 +675,16 @@ public class EloRatingsManager {
 
 			if (winnerScore == loserScore)
 				return;
-			double totalScore = winnerScore + loserScore;
+			var totalScore = winnerScore + loserScore;
 			if (totalScore > 0.0) {
 				matches++;
 				total += totalScore;
-				double winnerProbability = eloWinProbability(winnerRating, loserRating);
-				double loserProbability = 1.0 - winnerProbability;
+				var winnerProbability = eloWinProbability(winnerRating, loserRating);
+				var loserProbability = 1.0 - winnerProbability;
 				predicted += winnerProbability > 0.5 ? winnerScore : loserScore;
 				prediction += (winnerProbability > 0.5 ? winnerProbability : loserProbability) * totalScore;
 				pLog += log(winnerScore > loserScore ? winnerProbability : loserProbability) * totalScore;
-				double pDelta = winnerScore - winnerProbability * totalScore;
+				var pDelta = winnerScore - winnerProbability * totalScore;
 				pDelta2 += pDelta * pDelta;
 			}
 		}

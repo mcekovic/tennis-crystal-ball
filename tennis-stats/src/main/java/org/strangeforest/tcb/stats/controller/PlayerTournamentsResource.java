@@ -31,8 +31,8 @@ public class PlayerTournamentsResource {
 		"levels", BY_LEVEL,
 		"surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)),
 		"speeds", (t1, t2) -> {
-			List<Integer> speeds1 = t1.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
-			List<Integer> speeds2 = t2.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
+				var speeds1 = t1.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
+				var speeds2 = t2.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
 			return compareLists(speeds1, speeds2);
 		},
 		"eventCount", comparing(PlayerTournament::getEventCount),
@@ -55,10 +55,10 @@ public class PlayerTournamentsResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		TournamentEventResultFilter filter = new TournamentEventResultFilter(null, null, level, surface, indoor, speedRange, result, null, null, searchPhrase);
-		Comparator<PlayerTournament> comparator = getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
-		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = new TournamentEventResultFilter(null, null, level, surface, indoor, speedRange, result, null, null, searchPhrase);
+		var comparator = getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
+		var pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return sortAndPage(tournamentService.getPlayerTournaments(playerId, filter), comparator, pageSize, current);
 	}
 }

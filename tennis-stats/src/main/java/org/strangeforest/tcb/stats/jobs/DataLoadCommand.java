@@ -10,8 +10,8 @@ public class DataLoadCommand {
 	private String dataLoadCommand;
 
 	public int execute(String name, String... params) {
-		int length = params.length;
-		String[] command = new String[length + 1];
+		var length = params.length;
+		var command = new String[length + 1];
 		command[0] = dataLoadCommand;
 		System.arraycopy(params, 0, command, 1, length);
 		return CommandExecutor.execute(name, command);

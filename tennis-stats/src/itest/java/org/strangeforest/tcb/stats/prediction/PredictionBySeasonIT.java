@@ -17,8 +17,8 @@ class PredictionBySeasonIT extends BasePredictionVerificationIT {
 
 	@Test
 	void bySeasonPredictions() throws InterruptedException {
-		for (int year = FROM_YEAR; year <= TO_YEAR ; year++) {
-			PredictionVerificationResult result = verifyPrediction(LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31));
+		for (var year = FROM_YEAR; year <= TO_YEAR ; year++) {
+			var result = verifyPrediction(LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31));
 			printResultDistribution(result);
 		}
 	}

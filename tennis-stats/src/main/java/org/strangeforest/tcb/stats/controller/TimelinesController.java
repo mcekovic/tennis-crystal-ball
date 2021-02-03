@@ -36,12 +36,12 @@ public class TimelinesController extends PageController {
 		@RequestParam(name = "predictability", defaultValue = F) boolean predictability,
 		@RequestParam(name = "averageElo", defaultValue = F) boolean averageElo
 	) {
-		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
-		Surface aSurface = Surface.safeDecode(surface);
-		DominanceTimeline timeline = timelineService.getDominanceTimeline(aSurface).filterSeasons(seasonRange);
-		int minGOATPoints = timelineService.getMinGOATPoints(aSurface);
+		var seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		var aSurface = Surface.safeDecode(surface);
+		var timeline = timelineService.getDominanceTimeline(aSurface).filterSeasons(seasonRange);
+		var minGOATPoints = timelineService.getMinGOATPoints(aSurface);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("fromSeason", seasonRange.hasLowerBound() ? seasonRange.lowerEndpoint() : null);
@@ -51,7 +51,7 @@ public class TimelinesController extends PageController {
 		modelMap.addAttribute("averageElo", averageElo);
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("minGOATPoints", minGOATPoints);
-		modelMap.addAttribute("dominanceeRatioCoefficient", (int)DominanceSeason.getDominanceRatioCoefficient(aSurface));
+		modelMap.addAttribute("dominanceRatioCoefficient", (int)DominanceSeason.getDominanceRatioCoefficient(aSurface));
 		modelMap.addAttribute("skipAds", true);
 		return new ModelAndView("dominanceTimeline", modelMap);
 	}
@@ -60,10 +60,10 @@ public class TimelinesController extends PageController {
 	public ModelAndView tournamentLevelTimeline(
       @RequestParam(name = "level") String level
 	) {
-		TournamentLevel tournamentLevel = TournamentLevel.decode(level);
-		TournamentLevelTimeline timeline = tournamentLevelService.getTournamentLevelTimeline(level, tournamentLevel != MASTERS);
+		var tournamentLevel = TournamentLevel.decode(level);
+		var timeline = tournamentLevelService.getTournamentLevelTimeline(level, tournamentLevel != MASTERS);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("level", tournamentLevel);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("tournamentLevelTimeline", modelMap);
@@ -73,11 +73,11 @@ public class TimelinesController extends PageController {
 	public ModelAndView tournamentLevelGroupTimeline(
       @RequestParam(name = "level") String level
 	) {
-		TournamentLevelGroup tournamentLevelGroup = TournamentLevelGroup.decode(level);
-		TournamentLevel tournamentLevel = tournamentLevelGroup.getLevels().iterator().next();
-		TournamentLevelTimeline timeline = tournamentLevelService.getTournamentLevelGroupTimeline(tournamentLevelGroup, tournamentLevel != MASTERS);
+		var tournamentLevelGroup = TournamentLevelGroup.decode(level);
+		var tournamentLevel = tournamentLevelGroup.getLevels().iterator().next();
+		var timeline = tournamentLevelService.getTournamentLevelGroupTimeline(tournamentLevelGroup, tournamentLevel != MASTERS);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("level", tournamentLevel);
 		modelMap.addAttribute("levelGroup", tournamentLevelGroup);
 		modelMap.addAttribute("timeline", timeline);
@@ -88,10 +88,10 @@ public class TimelinesController extends PageController {
 	public ModelAndView teamTournamentLevelTimeline(
       @RequestParam(name = "level") String level
 	) {
-		TournamentLevel tournamentLevel = TournamentLevel.decode(level);
-		List<TeamTournamentLevelTimelineItem> timeline = tournamentLevelService.getTeamTournamentLevelTimeline(level);
+		var tournamentLevel = TournamentLevel.decode(level);
+		var timeline = tournamentLevelService.getTeamTournamentLevelTimeline(level);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("level", tournamentLevel);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("teamTournamentLevelTimeline", modelMap);
@@ -101,9 +101,9 @@ public class TimelinesController extends PageController {
 	public ModelAndView topRankingsTimeline(
 		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType
 	) {
-		TopRankingsTimeline timeline = rankingsService.getTopRankingsTimeline(rankType);
+		var timeline = rankingsService.getTopRankingsTimeline(rankType);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("rankCategories", RankCategory.values());
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("timeline", timeline);
@@ -114,9 +114,9 @@ public class TimelinesController extends PageController {
 	public ModelAndView surfaceTimeline(
 		@RequestParam(name = "indoor", defaultValue = "false") boolean indoor
 	) {
-		List<SurfaceTimelineItem> timeline = surfaceService.getSurfaceTimeline();
+		var timeline = surfaceService.getSurfaceTimeline();
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("surfaceTimeline", modelMap);
@@ -135,12 +135,12 @@ public class TimelinesController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
-		Range<LocalDate> dateRange = DateUtil.toDateRange(fromSeason, toSeason);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		PerfStatsFilter filter = new PerfStatsFilter(null, dateRange, level, bestOf, surface, indoor, speedRange, round, null, tournamentId, null);
-		Map<Integer, PlayerStats> seasonsStats = statisticsService.getStatisticsTimeline(filter);
+		var dateRange = DateUtil.toDateRange(fromSeason, toSeason);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = new PerfStatsFilter(null, dateRange, level, bestOf, surface, indoor, speedRange, round, null, tournamentId, null);
+		var seasonsStats = statisticsService.getStatisticsTimeline(filter);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);

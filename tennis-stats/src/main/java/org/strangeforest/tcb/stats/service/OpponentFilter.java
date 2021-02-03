@@ -115,7 +115,7 @@ public class OpponentFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof OpponentFilter)) return false;
-		OpponentFilter filter = (OpponentFilter)o;
+		var filter = (OpponentFilter)o;
 		return opponent == filter.opponent && Objects.equals(opponentId, filter.opponentId) && countryIds.equals(filter.countryIds);
 	}
 

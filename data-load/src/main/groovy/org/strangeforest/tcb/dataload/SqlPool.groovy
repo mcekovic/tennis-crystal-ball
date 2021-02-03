@@ -17,7 +17,7 @@ class SqlPool extends LinkedBlockingDeque<Sql> {
 	static final String PASSWORD_PROPERTY = 'tcb.db.password'
 	static final String DB_CONNECTIONS_PROPERTY = 'tcb.db.connections'
 
-	static final String DB_URL_DEFAULT = 'jdbc:postgresql://localhost:5432/postgres'
+	static final String DB_URL_DEFAULT = 'jdbc:postgresql://localhost:5432/tcb'
 	static final String USERNAME_DEFAULT = 'tcb'
 	static final String PASSWORD_DEFAULT = 'tcb'
 	static final int DB_CONNECTIONS_DEFAULT = 2

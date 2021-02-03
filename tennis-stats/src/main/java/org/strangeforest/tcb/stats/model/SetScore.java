@@ -29,7 +29,7 @@ public class SetScore {
 	}
 
 	public String formatted() {
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 		sb.append(wGames).append('-').append(lGames);
 		if (wTBPoints != null && lTBPoints != null)
 			sb.append("<sup>(").append(wTBPoints > lTBPoints ? lTBPoints : wTBPoints).append(")</sup>");

@@ -106,9 +106,9 @@ public class RecordsService {
 
 	@Cacheable("Records.Table")
 	public BootgridTable<RecordRow> getRecordsTable(RecordFilter filter, int pageSize, int currentPage) {
-		List<Record> records = getRecords(filter);
-		int offset = (currentPage - 1) * pageSize;
-		List<RecordRow> recordRows = records.stream()
+		var records = getRecords(filter);
+		var offset = (currentPage - 1) * pageSize;
+		var recordRows = records.stream()
 			.skip(offset).limit(pageSize)
 			.map(RecordRow::new)
 			.collect(toList());
@@ -118,19 +118,19 @@ public class RecordsService {
 				bindStringArray(ps, 1, recordRows.stream().map(RecordRow::getId).toArray(String[]::new));
 			},
 			rs -> {
-				RecordRow recordRow = addRecordHolders(recordRows, rs);
+				var recordRow = addRecordHolders(recordRows, rs);
 				recordRow.setGoatPoints(rs.getString("goat_points"));
 			}
 		);
-		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, records.size());
+		var table = new BootgridTable<RecordRow>(currentPage, records.size());
 		recordRows.forEach(table::addRow);
 		return table;
 	}
 
 	@Cacheable("PlayerRecords.Table")
 	public BootgridTable<PlayerRecordRow> getPlayerRecordsTable(RecordFilter filter, int playerId, int pageSize, int currentPage) {
-		List<Record> records = getRecords(filter);
-		List<PlayerRecordRow> recordRows = records.stream()
+		var records = getRecords(filter);
+		var recordRows = records.stream()
 			.map(record -> new PlayerRecordRow(record, playerId))
 			.collect(toList());
 		jdbcTemplate.getJdbcOperations().query(
@@ -143,9 +143,9 @@ public class RecordsService {
 				addRecordHolders(recordRows, rs);
 			}
 		);
-		List<PlayerRecordRow> playerRecordRows = recordRows.stream().filter(PlayerRecordRow::hasHolders).collect(toList());
-		BootgridTable<PlayerRecordRow> table = new BootgridTable<>(currentPage, playerRecordRows.size());
-		int offset = (currentPage - 1) * pageSize;
+		var playerRecordRows = recordRows.stream().filter(PlayerRecordRow::hasHolders).collect(toList());
+		var table = new BootgridTable<PlayerRecordRow>(currentPage, playerRecordRows.size());
+		var offset = (currentPage - 1) * pageSize;
 		playerRecordRows.stream().skip(offset).limit(pageSize).forEach(table::addRow);
 		return table;
 	}
@@ -157,16 +157,16 @@ public class RecordsService {
 	}
 
 	private static RecordRow addRecordHolders(List<? extends RecordRow> recordRows, ResultSet rs) throws SQLException {
-		String recordId = rs.getString("record_id");
-		int playerId = rs.getInt("player_id");
-		String name = rs.getString("name");
-		String countryId = getInternedString(rs, "country_id");
-		boolean active = rs.getBoolean("active");
-		Record record = Records.getRecord(recordId);
-		RecordDetail detail = getDetail(record, rs.getString("detail"));
+		var recordId = rs.getString("record_id");
+		var playerId = rs.getInt("player_id");
+		var name = rs.getString("name");
+		var countryId = getInternedString(rs, "country_id");
+		var active = rs.getBoolean("active");
+		var record = Records.getRecord(recordId);
+		var detail = getDetail(record, rs.getString("detail"));
 		RecordHolderRow recordHolder = new RecordHolderRow<RecordDetail>(playerId, name, countryId, active, detail, record.getDetailURLFormatter());
 		Optional<RecordRow> recordRowOptional = findRecordRow((List)recordRows, recordId);
-		RecordRow recordRow = recordRowOptional.orElseThrow(() -> new IllegalStateException("Cannot find record: " + recordId));
+		var recordRow = recordRowOptional.orElseThrow(() -> new IllegalStateException("Cannot find record: " + recordId));
 		recordRow.addRecordHolder(recordHolder);
 		return recordRow;
 	}
@@ -178,23 +178,23 @@ public class RecordsService {
 	@Transactional
 	@Cacheable("Record.Table")
 	public BootgridTable<RecordDetailRow> getRecordTable(String recordId, boolean activePlayers, int pageSize, int currentPage) {
-		Record record = Records.getRecord(recordId);
+		var record = Records.getRecord(recordId);
 		ensureSaveRecord(record, activePlayers);
-		BootgridTable<RecordDetailRow> table = new BootgridTable<>(currentPage);
-		AtomicInteger players = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
+		var table = new BootgridTable<RecordDetailRow>(currentPage);
+		var players = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(RECORD_TABLE_QUERY, getTableName(activePlayers)),
 			params("recordId", recordId)
 				.addValue("offset", offset),
 			rs -> {
 				if (players.incrementAndGet() <= pageSize) {
-					int rank = rs.getInt("rank");
-					int playerId = rs.getInt("player_id");
-					String name = rs.getString("name");
-					String countryId = getInternedString(rs, "country_id");
-					Boolean active = !activePlayers ? rs.getBoolean("active") : null;
-					RecordDetail detail = getDetail(record, rs.getString("detail"));
+					var rank = rs.getInt("rank");
+					var playerId = rs.getInt("player_id");
+					var name = rs.getString("name");
+					var countryId = getInternedString(rs, "country_id");
+					var active = !activePlayers ? rs.getBoolean("active") : null;
+					var detail = getDetail(record, rs.getString("detail"));
 					table.addRow(new RecordDetailRow<RecordDetail>(rank, playerId, name, countryId, active, detail, record.getDetailURLFormatter()));
 				}
 			}
@@ -222,7 +222,7 @@ public class RecordsService {
 
 	@Transactional
 	public void refreshRecord(String recordId, boolean activePlayers) {
-		Record record = Records.getRecord(recordId);
+		var record = Records.getRecord(recordId);
 		deleteRecord(record, activePlayers);
 		saveRecord(record, activePlayers);
 		if (!isRecordSaved(record, activePlayers))

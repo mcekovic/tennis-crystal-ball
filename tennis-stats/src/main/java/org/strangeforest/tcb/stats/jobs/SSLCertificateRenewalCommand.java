@@ -18,7 +18,7 @@ public class SSLCertificateRenewalCommand {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SSLCertificateRenewalCommand.class);
 
 	public int renewSSLCertificate() {
-		int exitCode = -1;
+		var exitCode = -1;
 		try {
 			LOGGER.info("Stopping Tomcat redirect connector");
 			tomcat.stopRedirectConnector();

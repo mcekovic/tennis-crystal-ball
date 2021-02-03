@@ -25,6 +25,26 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		'WHERE tournament_id = (SELECT tournament_id FROM tournament_mapping WHERE ext_tournament_id = :extId)\n' +
 		'AND season = :season'
 
+	static final String SELECT_TOURNAMENT_EVENT_MATCHES_WO_STATS_SQL = //language=SQL
+		'SELECT m.match_id, pw.name AS winner_name, pl.name AS loser_name\n' +
+		'FROM match m\n' +
+		'INNER JOIN tournament_event e USING (tournament_event_id)\n' +
+		'INNER JOIN tournament_mapping tm USING (tournament_id)\n' +
+		'INNER JOIN player_v pw ON pw.player_id = m.winner_id\n' +
+		'INNER JOIN player_v pl ON pl.player_id = m.loser_id\n' +
+		'WHERE e.season = :season AND tm.ext_tournament_id = :extId\n' +
+		'AND NOT m.has_stats AND (m.outcome IS NULL OR NOT m.outcome = \'W/O\'::match_outcome)'
+
+	static final String SELECT_PLAYER_ALIASES_SQL = //language=SQL
+		'SELECT alias, name FROM player_alias'
+
+	static final String LOAD_STATS_SQL = //language=SQL
+		'CALL load_match_stats(' +
+			':match_id, :minutes, ' +
+			':w_ace, :w_df, :w_sv_pt, :w_1st_in, :w_1st_won, :w_2nd_won, :w_sv_gms, :w_bp_sv, :w_bp_fc, ' +
+			':l_ace, :l_df, :l_sv_pt, :l_1st_in, :l_1st_won, :l_2nd_won, :l_sv_gms, :l_bp_sv, :l_bp_fc' +
+		')'
+
 
 	ATPTourTournamentLoader(Sql sql) {
 		super(sql)
@@ -35,7 +55,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
 		def doc = retriedGetDoc(url)
-		List<Object> matches = scrapeDraws
+		def matches = scrapeDraws
 			? this.scrapeDraws(doc, level, urlId, name, season, surface, date, overrideExtId, extId, true)
 			: scrapeResults(doc, level, urlId, name, season, surface, date, skipRounds, overrideExtId, extId)
 
@@ -51,7 +71,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		println "${matches.size()} matches loaded in $stopwatch"
 	}
 
-	def scrapeResults(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, Collection<String> skipRounds, overrideExtId, extId) {
+	List scrapeResults(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, Collection<String> skipRounds, overrideExtId, extId) {
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1), '', '.')
 		level = level ?: mapLevel(atpLevel, urlId)
@@ -136,7 +156,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		matches
 	}
 
-	def scrapeDraws(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, overrideExtId, extId, verbose) {
+	List scrapeDraws(doc, String level, String urlId, String name, int season, String surface, String tournamentDate, overrideExtId, extId, verbose) {
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1), '', '.')
 		level = level ?: mapLevel(atpLevel, urlId)
@@ -294,6 +314,7 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 			drawRowSpan *= 2
 			prevMatchNumOffset = matchNumOffset
 		}
+		matches
 	}
 
 	static extractEntryPlayer(Element entryMatch, int index) {
@@ -355,5 +376,49 @@ class ATPTourTournamentLoader extends BaseATPTourTournamentLoader {
 		@Override NodeFilter.FilterResult tail(Node node, int depth) {
 			node instanceof Comment ? NodeFilter.FilterResult.REMOVE : NodeFilter.FilterResult.CONTINUE
 		}
+	}
+
+	def loadMissingStats(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, String date = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null, boolean scrapeDraws = false) {
+		def url = tournamentUrl(current, season, urlId, extId, scrapeDraws)
+		println "Fetching tournament URL '$url'"
+		def stopwatch = Stopwatch.createStarted()
+		def doc = retriedGetDoc(url)
+		def matches = scrapeDraws
+				? this.scrapeDraws(doc, level, urlId, name, season, surface, date, overrideExtId, extId, true)
+				: scrapeResults(doc, level, urlId, name, season, surface, date, skipRounds, overrideExtId, extId)
+		def matchIdsWoStats = sql.rows([season: season, extId: string(extId)], SELECT_TOURNAMENT_EVENT_MATCHES_WO_STATS_SQL)
+		def playerAliases = sql.rows(SELECT_PLAYER_ALIASES_SQL)
+		def matchesWoStats = matches.findAll { match ->
+			def matchId = findMatch(matchIdsWoStats, match.winner_name, match.loser_name, playerAliases)?.match_id
+			if (matchId)
+				match.match_id = matchId
+			matchId
+		}
+
+		loadStats(matchesWoStats, season, extId, 'w_', 'l_', 'winner_name', 'loser_name')
+
+		withTx sql, { Sql s ->
+			s.withBatch(LOAD_STATS_SQL) { ps ->
+				matchesWoStats.each { match ->
+					ps.addBatch(match)
+				}
+			}
+		}
+		println "${matchesWoStats.size()} match stats loaded in $stopwatch"
+	}
+
+	private static Map findMatch(List matches, String winner, String loser, List aliases) {
+		winner = winner.toLowerCase()
+		loser = loser.toLowerCase()
+		matches.find { match ->
+			def aWinner = match.winner_name.toLowerCase()
+			def aLoser = match.loser_name.toLowerCase()
+			(aWinner == winner || aWinner == findPlayer(aliases, winner)?.toLowerCase()) && (aLoser == loser ||  aLoser == findPlayer(aliases, loser)?.toLowerCase())
+		}
+	}
+
+	private static String findPlayer(List aliases, String name) {
+		name = name.toLowerCase()
+		aliases.find { player -> player.alias.toLowerCase() == name }?.name
 	}
 }

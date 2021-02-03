@@ -20,7 +20,7 @@ public class GreatestRivalriesResource {
 
 	private static final int MAX_RIVALRIES = 1000;
 
-	private static Map<String, String> ORDER_MAP = Map.of(
+	private static final Map<String, String> ORDER_MAP = Map.of(
 		"matches", "matches",
 		"rivalryScore", "rivalry_score"
 	);
@@ -43,11 +43,11 @@ public class GreatestRivalriesResource {
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		RivalryFilter filter = new RivalryFilter(seasonRange, level, bestOf, surface, indoor, speedRange, round, tournamentId);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
+		var seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = new RivalryFilter(seasonRange, level, bestOf, surface, indoor, speedRange, round, tournamentId);
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
 		return rivalriesService.getGreatestRivalriesTable(filter, bestRank, minMatches, orderBy, pageSize, current);
 	}
 
@@ -65,9 +65,9 @@ public class GreatestRivalriesResource {
 		@RequestParam(name = "bestRank", required = false) Integer bestRank,
 		@RequestParam(name = "minMatches", required = false) Integer minMatches
 	) {
-		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		RivalryFilter filter = new RivalryFilter(seasonRange, level, bestOf, surface, indoor, speedRange, round, tournamentId);
+		var seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = new RivalryFilter(seasonRange, level, bestOf, surface, indoor, speedRange, round, tournamentId);
 		return rivalriesService.getGreatestRivalriesMinMatches(filter, bestRank, minMatches);
 	}
 }

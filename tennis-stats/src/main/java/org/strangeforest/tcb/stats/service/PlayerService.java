@@ -132,18 +132,18 @@ public class PlayerService {
 
 	@Cacheable("PlayerCareerEnd")
 	public LocalDate getPlayerCareerEnd(int playerId) {
-		LocalDate lastMatchDate = jdbcTemplate.queryForObject(PLAYER_CAREER_END_QUERY, params("playerId", playerId), LocalDate.class);
+		var lastMatchDate = jdbcTemplate.queryForObject(PLAYER_CAREER_END_QUERY, params("playerId", playerId), LocalDate.class);
 		return lastMatchDate != null ? lastMatchDate.plusDays(1L) : null;
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {
-		MapSqlParameterSource params = params("name", name).addValue("count", AUTOCOMPLETE_COUNT);
-		List<AutocompleteOption> options = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, params, this::playerAutocompleteOptionMapper);
-		int count = options.size();
+		var params = params("name", name).addValue("count", AUTOCOMPLETE_COUNT);
+		var options = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, params, this::playerAutocompleteOptionMapper);
+		var count = options.size();
 		if (count <= AUTOCOMPLETE_EX_THRESHOLD) {
 			params.addValue("distance", 0.7);
-			List<AutocompleteOption> optionsEx = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_EX_QUERY, params, this::playerAutocompleteOptionMapper);
-			for (AutocompleteOption option : optionsEx) {
+			var optionsEx = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_EX_QUERY, params, this::playerAutocompleteOptionMapper);
+			for (var option : optionsEx) {
 				if (options.size() < AUTOCOMPLETE_COUNT && !options.contains(option))
 					options.add(option);
 			}
@@ -175,21 +175,21 @@ public class PlayerService {
 	}
 
 	public IndexedPlayers getIndexedPlayers(int... playerIds) {
-		IndexedPlayers indexedPlayers = new IndexedPlayers();
-		for (int index = 0; index < playerIds.length; index++) {
-			int playerId = playerIds[index];
+		var indexedPlayers = new IndexedPlayers();
+		for (var index = 0; index < playerIds.length; index++) {
+			var playerId = playerIds[index];
 			indexedPlayers.addPlayer(playerId, self.getPlayerName(playerId), index);
 		}
 		return indexedPlayers;
 	}
 
 	public IndexedPlayers getIndexedPlayers(List<String> inputPlayers) {
-		IndexedPlayers indexedPlayers = new IndexedPlayers();
-		int index = 0;
-		for (String player : inputPlayers) {
+		var indexedPlayers = new IndexedPlayers();
+		var index = 0;
+		for (var player : inputPlayers) {
 			if (isNullOrEmpty(player))
 				continue;
-			Optional<Integer> playerId = self.findPlayerId(player);
+			var playerId = self.findPlayerId(player);
 			if (playerId.isPresent())
 				indexedPlayers.addPlayer(playerId.get(), player, index++);
 		}
@@ -199,6 +199,7 @@ public class PlayerService {
 	@Cacheable("PlayerQuickPicks")
 	public Map<String, String> getPlayerQuickPicks() {
 		Map<String, String> quickPicks = new LinkedHashMap<>();
+		quickPicks.put("Big Three", "Roger Federer, Novak Djokovic, Rafael Nadal");
 		quickPicks.put("Big Four", "Roger Federer, Novak Djokovic, Rafael Nadal, Andy Murray");
 		quickPicks.put("Second Tier", "David Ferrer, Juan Martin Del Potro, Stan Wawrinka, Tomas Berdych, Jo Wilfried Tsonga");
 		quickPicks.put("Young Guns", "Dominic Thiem, Nick Kyrgios, Lucas Pouille, Jack Sock, Hyeon Chung");
@@ -232,9 +233,9 @@ public class PlayerService {
 	private static final String WIKIPEDIA_SEARCH_URL = "https://en.wikipedia.org/w?search=%1$s";
 
 	public String getPlayerWikipediaUrl(int playerId) {
-		String name = self.getPlayerName(playerId).replace(' ', '_');
-		for (String wikipediaUrlTemplate : WIKIPEDIA_URLS) {
-			String wikipediaUrl = format(wikipediaUrlTemplate, name);
+		var name = self.getPlayerName(playerId).replace(' ', '_');
+		for (var wikipediaUrlTemplate : WIKIPEDIA_URLS) {
+			var wikipediaUrl = format(wikipediaUrlTemplate, name);
 			try {
 				if (URLUtil.checkURL(wikipediaUrl) == HttpURLConnection.HTTP_OK)
 					return wikipediaUrl;
@@ -250,7 +251,7 @@ public class PlayerService {
 	// Util
 
 	private Player mapPlayer(ResultSet rs) throws SQLException {
-		Player p = new Player(rs.getInt("player_id"));
+		var p = new Player(rs.getInt("player_id"));
 		p.setName(rs.getString("name"));
 		p.setDob(getLocalDate(rs, "dob"));
 		p.setDod(getLocalDate(rs, "dod"));
@@ -297,9 +298,9 @@ public class PlayerService {
 	}
 
 	private AutocompleteOption playerAutocompleteOptionMapper(ResultSet rs, int rowNum) throws SQLException {
-		String id = rs.getString("player_id");
-		String name = rs.getString("name");
-		String countryId = getInternedString(rs, "country_id");
+		var id = rs.getString("player_id");
+		var name = rs.getString("name");
+		var countryId = getInternedString(rs, "country_id");
 		return new AutocompleteOption(id, name, name + " (" + countryId + ')');
 	}
 }

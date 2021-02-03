@@ -21,7 +21,7 @@ public class InProgressEventsResource {
 
 	private static final int MAX_TOURNAMENT_EVENTS = 5000;
 
-	private static Map<String, String> ORDER_MAP = Map.of(
+	private static final Map<String, String> ORDER_MAP = Map.of(
 		"date", "date",
 		"name", "name",
 		"surface", "surface",
@@ -43,9 +43,9 @@ public class InProgressEventsResource {
 		@RequestParam Map<String, String> requestParams,
 		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
-		InProgressEventFilter filter = new InProgressEventFilter(completed, searchPhrase);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENT_EVENTS;
+		var filter = new InProgressEventFilter(completed, searchPhrase);
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENT_EVENTS;
 		return forecastService.getInProgressEventsTable(filter, priceFormat, orderBy, pageSize, current);
 	}
 

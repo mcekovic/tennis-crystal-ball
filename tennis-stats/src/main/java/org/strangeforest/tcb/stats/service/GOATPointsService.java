@@ -76,14 +76,14 @@ public class GOATPointsService {
 	public Map<String, Collection<String>> getLevelResults() {
 		Map<String, Collection<String>> levelResults = new LinkedHashMap<>();
 		jdbcTemplate.query(LEVEL_RESULTS_QUERY, rs -> {
-			String level = getInternedString(rs, "level");
-			String result = mapResult(level, getInternedString(rs, "result"));
+			var level = getInternedString(rs, "level");
+			var result = mapResult(level, getInternedString(rs, "result"));
 			levelResults.computeIfAbsent(level, aLevel -> new LinkedHashSet<>()).add(result);
 		});
 		// Merge Tour Finals results
-		Collection<String> afResults = levelResults.remove("L");
+		var afResults = levelResults.remove("L");
 		if (afResults != null) {
-			Collection<String> tfResults = levelResults.get("F");
+			var tfResults = levelResults.get("F");
 			if (tfResults != null)
 				tfResults.addAll(afResults);
 			else
@@ -93,16 +93,16 @@ public class GOATPointsService {
 	}
 
 	public PlayerGOATPoints getPlayerGOATPoints(int playerId, Surface surface, boolean withTournamentPoints) {
-		boolean overall = surface == null;
-		String criteria = overall ? "" : " AND surface = :surface::surface";
-		MapSqlParameterSource params = params("playerId", playerId);
+		var overall = surface == null;
+		var criteria = overall ? "" : " AND surface = :surface::surface";
+		var params = params("playerId", playerId);
 		if (!overall)
 			params.addValue("surface", surface.getCode());
 
-		String totalTableName = overall ? "player_goat_points" : "player_surface_goat_points";
-		String totalSql = format(TOTAL_POINTS_QUERY, overall ? GOAT_POINTS_AREAS : SURFACE_GOAT_POINTS_AREAS, totalTableName, criteria);
-		PlayerGOATPoints goatPoints = jdbcTemplate.query(totalSql, params, rs -> {
-			PlayerGOATPoints points = new PlayerGOATPoints(surface);
+		var totalTableName = overall ? "player_goat_points" : "player_surface_goat_points";
+		var totalSql = format(TOTAL_POINTS_QUERY, overall ? GOAT_POINTS_AREAS : SURFACE_GOAT_POINTS_AREAS, totalTableName, criteria);
+		var goatPoints = jdbcTemplate.query(totalSql, params, rs -> {
+			var points = new PlayerGOATPoints(surface);
 			if (rs.next()) {
 				points.setTotalPoints(rs.getInt("goat_points"));
 				points.setTournamentPoints(rs.getInt("tournament_goat_points"));
@@ -133,27 +133,27 @@ public class GOATPointsService {
 		if (goatPoints.isEmpty())
 			return goatPoints;
 
-		String seasonsTableName = overall ? "player_season_goat_points" : "player_surface_season_goat_points";
-		String seasonsSql = format(SEASONS_POINTS_QUERY, overall ? SEASON_GOAT_POINTS_AREAS : SURFACE_SEASON_GOAT_POINTS_AREAS, seasonsTableName, criteria);
-		List<PlayerSeasonGOATPoints> seasonPoints = jdbcTemplate.query(seasonsSql, params, (rs, rowNum) -> mapPlayerSeasonGOATPoints(rs, surface));
+		var seasonsTableName = overall ? "player_season_goat_points" : "player_surface_season_goat_points";
+		var seasonsSql = format(SEASONS_POINTS_QUERY, overall ? SEASON_GOAT_POINTS_AREAS : SURFACE_SEASON_GOAT_POINTS_AREAS, seasonsTableName, criteria);
+		var seasonPoints = jdbcTemplate.query(seasonsSql, params, (rs, rowNum) -> mapPlayerSeasonGOATPoints(rs, surface));
 		goatPoints.setPlayerSeasonsPoints(seasonPoints);
 
 		if (withTournamentPoints) {
-			String tournamentPointsSql = format(TOURNAMENT_POINTS_QUERY, criteria);
+			var tournamentPointsSql = format(TOURNAMENT_POINTS_QUERY, criteria);
 			jdbcTemplate.query(tournamentPointsSql, params, rs -> {
-				int season = rs.getInt("season");
-				String level = getInternedString(rs, "level");
-				String result = mapResult(level, getInternedString(rs, "result"));
-				int count = rs.getInt("count");
-				int roundRobinWins = rs.getInt("round_robin_wins");
-				PlayerTournamentGOATPoints breakdown = goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown();
+				var season = rs.getInt("season");
+				var level = getInternedString(rs, "level");
+				var result = mapResult(level, getInternedString(rs, "result"));
+				var count = rs.getInt("count");
+				var roundRobinWins = rs.getInt("round_robin_wins");
+				var breakdown = goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown();
 				breakdown.addResultCount(level, result, count, roundRobinWins);
 			});
 
-			String teamTournamentPointsSql = format(TEAM_TOURNAMENT_POINTS_QUERY, overall ? "" : " AND surface = :surface::surface");
+			var teamTournamentPointsSql = format(TEAM_TOURNAMENT_POINTS_QUERY, overall ? "" : " AND surface = :surface::surface");
 			jdbcTemplate.query(teamTournamentPointsSql, params, rs -> {
-				int season = rs.getInt("season");
-				int count = rs.getInt("count");
+				var season = rs.getInt("season");
+				var count = rs.getInt("count");
 				goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown().addResultCount("T", "W", count, 0);
 			});
 
@@ -170,7 +170,7 @@ public class GOATPointsService {
 	}
 
 	private static PlayerSeasonGOATPoints mapPlayerSeasonGOATPoints(ResultSet rs, Surface surface) throws SQLException {
-		PlayerSeasonGOATPoints points = new PlayerSeasonGOATPoints(rs.getInt("season"), surface, rs.getInt("goat_points"));
+		var points = new PlayerSeasonGOATPoints(rs.getInt("season"), surface, rs.getInt("goat_points"));
 		points.setTournamentPoints(rs.getInt("tournament_goat_points"));
 		points.setRankingPoints(rs.getInt("ranking_goat_points"));
 		points.setAchievementsPoints(rs.getInt("achievements_goat_points"));

@@ -137,9 +137,9 @@ public class PerformanceService {
 	}
 
 	public PlayerPerformance getPlayerPerformance(int playerId, PerfStatsFilter filter) {
-		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
-		String tableName = getPerformanceTableName(filter);
-		String perfColumns = isMaterializedSum(filter) ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;
+		var params = filter.getParams().addValue("playerId", playerId);
+		var tableName = getPerformanceTableName(filter);
+		var perfColumns = isMaterializedSum(filter) ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;
 		return jdbcTemplate.query(
 			format(PLAYER_PERFORMANCE_QUERY, perfColumns, tableName, playerPerformanceJoin(filter, false), filter.getCriteria()),
 			params,
@@ -161,7 +161,7 @@ public class PerformanceService {
 	}
 
 	private static String playerPerformanceJoin(PerfStatsFilter filter, boolean skipEventStatsJoin) {
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 		if (!skipEventStatsJoin && filter.hasSpeedRange())
 			sb.append(EVENT_STATS_JOIN);
 		if (filter.hasResult())
@@ -176,7 +176,7 @@ public class PerformanceService {
 		jdbcTemplate.query(
 			PLAYER_SEASONS_PERFORMANCE_QUERY, params("playerId", playerId),
 			rs -> {
-				int season = rs.getInt("season");
+				var season = rs.getInt("season");
 				seasonsPerf.put(season, mapPlayerPerformance(rs));
 			}
 		);
@@ -184,7 +184,7 @@ public class PerformanceService {
 	}
 
 	private PlayerPerformance mapPlayerPerformance(ResultSet rs) throws SQLException {
-		PlayerPerformance perf = new PlayerPerformance();
+		var perf = new PlayerPerformance();
 		// Performance
 		perf.setMatches(mapWonLost(rs, "matches"));
 		perf.setGrandSlamMatches(mapWonLost(rs, "grand_slam_matches"));
@@ -226,18 +226,18 @@ public class PerformanceService {
 	// Player Season
 
 	public PlayerPerformanceEx getPlayerPerformanceEx(int playerId, PerfStatsFilter filter) {
-		PlayerPerformance performance = getPlayerPerformance(playerId, filter);
-		PlayerPerformanceEx performanceEx = new PlayerPerformanceEx(performance);
+		var performance = getPlayerPerformance(playerId, filter);
+		var performanceEx = new PlayerPerformanceEx(performance);
 
-		String join = playerPerformanceJoin(filter, false);
-		String criteria = filter.getCriteria();
-		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
+		var join = playerPerformanceJoin(filter, false);
+		var criteria = filter.getCriteria();
+		var params = filter.getParams().addValue("playerId", playerId);
 
 		jdbcTemplate.query(
 			format(PLAYER_COURT_SPEED_BREAKDOWN_QUERY, playerPerformanceJoin(filter, true), criteria), params,
 			rs -> {
-				CourtSpeed speed = CourtSpeed.forSpeed(rs.getInt("speed"));
-				WonLost wonLost = mapWonLost(rs);
+				var speed = CourtSpeed.forSpeed(rs.getInt("speed"));
+				var wonLost = mapWonLost(rs);
 				performanceEx.addSpeedMatches(speed, wonLost);
 			}
 		);
@@ -246,8 +246,8 @@ public class PerformanceService {
 		jdbcTemplate.query(
 			format(PLAYER_OPPOSITION_BREAKDOWN_QUERY, join, criteria), params,
 			rs -> {
-				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
-				WonLost wonLost = mapWonLost(rs);
+				var opposition = Opponent.valueOf(rs.getString("opposition"));
+				var wonLost = mapWonLost(rs);
 				oppositionMatches.put(opposition, wonLost);
 			}
 		);
@@ -258,10 +258,10 @@ public class PerformanceService {
 		jdbcTemplate.query(
 			format(PLAYER_SCORE_BREAKDOWN_QUERY, join, criteria), params,
 			rs -> {
-				int bestOf = rs.getInt("best_of");
-				int pSets = rs.getInt("p_sets");
-				int oSets = rs.getInt("o_sets");
-				int count = rs.getInt("count");
+				var bestOf = rs.getInt("best_of");
+				var pSets = rs.getInt("p_sets");
+				var oSets = rs.getInt("o_sets");
+				var count = rs.getInt("count");
 				scoreCounts.put(new PerfMatchScore(bestOf, pSets, oSets), count);
 			}
 		);
@@ -270,8 +270,8 @@ public class PerformanceService {
 		jdbcTemplate.query(
 			format(PLAYER_ROUND_BREAKDOWN_QUERY, join, criteria), params,
 			rs -> {
-				Round round = Round.decode(rs.getString("round"));
-				WonLost wonLost = mapWonLost(rs);
+				var round = Round.decode(rs.getString("round"));
+				var wonLost = mapWonLost(rs);
 				performanceEx.addRoundMatches(round, wonLost);
 			}
 		);
@@ -281,8 +281,8 @@ public class PerformanceService {
 			jdbcTemplate.query(
 				format(PLAYER_RESULT_BREAKDOWN_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "",criteria), params,
 				rs -> {
-					EventResult result = EventResult.decode(rs.getString("result"));
-					int count = rs.getInt("count");
+					var result = EventResult.decode(rs.getString("result"));
+					var count = rs.getInt("count");
 					resultCounts.put(result, count);
 				}
 			);

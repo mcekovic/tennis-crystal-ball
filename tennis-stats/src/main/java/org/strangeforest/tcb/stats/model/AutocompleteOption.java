@@ -33,7 +33,7 @@ public class AutocompleteOption {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof AutocompleteOption)) return false;
-		AutocompleteOption that = (AutocompleteOption)o;
+		var that = (AutocompleteOption)o;
 		return id.equals(that.id);
 	}
 

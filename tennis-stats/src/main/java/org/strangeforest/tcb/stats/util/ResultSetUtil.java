@@ -16,15 +16,15 @@ public abstract class ResultSetUtil {
 	// Extracting
 
 	public static Integer getInteger(ResultSet rs, String column) throws SQLException {
-		int i = rs.getInt(column);
+		var i = rs.getInt(column);
 		return rs.wasNull() ? null : i;
 	}
 
 	public static List<Integer> getIntegers(ResultSet rs, String column) throws SQLException {
-		Array sqlArray = rs.getArray(column);
+		var sqlArray = rs.getArray(column);
 		if (sqlArray == null)
 			return emptyList();
-		Object array = sqlArray.getArray();
+		var array = sqlArray.getArray();
 		if (array instanceof Integer[])
 			return List.of((Integer[])array);
 		else if (array instanceof Number[])
@@ -34,22 +34,22 @@ public abstract class ResultSetUtil {
 	}
 
 	public static Double getDouble(ResultSet rs, String column) throws SQLException {
-		double d = rs.getDouble(column);
+		var d = rs.getDouble(column);
 		return rs.wasNull() ? null : d;
 	}
 
 	public static Boolean getBoolean(ResultSet rs, String column) throws SQLException {
-		boolean b = rs.getBoolean(column);
+		var b = rs.getBoolean(column);
 		return rs.wasNull() ? null : b;
 	}
 
 	public static String getInternedString(ResultSet rs, String column) throws SQLException {
-		String s = rs.getString(column);
+		var s = rs.getString(column);
 		return s != null ? s.intern() : null;
 	}
 
 	public static LocalDate getLocalDate(ResultSet rs, String column) throws SQLException {
-		LocalDate date = rs.getObject(column, LocalDate.class);
+		var date = rs.getObject(column, LocalDate.class);
 		return rs.wasNull() ? null : date;
 	}
 
@@ -57,7 +57,7 @@ public abstract class ResultSetUtil {
 	private static final double DAY_FACTOR = 1.0 / 365.25;
 
 	public static Double getYears(ResultSet rs, String column) throws SQLException {
-		PGInterval i = rs.getObject(column, PGInterval.class);
+		var i = rs.getObject(column, PGInterval.class);
 		return rs.wasNull() ? null : i.getYears() + MONTH_FACTOR * i.getMonths() + DAY_FACTOR * i.getDays();
 	}
 

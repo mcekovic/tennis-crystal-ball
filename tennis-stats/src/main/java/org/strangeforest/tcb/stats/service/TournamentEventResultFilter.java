@@ -72,7 +72,7 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 		if (this == o) return true;
 		if (!(o instanceof TournamentEventResultFilter)) return false;
 		if (!super.equals(o)) return false;
-		TournamentEventResultFilter filter = (TournamentEventResultFilter)o;
+		var filter = (TournamentEventResultFilter)o;
 		return stringsEqual(result, filter.result) && statsFilter.equals(filter.statsFilter);
 	}
 

@@ -13,14 +13,14 @@ class NoTBSetOutcomeTest {
 
 	@Test
 	void testEqualP() {
-		SetOutcome set = new SetOutcome(0.6, 0.4, NO_TB_SET);
+		var set = new SetOutcome(0.6, 0.4, NO_TB_SET);
 
 		assertThat(set.pWin()).isEqualTo(0.5, OFFSET);
 	}
 
 	@Test
 	void testFinalStep() {
-		SetOutcome set = new SetOutcome(0.8, 0.4, NO_TB_SET);
+		var set = new SetOutcome(0.8, 0.4, NO_TB_SET);
 
 		assertThat(set.pWin(6, 0)).isEqualTo(1.0);
 		assertThat(set.pWin(6, 1)).isEqualTo(1.0);
@@ -36,7 +36,7 @@ class NoTBSetOutcomeTest {
 
 	@Test
 	void testDeuce() {
-		SetOutcome set = new SetOutcome(0.75, 0.35, NO_TB_SET);
+		var set = new SetOutcome(0.75, 0.35, NO_TB_SET);
 
 		assertThat(set.pWin(6, 5)).isEqualTo(0.9895040835, OFFSET);
 		assertThat(set.pWin(6, 6)).isEqualTo(0.7933111835, OFFSET);
@@ -51,8 +51,8 @@ class NoTBSetOutcomeTest {
 
 	@Test
 	void testTBpDiff() {
-		double pTB = new SetOutcome(0.75, 0.35, COMMON_SET).pWin();
-		double pNoTB = new SetOutcome(0.75, 0.35, NO_TB_SET).pWin();
+		var pTB = new SetOutcome(0.75, 0.35, COMMON_SET).pWin();
+		var pNoTB = new SetOutcome(0.75, 0.35, NO_TB_SET).pWin();
 
 		assertThat(pTB).isEqualTo(0.7817143146, OFFSET);
 		assertThat(pNoTB).isEqualTo(0.8196805996, OFFSET);

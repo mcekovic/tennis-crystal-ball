@@ -3,6 +3,7 @@
 	<tournament season="1984" name="Memphis" date="1984-02-06" ext-id="402">
 		<level>A</level>
 		<surface>P</surface>
+		<indoor>true</indoor>
 		<draw-type>KO</draw-type>
 		<draw-size>48</draw-size>
 		<!-- R64 -->

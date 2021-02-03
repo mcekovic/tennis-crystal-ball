@@ -321,7 +321,7 @@ public class PlayerPerformance {
 	public static final PlayerPerformance EMPTY = empty();
 
 	private static PlayerPerformance empty() {
-		PlayerPerformance empty = new PlayerPerformance();
+		var empty = new PlayerPerformance();
 		empty.matches = WonLost.EMPTY;
 		empty.grandSlamMatches = WonLost.EMPTY;
 		empty.tourFinalsMatches = WonLost.EMPTY;

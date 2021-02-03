@@ -103,7 +103,7 @@ public class MatchPredictionService implements HasCache {
 	
 	public MatchPredictionService(boolean includeInProgressEventData) {
 		this.includeInProgressEventData = includeInProgressEventData;
-		Caffeine<Object, Object> builder = Caffeine.newBuilder()
+		var builder = Caffeine.newBuilder()
 			.expireAfterWrite(1, TimeUnit.HOURS)
 			.expireAfterAccess(1, TimeUnit.HOURS);
 		players = builder.build(this::fetchPlayerData);
@@ -119,17 +119,17 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
-		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
+		var config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
 		return predictMatch(playerId1, playerId2, date, date, null, null, inProgress, surface, indoor, level, null, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
-		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
+		var config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
 		return predictMatch(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, null, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round) {
-		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, bestOf));
+		var config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, bestOf));
 		return predictMatch(playerId1, playerId2, date, date, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config);
 	}
 
@@ -138,7 +138,7 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round, PredictionConfig config) {
-		short bstOf = defaultBestOf(level, bestOf);
+		var bstOf = defaultBestOf(level, bestOf);
 		if (playerId1 > 0) {
 			if (playerId2 > 0)
 				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bstOf, round, config);
@@ -154,13 +154,13 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, short bestOf, Round round, PredictionConfig config) {
-		PlayerData playerData1 = getPlayerData(playerId1);
-		PlayerData playerData2 = getPlayerData(playerId2);
-		RankingData rankingData1 = getRankingData(playerId1, date1, surface, indoor, inProgress ? round : null);
-		RankingData rankingData2 = getRankingData(playerId2, date2, surface, indoor, inProgress ? round : null);
-		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
-		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
-		MatchPrediction prediction = predictMatch(List.of(
+		var playerData1 = getPlayerData(playerId1);
+		var playerData2 = getPlayerData(playerId2);
+		var rankingData1 = getRankingData(playerId1, date1, surface, indoor, inProgress ? round : null);
+		var rankingData2 = getRankingData(playerId2, date2, surface, indoor, inProgress ? round : null);
+		var matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
+		var matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
+		var prediction = predictMatch(List.of(
 			new RankingMatchPredictor(rankingData1, rankingData2, bestOf, config),
 			new RecentFormMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, bestOf, config),
 			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bestOf, config),
@@ -172,8 +172,8 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, short bestOf, Round round, PredictionConfig config) {
-		RankingData rankingData = getRankingData(playerId, date, surface, indoor, inProgress ? round : null);
-		List<MatchData> matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
+		var rankingData = getRankingData(playerId, date, surface, indoor, inProgress ? round : null);
+		var matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
 		return predictMatch(List.of(
 			new RankingMatchPredictor(rankingData, getQualifierRankingData(), bestOf, config),
 			new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bestOf, config)
@@ -181,11 +181,11 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	private MatchPrediction predictMatch(Iterable<MatchPredictor> predictors, PredictionConfig config, short bestOf) {
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
-		for (MatchPredictor predictor : predictors) {
-			PredictionArea area = predictor.getArea();
+		var prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
+		for (var predictor : predictors) {
+			var area = predictor.getArea();
 			if (config.isAreaEnabled(area)) {
-				MatchPrediction areaPrediction = predictor.predictMatch();
+				var areaPrediction = predictor.predictMatch();
 				if (!areaPrediction.isEmpty())
 					prediction.addAreaProbabilities(areaPrediction, config.getAreaAdjustedWeight(area));
 			}
@@ -206,8 +206,8 @@ public class MatchPredictionService implements HasCache {
 			params("playerId", playerId),
 			rs -> {
 				if (rs.next()) {
-					String hand = getInternedString(rs, "hand");
-					String backhand = getInternedString(rs, "backhand");
+					var hand = getInternedString(rs, "hand");
+					var backhand = getInternedString(rs, "backhand");
 					return new PlayerData(hand, backhand);
 				}
 				else
@@ -231,15 +231,15 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	private RankingData fetchRankingData(RankingKey key) {
-		RankingData rankingData = new RankingData();
+		var rankingData = new RankingData();
 		if (!key.isQualifier()) {
-			MapSqlParameterSource params = params("playerId", key.playerId).addValue("date", key.date);
+			var params = params("playerId", key.playerId).addValue("date", key.date);
 			jdbcTemplate.query(PLAYER_RANKING_QUERY, params, rs -> {
 				rankingData.setRank(getInteger(rs, "rank"));
 				rankingData.setRankPoints(getInteger(rs, "rank_points"));
 			});
-			String surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
-			String inOutPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
+			var surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
+			var inOutPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
 			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, inOutPrefix), params, rs -> {
 				rankingData.setEloRating(getInteger(rs, "elo_rating"));
 				rankingData.setRecentEloRating(getInteger(rs, "recent_elo_rating"));
@@ -263,14 +263,14 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	private RankingData fetchInProgressRankingData(InProgressRankingKey key) {
-		RankingData rankingData = getRankingData(key.playerId, key.date, key.surface, key.indoor, null);
+		var rankingData = getRankingData(key.playerId, key.date, key.surface, key.indoor, null);
 		if (!includeInProgressEventData || key.round == null)
 			return rankingData;
-		RankingData inProgressData = rankingData.copy();
-		MapSqlParameterSource params = params("playerId", key.playerId).addValue("date", key.date).addValue("round", key.round.getCode());
+		var inProgressData = rankingData.copy();
+		var params = params("playerId", key.playerId).addValue("date", key.date).addValue("round", key.round.getCode());
 		jdbcTemplate.query(PLAYER_IN_PROGRESS_ELO_RATINGS_QUERY, params, rs -> {
-			LocalDate rankDate = rs.getObject("date", LocalDate.class).plusDays(1);
-			LocalDate eloDate = inProgressData.getEloDate();
+			var rankDate = rs.getObject("date", LocalDate.class).plusDays(1);
+			var eloDate = inProgressData.getEloDate();
 			if (eloDate == null || rankDate.isAfter(eloDate)) {
 				inProgressData.setEloRating(getInteger(rs, "elo_rating"));
 				inProgressData.setRecentEloRating(getInteger(rs, "recent_elo_rating"));
@@ -289,9 +289,9 @@ public class MatchPredictionService implements HasCache {
 	// Match Data
 
 	private List<MatchData> getMatchData(int playerId, LocalDate date, Integer tournamentEventId, boolean inProgress, Round round) {
-		List<MatchData> matchData = playersMatches.get(playerId);
+		var matchData = playersMatches.get(playerId);
 		return matchData.stream().filter(match -> {
-			LocalDate matchDate = match.getDate();
+			var matchDate = match.getDate();
 			if (!match.isInProgress())
 				return matchDate.isBefore(date);
 			else if (inProgress) {
@@ -311,7 +311,7 @@ public class MatchPredictionService implements HasCache {
 	}
 
 	private List<MatchData> fetchMatchData(int playerId) {
-		String sql = format(PLAYER_MATCHES_QUERY, includeInProgressEventData ? PLAYER_IN_PROGRESS_MATCHES_UNION : "");
+		var sql = format(PLAYER_MATCHES_QUERY, includeInProgressEventData ? PLAYER_IN_PROGRESS_MATCHES_UNION : "");
 		return jdbcTemplate.query(sql, params("playerId", playerId), this::matchData);
 	}
 
@@ -387,7 +387,7 @@ public class MatchPredictionService implements HasCache {
 		@Override public boolean equals(Object o) {
 			if (this == o) return true;
 			if (!(o instanceof RankingKey)) return false;
-			RankingKey key = (RankingKey)o;
+			var key = (RankingKey)o;
 			return playerId == key.playerId && Objects.equals(date, key.date) && Objects.equals(surface, key.surface) && Objects.equals(indoor, key.indoor);
 		}
 
@@ -409,7 +409,7 @@ public class MatchPredictionService implements HasCache {
 			if (this == o) return true;
 			if (!(o instanceof InProgressRankingKey)) return false;
 			if (!super.equals(o)) return false;
-			InProgressRankingKey key = (InProgressRankingKey)o;
+			var key = (InProgressRankingKey)o;
 			return round == key.round;
 		}
 

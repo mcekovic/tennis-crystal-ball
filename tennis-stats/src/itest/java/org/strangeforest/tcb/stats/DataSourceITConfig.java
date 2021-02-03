@@ -25,7 +25,7 @@ public class DataSourceITConfig {
 
 	@Bean
 	public DataSource dataSource() {
-		PGPoolingDataSource dataSource = new PGPoolingDataSource();
+		var dataSource = new PGPoolingDataSource();
 		dataSource.setDataSourceName("Test");
 		dataSource.setUrl(dataSourceUrl);
 		dataSource.setUser(dataSourceUsername);

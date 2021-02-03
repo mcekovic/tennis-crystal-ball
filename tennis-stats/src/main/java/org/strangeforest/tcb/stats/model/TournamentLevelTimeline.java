@@ -18,7 +18,7 @@ public class TournamentLevelTimeline {
 	}
 
 	public boolean areSameTournaments(int season) {
-		Optional<Integer> nextSeason = getNextSeason(season);
+		var nextSeason = getNextSeason(season);
 		return nextSeason.isPresent() && startsWith(seasonsTournaments.get(nextSeason.get()), seasonsTournaments.get(season));
 	}
 
@@ -41,7 +41,7 @@ public class TournamentLevelTimeline {
 	}
 
 	private void addSeasonTournament(TournamentLevelTimelineItem item) {
-		TournamentItem tournamentItem = new TournamentItem(item.getTournamentId(), item.getName(), item.getLevel());
+		var tournamentItem = new TournamentItem(item.getTournamentId(), item.getName(), item.getLevel());
 		seasonsTournaments.computeIfAbsent(item.getSeason(), s -> new ArrayList<>()).add(tournamentItem);
 	}
 
@@ -51,23 +51,23 @@ public class TournamentLevelTimeline {
 
 	private void updatePlayerWins(TournamentLevelTimelineItem item) {
 		PlayerRow winner = item.getWinner();
-		if (winner == null)
+		if (winner == null || "ABD".equals(item.getOutcome()))
 			return;
 		item.setPlayerWins(playerWins.computeIfAbsent(item.getLevel(), l -> new HashMap<>()).compute(winner.getPlayerId(), (p, w) -> w != null ? w + 1 : 1));
 	}
 
 	public void addMissingSeasonLastTournaments() {
 		for (int season : getSeasons()) {
-			Optional<Integer> optionalPrevSeason = getPrevSeason(season);
+			var optionalPrevSeason = getPrevSeason(season);
 			if (optionalPrevSeason.isEmpty())
 				continue;
 			int prevSeason = optionalPrevSeason.get();
-			List<TournamentItem> seasonTournaments = seasonsTournaments.get(season);
-			List<TournamentItem> prevSeasonTournaments = seasonsTournaments.get(prevSeason);
+			var seasonTournaments = seasonsTournaments.get(season);
+			var prevSeasonTournaments = seasonsTournaments.get(prevSeason);
 			if (startsWith(prevSeasonTournaments, seasonTournaments)) {
-				List<TournamentLevelTimelineItem> prevSeasonEvents = seasonsEvents.get(prevSeason);
-				for (int index = seasonTournaments.size(); index < prevSeasonEvents.size(); index++) {
-					TournamentLevelTimelineItem item = prevSeasonEvents.get(index);
+				var prevSeasonEvents = seasonsEvents.get(prevSeason);
+				for (var index = seasonTournaments.size(); index < prevSeasonEvents.size(); index++) {
+					var item = prevSeasonEvents.get(index);
 					addItem(new TournamentLevelTimelineItem(item.getTournamentId(), item.getName(), season, 0, null, item.getLevel(), null));
 				}
 			}
@@ -81,7 +81,7 @@ public class TournamentLevelTimeline {
 		if (season == getFirstSeason())
 			return Optional.empty();
 		else {
-			for (int prevSeason = season - 1; true; prevSeason--) {
+			for (var prevSeason = season - 1; true; prevSeason--) {
 				if (hasSeason(prevSeason))
 					return Optional.of(prevSeason);
 			}
@@ -92,7 +92,7 @@ public class TournamentLevelTimeline {
 		if (season == getLastSeason())
 			return Optional.empty();
 		else {
-			for (int nextSeason = season + 1; true; nextSeason++) {
+			for (var nextSeason = season + 1; true; nextSeason++) {
 				if (hasSeason(nextSeason))
 					return Optional.of(nextSeason);
 			}

@@ -52,7 +52,7 @@ public class RecordFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof RecordFilter)) return false;
-		RecordFilter filter = (RecordFilter)o;
+		var filter = (RecordFilter)o;
 		return stringsEqual(category, filter.category) && stringsEqual(searchPhrase, filter.searchPhrase) && infamous == filter.infamous;
 	}
 

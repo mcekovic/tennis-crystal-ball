@@ -53,7 +53,7 @@ public class WinningStreaksCategory extends RecordCategory {
 	private static Record winningStreak(RecordDomain domain, String nameSuffix, String tableName, String condition) {
 		if (condition == null)
 			condition = domain.condition;
-		boolean useMaterializedViews = !EnumSet.of(ALL_FINALS, BIG_TOURNAMENTS, SMALL_TOURNAMENTS).contains(domain);
+		var useMaterializedViews = !EnumSet.of(ALL_FINALS, BIG_TOURNAMENTS, SMALL_TOURNAMENTS).contains(domain);
 		return winningStreakRecord(domain.id + nameSuffix + "WinningStreak", suffix(domain.name, " ") + suffix(nameSuffix, " ") + "Winning Streak" + prefix(domain.nameSuffix, " "), tableName, condition, useMaterializedViews, false, domain.urlParam);
 	}
 

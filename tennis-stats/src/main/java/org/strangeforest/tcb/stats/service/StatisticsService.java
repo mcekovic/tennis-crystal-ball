@@ -141,10 +141,10 @@ public class StatisticsService {
 	}
 
 	private MatchStats mapMatchStats(ResultSet rs, boolean inProgress) throws SQLException {
-		String player1 = rs.getString("player1");
-		String player2 = rs.getString("player2");
-		PlayerStats stats1 = mapPlayerMatchStats(rs, inProgress ? "p1_" : "w_");
-		PlayerStats stats2 = mapPlayerMatchStats(rs, inProgress ? "p2_" : "l_");
+		var player1 = rs.getString("player1");
+		var player2 = rs.getString("player2");
+		var stats1 = mapPlayerMatchStats(rs, inProgress ? "p1_" : "w_");
+		var stats2 = mapPlayerMatchStats(rs, inProgress ? "p2_" : "l_");
 		return new MatchStats(player1, player2, stats1, stats2);
 	}
 
@@ -208,7 +208,7 @@ public class StatisticsService {
 				format(PLAYERS_FILTERED_STATS_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "", filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
 				filter.getParams().addValue("playerIds", playerIds),
 				rs -> {
-					int playerId = rs.getInt("player_id");
+					var playerId = rs.getInt("player_id");
 					playersStats.put(playerId, mapPlayerStats(rs, true, false));
 				}
 			);
@@ -217,14 +217,14 @@ public class StatisticsService {
 	}
 
 	private String join(MatchFilter filter) {
-		StringBuilder sb = new StringBuilder(100);
+		var sb = new StringBuilder(100);
 		if (!filter.isTournamentEventFilterEmpty())
 			sb.append(TOURNAMENT_EVENT_JOIN);
 		if (filter.hasSpeedRange())
 			sb.append(EVENT_STATS_JOIN);
 		if (filter.hasResult())
 			sb.append(TOURNAMENT_EVENT_RESULT_JOIN);
-		OpponentFilter opponentFilter = filter.getOpponentFilter();
+		var opponentFilter = filter.getOpponentFilter();
 		if (opponentFilter.isOpponentRequired() || filter.hasSearchPhrase())
 			sb.append(OPPONENT_JOIN);
 		if (filter.isBigWin())
@@ -237,8 +237,8 @@ public class StatisticsService {
 		jdbcTemplate.query(
 			PLAYER_SEASONS_STATS_QUERY, params("playerId", playerId),
 			rs -> {
-				int season = rs.getInt("season");
-				PlayerStats stats = mapPlayerStats(rs, false, false);
+				var season = rs.getInt("season");
+				var stats = mapPlayerStats(rs, false, false);
 				seasonsStats.put(season, stats);
 			}
 		);
@@ -246,8 +246,8 @@ public class StatisticsService {
 	}
 
 	static PlayerStats mapPlayerStats(ResultSet rs, boolean summed, boolean total) throws SQLException {
-		PlayerStats playerStats = mapPlayerStats(rs, "p_", summed, total);
-		PlayerStats opponentStats = mapPlayerStats(rs, "o_", summed, total);
+		var playerStats = mapPlayerStats(rs, "p_", summed, total);
+		var opponentStats = mapPlayerStats(rs, "o_", summed, total);
 		playerStats.crossLinkOpponentStats(opponentStats);
 		return playerStats;
 	}
@@ -308,8 +308,8 @@ public class StatisticsService {
 			format(SEASONS_STATS_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "", where(filter.getCriteria())),
 			filter.getParams(),
 			rs -> {
-				int season = rs.getInt("season");
-				PlayerStats stats = StatisticsService.mapPlayerStats(rs, true, true);
+				var season = rs.getInt("season");
+				var stats = StatisticsService.mapPlayerStats(rs, true, true);
 				seasonsStats.put(season, stats);
 			}
 		);

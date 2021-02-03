@@ -20,7 +20,7 @@ public class TopMatchStatsController extends PageController {
 	public ModelAndView topMatchStats(
 		@RequestParam(name = "category", required = false) String category
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("category", category);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getMatchCategoryClasses());
 		modelMap.addAttribute("seasons", statisticsService.getSeasons());

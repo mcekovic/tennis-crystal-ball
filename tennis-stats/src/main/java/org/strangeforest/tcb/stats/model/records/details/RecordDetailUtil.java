@@ -5,7 +5,7 @@ import static com.google.common.base.Strings.*;
 public abstract class RecordDetailUtil {
 
 	public static String resultURLParam(String result) {
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 		if (!(isNullOrEmpty(result) || result.equals("RR"))) {
 			sb.append("&result=").append(result);
 			if (!result.equals("W"))

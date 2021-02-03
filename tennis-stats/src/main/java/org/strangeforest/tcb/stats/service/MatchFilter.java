@@ -174,18 +174,18 @@ public class MatchFilter extends TournamentEventResultFilter {
 	}
 
 	public boolean isForSeason() {
-		Integer season = getSeason();
+		var season = getSeason();
 		return season != null && equals(forSeason(season));
 	}
 
 	public boolean isForSurface() {
-		String surface = getSurface();
+		var surface = getSurface();
 		return !isNullOrEmpty(surface) && surface.length() == 1 && equals(forSurface(surface));
 	}
 
 	public boolean isForSeasonAndSurface() {
-		Integer season = getSeason();
-		String surface = getSurface();
+		var season = getSeason();
+		var surface = getSurface();
 		return season != null && !isNullOrEmpty(surface) && surface.length() == 1 && equals(forSeasonAndSurface(season, surface));
 	}
 
@@ -196,7 +196,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 		if (this == o) return true;
 		if (!(o instanceof MatchFilter)) return false;
 		if (!super.equals(o)) return false;
-		MatchFilter filter = (MatchFilter)o;
+		var filter = (MatchFilter)o;
 		return Objects.equals(bestOf, filter.bestOf) && stringsEqual(round, filter.round) && opponentFilter.equals(filter.opponentFilter) && outcomeFilter.equals(filter.outcomeFilter) && scoreFilter.equals(filter.scoreFilter) && bigWin == filter.bigWin;
 	}
 

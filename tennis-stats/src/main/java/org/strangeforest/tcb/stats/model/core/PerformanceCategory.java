@@ -56,7 +56,7 @@ public final class PerformanceCategory {
 	}
 
 	private static void addCategory(String categoryClass, String name, String column, String title, int minEntries, String entriesName, boolean basic, String cssClass) {
-		PerformanceCategory category = new PerformanceCategory(name, column, title, minEntries, entriesName, basic, cssClass);
+		var category = new PerformanceCategory(name, column, title, minEntries, entriesName, basic, cssClass);
 		CATEGORIES.put(name, category);
 		if (category.isBasic())
 			BASIC_CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
@@ -64,7 +64,7 @@ public final class PerformanceCategory {
 	}
 
 	public static PerformanceCategory get(String category) {
-		PerformanceCategory perfCategory = CATEGORIES.get(category);
+		var perfCategory = CATEGORIES.get(category);
 		if (perfCategory == null)
 			throw new NotFoundException("Performance category", category);
 		return perfCategory;

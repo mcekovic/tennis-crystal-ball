@@ -66,13 +66,13 @@ abstract class BasePredictionVerificationIT {
 	PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
 		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights: ", fromDate, toDate);
 		printWeights(config, tuningSet, true);
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		PredictionVerificationResult verificationResult = new PredictionVerificationResult(config);
-		Phaser phaser = new Phaser();
+		var stopwatch = Stopwatch.createStarted();
+		var verificationResult = new PredictionVerificationResult(config);
+		var phaser = new Phaser();
 		jdbcTemplate.query(
 			format(MATCHES_QUERY, tuningSet.getCondition()),
 			params("source", PRICE_SOURCE).addValue("fromDate", fromDate).addValue("toDate", toDate), rs -> {
-				MatchForVerification match = match(rs);
+					var match = match(rs);
 				phaser.register();
 				executor.submit(() -> {
 					try {
@@ -89,25 +89,25 @@ abstract class BasePredictionVerificationIT {
 		);
 		phaser.awaitAdvanceInterruptibly(0);
 		verificationResult.complete();
-		PredictionResult result = verificationResult.getResult();
+		var result = verificationResult.getResult();
 		System.out.printf("%1$s in %2$s\n", result, stopwatch);
 		return verificationResult;
 	}
 
 	private void processMatch(MatchForVerification match, PredictionConfig config, PredictionVerificationResult verificationResult) {
-		Surface surface = match.surface;
-		boolean indoor = match.indoor;
-		TournamentLevel level = match.level;
-		short bestOf = match.bestOf;
-		PredictionConfig matchConfig = config != null ? config : PredictionConfig.defaultConfig(TUNING_SET_LEVEL.select(surface, indoor, level, bestOf));
-		MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, surface, indoor, level, bestOf, match.round, matchConfig);
+		var surface = match.surface;
+		var indoor = match.indoor;
+		var level = match.level;
+		var bestOf = match.bestOf;
+		var matchConfig = config != null ? config : PredictionConfig.defaultConfig(TUNING_SET_LEVEL.select(surface, indoor, level, bestOf));
+		var prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, surface, indoor, level, bestOf, match.round, matchConfig);
 		boolean predictable = false, predicted = false, withPrice = false, beatingPrice = false, profitable = false;
 		double winnerProbability = 0.0, stake = 0.0, return_ = 0.0;
 		if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
 			winnerProbability = prediction.getWinProbability1();
-			double loserProbability = prediction.getWinProbability2();
-			Double winnerPrice = match.winnerPrice;
-			Double loserPrice = match.loserPrice;
+			var loserProbability = prediction.getWinProbability2();
+			var winnerPrice = match.winnerPrice;
+			var loserPrice = match.loserPrice;
 			predictable = winnerProbability != 0.5;
 			if (winnerProbability > 0.5)
 				predicted = true;
@@ -165,8 +165,8 @@ abstract class BasePredictionVerificationIT {
 	}
 
 	static void printWeights(PredictionConfig config, boolean compact) {
-		for (PredictionArea area : PredictionArea.values()) {
-			double areaWeight = config.getAreaWeight(area);
+		for (var area : PredictionArea.values()) {
+			var areaWeight = config.getAreaWeight(area);
 			if (areaWeight > 0.0) {
 				System.out.printf("%1$s: %2$s %3$s%4$s", area, areaWeight,
 					Stream.of(area.getItems()).filter(item -> config.getItemWeight(item) > 0.0).map(item -> format("%1$s: %2$s", item, config.getItemWeight(item))).collect(toList()),

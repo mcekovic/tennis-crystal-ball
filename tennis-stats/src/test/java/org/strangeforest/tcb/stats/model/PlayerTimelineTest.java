@@ -13,7 +13,7 @@ class PlayerTimelineTest {
 
 	@Test
 	void simplePlayerTimelineIsCreated() {
-		PlayerTimeline timeline = new PlayerTimeline(emptySet());
+		var timeline = new PlayerTimeline(emptySet());
 		timeline.addItem(new PlayerTimelineItem(1, 1, "Australian Open", 2001, 101, LocalDate.of(2001, 1, 15), "G", "H", false, "Australian Open", "SF"));
 		timeline.addItem(new PlayerTimelineItem(1, 1, "Australian Open", 2002, 201, LocalDate.of(2002, 1, 20), "G", "H", false, "Australian Open", "QF"));
 		timeline.addItem(new PlayerTimelineItem(1, 1, "Australian Open", 2003, 301, LocalDate.of(2003, 1, 18), "G", "H", false, "Australian Open", "W"));
@@ -33,38 +33,38 @@ class PlayerTimelineTest {
 
 
 		assertThat(timeline.getSeasons()).containsExactly(2001, 2002, 2003, 2004, 2008, 2009);
-		List<PlayerTournamentTimeline> tournaments = timeline.getBigTournaments();
+		var tournaments = timeline.getBigTournaments();
 		assertThat(tournaments).hasSize(5);
 
-		PlayerTournamentTimeline tournament1 = tournaments.get(0);
+		var tournament1 = tournaments.get(0);
 		assertThat(tournament1.getMaxLevel()).isEqualTo("G");
 		assertThat(tournament1.getLevelsAndNames()).containsExactly(entry("G", "Australian Open"));
 		assertThat(tournament1.isFirstByLevel()).isTrue();
 		assertThat(tournament1.getSurfaces()).containsExactly(new TimelineSurface("H"));
 		assertThatItemSeasonsAre(tournament1.getItems(), timeline.getSeasons());
 
-		PlayerTournamentTimeline tournament2 = tournaments.get(1);
+		var tournament2 = tournaments.get(1);
 		assertThat(tournament2.getMaxLevel()).isEqualTo("G");
 		assertThat(tournament2.getLevelsAndNames()).containsExactly(entry("G", "Roland Garros"));
 		assertThat(tournament2.isFirstByLevel()).isFalse();
 		assertThat(tournament2.getSurfaces()).containsExactly(new TimelineSurface("C"));
 		assertThatItemSeasonsAre(tournament2.getItems(), timeline.getSeasons());
 
-		PlayerTournamentTimeline tournament3 = tournaments.get(2);
+		var tournament3 = tournaments.get(2);
 		assertThat(tournament3.getMaxLevel()).isEqualTo("M");
 		assertThat(tournament3.getLevelsAndNames()).containsExactly(entry("M", "Miami"));
 		assertThat(tournament3.isFirstByLevel()).isTrue();
 		assertThat(tournament3.getSurfaces()).containsExactly(new TimelineSurface("H"));
 		assertThatItemSeasonsAre(tournament3.getItems(), timeline.getSeasons());
 
-		PlayerTournamentTimeline tournament4 = tournaments.get(3);
+		var tournament4 = tournaments.get(3);
 		assertThat(tournament4.getMaxLevel()).isEqualTo("M");
 		assertThat(tournament4.getLevelsAndNames()).containsExactly(entry("M", "Hamburg Masters"), entry("A", "Hamburg"));
 		assertThat(tournament4.isFirstByLevel()).isFalse();
 		assertThat(tournament4.getSurfaces()).containsExactly(new TimelineSurface("C"));
 		assertThatItemSeasonsAre(tournament4.getItems(), timeline.getSeasons());
 
-		PlayerTournamentTimeline tournament5 = tournaments.get(4);
+		var tournament5 = tournaments.get(4);
 		assertThat(tournament5.getMaxLevel()).isEqualTo("M");
 		assertThat(tournament5.getLevelsAndNames()).containsExactly(entry("M", "Stuttgart Masters"), entry("A", "Stuttgart"));
 		assertThat(tournament5.isFirstByLevel()).isFalse();
@@ -74,8 +74,8 @@ class PlayerTimelineTest {
 
 	private void assertThatItemSeasonsAre(List<PlayerTimelineItem> items, Collection<Integer> seasons) {
 		assertThat(items).hasSize(seasons.size());
-		Iterator<Integer> iter = seasons.iterator();
-		for (PlayerTimelineItem item : items)
+		var iter = seasons.iterator();
+		for (var item : items)
 			assertThat(item.getSeason()).isEqualTo(iter.next());
 	}
 }

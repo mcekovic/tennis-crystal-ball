@@ -27,8 +27,8 @@ public abstract class RowCursor<T> {
 
 	public void addRow() {
 		if (x != null) {
-			TableRow row = table.addRow(formatValue(x));
-			for (String y : ys)
+			var row = table.addRow(formatValue(x));
+			for (var y : ys)
 				row.addCell(y);
 			x = null;
 		}

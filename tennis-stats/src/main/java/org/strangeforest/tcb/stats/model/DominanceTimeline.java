@@ -33,7 +33,7 @@ public class DominanceTimeline {
 	}
 
 	public DominanceSeason getDominanceSeason(int season) {
-		for (DominanceSeason dominanceSeason : dominanceSeasons) {
+		for (var dominanceSeason : dominanceSeasons) {
 			if (dominanceSeason.getSeason() == season)
 				return dominanceSeason;
 		}
@@ -52,28 +52,28 @@ public class DominanceTimeline {
 
 	public void calculateDominanceSeasons() {
 		dominanceSeasons = new ArrayList<>(seasons.size());
-		for (Integer season : seasons) {
-			DominanceSeason dominanceSeason = new DominanceSeason(season, surface);
-			for (PlayerDominanceTimeline player : players)
+		for (var season : seasons) {
+			var dominanceSeason = new DominanceSeason(season, surface);
+			for (var player : players)
 				dominanceSeason.processPlayer(player);
 			dominanceSeasons.add(dominanceSeason);
 		}
 	}
 
 	public void calculateDominanceEras() {
-		int seasonCount = dominanceSeasons.size();
-		for (int i = 0; i < seasonCount; i++) {
-			DominanceSeason dominanceSeason = dominanceSeasons.get(i);
+		var seasonCount = dominanceSeasons.size();
+		for (var i = 0; i < seasonCount; i++) {
+			var dominanceSeason = dominanceSeasons.get(i);
 			if (dominanceSeason.isEligibleForEra()) {
-				PlayerDominanceTimeline bestPlayer = dominanceSeason.getBestPlayer();
-				PlayerDominanceTimeline prevBestPlayer = i > 0 ? getAdjacentSeasonBestPlayer(i - 1) : null;
-				PlayerDominanceTimeline nextBestPlayer = i < seasonCount - 1 ? getAdjacentSeasonBestPlayer(i + 1) : null;
+				var bestPlayer = dominanceSeason.getBestPlayer();
+				var prevBestPlayer = i > 0 ? getAdjacentSeasonBestPlayer(i - 1) : null;
+				var nextBestPlayer = i < seasonCount - 1 ? getAdjacentSeasonBestPlayer(i + 1) : null;
 				dominanceSeason.setEraPlayer(prevBestPlayer == null || prevBestPlayer != nextBestPlayer ? bestPlayer : prevBestPlayer);
 			}
 		}
 		dominanceEras = new ArrayList<>();
 		List<DominanceSeason> eraSeasons = null;
-		for (DominanceSeason dominanceSeason : dominanceSeasons) {
+		for (var dominanceSeason : dominanceSeasons) {
 			if (eraSeasons != null && dominanceSeason.getEraPlayer() != eraSeasons.get(0).getEraPlayer()) {
 				dominanceEras.add(new DominanceEra(eraSeasons));
 				eraSeasons = null;
@@ -87,23 +87,23 @@ public class DominanceTimeline {
 	}
 
 	private PlayerDominanceTimeline getAdjacentSeasonBestPlayer(int seasonIndex) {
-		DominanceSeason prevSeason = dominanceSeasons.get(seasonIndex);
+		var prevSeason = dominanceSeasons.get(seasonIndex);
 		return !prevSeason.isOngoingSeason() ? prevSeason.getBestPlayer() : null;
 	}
 
 	public DominanceTimeline filterSeasons(Range<Integer> seasonRange) {
 		if (seasonRange.equals(Range.all()))
 			return this;
-		DominanceTimeline timeline = new DominanceTimeline(surface);
-		for (PlayerDominanceTimeline player : players) {
+		var timeline = new DominanceTimeline(surface);
+		for (var player : players) {
 			player = player.filterSeasons(seasonRange);
 			if (player.hasSeasons())
 				timeline.addPlayer(player);
 		}
 		timeline.calculateDominanceSeasons();
 		timeline.calculateDominanceEras();
-		for (DominanceSeason dominanceSeason : timeline.getDominanceSeasons()) {
-			DominanceSeason season = getDominanceSeason(dominanceSeason.getSeason());
+		for (var dominanceSeason : timeline.getDominanceSeasons()) {
+			var season = getDominanceSeason(dominanceSeason.getSeason());
 			if (season != null) {
 				dominanceSeason.setPredictability(season.getPredictability());
 				dominanceSeason.setEloPredictability(season.getEloPredictability());

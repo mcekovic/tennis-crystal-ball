@@ -69,7 +69,7 @@ public class ScoreFilter {
 			}
 			else {
 				after = score.endsWith("+");
-				int pos = score.indexOf(':');
+				var pos = score.indexOf(':');
 				if (pos >= 0) {
 					wSets = pos > 0 ? Integer.parseInt(score.substring(0, pos)) : 0;
 					lSets = pos < score.length() - 1 ? Integer.parseInt(score.substring(pos + 1, score.length() - (after ? 1 : 0))) : 0;
@@ -130,8 +130,8 @@ public class ScoreFilter {
 			));
 		}
 		else if (misc.length() == 3 && misc.charAt(1) == ':') {
-			int wGames = Integer.parseInt(misc.substring(0, 1));
-			int lGames = Integer.parseInt(misc.substring(2));
+			var wGames = Integer.parseInt(misc.substring(0, 1));
+			var lGames = Integer.parseInt(misc.substring(2));
 			criteria.append(format(forStats ? STATS_CRITERION_TEMPLATE : MATCHES_CRITERION_TEMPLATE, format(SET_GAMES_CRITERION, wGames, lGames), format(SET_GAMES_CRITERION, lGames, wGames)));
 		}
 	}
@@ -233,7 +233,7 @@ public class ScoreFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof ScoreFilter)) return false;
-		ScoreFilter filter = (ScoreFilter)o;
+		var filter = (ScoreFilter)o;
 		return wSets == filter.wSets && lSets == filter.lSets && after == filter.after && stringsEqual(misc, filter.misc) && all == filter.all;
 	}
 
@@ -242,7 +242,7 @@ public class ScoreFilter {
 	}
 
 	@Override public String toString() {
-		ToStringHelper helper = MoreObjects.toStringHelper(this).omitNullValues();
+		var helper = MoreObjects.toStringHelper(this).omitNullValues();
 		if (!all) {
 			if (isNullOrEmpty(misc)) {
 				helper.add("after", nullIf(after, true));

@@ -84,7 +84,7 @@ public enum Opponent {
 
 	private static final Supplier<Map<OpponentCategory, List<Opponent>>> CATEGORIES = () -> {
 		Map<OpponentCategory, List<Opponent>> categories = new LinkedHashMap<>();
-		for (Opponent opponent : Opponent.values())
+		for (var opponent : Opponent.values())
 			categories.computeIfAbsent(opponent.category, c -> new ArrayList<>()).add(opponent);
 		return categories;
 	};

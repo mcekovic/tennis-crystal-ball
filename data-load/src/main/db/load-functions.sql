@@ -468,7 +468,7 @@ BEGIN
 		 p_score, p_outcome::match_outcome, p_w_sets, p_l_sets, p_w_games, p_l_games, p_w_tbs, p_l_tbs, l_has_stats)
 		RETURNING match_id INTO l_match_id;
 		l_new := TRUE;
-   EXCEPTION WHEN unique_violation THEN
+    EXCEPTION WHEN unique_violation THEN
 		UPDATE match
 		SET date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
 			winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry::tournament_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_elo_rating = l_winner_elo_rating, winner_age = p_winner_age, winner_height = p_winner_height,
@@ -477,7 +477,7 @@ BEGIN
 		WHERE tournament_event_id = l_tournament_event_id AND match_num = p_match_num
 		RETURNING match_id INTO l_match_id;
 		l_new := FALSE;
-   END;
+    END;
 
 	-- merge match_stats
 	IF l_has_stats THEN
@@ -513,6 +513,55 @@ BEGIN
 		WHERE match_id = l_match_id AND set > l_set_count;
 	END IF;
 
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- load_match_stats
+
+CREATE OR REPLACE PROCEDURE load_match_stats(
+    p_match_id BIGINT,
+	p_minutes SMALLINT,
+	p_w_ace SMALLINT,
+	p_w_df SMALLINT,
+	p_w_sv_pt SMALLINT,
+	p_w_1st_in SMALLINT,
+	p_w_1st_won SMALLINT,
+	p_w_2nd_won SMALLINT,
+	p_w_sv_gms SMALLINT,
+	p_w_bp_sv SMALLINT,
+	p_w_bp_fc SMALLINT,
+	p_l_ace SMALLINT,
+	p_l_df SMALLINT,
+	p_l_sv_pt SMALLINT,
+	p_l_1st_in SMALLINT,
+	p_l_1st_won SMALLINT,
+	p_l_2nd_won SMALLINT,
+	p_l_sv_gms SMALLINT,
+	p_l_bp_sv SMALLINT,
+	p_l_bp_fc SMALLINT
+) AS $$
+DECLARE
+	l_has_stats BOOLEAN;
+BEGIN
+	l_has_stats := (p_minutes IS NOT NULL AND p_minutes > 0) OR (coalesce(p_w_sv_pt, 0) + coalesce(p_l_sv_pt, 0) > 0);
+	IF l_has_stats THEN
+		INSERT INTO match_stats
+		(match_id, set, minutes,
+		 w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,
+		 l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc)
+		VALUES
+		(p_match_id, 0, p_minutes,
+		 p_w_ace, p_w_df, p_w_sv_pt, p_w_1st_in, p_w_1st_won, p_w_2nd_won, p_w_sv_gms, p_w_bp_sv, p_w_bp_fc,
+		 p_l_ace, p_l_df, p_l_sv_pt, p_l_1st_in, p_l_1st_won, p_l_2nd_won, p_l_sv_gms, p_l_bp_sv, p_l_bp_fc)
+		ON CONFLICT (match_id, set)
+		DO UPDATE SET minutes = p_minutes,
+			w_ace = p_w_ace, w_df = p_w_df, w_sv_pt = p_w_sv_pt, w_1st_in = p_w_1st_in, w_1st_won = p_w_1st_won, w_2nd_won = p_w_2nd_won, w_sv_gms = p_w_sv_gms, w_bp_sv = p_w_bp_sv, w_bp_fc = p_w_bp_fc,
+			l_ace = p_l_ace, l_df = p_l_df, l_sv_pt = p_l_sv_pt, l_1st_in = p_l_1st_in, l_1st_won = p_l_1st_won, l_2nd_won = p_l_2nd_won, l_sv_gms = p_l_sv_gms, l_bp_sv = p_l_bp_sv, l_bp_fc = p_l_bp_fc;
+		UPDATE match
+	    SET has_stats = TRUE
+	    WHERE match_id = p_match_id;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -679,15 +728,15 @@ BEGIN
 		IF p_player1_country_id IS NULL THEN
 			SELECT country_id INTO p_player1_country_id FROM player WHERE player_id = l_player1_id;
 		END IF;
-		l_player1_rank := player_rank(l_player1_id, current_date);
-		l_player1_elo_ratings := player_elo_ratings(l_player1_id, current_date, p_surface, p_indoor);
+		l_player1_rank := player_rank(l_player1_id, p_date);
+		l_player1_elo_ratings := player_elo_ratings(l_player1_id, p_date, p_surface, p_indoor);
 	END IF;
 	IF l_player2_id IS NOT NULL THEN
 		IF p_player2_country_id IS NULL THEN
 			SELECT country_id INTO p_player2_country_id FROM player WHERE player_id = l_player2_id;
 		END IF;
-		l_player2_rank := player_rank(l_player2_id, current_date);
-		l_player2_elo_ratings := player_elo_ratings(l_player2_id, current_date, p_surface, p_indoor);
+		l_player2_rank := player_rank(l_player2_id, p_date);
+		l_player2_elo_ratings := player_elo_ratings(l_player2_id, p_date, p_surface, p_indoor);
 	END IF;
 
 	l_has_stats := (p_minutes IS NOT NULL AND p_minutes > 0) OR (coalesce(p_p1_sv_pt, 0) + coalesce(p_p2_sv_pt, 0) > 0);
@@ -1012,6 +1061,34 @@ BEGIN
 	UPDATE tournament
 	SET linked = TRUE
 	WHERE tournament_id = l_tournament_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- link_tournament_events
+
+CREATE OR REPLACE PROCEDURE link_tournament_events(
+	p_ext_tournament_id TEXT,
+	p_to_ext_tournament_id TEXT,
+	p_season_range int4range
+) AS $$
+DECLARE
+	l_tournament_id INTEGER;
+	l_to_tournament_id INTEGER;
+BEGIN
+	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
+	IF l_tournament_id IS NULL THEN
+		RAISE EXCEPTION 'Tournament % not found', p_ext_tournament_id;
+	END IF;
+	l_to_tournament_id := map_ext_tournament(p_to_ext_tournament_id);
+	IF l_to_tournament_id IS NULL THEN
+		RAISE EXCEPTION 'Tournament % not found', p_to_ext_tournament_id;
+	END IF;
+
+	UPDATE tournament_event
+	SET tournament_id = l_to_tournament_id
+	WHERE original_tournament_id = l_tournament_id
+	AND p_season_range @> season::INTEGER;
 END;
 $$ LANGUAGE plpgsql;
 

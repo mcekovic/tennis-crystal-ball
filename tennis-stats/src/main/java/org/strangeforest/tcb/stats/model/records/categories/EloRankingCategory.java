@@ -13,7 +13,7 @@ public class EloRankingCategory extends RankingCategory {
 	public EloRankingCategory(RankType rankType, RecordDomain domain) {
 		super(RankClass.ELO, rankType, suffix(domain.name, " ") + "Elo Ranking", N_A, N_A);
 		registerRanking(domain, "elo_");
-		String ratingColumn = domain.columnPrefix + "elo_rating";
+		var ratingColumn = domain.columnPrefix + "elo_rating";
 		register(mostPoints(domain.id + "EloRating", "Highest " + suffix(domain.name, " ") + "Elo Rating", "player_best_elo_rating", "best_" + ratingColumn, "best_" + ratingColumn + "_date", "Elo Rating", getRankType(domain), N_A));
 		if (domain == ALL)
 			register(mostEndOfSeasonPoints("EndOfSeasonEloRating", "Highest End of Season Elo Rating", "player_year_end_elo_rank", "year_end_elo_rating", "Elo Rating", getRankType(domain), N_A));

@@ -24,7 +24,7 @@ public class NewCompletedEventsJob {
 
 	private void clearCaches() {
 		dataService.evictGlobal("Tournaments");
-		int cacheCount = dataService.clearCaches("Tournament.*");
+		var cacheCount = dataService.clearCaches("Tournament.*");
 		LOGGER.info("{} cache(s) cleared.", cacheCount);
 	}
 }

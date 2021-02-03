@@ -58,10 +58,10 @@ public class DataService {
 	}
 
 	private Version dbServerVersion() {
-		String versionStr = getDBServerVersionString();
-		String[] versionArr = versionStr.split(" ");
+		var versionStr = getDBServerVersionString();
+		var versionArr = versionStr.split(" ");
 		if (versionArr.length >= 2) {
-			String version = versionArr[1];
+			var version = versionArr[1];
 			if (version.endsWith(","))
 				version = version.substring(0, version.length() - 1);
 			return ServerVersion.from(version);
@@ -93,31 +93,31 @@ public class DataService {
 	}
 
 	public Integer getFirstSeason() {
-		List<Integer> seasons = self.getSeasons();
+		var seasons = self.getSeasons();
 		return !seasons.isEmpty() ? seasons.get(seasons.size() - 1) : null;
 	}
 
 	public Integer getLastSeason() {
-		List<Integer> seasons = self.getSeasons();
+		var seasons = self.getSeasons();
 		return !seasons.isEmpty() ? seasons.get(0) : null;
 	}
 
 	public int clearCaches(String nameRegEx) {
-		Pattern pattern = Pattern.compile(nameRegEx);
-		int cacheCount = 0;
-		for (String cacheName : cacheManager.getCacheNames()) {
+		var pattern = Pattern.compile(nameRegEx);
+		var cacheCount = 0;
+		for (var cacheName : cacheManager.getCacheNames()) {
 			if (pattern.matcher(cacheName).matches()) {
 				cacheManager.getCache(cacheName).clear();
 				cacheCount++;
 			}
 		}
-		for (HasCache hasCache : appContext.getBeansOfType(HasCache.class).values())
+		for (var hasCache : appContext.getBeansOfType(HasCache.class).values())
 			cacheCount += hasCache.clearCache();
 		return cacheCount;
 	}
 
 	public void evictGlobal(Object key) {
-		Cache cache = cacheManager.getCache("Global");
+		var cache = cacheManager.getCache("Global");
 		if (cache != null)
 			cache.evict(key);
 	}

@@ -28,13 +28,13 @@ public class TournamentsResource {
 
 	private static final Comparator<Tournament> BY_NAME = nullsLast(comparing(Tournament::getName));
 	private static final Comparator<Tournament> BY_LEVEL = (t1, t2) -> compareLists(mapSortList(t1.getLevels(), TournamentLevel::decode), mapSortList(t2.getLevels(), TournamentLevel::decode));
-	private static Map<String, Comparator<Tournament>> ORDER_MAP = Map.of(
+	private static final Map<String, Comparator<Tournament>> ORDER_MAP = Map.of(
 		"name", BY_NAME,
 		"levels", BY_LEVEL,
 		"surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::safeDecode), mapList(t2.getSurfaces(), Surface::safeDecode)),
 		"speeds", (t1, t2) -> {
-			List<Integer> speeds1 = t1.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
-			List<Integer> speeds2 = t2.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
+				var speeds1 = t1.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
+				var speeds2 = t2.getSpeeds().values().stream().sorted(reverseOrder()).collect(toList());
 			return compareLists(speeds1, speeds2);
 		},
 		"eventCount", comparing(Tournament::getEventCount),
@@ -57,11 +57,11 @@ public class TournamentsResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<LocalDate> dateRange = DateUtil.toDateRange(fromSeason, toSeason);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		TournamentEventFilter filter = new TournamentEventFilter(null, dateRange, level, surface, indoor, speedRange, null, null, searchPhrase);
-		Comparator<Tournament> comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
-		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
+		var dateRange = DateUtil.toDateRange(fromSeason, toSeason);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = new TournamentEventFilter(null, dateRange, level, surface, indoor, speedRange, null, null, searchPhrase);
+		var comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
+		var pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return sortAndPage(tournamentService.getTournaments(filter), comparator, pageSize, current);
 	}
 }

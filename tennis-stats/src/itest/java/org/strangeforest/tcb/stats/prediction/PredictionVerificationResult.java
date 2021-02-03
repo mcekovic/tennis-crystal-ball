@@ -37,34 +37,34 @@ public class PredictionVerificationResult {
 	public synchronized void newMatch(MatchForVerification match, boolean predictable, double winnerProbability, boolean predicted, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
 		result.newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 		if (predictable) {
-			double probability = predicted ? winnerProbability : 1.0 - winnerProbability;
+			var probability = predicted ? winnerProbability : 1.0 - winnerProbability;
 			probability = Math.round(probability * PROBABILITY_RANGES_2) / (double)PROBABILITY_RANGES_2;
 			probabilityRangeResults.computeIfAbsent(probability, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 		}
-		Surface surface = match.surface;
+		var surface = match.surface;
 		if (surface != null)
 			surfaceResults.computeIfAbsent(surface, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
-		TournamentLevel level = match.level;
+		var level = match.level;
 		if (level != null)
 			levelResults.computeIfAbsent(level, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
-		short bestOf = match.bestOf;
+		var bestOf = match.bestOf;
 		bestOfResults.computeIfAbsent(bestOf, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
-		Range<Integer> rankRange = rankRange(nullsLastMin(match.winnerRank, match.loserRank));
+		var rankRange = rankRange(nullsLastMin(match.winnerRank, match.loserRank));
 		if (rankRange != null)
 			rankRangeResults.computeIfAbsent(rankRange, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 	}
 
 	public synchronized void complete() {
 		result.complete();
-		for (PredictionResult result : probabilityRangeResults.values())
+		for (var result : probabilityRangeResults.values())
 			result.complete();
-		for (PredictionResult result : surfaceResults.values())
+		for (var result : surfaceResults.values())
 			result.complete();
-		for (PredictionResult result : levelResults.values())
+		for (var result : levelResults.values())
 			result.complete();
-		for (PredictionResult result : bestOfResults.values())
+		for (var result : bestOfResults.values())
 			result.complete();
-		for (PredictionResult result : rankRangeResults.values())
+		for (var result : rankRangeResults.values())
 			result.complete();
 	}
 
@@ -89,7 +89,7 @@ public class PredictionVerificationResult {
 	}
 
 	public Map<Range<Integer>, PredictionResult> getRankRangeResults() {
-		TreeMap<Range<Integer>, PredictionResult> sorted = new TreeMap<>(comparingInt(Range::lowerEndpoint));
+		var sorted = new TreeMap<Range<Integer>, PredictionResult>(comparingInt(Range::lowerEndpoint));
 		sorted.putAll(rankRangeResults);
 		return sorted;
 	}

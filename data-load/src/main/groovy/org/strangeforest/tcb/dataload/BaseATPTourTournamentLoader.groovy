@@ -15,7 +15,9 @@ abstract class BaseATPTourTournamentLoader {
 
 	protected final Sql sql
 
-	protected static final int FETCH_THREAD_COUNT = 5
+	private static final int FETCH_STATS_THREAD_COUNT = 1
+	private static final long FETCH_STATS_PAUSE_MIN = 5000L
+	private static final long FETCH_STATS_PAUSE_MAX = 10000L
 
 	BaseATPTourTournamentLoader(Sql sql) {
 		this.sql = sql
@@ -29,23 +31,27 @@ abstract class BaseATPTourTournamentLoader {
 
 	static getName(Document doc, String level, int season) {
 		switch (level) {
-			case 'G': return doc.select('span.tourney-title').text() ?: doc.select('td.title-content > a:nth-child(1)').text()
+			case 'G': return doc.select('span.tourney-title').text() ?: doc.select('td.title-content > a.tourney-title').text()
 			case 'F': return 'Tour Finals'
 			default:
-				def location = doc.select('td.title-content > span:nth-child(2)').text()
+				def name = doc.select('td.title-content > a.tourney-title').text()
+				def location = doc.select('td.title-content > span.tourney-location').text()
 				def pos = location.indexOf(',')
-				def name = pos > 0 ? location.substring(0, pos) : location
+				def city = pos > 0 ? location.substring(0, pos) : location
+				name = name ?: city
+
+				def pos2 = name.length() - 2
+				if (pos2 > 0 && name.charAt(pos2) == '-')
+					name = name.substring(0, pos2) + ' ' + name.substring(pos2 + 1)
 				switch (level) {
 					case 'M':
-						if (name.startsWith('Montreal'))
-							name = 'Canada' + name.substring(8)
-						else if (name.startsWith('Toronto'))
-							name = 'Canada' + name.substring(7)
+						if (name.startsWith('ATP Masters 1000 '))
+							name = name.substring(17)
 						if (season >= 1990 && !name.endsWith(' Masters'))
 							name += ' Masters'
 						return name
 					case 'H':
-						if (name.startsWith('Milan') && season >= 2017)
+						if (name.equals('Next Gen ATP Finals'))
 							return 'Next Gen Finals'
 						else
 							return name
@@ -105,11 +111,15 @@ abstract class BaseATPTourTournamentLoader {
 					name.startsWith('Tour Finals')
 				)) ||
 				(season >= 2018 && (
-					name.startsWith('New York') ||
+					(name.startsWith('New York') && !(name == "New York Masters")) ||
 					(name.startsWith('Tokyo') && season == 2018)
 				)) ||
 				(season >= 2019 && (
 					name.startsWith('Davis Cup Finals')
+				)) ||
+				(season >= 2020 && (
+					name.startsWith('Cologne') ||
+					name.startsWith('Nur-Sultan')
 				))
 			case 'C': return (season >= 2018 && (
 					name.startsWith('Sao Paulo')
@@ -288,7 +298,8 @@ abstract class BaseATPTourTournamentLoader {
 
 	static loadStats(matches, int season, extId, String prefix1, String prefix2, String nameProperty1, String nameProperty2) {
 		def progress = new ProgressTicker('.' as char, 1).withDownstreamTicker(ProgressTicker.newLineTicker())
-		def pool = new ForkJoinPool(FETCH_THREAD_COUNT)
+		def pool = new ForkJoinPool(FETCH_STATS_THREAD_COUNT)
+		def rnd = new Random()
 		try {
 			pool.submit {
 				matches.parallelStream().forEach { match ->
@@ -301,6 +312,7 @@ abstract class BaseATPTourTournamentLoader {
 							forcedUrl = true
 						}
 						if (statsUrl) {
+							randomCrawl(rnd)
 							def statsDoc = retriedGetDoc(statsUrl)
 							if (forcedUrl) {
 								def title = statsDoc.select('div.modal-scores-header h3.section-title').text()
@@ -310,7 +322,7 @@ abstract class BaseATPTourTournamentLoader {
 										println "\nMatch '$title' cannot be found"
 								}
 							}
-							if (match)
+							if (match && statsDoc)
 								setMatchStatsParams(match, statsDoc, prefix1, prefix2, nameProperty1, nameProperty2, progress)
 						}
 					}
@@ -333,7 +345,7 @@ abstract class BaseATPTourTournamentLoader {
 	}
 
 	static matchStatsUrl(int season, extId, String matchNum) {
-		"https://www.atptour.com/en/scores/$season/$extId/MS$matchNum/match-stats"
+		"https://www.atptour.com/en/scores/match-stats/archive/$season/$extId/MS$matchNum"
 	}
 
 	static setMatchStatsParams(Map match, statsDoc, String prefix1, String prefix2, String nameProperty1, String nameProperty2, ProgressTicker progress) {
@@ -397,5 +409,18 @@ abstract class BaseATPTourTournamentLoader {
 		matches.find { match ->
 			title.contains(match[nameProperty1].toLowerCase()) && title.contains(match[nameProperty2].toLowerCase())
 		}
+	}
+
+	static randomCrawl(Random rnd) {
+		randomPause(rnd)
+		if (rnd.nextInt(10) == 0) {
+			retriedGetDoc('https://www.atptour.com')
+			print '*'
+			randomPause(rnd)
+		}
+	}
+
+	static randomPause(Random rnd) {
+		Thread.sleep(FETCH_STATS_PAUSE_MIN + rnd.nextInt(FETCH_STATS_PAUSE_MAX - FETCH_STATS_PAUSE_MIN as int))
 	}
 }

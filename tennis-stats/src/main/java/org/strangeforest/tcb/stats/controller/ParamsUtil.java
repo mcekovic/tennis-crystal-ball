@@ -42,8 +42,8 @@ public class ParamsUtil {
 		if (isNullOrEmpty(props))
 			return emptyMap();
 		Map<String, Integer> propMap = new HashMap<>();
-		for (String prop : props.split(",")) {
-			int pos = prop.indexOf('=');
+		for (var prop : props.split(",")) {
+			var pos = prop.indexOf('=');
 			if (pos > 0)
 				propMap.put(prop.substring(0, pos), Integer.parseInt(prop.substring(pos + 1)));
 			else

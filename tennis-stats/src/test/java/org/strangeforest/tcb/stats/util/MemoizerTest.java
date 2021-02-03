@@ -45,7 +45,7 @@ class MemoizerTest {
 	@Test
 	void valueIsMemoizedAndCleared() {
 		when(supplier.get()).thenReturn("Pera");
-		Memoizer<String> memoizer = Memoizer.of(supplier);
+		var memoizer = Memoizer.of(supplier);
 
 		assertThat(memoizer.get()).isEqualTo("Pera");
 		verify(supplier).get();

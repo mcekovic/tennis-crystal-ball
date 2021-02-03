@@ -23,9 +23,9 @@ abstract class FilterUtil {
 	}
 
 	static String or(String... conditions) {
-		StringBuilder or = new StringBuilder();
+		var or = new StringBuilder();
 		for (int i = 0, len = conditions.length; i < len; i++) {
-			String condition = conditions[i];
+			var condition = conditions[i];
 			or.append(i == 0 ? " AND ((" : ") OR (");
 			or.append(skipAnd(condition));
 		}
@@ -34,13 +34,13 @@ abstract class FilterUtil {
 	}
 
 	static String rangeFilter(Range<?> range, String column) {
-		StringBuilder condition = new StringBuilder();
+		var condition = new StringBuilder();
 		appendRangeFilter(condition, range, column);
 		return condition.toString();
 	}
 
 	static String rangeFilter(Range<?> range, String column, String param) {
-		StringBuilder condition = new StringBuilder();
+		var condition = new StringBuilder();
 		appendRangeFilter(condition, range, column, param);
 		return condition.toString();
 	}

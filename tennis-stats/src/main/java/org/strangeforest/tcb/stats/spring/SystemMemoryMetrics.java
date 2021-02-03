@@ -29,7 +29,7 @@ public class SystemMemoryMetrics {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SystemMemoryMetrics.class);
 
 	public SystemMemoryMetrics(MeterRegistry meterRegistry) {
-		for (SystemMemoryGauge gauge : SYSTEM_MEMORY_GAUGES)
+		for (var gauge : SYSTEM_MEMORY_GAUGES)
 			meterRegistry.gauge(SYSTEM_MEMORY, List.of(Tag.of(TYPE, gauge.type), Tag.of(ID, gauge.id)), gauge, SystemMemoryGauge::getMemoryValue);
 	}
 
@@ -51,12 +51,12 @@ public class SystemMemoryMetrics {
 
 		private static Object invoke(Object obj, String methodName) {
 			try {
-				Method method = obj.getClass().getDeclaredMethod(methodName);
+				var method = obj.getClass().getDeclaredMethod(methodName);
 				method.setAccessible(true);
 				return method.invoke(obj);
 			}
 			catch (InvocationTargetException ex) {
-				Throwable target = ex.getTargetException();
+				var target = ex.getTargetException();
 				if (target == null)
 					target = ex;
 				LOGGER.error(target.getMessage(), target);

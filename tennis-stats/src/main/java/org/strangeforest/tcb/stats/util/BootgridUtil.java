@@ -8,8 +8,8 @@ public abstract class BootgridUtil {
 
 	public static String getOrderBy(Map<String, String> params, Map<String, String> orderMap, OrderBy... defaultOrders) {
 		String orderBy = null;
-		for (Map.Entry<String, String> order : orderMap.entrySet()) {
-			String sort = findSortBy(params, order.getKey(), order.getValue());
+		for (var order : orderMap.entrySet()) {
+			var sort = findSortBy(params, order.getKey(), order.getValue());
 			if (sort != null) {
 				if (orderBy != null)
 					orderBy += ", " + sort;
@@ -17,7 +17,7 @@ public abstract class BootgridUtil {
 					orderBy = sort;
 			}
 		}
-		for (OrderBy defaultOrder : defaultOrders) {
+		for (var defaultOrder : defaultOrders) {
 			if (orderBy != null) {
 				if (!hasColumn(orderBy, defaultOrder))
 					orderBy += ", " + defaultOrder;
@@ -29,7 +29,7 @@ public abstract class BootgridUtil {
 	}
 
 	private static String findSortBy(Map<String, String> params, String attrName, final String columnName) {
-		String sort = getSort(params, attrName);
+		var sort = getSort(params, attrName);
 		return sort != null ? OrderBy.addSort(columnName, sort.toUpperCase()) : null;
 	}
 
@@ -38,19 +38,19 @@ public abstract class BootgridUtil {
 	}
 
 	private static boolean hasColumn(String orderBy, OrderBy order) {
-		String column = order.getColumn();
+		var column = order.getColumn();
 		return orderBy.contains(column + ' ') || orderBy.contains(column + ',');
 	}
 
 	public static <T> Comparator<T> getComparator(Map<String, String> params, Map<String, Comparator<T>> orderMap, Comparator<T> defaultComparator) {
 		Comparator<T> orderBy = null;
-		for (Map.Entry<String, Comparator<T>> order : orderMap.entrySet())
+		for (var order : orderMap.entrySet())
 			orderBy = chain(orderBy, findComparator(params, order.getKey(), order.getValue()));
 		return chain(orderBy, defaultComparator);
 	}
 
 	private static <T> Comparator<T> findComparator(Map<String, String> params, String attrName, Comparator<T> comparator) {
-		String sort = getSort(params, attrName);
+		var sort = getSort(params, attrName);
 		return sort != null ? (sort.toUpperCase().equals("DESC") ? comparator.reversed() : comparator ) : null;
 	}
 
@@ -59,9 +59,9 @@ public abstract class BootgridUtil {
 	}
 
 	public static <T> BootgridTable<T> sortAndPage(List<T> rows, Comparator<T> comparator, int pageSize, int currentPage) {
-		BootgridTable<T> table = new BootgridTable<>(currentPage);
-		int offset = (currentPage - 1) * pageSize;
-		int endOffset = Math.min(offset + pageSize, rows.size());
+		var table = new BootgridTable<T>(currentPage);
+		var offset = (currentPage - 1) * pageSize;
+		var endOffset = Math.min(offset + pageSize, rows.size());
 		rows.sort(comparator);
 		table.addRows(rows.subList(offset, endOffset));
 		table.setTotal(rows.size());

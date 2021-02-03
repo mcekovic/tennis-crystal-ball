@@ -1,28 +1,57 @@
+DO $$ BEGIN
+
+-- 1968
+CALL set_tournament_event_surface(1968, 'Richmond', 'P', TRUE);
+CALL set_tournament_event_surface(1968, 'Shreveport WCT', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Salisbury', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Macon', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Kingston', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Sao Paulo NTL 1', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Bogota NTL', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Paris NTL', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Wembley NTL 1', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Wembley NTL 2', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Bastad WCT', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Cannes WCT', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Sao Paulo NTL 2', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Vienna WCT', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'London 2', NULL, TRUE);
+CALL set_tournament_event_surface(1968, 'Wembley 3', 'P', TRUE);
+CALL set_tournament_event_surface(1968, 'London 3', NULL, TRUE);
+
 -- 1969
 CALL set_tournament_event_surface(1969, 'Stockholm Open', NULL, TRUE);
+CALL set_tournament_event_surface(1969, 'Omaha', NULL, TRUE);
+CALL set_tournament_event_surface(1969, 'Salisbury', NULL, TRUE);
+CALL set_tournament_event_surface(1969, 'Kingston', NULL, TRUE);
+CALL set_tournament_event_surface(1969, '9284', NULL, TRUE);
+CALL set_tournament_event_surface(1969, 'Cologne', NULL, TRUE); -- London 2
+CALL set_tournament_event_surface(1969, 'Vienna', NULL, TRUE);
 
 -- 1970
-CALL set_tournament_event_surface(1970, 'Casablanca WCT', 'H', FALSE);
+CALL set_tournament_event_surface(1970, 'Salisbury', NULL, TRUE);
+CALL set_tournament_event_surface(1970, 'Casablanca WCT', 'C', FALSE);
 CALL set_tournament_event_surface(1970, 'Stockholm Open', NULL, TRUE);
 
 -- 1971
+CALL set_tournament_event_surface(1971, 'Sydney Outdoor', 'G', FALSE);
 CALL set_tournament_event_surface(1971, 'New York', 'H', TRUE);
 CALL set_tournament_event_surface(1971, 'Queen''s Club', 'G', FALSE);
 CALL set_tournament_event_surface(1971, 'Quebec WCT', 'H', TRUE);
 CALL set_tournament_event_surface(1971, 'Vancouver WCT', 'H', FALSE);
 CALL set_tournament_event_surface(1971, 'Paris Indoor', 'P', TRUE);
 CALL set_tournament_event_surface(1971, 'Merion', 'G', FALSE);
-CALL set_tournament_event_surface(1971, 'Richmond', NULL, TRUE);
+CALL set_tournament_event_surface(1971, 'Richmond', 'P', TRUE);
 CALL set_tournament_event_surface(1971, 'Salisbury', NULL, TRUE);
 CALL set_tournament_event_surface(1971, 'Hampton', NULL, TRUE);
 CALL set_tournament_event_surface(1971, 'Stockholm Open', NULL, TRUE);
-CALL set_tournament_event_surface(1971, 'Wembley', NULL, TRUE);
+CALL set_tournament_event_surface(1971, 'Wembley', 'P', TRUE);
 
 -- 1972
 CALL set_tournament_event_surface(1972, 'Des Moines', 'H', TRUE);
 CALL set_tournament_event_surface(1972, 'Kansas City', 'H', TRUE);
 CALL set_tournament_event_surface(1972, 'Los Angeles', 'H', TRUE);
-CALL set_tournament_event_surface(1972, 'New York', 'H', TRUE);
+CALL set_tournament_event_surface(1972, '2058', 'H', TRUE); -- New York
 CALL set_tournament_event_surface(1972, 'Quebec WCT', 'H', TRUE);
 CALL set_tournament_event_surface(1972, 'Tanglewood', 'H', FALSE);
 CALL set_tournament_event_surface(1972, 'Montreal WCT', 'H', FALSE);
@@ -31,6 +60,7 @@ CALL set_tournament_event_surface(1972, 'Seattle', 'H', FALSE);
 CALL set_tournament_event_surface(1972, 'Alamo WCT', 'H', FALSE);
 CALL set_tournament_event_surface(1972, 'Vancouver WCT', 'H', FALSE);
 CALL set_tournament_event_surface(1972, 'Merion', 'G', FALSE);
+CALL set_tournament_event_surface(1972, 'Brisbane', 'G', FALSE);
 CALL set_tournament_event_surface(1972, 'London Indoor', NULL, TRUE);
 CALL set_tournament_event_surface(1972, 'Omaha', NULL, TRUE);
 CALL set_tournament_event_surface(1972, 'Salisbury', NULL, TRUE);
@@ -41,15 +71,18 @@ CALL set_tournament_event_surface(1972, 'Jacksonville', NULL, TRUE);
 
 -- 1973
 CALL set_tournament_event_surface(1973, 'Calgary', 'H', TRUE);
+CALL set_tournament_event_surface(1973, 'Roanoke', 'P', TRUE);
 CALL set_tournament_event_surface(1973, 'Vancouver WCT', 'H', FALSE);
 CALL set_tournament_event_surface(1973, 'Tanglewood', 'H', FALSE);
-CALL set_tournament_event_surface(1973, 'Montreal / Toronto', 'C', FALSE);
+CALL set_tournament_event_surface(1973, 'Berlin', 'C', FALSE);
+CALL set_tournament_event_surface(1973, 'Toronto', 'C', FALSE);
 CALL set_tournament_event_surface(1973, 'Seattle', 'H', TRUE);
 CALL set_tournament_event_surface(1973, 'Quebec', 'H', TRUE);
 CALL set_tournament_event_surface(1973, 'Tokyo', 'H', FALSE);
 CALL set_tournament_event_surface(1973, 'New Delhi', 'H', FALSE);
 CALL set_tournament_event_surface(1973, 'Djkarta', 'H', FALSE);
 CALL set_tournament_event_surface(1973, 'Christchurch', 'H', FALSE);
+CALL set_tournament_event_surface(1973, 'Boston', 'H', FALSE);
 CALL set_tournament_event_surface(1973, 'Baltimore', NULL, TRUE);
 CALL set_tournament_event_surface(1973, 'London WCT', NULL, TRUE);
 CALL set_tournament_event_surface(1973, 'Omaha', NULL, TRUE);
@@ -64,14 +97,16 @@ CALL set_tournament_event_surface(1973, 'Stockholm', NULL, TRUE);
 CALL set_tournament_event_surface(1973, 'Sydney Indoor', NULL, TRUE);
 
 -- 1974
-CALL set_tournament_event_surface(1974, 'Roanoke', 'H', TRUE);
+CALL set_tournament_event_surface(1974, 'Roanoke', 'P', TRUE);
 CALL set_tournament_event_surface(1974, 'Omaha', 'H', FALSE);
 CALL set_tournament_event_surface(1974, 'Paramus', 'H', TRUE);
 CALL set_tournament_event_surface(1974, 'Calgary', 'H', TRUE);
 CALL set_tournament_event_surface(1974, 'Salt Lake City', 'H', TRUE);
 CALL set_tournament_event_surface(1974, 'New Orleans WCT', 'H', FALSE);
-CALL set_tournament_event_surface(1974, 'Washington', 'H', FALSE);
-CALL set_tournament_event_surface(1974, 'Montreal / Toronto', 'C', FALSE);
+CALL set_tournament_event_surface(1974, 'Cincinnati', 'H', FALSE);
+CALL set_tournament_event_surface(1974, '418', 'C', FALSE); -- Washington
+CALL set_tournament_event_surface(1974, '2040', 'H', TRUE); -- Washington
+CALL set_tournament_event_surface(1974, 'Toronto', 'C', FALSE);
 CALL set_tournament_event_surface(1974, 'Tokyo WCT', 'H', FALSE);
 CALL set_tournament_event_surface(1974, 'Dublin', 'H', FALSE);
 CALL set_tournament_event_surface(1974, 'Cedar Grove', 'H', FALSE);
@@ -86,12 +121,14 @@ CALL set_tournament_event_surface(1974, 'Stockholm', NULL, TRUE);
 
 -- 1975
 CALL set_tournament_event_surface(1975, 'Bahamas', 'H', FALSE);
-CALL set_tournament_event_surface(1975, 'Roanoke', 'H', TRUE);
+CALL set_tournament_event_surface(1975, 'Roanoke', 'P', TRUE);
 CALL set_tournament_event_surface(1975, 'Shreveport', 'H', FALSE);
 CALL set_tournament_event_surface(1975, 'New York', 'H', TRUE);
 CALL set_tournament_event_surface(1975, 'Istanbul', 'C', FALSE);
-CALL set_tournament_event_surface(1975, 'Washington', 'C', FALSE);
-CALL set_tournament_event_surface(1975, 'Montreal / Toronto', 'C', FALSE);
+CALL set_tournament_event_surface(1975, 'Cincinnati', 'H', FALSE);
+CALL set_tournament_event_surface(1975, '418', 'C', FALSE); -- Washington
+CALL set_tournament_event_surface(1975, '2040', 'H', TRUE); -- Washington
+CALL set_tournament_event_surface(1975, 'Toronto', 'C', FALSE);
 CALL set_tournament_event_surface(1975, 'Melbourne Indoor', 'P', TRUE);
 CALL set_tournament_event_surface(1975, 'Sydney Indoor', NULL, TRUE);
 CALL set_tournament_event_surface(1975, 'Paris Indoor', NULL, TRUE);
@@ -99,22 +136,23 @@ CALL set_tournament_event_surface(1975, 'Stockholm', NULL, TRUE);
 CALL set_tournament_event_surface(1975, 'Masters', NULL, TRUE);
 
 -- 1976
-CALL set_tournament_event_surface(1976, 'Montreal / Toronto', 'C', FALSE);
+CALL set_tournament_event_surface(1976, 'Toronto', 'C', FALSE);
+CALL set_tournament_event_surface(1976, 'Berlin', 'C', FALSE);
+CALL set_tournament_event_surface(1976, 'Cincinnati', 'H', FALSE);
 CALL set_tournament_event_surface(1976, 'Paris Indoor', NULL, TRUE);
-CALL set_tournament_event_surface(1976, '3934', NULL, TRUE);
 CALL set_tournament_event_surface(1976, 'Vienna', NULL, TRUE);
 CALL set_tournament_event_surface(1976, 'Stockholm', NULL, TRUE);
 
 -- 1977
 CALL set_tournament_event_surface(1977, 'Virginia Beach', 'C', FALSE);
 CALL set_tournament_event_surface(1977, 'Tournament of Champions WCT', 'H', FALSE);
-CALL set_tournament_event_surface(1977, 'Montreal / Toronto', 'C', FALSE);
+CALL set_tournament_event_surface(1977, 'Toronto', 'C', FALSE);
 CALL set_tournament_event_surface(1977, 'London WCT', NULL, TRUE);
 CALL set_tournament_event_surface(1977, 'Sydney Indoor', NULL, TRUE);
 CALL set_tournament_event_surface(1977, 'Vienna', NULL, TRUE);
 CALL set_tournament_event_surface(1977, 'Paris Indoor', NULL, TRUE);
 CALL set_tournament_event_surface(1977, 'Stockholm', NULL, TRUE);
-CALL set_tournament_event_surface(1977, 'Wembley', NULL, TRUE);
+CALL set_tournament_event_surface(1977, 'Wembley', 'P', TRUE);
 CALL set_tournament_event_surface(1977, 'Oviedo', NULL, TRUE);
 
 -- 1978
@@ -147,7 +185,7 @@ CALL set_tournament_event_surface(1980, 'Cologne', NULL, TRUE);
 
 -- 1981
 CALL set_tournament_event_surface(1981, 'Nancy', NULL, TRUE);
-CALL set_tournament_event_surface(1981, 'Rotterdam', NULL, TRUE);
+CALL set_tournament_event_surface(1981, 'Rotterdam', 'P', TRUE);
 CALL set_tournament_event_surface(1981, 'Stuttgart Indoor', NULL, TRUE);
 CALL set_tournament_event_surface(1981, 'Linz', NULL, TRUE);
 CALL set_tournament_event_surface(1981, 'Basel', NULL, TRUE);
@@ -170,7 +208,7 @@ CALL set_tournament_event_surface(1982, 'Toulouse', NULL, TRUE);
 
 -- 1983
 CALL set_tournament_event_surface(1983, 'Nancy', NULL, TRUE);
-CALL set_tournament_event_surface(1983, 'Rotterdam', NULL, TRUE);
+CALL set_tournament_event_surface(1983, 'Rotterdam', 'P', TRUE);
 CALL set_tournament_event_surface(1983, 'Basel', NULL, TRUE);
 CALL set_tournament_event_surface(1983, 'Sydney Indoor', NULL, TRUE);
 CALL set_tournament_event_surface(1983, 'Vienna', NULL, TRUE);
@@ -463,7 +501,7 @@ CALL set_tournament_event_surface(1998, 'Tour Finals', NULL, TRUE);
 -- 1999
 CALL set_tournament_event_surface(1999, 'Marseille', NULL, TRUE);
 CALL set_tournament_event_surface(1999, 'San Jose', NULL, TRUE);
-CALL set_tournament_event_surface(1999, 'St Petersburg', NULL, TRUE);
+CALL set_tournament_event_surface(1999, 'St. Petersburg', NULL, TRUE);
 CALL set_tournament_event_surface(1999, 'Memphis', NULL, TRUE);
 CALL set_tournament_event_surface(1999, 'Rotterdam', NULL, TRUE);
 CALL set_tournament_event_surface(1999, 'London', NULL, TRUE);
@@ -779,7 +817,7 @@ CALL set_tournament_event_surface(2016, 'Memphis', NULL, TRUE);
 CALL set_tournament_event_surface(2016, 'Rotterdam', NULL, TRUE);
 CALL set_tournament_event_surface(2016, 'Marseille', NULL, TRUE);
 CALL set_tournament_event_surface(2016, 'Metz', NULL, TRUE);
-CALL set_tournament_event_surface(2016, 'St.Petersburg', NULL, TRUE);
+CALL set_tournament_event_surface(2016, 'St. Petersburg', NULL, TRUE);
 CALL set_tournament_event_surface(2016, 'Antwerp', NULL, TRUE);
 CALL set_tournament_event_surface(2016, 'Moscow', NULL, TRUE);
 CALL set_tournament_event_surface(2016, 'Stockholm', NULL, TRUE);
@@ -841,5 +879,22 @@ CALL set_tournament_event_surface(2019, 'Paris Masters', NULL, TRUE);
 CALL set_tournament_event_surface(2019, 'Next Gen Finals', NULL, TRUE);
 CALL set_tournament_event_surface(2019, 'Tour Finals', NULL, TRUE);
 CALL set_tournament_event_surface(2019, 'Davis Cup Finals', NULL, TRUE);
+
+-- 2020
+CALL set_tournament_event_surface(2020, 'Montpellier', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Rotterdam', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'New York', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Marseille', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'St Petersburg', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Cologne 1', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Antwerp', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Cologne 2', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Vienna', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Nur-Sultan', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Paris Masters', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Sofia', NULL, TRUE);
+CALL set_tournament_event_surface(2020, 'Tour Finals', NULL, TRUE);
+
+END $$;
 
 COMMIT;

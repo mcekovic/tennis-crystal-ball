@@ -1,3 +1,4 @@
+-- In tcb database as postgres user
 CREATE USER tcb WITH
 	LOGIN
 	NOSUPERUSER

@@ -55,15 +55,15 @@ public class PerformanceChartService {
 
 
 	public DataTable getPerformanceDataTable(int[] playerIds, PerformanceCategory category, PerformanceChartType chartType, Range<Integer> seasonRange, boolean byAge) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
-		DataTable table = fetchPerformanceDataTable(indexedPlayers, category, chartType, seasonRange, byAge);
+		var indexedPlayers = playerService.getIndexedPlayers(playerIds);
+		var table = fetchPerformanceDataTable(indexedPlayers, category, chartType, seasonRange, byAge);
 		addColumns(table, indexedPlayers, category, byAge);
 		return table;
 	}
 
 	public DataTable getPerformanceDataTable(List<String> players, PerformanceCategory category, PerformanceChartType chartType, Range<Integer> seasonRange, boolean byAge) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(players);
-		DataTable table = fetchPerformanceDataTable(indexedPlayers, category, chartType, seasonRange, byAge);
+		var indexedPlayers = playerService.getIndexedPlayers(players);
+		var table = fetchPerformanceDataTable(indexedPlayers, category, chartType, seasonRange, byAge);
 		if (!table.getRows().isEmpty())
 			addColumns(table, indexedPlayers, category, byAge);
 		else {
@@ -74,7 +74,7 @@ public class PerformanceChartService {
 	}
 
 	private DataTable fetchPerformanceDataTable(IndexedPlayers players, PerformanceCategory category, PerformanceChartType chartType, Range<Integer> seasonRange, boolean byAge) {
-		DataTable table = new DataTable();
+		var table = new DataTable();
 		if (players.isEmpty())
 			return table;
 		RowCursor rowCursor = new IntegerRowCursor(table, players);
@@ -83,8 +83,8 @@ public class PerformanceChartService {
 			getParams(players, seasonRange),
 			rs -> {
 				Object x = byAge ? rs.getInt("age") : rs.getInt("season");
-				int playerId = rs.getInt("player_id");
-				Number y = getValue(rs, chartType);
+				var playerId = rs.getInt("player_id");
+				var y = getValue(rs, chartType);
 				rowCursor.next(x, playerId, y);
 			}
 		);
@@ -97,7 +97,7 @@ public class PerformanceChartService {
 			table.addColumn("number", "Age");
 		else
 			table.addColumn("number", "Season");
-		for (String player : players.getPlayers())
+		for (var player : players.getPlayers())
 			table.addColumn("number", player + " " + category.getTitle());
 	}
 
@@ -112,7 +112,7 @@ public class PerformanceChartService {
 	}
 
 	private MapSqlParameterSource getParams(IndexedPlayers players, Range<Integer> seasonRange) {
-		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
+		var params = params("playerIds", players.getPlayerIds());
 		addRangeParams(params, seasonRange, "season");
 		return params;
 	}

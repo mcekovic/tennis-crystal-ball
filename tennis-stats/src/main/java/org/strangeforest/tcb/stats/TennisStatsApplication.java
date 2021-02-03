@@ -20,8 +20,8 @@ public class TennisStatsApplication {
 	}
 
 	public static void restart() {
-		String[] args = context.getBean(ApplicationArguments.class).getSourceArgs();
-		Thread thread = new Thread(() -> {
+		var args = context.getBean(ApplicationArguments.class).getSourceArgs();
+		var thread = new Thread(() -> {
 			context.close();
 			run(args);
 		}, "Application restarter");

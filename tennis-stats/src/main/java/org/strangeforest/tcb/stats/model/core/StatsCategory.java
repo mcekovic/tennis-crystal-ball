@@ -94,6 +94,7 @@ public final class StatsCategory {
 	private static final String RETURN_GAMES_WON_PCT = "(o_bp_fc - o_bp_sv)::REAL / nullif(o_sv_gms, 0)";
 	private static final String TOTAL_POINTS_WON = "p_1st_won + p_2nd_won + o_sv_pt - o_1st_won - o_2nd_won";
 	private static final String TOTAL_POINTS_WON_PCT = "(" + TOTAL_POINTS_WON + ")::REAL / nullif(" + TOTAL_POINTS + ", 0)";
+	private static final String TOTAL_BREAK_POINTS_WON_PCT = "(p_bp_sv + o_bp_fc - o_bp_sv)::REAL / nullif(p_bp_fc + o_bp_fc, 0)";
 	private static final String TIE_BREAKS_WON_PCT = "p_tbs::REAL / nullif(" + TOTAL_TIE_BREAKS + ", 0)";
 	private static final String GAMES_WON_PCT = "p_games::REAL / nullif(" + TOTAL_GAMES + ", 0)";
 	private static final String SETS_WON_PCT = "p_sets::REAL / nullif(" + TOTAL_SETS + ", 0)";
@@ -167,6 +168,7 @@ public final class StatsCategory {
 		addCategory(POINTS, "totalPointsWon", TOTAL_POINTS_WON, PlayerStats::getTotalPointsWon, POINT, COUNT, false, true, "Total Points Won");
 		addCategory(POINTS, "totalPointsWonPct", TOTAL_POINTS_WON_PCT, PlayerStats::getTotalPointsWonPct, PlayerStats::getTotalPointsWon, PlayerStats::getTotalPoints, POINT, PERCENTAGE, false, true, "Total Points Won %");
 		addCategory(POINTS, "totalSSIPPointsWonPct", "(p_2nd_won + o_sv_pt - o_1st_in - o_2nd_won - o_df)::REAL / nullif(p_sv_pt - p_1st_in - p_df + o_sv_pt - o_1st_in - o_df, 0)", PlayerStats::getTotalSecondServeInPlayPointsWonPct, PlayerStats::getTotalSecondServeInPlayPointsWon, PlayerStats::getTotalSecondServeInPlayPoints, POINT, PERCENTAGE, false, true, "Tot. 2nd Srv. In-pl. Pts. W. %", "stats.totalSSIPPointsWonPct.title");
+		addCategory(POINTS, "totalBreakPointsWonPct", TOTAL_BREAK_POINTS_WON_PCT, PlayerStats::getTotalBreakPointsWonPct, PlayerStats::getTotalBreakPointsWon, PlayerStats::getTotalBreakPoints, POINT, PERCENTAGE, false, true, "Total Break Points Won %");
 		addCategory(POINTS, "rtnToSvcPointsRatio", "o_sv_pt::REAL / nullif(p_sv_pt, 0)", PlayerStats::getReturnToServicePointsRatio, PlayerStats::getReturnPoints, PlayerStats::getServicePoints, POINT, RATIO3, false, true, "Rtn. to Svc. Points Ratio", "stats.rtnToSvcPointsRatio.title");
 		addCategory(POINTS, "pointsPerGame", "(" + TOTAL_POINTS + ")::REAL / nullif(games_w_stats, 0)", PlayerStats::getPointsPerGame, PlayerStats::getTotalPoints, PlayerStats::getGamesWithStats, GAME_W_STATS, RATIO3, false, true, "Points per Game");
 		addCategory(POINTS, "pointsPerSet", "(" + TOTAL_POINTS + ")::REAL / nullif(sets_w_stats, 0)", PlayerStats::getPointsPerSet, PlayerStats::getTotalPoints, PlayerStats::getSetsWithStats, SET_W_STATS, RATIO2, false, true, "Points per Set");
@@ -207,7 +209,7 @@ public final class StatsCategory {
 		addCategory(PERFORMANCE, "gmsToMatchesOverPerfRatio", "(" + MATCHES_WON_PCT + ") / nullif(" + GAMES_WON_PCT + ", 0)", PlayerStats::getGamesToMatchesOverPerformingRatio, GAME, RATIO3, false, false, "Gms. to Matches Ov.-Perf.", "stats.gamesToMatchesOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "gmsToSetsOverPerfRatio", "(" + SETS_WON_PCT + ") / nullif(" + GAMES_WON_PCT + ", 0)", PlayerStats::getGamesToSetsOverPerformingRatio, GAME, RATIO3, false, false, "Gms. to Sets Over-Perf.", "stats.gamesToSetsOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "setsToMatchesOverPerfRatio", "(" + MATCHES_WON_PCT + ") / nullif(" + SETS_WON_PCT + ", 0)", PlayerStats::getSetsToMatchesOverPerformingRatio, SET, RATIO3, false, false, "Sets to Matches Ov.-Perf.", "stats.setsToMatchesOverPerformingRatio.title");
-		addCategory(PERFORMANCE, "bpsOverPerfRatio", "((p_bp_sv + o_bp_fc - o_bp_sv)::REAL / nullif(p_bp_fc + o_bp_fc, 0)) / nullif(" + TOTAL_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsOverPerformingRatio, POINT, RATIO3, false, false, "BPs Over-Performing", "stats.breakPointsOverPerformingRatio.title");
+		addCategory(PERFORMANCE, "bpsOverPerfRatio", "(" + TOTAL_BREAK_POINTS_WON_PCT + ") / nullif(" + TOTAL_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsOverPerformingRatio, POINT, RATIO3, false, false, "BPs Over-Performing", "stats.breakPointsOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "bpsSavedOverPerfRatio", "(" + BREAK_POINTS_SAVED_PCT + ") / nullif(" + SERVICE_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsSavedOverPerformingRatio, POINT, RATIO3, false, false, "BPs Saved Over-Perf.", "stats.breakPointsSavedOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "bpsConvOverPerfRatio", "(" + BREAK_POINTS_PCT + ") / nullif(" + RETURN_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsConvertedOverPerformingRatio, POINT, RATIO3, false, false, "BPs Conv. Over-Perf.", "stats.breakPointsConvertedOverPerformingRatio.title");
 		// Opponent
@@ -248,7 +250,7 @@ public final class StatsCategory {
 			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet", "rtnGamesWonPerMarch")
 		);
 		addGroup("Total", "Total", false,
-			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "totalSSIPPointsWonPct", "rtnToSvcPointsRatio", "pointsPerGame", "pointsPerSet", "pointsPerMatch"),
+			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "totalSSIPPointsWonPct", "totalBreakPointsWonPct", "rtnToSvcPointsRatio", "pointsPerGame", "pointsPerSet", "pointsPerMatch"),
 			new CategorySubGroup("Games", "totalGames", "totalGamesWon", "totalGamesWonPct", "gamesPerSet", "gamesPerMatch"),
 			new CategorySubGroup("Tie-Breaks", "tieBreaks", "tieBreaksWon", "tieBreaksWonPct", "tieBreaksPerSet", "tieBreaksPerMatch")
 		);
@@ -352,7 +354,7 @@ public final class StatsCategory {
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, String singleExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, boolean forMatch, String title, String descriptionId) {
-		StatsCategory category = new StatsCategory(name, expression, summedExpression, singleExpression, statFunction, upFunction, downFunction, item, type, inverted, categoryClass.equals(TIME_CATEGORY), title, descriptionId);
+		var category = new StatsCategory(name, expression, summedExpression, singleExpression, statFunction, upFunction, downFunction, item, type, inverted, categoryClass.equals(TIME_CATEGORY), title, descriptionId);
 		CATEGORIES.put(name, category);
 		CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
 		if (forMatch)
@@ -361,7 +363,7 @@ public final class StatsCategory {
 	}
 
 	public static StatsCategory get(String category) {
-		StatsCategory statsCategory = CATEGORIES.get(category);
+		var statsCategory = CATEGORIES.get(category);
 		if (statsCategory == null)
 			throw new NotFoundException("Statistics category", category);
 		return statsCategory;
@@ -443,7 +445,7 @@ public final class StatsCategory {
 	}
 
 	public String getStatFormatted(PlayerStats stats) {
-		Number value = statFunction.apply(stats);
+		var value = statFunction.apply(stats);
 		switch (type) {
 			case COUNT: return formatCount(value);
 			case PERCENTAGE: return formatPct(value);
@@ -456,8 +458,8 @@ public final class StatsCategory {
 	}
 
 	public String getStatDiffFormatted(PlayerStats compareStats, PlayerStats stats) {
-		Number compareValue = statFunction.apply(compareStats);
-		Number value = statFunction.apply(stats);
+		var compareValue = statFunction.apply(compareStats);
+		var value = statFunction.apply(stats);
 		switch (type) {
 			case COUNT: return formatCountDiff(compareValue, value);
 			case PERCENTAGE: return formatPctDiff(compareValue, value);
@@ -474,10 +476,10 @@ public final class StatsCategory {
 	}
 
 	public int statCompare(PlayerStats stats1, PlayerStats stats2) {
-		Number n1 = getStat(stats1);
-		Number n2 = getStat(stats2);
+		var n1 = getStat(stats1);
+		var n2 = getStat(stats2);
 		if (n1 != null && n2 != null) {
-			int result = Double.compare(n1.doubleValue(), n2.doubleValue());
+			var result = Double.compare(n1.doubleValue(), n2.doubleValue());
 			return inverted ? -result : result;
 		}
 		else
@@ -615,9 +617,9 @@ public final class StatsCategory {
 
 		private CategorySubGroup(String name, String... categories) {
 			this.name = name;
-			AtomicBoolean needsStats = new AtomicBoolean(true);
+			var needsStats = new AtomicBoolean(true);
 			this.categories = Stream.of(categories).map(category -> {
-				StatsCategory statsCategory = CATEGORIES.get(category);
+				var statsCategory = CATEGORIES.get(category);
 				if (statsCategory == null)
 					throw new IllegalArgumentException("Unknown statistics category: " + category);
 				if (!statsCategory.isNeedsStats())

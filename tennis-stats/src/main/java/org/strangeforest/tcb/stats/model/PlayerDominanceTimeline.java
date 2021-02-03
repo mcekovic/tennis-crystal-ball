@@ -26,7 +26,6 @@ public class PlayerDominanceTimeline extends PlayerRow {
 		this.goatPoints = goatPoints;
 	}
 
-
 	public PlayerDominanceTimeline(PlayerDominanceTimeline timeline) {
 		super(timeline);
 		lastName = timeline.lastName;
@@ -57,7 +56,7 @@ public class PlayerDominanceTimeline extends PlayerRow {
 
 	public List<SeasonPoints> getSeasonsPoints() {
 		return timeline.getSeasons().stream().map(season -> {
-			SeasonPoints seasonPoints = seasons.get(season);
+			var seasonPoints = seasons.get(season);
 			return seasonPoints != null ? seasonPoints : new SeasonPoints(season, surface, 0);
 		}).collect(toList());
 	}
@@ -75,8 +74,8 @@ public class PlayerDominanceTimeline extends PlayerRow {
 	}
 
 	public PlayerDominanceTimeline filterSeasons(Range<Integer> seasonRange) {
-		PlayerDominanceTimeline player = new PlayerDominanceTimeline(this);
-		for (SeasonPoints seasonPoints : seasons.values()) {
+		var player = new PlayerDominanceTimeline(this);
+		for (var seasonPoints : seasons.values()) {
 			if (seasonRange.contains(seasonPoints.getSeason()))
 				player.addSeasonPoints(seasonPoints);
 		}

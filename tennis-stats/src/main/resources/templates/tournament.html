@@ -1,62 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="tournament" type="org.strangeforest.tcb.stats.model.Tournament"*/-->
+<!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
 <head th:replace="fragments/head :: commonHead(${tournament.name}, true, ~{::template})">
 	<template>
 	<meta name="description" th:content="${tournament.name} + ' at Ultimate Tennis Statistics'"/>
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			decorateSurface("#tournamentSurfaces .tournament-surface");
 			decorateSpeed("#tournamentSurfaces .tournament-court-speed");
 			$("#tournamentPills").find("a").click(tabClick);
-			var $tournamentHistoryTable = $("#tournamentHistoryTable");
-			var device = detectDevice();
-			setBootgridColumnsVisible($tournamentHistoryTable, ["speed", "finalEx"], deviceGreaterOrEqual(device, "xl"));
-			setBootgridColumnsVisible($tournamentHistoryTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
-			setBootgridColumnsVisible($tournamentHistoryTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
-			if (deviceGreaterOrEqual(device, "lg"))
-				setBootgridColumnsWidths($tournamentHistoryTable, ["name"], [175]);
-			if (device === "md")
-				setBootgridColumnsWidths($tournamentHistoryTable, ["final"], [400]);
-			$tournamentHistoryTable.bootgrid({
-				ajax: true,
-				ajaxSettings: {
-					method: "GET",
-					cache: false
-				},
-				url: "/tournamentEventsTable?tournamentId=[(${tournament.id})]",
-				rowCount: [15, 25, 50, -1],
-				formatters: {
-					"date": dateFormatter,
-					"event": tournamentEventFormatterExtId,
-					"level": levelFormatter,
-					"surface": surfaceFormatter,
-					"speed": speedFormatter,
-					"participation": participationFormatter,
-					"final": finalFormatter,
-					"finalEx": finalExFormatter
-				},
-				labels: {
-					loading: bootgridTemplateLoading,
-					noResults: "No tournament events found"
-				},
-				templates: {
-					paginationItem: bootgridTemplatePaginationItem
-				}
-			});
-			var $tournamentHistoryTableHeader = $("#tournamentHistoryTable-header");
-			$tournamentHistoryTableHeader.find("div.search").remove();
-			setBootgridTitle($tournamentHistoryTableHeader, $("#tournamentHistoryTable-title"));
-			addBootgridCsvDownload("tournamentHistoryTable", "TournamentEvents.csv", ["^id$", "tournamentId", "tournamentExtId", "winner_id", "runnerUp_id", "country_code", "^draw$"]);
-			setBootgridTitles($tournamentHistoryTable, [
-				{id: "speed", title: "[[#{event.courtSpeed.title}]]"},
-				{id: "playerCount", title: "Players"},
-				{id: "participation", title: "[[#{event.participation.title}]]"},
-				{id: "strength", title: "[[#{event.strength.title}]]"},
-				{id: "averageEloRating", title: "[[#{event.averageEloRating.title}]]"}
-			]);
+			[# th:if="${tab}" th:switch="${tab}"]
+				$("#[(${tab})]Pill").click();
+			[/]
+			[# th:unless="${tab}"] $("#eventsPill").click(); [/]
 		});
 	</script>
 	</template>
@@ -127,35 +86,18 @@
 		</div>
 	</div>
 	<ul id="tournamentPills" class="nav nav-pills">
-		<li class="active"><a data-toggle="pill" href="#events">Events</a></li>
-		<li><a data-toggle="pill" href="#records" th:data-url="'/tournamentRecords?tournamentId=' + ${tournament.id}">Records</a></li>
-		<li><a data-toggle="pill" href="#performance" th:data-url="'/tournamentPerformance?tournamentId=' + ${tournament.id}">Performance</a></li>
-		<li><a data-toggle="pill" href="#statistics" th:data-url="'/tournamentStats?tournamentId=' + ${tournament.id}">Statistics</a></li>
+		<li><a id="eventsPill" data-toggle="pill" href="#events" th:data-url="'/tournamentEventsTab?tournamentId=' + ${tournament.id}">Events</a></li>
+		<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/tournamentPerformance?tournamentId=' + ${tournament.id}">Performance</a></li>
+		<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/tournamentStats?tournamentId=' + ${tournament.id}">Statistics</a></li>
+		<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/tournamentRecords?tournamentId=' + ${tournament.id}">Records</a></li>
+		<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" th:data-url="'/tournamentGOATPoints?tournamentId=' + ${tournament.id}">GOAT Points<sup class="new-feature"></sup></a></li>
 	</ul>
 	<div class="tab-content">
-		<div id="events" class="tab-pane fade in active">
-			<h3 id="tournamentHistoryTable-title" class="grid-title" th:text="${tournament.name} + ' Events'">Australian Open Events</h3>
-			<table id="tournamentHistoryTable" class="table table-condensed table-hover table-striped">
-				<thead>
-				<tr>
-					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
-					<th data-column-id="name" data-formatter="event" data-width="200">Name</th>
-					<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-					<th data-column-id="speed" data-formatter="speed" data-width="70" data-align="center" data-header-align="center">Speed</th>
-					<th data-column-id="draw" data-width="65">Draw</th>
-					<th data-column-id="playerCount" data-type="numeric" data-width="55" data-align="right" data-header-align="right">Pls.</th>
-					<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
-					<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>
-					<th data-column-id="averageEloRating" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Elo</th>
-					<th data-column-id="final" data-formatter="final" data-sortable="false" data-width="500">Final</th>
-					<th data-column-id="finalEx" data-formatter="finalEx" data-sortable="false" data-visible="false" data-width="550">Final Details</th>
-				</tr>
-				</thead>
-			</table>
-		</div>
-		<div id="records" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="events" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="performance" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="records" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="goatPoints" class="tab-pane fade"><div class="loading"></div></div>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>

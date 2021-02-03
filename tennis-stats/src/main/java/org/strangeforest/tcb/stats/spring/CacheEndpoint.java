@@ -20,7 +20,7 @@ public class CacheEndpoint {
 	public String clearCache(@Selector String name) {
 		if (Strings.isNullOrEmpty(name))
 			name = ".*";
-		int cacheCount = dataService.clearCaches(name);
+		var cacheCount = dataService.clearCaches(name);
 		return format("OK (%1$d caches cleared)", cacheCount);
 	}
 }

@@ -46,14 +46,14 @@ public class EloSurfaceFactors {
 
 	private EloSurfaceFactors(JdbcTemplate jdbcTemplate, int fromSeason) {
 		System.out.print("Loading Elo Ratings surface ratios");
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		LocalDate fromDate = LocalDate.of(fromSeason, 1, 1);
-		LocalDate toDate = LocalDate.now().with(TemporalAdjusters.firstDayOfYear());
+		var stopwatch = Stopwatch.createStarted();
+		var fromDate = LocalDate.of(fromSeason, 1, 1);
+		var toDate = LocalDate.now().with(TemporalAdjusters.firstDayOfYear());
 		jdbcTemplate.query(SURFACE_RATIOS_QUERY, ps -> {
 			ps.setObject(1, fromDate, Types.DATE);
 			ps.setObject(2, toDate, Types.DATE);
 		}, rs -> {
-			int season = rs.getInt("season");
+			var season = rs.getInt("season");
 			hardFactors.put(season, (1.35 + pctToFactor(rs.getDouble("hard_pct"))) / 2.0);
 			clayFactors.put(season, (1.45 + pctToFactor(rs.getDouble("clay_pct"))) / 2.0);
 			grassFactors.put(season, (2.05 + pctToFactor(rs.getDouble("grass_pct"))) / 2.0);
@@ -81,7 +81,7 @@ public class EloSurfaceFactors {
 	}
 
 	private static double kFactor(Map<Integer, Double> surfaceFactors, int season) {
-		Double pct = surfaceFactors.get(season);
+		var pct = surfaceFactors.get(season);
 		if (pct != null)
 			return pct;
 		pct = surfaceFactors.get(season - 1);

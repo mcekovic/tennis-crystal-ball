@@ -10,7 +10,7 @@ dependencies {
 }
 
 flyway {
-	url = 'jdbc:postgresql://localhost:5432/postgres'
+	url = 'jdbc:postgresql://localhost:5432/tcb'
 	user = 'tcb'
 	password = 'tcb'
 	locations = ['filesystem:src/main/db/migration']

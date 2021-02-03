@@ -86,16 +86,16 @@ public class GOATListResource {
 		@RequestParam(name = "searchPhrase", defaultValue = "") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		PlayerListFilter filter = new PlayerListFilter(active, matchesService.getSameCountryIds(countryId), searchPhrase);
-		GOATListConfig config = new GOATListConfig(
+		var filter = new PlayerListFilter(active, matchesService.getSameCountryIds(countryId), searchPhrase);
+		var config = new GOATListConfig(
 			oldLegends, extrapolate, tournamentFactor, rankingFactor, achievementsFactor, parseIntProperties(levelFactors), parseIntProperties(resultFactors),
 			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
 			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
 		);
-		int playerCount = goatListService.getPlayerCount(surface, filter, config);
+		var playerCount = goatListService.getPlayerCount(surface, filter, config);
 
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
-		int pageSize = rowCount > 0 ? rowCount : playerCount;
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
+		var pageSize = rowCount > 0 ? rowCount : playerCount;
 		return goatListService.getGOATListTable(playerCount, surface, filter, config, orderBy, pageSize, current);
 	}
 }

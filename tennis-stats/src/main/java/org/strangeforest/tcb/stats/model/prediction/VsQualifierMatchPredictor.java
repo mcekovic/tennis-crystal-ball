@@ -37,7 +37,7 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public MatchPrediction predictMatch() {
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
+		var prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
 		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
@@ -68,18 +68,18 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, H2HPredictionItem item, Predicate<MatchData> filter) {
-		double itemWeight = config.getItemWeight(item);
+		var itemWeight = config.getItemWeight(item);
 		if (itemWeight > 0.0) {
 			ToIntFunction<MatchData> dimension = item.isForSet() ? MatchData::getSets : MatchData::getMatches;
 
-			Predicate<MatchData> qualifierFilter = filter.and(isOpponentQualifier());
-			int total = matchData.stream().filter(qualifierFilter).mapToInt(dimension).sum();
+			var qualifierFilter = filter.and(isOpponentQualifier());
+			var total = matchData.stream().filter(qualifierFilter).mapToInt(dimension).sum();
 			if (total > 0) {
 				ToIntFunction<MatchData> pDimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
-				int won = matchData.stream().filter(qualifierFilter).mapToInt(pDimension).sum();
-				int lost = total - won;
-				double weight = itemWeight * weight(total);
-				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
+				var won = matchData.stream().filter(qualifierFilter).mapToInt(pDimension).sum();
+				var lost = total - won;
+				var weight = itemWeight * weight(total);
+				var probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
 				prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(1.0 * won / total));
 				prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(1.0 * lost / total));
 			}

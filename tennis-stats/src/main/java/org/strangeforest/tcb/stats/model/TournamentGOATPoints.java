@@ -33,7 +33,7 @@ public class TournamentGOATPoints {
 	}
 
 	public TournamentGOATPoints applyConfig(GOATListConfig config) {
-		int factor = config.getLevelFactor(level) * config.getResultFactor(result) * config.getTournamentFactor();
+		var factor = config.getLevelFactor(level) * config.getResultFactor(result) * config.getTournamentFactor();
 		return factor == 1 ? this : new TournamentGOATPoints(level, result, goatPoints * factor, additive);
 	}
 }

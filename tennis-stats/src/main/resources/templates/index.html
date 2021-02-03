@@ -136,6 +136,7 @@
 				Welcome to <th:block th:include="fragments/promotion :: logo"/>, the ultimate men's tennis statistics destination for the die-hard tennis fans!<br/>
 				Be it latest or historical results, in-match statistics, records or all-time greats comparisons, Elo ratings or tournament forecasts, you will find it here. More details at <a href="/about" class="text-nowrap"><i class="fa fa-question-circle"></i> About</a> page.
 			</p>
+			<p><b>Note: </b><th:block th:include="fragments/promotion :: logo"/> has trouble obtaining new data updates, as the current free data source is not available anymore. Work is in progress to switch to the alternative data source.</p>
 			<th:block th:include="fragments/ads :: responsive"/>
 			<th:block th:if="${hasInProgressEvents}">
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-eye"></i> Latest Forecasts <sup style="font-size: 60%"><i class="text-muted">Powered by <th:block th:include="fragments/promotion :: tcb"/></i></sup></h4>
@@ -216,6 +217,10 @@
 			</div>
 			<h4 class="text-nowrap" style="margin-top: 10px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature"></sup></h4>
 			<ul>
+				<li>Huge missing data update: More than 200 tournament events are added in seasons 1968-1972, lacking rankings are added in seasons 1976-1978 (now the dataset for the ATP Open Era is probably more than 99% complete)</li>
+				<li><a href="/mentalToughness">Mental Toughness Rating</a> - Compare players by mental toughness using special <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#mentalToughnessPopover">Mental Toughness formula</a>, filtered by various filters</li>
+				<li>Elo Ratings calculation now takes into account frozen rankings status during coronavirus ATP circuit break (23-03-2020 to 23-08-2020), leading to much more accurate <a href="/eloRatings?rankType=CLAY_ELO_RANK">Clay Elo ratings</a> and thus <a href="/inProgressEventForecast?name=Roland%20Garros">Roland Garros</a> predictions</li>
+				<li>Tournament GOAT Points tab to check who earned them most on the particular tournament: <a href="/tournament?name=Australian Open&tab=goatPoints">Australian Open</a>, <a href="/tournament?name=Roland Garros&tab=goatPoints">Roland Garros</a>, <a href="/tournament?name=Wimbledon&tab=goatPoints">Wimbledon</a>, <a href="/tournament?name=US Open&tab=goatPoints">US Open</a></li>
 				<li>Browse players with most <a href="/titlesAndResults">Titles or other results</a>, filtered by various filters</li>
 				<li>Only for computer geeks, Docker image <a href="https://hub.docker.com/r/mcekovic/uts-database" target="_blank" rel="noopener noreferrer" class="external">mcekovic/uts-database</a> with PostgreSQL database pre-populated with ATP tennis data as of season 2019 (more info at <a href="https://github.com/mcekovic/tennis-crystal-ball/issues/337" target="_blank" rel="noopener noreferrer" class="external">#337</a>)</li>
 				<li>Reference rank in <a href="/rankingsChart">Rankings Charts</a> like <a href="/rankingsChart?players=Roger%20Federer,%20Rafael%20Nadal,%20Novak%20Djokovic&rankType=POINTS&refRank=1&compensatePoints=true">Compare Big 3 ATP Points with ATP No. 1 ATP Points</a> to see how much Big 3 had more ATP Points than average ATP No. 1</li>
@@ -223,24 +228,20 @@
 				<li>Past forecasts for the completed tournaments are available at <a href="/inProgressEventsForecasts">Tournament Forecasts</a> by checking the 'Completed' checkbox</li>
 				<li>Easy CSV download in the most of the data grids (click <button type="button" disabled="disabled" class="btn btn-default btn-xs" style="vertical-align: bottom"><i class="fa fa-file-excel-o"></i></button> button in the upper-right grid corner)</li>
 				<li>New statistics categories across the site (<a href="/statsLeaders">Statistics Leaders</a>, <a href="/topMatchStats">Top Match Stats</a>, <a href="/statsChart">Statistics Chart</a>...): <span th:title="#{stats.firstServeEff.title}">First Serve Effectiveness</span>, <span th:title="#{stats.serveRating.title}">Serve Rating</span>, <span th:title="#{stats.returnRating.title}">Return Rating</span>, <span th:title="#{stats.totalSSIPPointsWonPct.title}">Total 2nd Serve In-play Points Won %</span>, <span th:title="#{stats.ipPointsDominanceRatio.title}">In-play Points Dominance Ratio</span>, <span th:title="#{stats.ssIPPointsDominanceRatio.title}">2nd Serve In-play Points Dominance Ratio</span> (details at <a href="/glossary#statsCategories">Glossary</a> page)</li>
-				<li>In-progress tournament Court Speed and Statistics Leaders - Find out the ongoing tournaments' court speeds and explore who has the most aces, the greatest serve % or the greatest service or return points won % so far</li>
+				<li>In-progress tournament Court Speed and Statistics Leaders - Find out the ongoing tournaments' court speeds and explore who has the most aces, the greatest serve % or the greatest service or return points won % so far (note: this feature is temporarily suspended due to data update issues)</li>
 				<li>New website logo - <img src="/images/uts-logo.png" width="50" height="15"/> Courtesy of and designed by <a href="mailto:crazysesirdzija@gmail.com" target="_blank" rel="noopener noreferrer">crazysesirdzija@gmail.com</a></li>
-				<li><a href="/topMatchStats">Top Match Stats</a> - Top match statistics figures, like who and when had most aces, service or return points won in a single match</li>
-				<li>In-match winning probabilities for a match, current set, current game, next set, service or return game and service or return point at Head-to-Head Hypothetical Matchup</li>
-				<li><a href="/eloRatings">Elo Ratings</a> inactivity penalty redesigned to use a logistic function with tuned parameters for maximum predictability after comebacks from long injury breaks</li>
-				<li>Adjusted H2H takes into account surface and importance skew in H2H matches and normalizes it (Federer vs Nadal <a href="/headToHead?name1=Roger%20Federer&name2=Rafael%20Nadal">Adjusted H2H</a>, details about formula at <a href="/glossary">Glossary</a> page and in the <a href="/blog?post=h2hSkew">Blog Post</a>)</li>
 			</ul>
 			<th:block th:include="fragments/ads :: responsive"/>
 		</div>
 		<div class="col-lg-2 col-md-3">
 			<div class="panel panel-default component text-center text-nowrap">
-				<i class="fa fa-calendar-check-o"></i> <a href="https://www.flashscore.co.uk/tennis" title="Live Tennis Results by FlashScore.co.uk" target="_blank" rel="noopener noreferrer" class="external">Tennis Results</a> by<br/>
-				FlashScore.co.uk
+				<i class="fa fa-calendar-check-o"></i> <a href="https://www.flashscore.co.uk/tennis" title="Live Tennis Results by FlashScore.co.uk" target="_blank" rel="noopener noreferrer" class="external">Tennis Results</a><br/>
+				by FlashScore
 			</div>
 			<div id="rankingTopN"></div>
 			<div class="panel panel-default component text-center text-nowrap">
-				<img src="/images/active.png" style="vertical-align: -5%" width="12" height="12"/> <a href="/liveScores" title="Live scores"><strong>Live Scores</strong></a> via<br/>
-				<a href="https://www.enetscores.com" title="Enetscores by Enetpulse" target="_blank" rel="noopener noreferrer" class="external">Enetscores</a>
+				<img src="/images/active.png" style="vertical-align: -5%" width="12" height="12"/> <a href="/liveScores" title="Live scores"><strong>Live Scores</strong></a><br/>
+				via <a href="https://www.enetscores.com" title="Enetscores by Enetpulse" target="_blank" rel="noopener noreferrer" class="external">Enetscores</a>
 			</div>
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>
 			<th:block th:include="fragments/promotion :: facebook"/>
@@ -250,6 +251,7 @@
 			<th:block th:include="fragments/promotion :: license"/>
 		</div>
 	</div>
+	<div th:include="fragments/aboutMentalToughness :: aboutMentalToughness"></div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>

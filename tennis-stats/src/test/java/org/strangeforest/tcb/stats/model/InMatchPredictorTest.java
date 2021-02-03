@@ -14,7 +14,7 @@ class InMatchPredictorTest {
 
 	@Test
 	void testNormalization() {
-		BaseProbabilities probs = normalize(0.7, new BaseProbabilities(0.75, 0.3), BEST_OF_5_MATCH);
+		var probs = normalize(0.7, new BaseProbabilities(0.75, 0.3), BEST_OF_5_MATCH);
 		assertThat(new MatchOutcome(probs.getPServe(), probs.getPReturn(), BEST_OF_5_MATCH).pWin()).isCloseTo(0.7, OFFSET);
 
 		probs = normalize(0.9, new BaseProbabilities(0.8, 0.35), BEST_OF_5_MATCH);

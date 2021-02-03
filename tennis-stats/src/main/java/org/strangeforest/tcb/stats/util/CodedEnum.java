@@ -12,7 +12,7 @@ public interface CodedEnum {
 	String getText();
 
 	static <E extends Enum<E> & CodedEnum> E decode(Class<E> enumClass, String code) {
-		for (E e : enumClass.getEnumConstants()) {
+		for (var e : enumClass.getEnumConstants()) {
 			if (e.getCode().equals(code))
 				return e;
 		}

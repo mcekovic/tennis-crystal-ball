@@ -38,7 +38,7 @@ public class RivalryPlayerListFilter extends PlayerListFilter {
 		if (this == o) return true;
 		if (!(o instanceof RivalryPlayerListFilter)) return false;
 		if (!super.equals(o)) return false;
-		RivalryPlayerListFilter filter = (RivalryPlayerListFilter)o;
+		var filter = (RivalryPlayerListFilter)o;
 		return Objects.equals(rivalryFilter, filter.rivalryFilter);
 	}
 

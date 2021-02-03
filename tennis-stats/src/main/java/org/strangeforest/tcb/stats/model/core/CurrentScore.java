@@ -54,7 +54,7 @@ public class CurrentScore {
 
 	public void incSets1() {
 		sets1++;
-		int sets = rules.getSets();
+		var sets = rules.getSets();
 		if (sets1 > sets)
 			sets1 = sets;
 		clearGames();
@@ -62,7 +62,7 @@ public class CurrentScore {
 
 	public void incSets2() {
 		sets2++;
-		int sets = rules.getSets();
+		var sets = rules.getSets();
 		if (sets2 > sets)
 			sets2 = sets;
 		clearGames();
@@ -70,7 +70,7 @@ public class CurrentScore {
 
 	public void incGames1() {
 		games1++;
-		SetRules setRules = getSetRules();
+		var setRules = getSetRules();
 		if (games1 >= setRules.getGames() && games1 - games2 >= setRules.getGamesDiff())
 			incSets1();
 		else
@@ -80,7 +80,7 @@ public class CurrentScore {
 
 	public void incGames2() {
 		games2++;
-		SetRules setRules = getSetRules();
+		var setRules = getSetRules();
 		if (games2 >= setRules.getGames() && games2 - games1 >= setRules.getGamesDiff())
 			incSets2();
 		else
@@ -90,9 +90,9 @@ public class CurrentScore {
 
 	public void incPoints1() {
 		points1++;
-		SetRules setRules = getSetRules();
+		var setRules = getSetRules();
 		if (setRules.isTieBreak(games1, games2)) {
-			TieBreakRules tieBreakRules = setRules.getTieBreak();
+			var tieBreakRules = setRules.getTieBreak();
 			if (points1 >= tieBreakRules.getPoints() && points1 - points2 >= tieBreakRules.getPointsDiff()) {
 				incSets1();
 				switchServe();
@@ -101,7 +101,7 @@ public class CurrentScore {
 				switchServe();
 		}
 		else {
-			GameRules gameRules = setRules.getGame();
+			var gameRules = setRules.getGame();
 			if (points1 >= gameRules.getPoints()) {
 				if (points1 - points2 >= gameRules.getPointsDiff())
 					incGames1();
@@ -115,9 +115,9 @@ public class CurrentScore {
 
 	public void incPoints2() {
 		points2++;
-		SetRules setRules = getSetRules();
+		var setRules = getSetRules();
 		if (setRules.isTieBreak(games1, games2)) {
-			TieBreakRules tieBreakRules = setRules.getTieBreak();
+			var tieBreakRules = setRules.getTieBreak();
 			if (points2 >= tieBreakRules.getPoints() && points2 - points1 >= tieBreakRules.getPointsDiff()) {
 				incSets2();
 				switchServe();
@@ -126,7 +126,7 @@ public class CurrentScore {
 				switchServe();
 		}
 		else {
-			GameRules gameRules = setRules.getGame();
+			var gameRules = setRules.getGame();
 			if (points2 >= gameRules.getPoints()) {
 				if (points2 - points1 >= gameRules.getPointsDiff())
 					incGames2();

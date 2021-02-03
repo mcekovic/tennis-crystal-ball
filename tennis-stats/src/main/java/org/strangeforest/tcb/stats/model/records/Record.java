@@ -100,7 +100,7 @@ public class Record<D extends RecordDetail> {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof Record)) return false;
-		Record<?> record = (Record<?>)o;
+		var record = (Record<?>)o;
 		return id.equals(record.id);
 	}
 

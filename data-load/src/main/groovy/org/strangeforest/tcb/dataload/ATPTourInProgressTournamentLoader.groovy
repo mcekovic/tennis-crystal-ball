@@ -514,7 +514,7 @@ class ATPTourInProgressTournamentLoader extends BaseATPTourTournamentLoader {
 		def extId = event.ext_tournament_id
 		def oldMatchesHash = forceForecast ? null : sql.firstRow([extId: extId], FETCH_EVENT_HASH_SQL).matches_hash
 		if (matchesHash != oldMatchesHash) {
-			loadStats(matches.values(), LocalDate.now().year, extId, 'p1_', 'p2_', 'player1_name', 'player2_name')
+//			loadStats(matches.values(), LocalDate.now().year, extId, 'p1_', 'p2_', 'player1_name', 'player2_name')
 			sql.withBatch(LOAD_MATCH_SQL) { ps ->
 				matches.values().each { match ->
 					ps.addBatch(match)

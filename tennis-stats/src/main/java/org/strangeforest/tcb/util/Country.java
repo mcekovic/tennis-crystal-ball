@@ -27,12 +27,12 @@ public class Country {
 	}
 
 	public String getCode() {
-		CountryCode code = code(countryId);
+		var code = code(countryId);
 		return code != null ? code.getAlpha2().toLowerCase() : UNKNOWN_CODE;
 	}
 
 	public String getName() {
-		CountryCode code = code(countryId);
+		var code = code(countryId);
 		return code != null ? code.getName() : UNKNOWN_NAME;
 	}
 
@@ -42,7 +42,7 @@ public class Country {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof Country)) return false;
-		Country country = (Country)o;
+		var country = (Country)o;
 		return Objects.equals(countryId, country.countryId);
 	}
 
@@ -155,9 +155,9 @@ public class Country {
 
 	public static CountryCode code(String countryId) {
 		if (!UNKNOWN_ID.equals(countryId)) {
-			String isoAlpha3 = OVERRIDES.getOrDefault(countryId, countryId);
+			var isoAlpha3 = OVERRIDES.getOrDefault(countryId, countryId);
 			if (!UNKNOWN_ID.equals(isoAlpha3)) {
-				CountryCode code = CountryCode.getByCode(isoAlpha3);
+				var code = CountryCode.getByCode(isoAlpha3);
 				if (code != null)
 					return code;
 				else

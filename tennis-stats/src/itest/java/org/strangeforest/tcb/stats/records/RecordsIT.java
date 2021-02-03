@@ -50,11 +50,11 @@ class RecordsIT {
 
 	private void testRecords(List<RecordCategory> categories, boolean active) {
 		Map<Integer, PlayerRecords> records = new HashMap<>();
-		for (RecordCategory recordCategory : categories) {
-			for (Record record : recordCategory.getRecords()) {
-				BootgridTable<RecordDetailRow> table = recordsService.getRecordTable(record.getId(), active, 100, 1);
+		for (var recordCategory : categories) {
+			for (var record : recordCategory.getRecords()) {
+				var table = recordsService.getRecordTable(record.getId(), active, 100, 1);
 				if (table.getRowCount() > 0) {
-					for (RecordDetailRow row : table.getRows()) {
+					for (var row : table.getRows()) {
 						if (row.getRank() == 1)
 							incRecords(records, row.getPlayerId());
 						else
@@ -69,7 +69,7 @@ class RecordsIT {
 	}
 
 	private static void incRecords(Map<Integer, PlayerRecords> records, int playerId) {
-		PlayerRecords playerRecords = records.get(playerId);
+		var playerRecords = records.get(playerId);
 		if (playerRecords != null)
 			playerRecords.records++;
 		else

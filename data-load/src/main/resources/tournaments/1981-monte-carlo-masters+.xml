@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="1981" tournament-name="Monte Carlo Masters" name="Monte Carlo" date="1981-04-13" ext-id="410">
+    <level>M</level>
+    <surface>C</surface>
+    <indoor>false</indoor>
+    <draw-type>KO</draw-type>
+    <draw-size>32</draw-size>
+    <player seed="2" name="Jimmy Connors" country="USA" />
+    <player seed="3" name="Guillermo Vilas" country="ARG" />
+    <!-- F -->
+    <match match-num="31" round="F" best-of="5" winner="Guillermo Vilas" loser="Jimmy Connors" score="5-5 ABD" outcome="ABD" />
+  </tournament>
+</tournament-data>

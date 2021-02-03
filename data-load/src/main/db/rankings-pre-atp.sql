@@ -1,3 +1,5 @@
+DO $$ BEGIN
+
 -- 1968
 
 CALL load_ranking(DATE '1968-01-01', 'Rod Laver', 1, NULL);
@@ -497,5 +499,7 @@ CALL load_ranking(DATE '1973-07-16', 'Roscoe Tanner', 17, NULL);
 CALL load_ranking(DATE '1973-07-16', 'Alex Metreveli', 18, NULL);
 CALL load_ranking(DATE '1973-07-16', 'Jimmy Connors', 19, NULL);
 CALL load_ranking(DATE '1973-07-16', 'Manuel Orantes', 20, NULL);
+
+END $$;
 
 COMMIT;

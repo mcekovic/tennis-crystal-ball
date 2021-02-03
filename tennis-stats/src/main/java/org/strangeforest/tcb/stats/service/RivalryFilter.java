@@ -127,7 +127,7 @@ public class RivalryFilter {
 	}
 
 	public String getCriteria() {
-		StringBuilder criteria = new StringBuilder();
+		var criteria = new StringBuilder();
 		appendCriteria(criteria);
 		return criteria.toString();
 	}
@@ -152,7 +152,7 @@ public class RivalryFilter {
 	}
 
 	public MapSqlParameterSource getParams() {
-		MapSqlParameterSource params = new MapSqlParameterSource();
+		var params = new MapSqlParameterSource();
 		addParams(params);
 		return params;
 	}
@@ -188,7 +188,7 @@ public class RivalryFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof RivalryFilter)) return false;
-		RivalryFilter filter = (RivalryFilter)o;
+		var filter = (RivalryFilter)o;
 		return seasonRange.equals(filter.seasonRange) && last52Weeks == filter.last52Weeks && stringsEqual(level, filter.level) && Objects.equals(bestOf, filter.bestOf) &&
 			stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) && speedRange.equals(filter.speedRange) && stringsEqual(round, filter.round) && Objects.equals(tournamentId, filter.tournamentId);
 	}

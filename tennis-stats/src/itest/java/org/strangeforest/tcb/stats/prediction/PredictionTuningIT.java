@@ -67,8 +67,8 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	void scriptedTuneDefaultPrediction() throws InterruptedException {
-		int factor = 10; // H: 20, C: 30, G: 50, I: 50, A: 10
-		PredictionConfig config = PredictionConfig.defaultConfig(TUNING_SET);
+		var factor = 10; // H: 20, C: 30, G: 50, I: 50, A: 10
+		var config = PredictionConfig.defaultConfig(TUNING_SET);
 		System.out.println("Tuning by area...");
 		doTunePredictionByArea(config, 10 * factor);
 		if (config.isAreaEnabled(RANKING)) {
@@ -151,15 +151,15 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 	}
 
 	private PredictionResult tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics, Integer maxSteps) throws InterruptedException {
-		TuningContext context = new TuningContext(comparing(metrics));
-		PredictionVerificationResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
+		var context = new TuningContext(comparing(metrics));
+		var result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
 
 		for (context.initialResult(result); (maxSteps == null || context.currentStep() < maxSteps) && context.startStep() != null; context.endStep()) {
-			for (Weighted weighted : features) {
-				PredictionConfig stepDownConfig = context.stepDown(weighted);
+			for (var weighted : features) {
+				var stepDownConfig = context.stepDown(weighted);
 				if (stepDownConfig != null)
 					tuningStep(context, stepDownConfig);
-				PredictionConfig stepUpConfig = context.stepUp(weighted);
+				var stepUpConfig = context.stepUp(weighted);
 				if (stepUpConfig != null)
 					tuningStep(context, stepUpConfig);
 			}
@@ -169,12 +169,12 @@ class PredictionTuningIT extends BasePredictionVerificationIT {
 	}
 
 	private void tuningStep(TuningContext context, PredictionConfig config) throws InterruptedException {
-		PredictionVerificationResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
+		var result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
 		if (context.nextResult(result)) {
 			printWeights(config, false);
 			printResultDistribution(result);
 			if (SAVE_BEST_CONFIG) {
-				try (PrintStream out = new PrintStream(new FileOutputStream("src/main/resources" + PredictionConfig.getConfigFileName(TUNING_SET)))) {
+				try (var out = new PrintStream(new FileOutputStream("src/main/resources" + PredictionConfig.getConfigFileName(TUNING_SET)))) {
 					out.println("# TENNIS CRYSTAL BALL - " + TUNING_SET);
 					out.println("# " + result.getResult());
 					out.println("# " + result.getProbabilityRangeResults());

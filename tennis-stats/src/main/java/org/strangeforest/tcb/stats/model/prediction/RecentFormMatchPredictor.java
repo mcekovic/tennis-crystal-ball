@@ -54,9 +54,9 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public MatchPrediction predictMatch() {
-		Period matchRecentPeriod = getMatchRecentPeriod();
-		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
-		int recentFormMatches = getRecentFormMatches();
+		var matchRecentPeriod = getMatchRecentPeriod();
+		var prediction = new MatchPrediction(config.getTotalAreasWeight(), bestOf);
+		var recentFormMatches = getRecentFormMatches();
 		addItemProbabilities(prediction, OVERALL, isRecent(date1, matchRecentPeriod), isRecent(date2, matchRecentPeriod), recentFormMatches);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface).and(isRecent(date1, matchRecentPeriod)), isSurface(surface).and(isRecent(date2, matchRecentPeriod)), recentFormMatches);
 		addItemProbabilities(prediction, LEVEL, isLevel(level).and(isRecent(date1, matchRecentPeriod)), isLevel(level).and(isRecent(date2, matchRecentPeriod)), recentFormMatches);
@@ -76,33 +76,33 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, RecentFormPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2, Integer matches) {
-		double itemWeight = config.getItemWeight(item);
+		var itemWeight = config.getItemWeight(item);
 		if (itemWeight > 0.0) {
-			List<MatchData> filteredMatchData1 = matchData1.stream().filter(filter1).collect(toList());
-			List<MatchData> filteredMatchData2 = matchData2.stream().filter(filter2).collect(toList());
+			var filteredMatchData1 = matchData1.stream().filter(filter1).collect(toList());
+			var filteredMatchData2 = matchData2.stream().filter(filter2).collect(toList());
 			if (matches != null) {
-				int matches1 = filteredMatchData1.size();
-				int matches2 = filteredMatchData2.size();
+				var matches1 = filteredMatchData1.size();
+				var matches2 = filteredMatchData2.size();
 				if (matches1 > matches)
 					filteredMatchData1 = filteredMatchData1.subList(matches1 - matches, matches1);
 				if (matches2 > matches)
 					filteredMatchData2 = filteredMatchData2.subList(matches2 - matches, matches2);
 			}
-			int matches1 = filteredMatchData1.size();
-			int matches2 = filteredMatchData2.size();
+			var matches1 = filteredMatchData1.size();
+			var matches2 = filteredMatchData2.size();
 			if (matches1 > 0 && matches2 > 0) {
-				double form1 = 0.0;
-				for (int i = 0; i < matches1; i++)
+				var form1 = 0.0;
+				for (var i = 0; i < matches1; i++)
 					form1 += filteredMatchData1.get(i).getOpponentEloScore() / recencyAdjustment(matches1 - i, LAST_MATCHES_COUNT);
 				form1 /= matches1;
-				double form2 = 0.0;
-				for (int i = 0; i < matches2; i++)
+				var form2 = 0.0;
+				for (var i = 0; i < matches2; i++)
 					form2 += filteredMatchData2.get(i).getOpponentEloScore() / recencyAdjustment(matches2 - i, LAST_MATCHES_COUNT);
 				form2 /= matches2;
-				double weight = itemWeight * weight(matches1, matches2);
-				double p1 = winProbability(form1, form2);
-				double p2 = winProbability(form2, form1);
-				double p12 = p1 + p2;
+				var weight = itemWeight * weight(matches1, matches2);
+				var p1 = winProbability(form1, form2);
+				var p2 = winProbability(form2, form1);
+				var p12 = p1 + p2;
 				if (p12 > 0.0) {
 					prediction.addItemProbability1(item, weight, matchProbabilityFromMixedProbability(p1 / p12, bestOf));
 					prediction.addItemProbability2(item, weight, matchProbabilityFromMixedProbability(p2 / p12, bestOf));

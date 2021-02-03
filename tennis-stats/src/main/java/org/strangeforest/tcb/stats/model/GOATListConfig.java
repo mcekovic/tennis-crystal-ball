@@ -269,7 +269,7 @@ public class GOATListConfig {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		GOATListConfig config = (GOATListConfig)o;
+		var config = (GOATListConfig)o;
 		return config.oldLegends == oldLegends && config.extrapolateCareer == extrapolateCareer &&
 			config.tournamentFactor == tournamentFactor &&
 			config.rankingFactor == rankingFactor &&

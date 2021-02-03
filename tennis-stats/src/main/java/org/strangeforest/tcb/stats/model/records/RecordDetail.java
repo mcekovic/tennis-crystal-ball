@@ -11,8 +11,8 @@ public interface RecordDetail<T> {
 	}
 
 	default String getValueString() {
-		String value = String.valueOf(getValue());
-		String detail = toDetailString();
+		var value = String.valueOf(getValue());
+		var detail = toDetailString();
 		if (!isNullOrEmpty(detail))
 			value += " (" + detail + ')';
 		return value;

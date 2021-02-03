@@ -29,7 +29,7 @@ class PredictionIT {
 		int playerId1 = playerService.findPlayerId("Novak Djokovic").orElseThrow();
 		int playerId2 = playerService.findPlayerId("Rafael Nadal").orElseThrow();
 
-		MatchPrediction prediction = predictionService.predictMatch(playerId1, playerId2, LocalDate.now(), false, CLAY, false, GRAND_SLAM, F);
+		var prediction = predictionService.predictMatch(playerId1, playerId2, LocalDate.now(), false, CLAY, false, GRAND_SLAM, F);
 
 		System.out.printf("Novak Djokovic win: %1$.2f%%\n", 100.0 * prediction.getWinProbability1());
 		System.out.printf("Rafael Nadal win: %1$.2f%%\n", 100.0 * prediction.getWinProbability2());

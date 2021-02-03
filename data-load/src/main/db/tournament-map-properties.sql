@@ -1,3 +1,5 @@
+DO $$ BEGIN
+
 -- Grand Slam
 
 -- Australian Open
@@ -84,5 +86,7 @@ CALL set_tournament_map_properties('337', NULL, NULL, NULL, '{"center": {"lat": 
 
 -- Basel 
 CALL set_tournament_map_properties('328', NULL, NULL, NULL, '{"center": {"lat": 47.5391808, "lng": 7.6186382}, "zoom": 18}'::JSON);
+
+END $$;
 
 COMMIT;

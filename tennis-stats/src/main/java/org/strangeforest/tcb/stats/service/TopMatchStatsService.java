@@ -73,15 +73,15 @@ public class TopMatchStatsService {
 
 	@Cacheable("TopMatchStats.Table")
 	public BootgridTable<TopMatchStatsRow> getTopMatchStatsTable(String category, int playerCount, PerfStatsFilter filter, String orderBy, int pageSize, int currentPage) {
-		StatsCategory statsCategory = StatsCategory.get(category);
-		BootgridTable<TopMatchStatsRow> table = new BootgridTable<>(currentPage, playerCount);
+		var statsCategory = StatsCategory.get(category);
+		var table = new BootgridTable<TopMatchStatsRow>(currentPage, playerCount);
 		filter.withPrefix("p.");
-		int offset = (currentPage - 1) * pageSize;
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(TOP_MATCH_STATS_QUERY, statsCategory.getExpression(), getTopMatchStatsJoin(filter), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy),
 			filter.getParams().addValue("offset", offset).addValue("limit", pageSize),
 			rs -> {
-				int rank = rs.getInt("rank");
+				var rank = rs.getInt("rank");
 				table.addRow(new TopMatchStatsRow(
 					rank,
 					rs.getInt("player_id"),
@@ -116,7 +116,7 @@ public class TopMatchStatsService {
 	}
 
 	private static String getTopMatchStatsJoin(PerfStatsFilter filter) {
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 		if (filter.hasSpeedRange())
 			sb.append(EVENT_STATS_JOIN);
 		if (filter.hasResult())

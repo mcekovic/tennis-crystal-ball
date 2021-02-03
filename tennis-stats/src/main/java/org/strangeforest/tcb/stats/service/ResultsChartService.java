@@ -37,15 +37,15 @@ public class ResultsChartService {
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
 	public DataTable getResultsDataTable(int[] playerIds, TournamentEventResultFilter filter, boolean bySeason, boolean byAge) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
-		DataTable table = fetchResultsDataTable(indexedPlayers, filter, bySeason, byAge);
+		var indexedPlayers = playerService.getIndexedPlayers(playerIds);
+		var table = fetchResultsDataTable(indexedPlayers, filter, bySeason, byAge);
 		addColumns(table, indexedPlayers, filter, bySeason, byAge);
 		return table;
 	}
 
 	public DataTable getResultsDataTable(List<String> players, TournamentEventResultFilter filter, boolean bySeason, boolean byAge) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(players);
-		DataTable table = fetchResultsDataTable(indexedPlayers, filter, bySeason, byAge);
+		var indexedPlayers = playerService.getIndexedPlayers(players);
+		var table = fetchResultsDataTable(indexedPlayers, filter, bySeason, byAge);
 		if (!table.getRows().isEmpty())
 			addColumns(table, indexedPlayers, filter, bySeason, byAge);
 		else {
@@ -56,7 +56,7 @@ public class ResultsChartService {
 	}
 
 	private DataTable fetchResultsDataTable(IndexedPlayers players, TournamentEventResultFilter filter, boolean bySeason, boolean byAge) {
-		DataTable table = new DataTable();
+		var table = new DataTable();
 		if (players.isEmpty())
 			return table;
 		RowCursor rowCursor = bySeason ? new IntegerRowCursor(table, players) : (byAge ? new DoubleRowCursor(table, players) : new DateRowCursor(table, players));
@@ -65,8 +65,8 @@ public class ResultsChartService {
 			getParams(players, filter),
 			rs -> {
 				Object x;
-				int playerId = rs.getInt("player_id");
-				int y =  rs.getInt("value");
+				var playerId = rs.getInt("player_id");
+				var y =  rs.getInt("value");
 				if (rs.wasNull())
 					return;
 				if (bySeason)
@@ -87,12 +87,12 @@ public class ResultsChartService {
 			table.addColumn("number", "Season");
 		else
 			table.addColumn("date", "Date");
-		for (String player : players.getPlayers())
+		for (var player : players.getPlayers())
 			table.addColumn("number", player + getResultsText(filter));
 	}
 
 	private static String getResultsText(TournamentEventResultFilter filter) {
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 		if (filter.hasLevel()) {
 			sb.append(' ');
 			sb.append(filter.getLevel().chars().mapToObj(level -> TournamentLevel.decode(String.valueOf((char)level)).getText()).collect(joining(", ")));
@@ -105,7 +105,7 @@ public class ResultsChartService {
 			sb.append(' ').append(filter.getIndoor() ? "Indoor" : "Outdoor");
 		sb.append(' ');
 		if (filter.hasResult()) {
-			EventResult result = EventResult.decode(filter.getResult());
+			var result = EventResult.decode(filter.getResult());
 			sb.append(result == EventResult.W ? "Titles" : result.getBaseResult().getText() + "s");
 		}
 		else
@@ -114,8 +114,8 @@ public class ResultsChartService {
 	}
 
 	private String getSQL(TournamentEventResultFilter filter, boolean bySeason, boolean byAge) {
-		String playerJoin = byAge ? PLAYER_JOIN : "";
-		String orderBy = byAge ? "age" : (bySeason ? "season" : "date");
+		var playerJoin = byAge ? PLAYER_JOIN : "";
+		var orderBy = byAge ? "age" : (bySeason ? "season" : "date");
 			if (bySeason) {
 				return format(PLAYER_SEASON_RESULTS_QUERY,
 					byAge ? ", extract(YEAR FROM age(make_date(e.season, 12, 31), p.dob)) AS age" : "",
@@ -133,7 +133,7 @@ public class ResultsChartService {
 	}
 
 	private MapSqlParameterSource getParams(IndexedPlayers players, TournamentEventResultFilter filter) {
-		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
+		var params = params("playerIds", players.getPlayerIds());
 		filter.addParams(params);
 		return params;
 	}

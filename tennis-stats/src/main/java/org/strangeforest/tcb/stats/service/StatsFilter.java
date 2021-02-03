@@ -74,7 +74,7 @@ public class StatsFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof StatsFilter)) return false;
-		StatsFilter filter = (StatsFilter)o;
+		var filter = (StatsFilter)o;
 		return stringsEqual(category, filter.category) && Objects.equals(range, filter.range);
 	}
 

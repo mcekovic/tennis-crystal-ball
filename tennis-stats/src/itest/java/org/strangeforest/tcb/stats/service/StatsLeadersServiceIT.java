@@ -15,7 +15,7 @@ class StatsLeadersServiceIT {
 
 	@Test
 	void statsLeaders() {
-		BootgridTable<StatsLeaderRow> statsLeaders = topPerformersService.getStatsLeadersTable("aces", 100, PerfStatsFilter.ALL, 50, "value", 20, 1);
+		var statsLeaders = topPerformersService.getStatsLeadersTable("aces", 100, PerfStatsFilter.ALL, 50, "value", 20, 1);
 
 		assertThat(statsLeaders.getRowCount()).isEqualTo(20);
 		assertThat(statsLeaders.getRows()).hasSize(20);

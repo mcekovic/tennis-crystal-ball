@@ -20,9 +20,9 @@ public enum PriceFormat {
 
 	FRACTIONAL("Fractional") {
 		@Override public String format(BigDecimal price) {
-			FractionalPrice fractionalPrice = FractionalPriceTable.toFractional(price);
-			int oddsUp = fractionalPrice.up;
-			int oddsDown = fractionalPrice.down;
+			var fractionalPrice = FractionalPriceTable.toFractional(price);
+			var oddsUp = fractionalPrice.up;
+			var oddsDown = fractionalPrice.down;
 			if (oddsUp == 0 && oddsDown == 0)
 				throw new MissingFormatArgumentException(String.format("Price %1$s cannot be formatted into %2$s format.", price, FRACTIONAL));
 			return format(oddsUp) + "/" + format(oddsDown);
@@ -37,14 +37,14 @@ public enum PriceFormat {
 		@Override public String format(BigDecimal price) {
 			if (!isPossible(price))
 				return '+' + INFINITY;
-			BigDecimal americanValue = price.subtract(ONE);
+			var americanValue = price.subtract(ONE);
 			if (americanValue.compareTo(ONE) >= 0)
 				americanValue = americanValue.multiply(HUNDRED).setScale(AMERICAN_SCALE, ROUNDING_MODE);
 			else if (americanValue.signum() != 0)
 				americanValue = HUNDRED.divide(americanValue, AMERICAN_SCALE, ROUNDING_MODE).negate();
 			else
 				return PriceFormat.NEGATIVE_INFINITY;
-			String formatted = americanValue.stripTrailingZeros().toPlainString();
+			var formatted = americanValue.stripTrailingZeros().toPlainString();
 			return americanValue.signum() > 0 ? '+' + formatted : formatted;
 		}
 	},
@@ -59,7 +59,7 @@ public enum PriceFormat {
 		@Override public String format(BigDecimal price) {
 			if (!isPossible(price))
 				return INFINITY;
-			BigDecimal indonesianValue = price.subtract(ONE);
+			var indonesianValue = price.subtract(ONE);
 			if (indonesianValue.compareTo(ONE) < 0) {
 				if (indonesianValue.signum() != 0)
 					indonesianValue = asianInvert(indonesianValue);
@@ -74,7 +74,7 @@ public enum PriceFormat {
 		@Override public String format(BigDecimal price) {
 			if (!isPossible(price))
 				return '-' + formatWithScale(ZERO, MALAY_SCALE);
-			BigDecimal malayValue = price.subtract(ONE);
+			var malayValue = price.subtract(ONE);
 			if (malayValue.compareTo(ONE) > 0)
 				malayValue = asianInvert(malayValue);
 			return formatWithScale(malayValue, MALAY_SCALE);

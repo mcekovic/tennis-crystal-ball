@@ -33,10 +33,10 @@ public class VisitorFilter implements Filter {
 	@Override public void destroy() {}
 
 	@Override public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest)request;
-		String remoteAddr = getRemoteAddress(httpRequest);
-		BrowserType agentType = UserAgentUtil.getAgentType(httpRequest);
-		Visit visit = visitorManager.visit(remoteAddr, agentType.name());
+		var httpRequest = (HttpServletRequest)request;
+		var remoteAddr = getRemoteAddress(httpRequest);
+		var agentType = UserAgentUtil.getAgentType(httpRequest);
+		var visit = visitorManager.visit(remoteAddr, agentType.name());
 		if (visit.isAllowed())
 			chain.doFilter(request, response);
 		else
@@ -44,17 +44,17 @@ public class VisitorFilter implements Filter {
 	}
 
 	private static String getRemoteAddress(HttpServletRequest httpRequest) {
-		String remoteAddr = httpRequest.getHeader(X_FORWARDED_FOR);
+		var remoteAddr = httpRequest.getHeader(X_FORWARDED_FOR);
 		if (isNullOrEmpty(remoteAddr))
 			remoteAddr = httpRequest.getRemoteAddr();
-		int commaPos = remoteAddr.indexOf(',');
+		var commaPos = remoteAddr.indexOf(',');
 		if (commaPos > 0)
 			remoteAddr = remoteAddr.substring(0, commaPos);
 		return remoteAddr;
 	}
 
 	private void tooManyRequests(HttpServletRequest httpRequest, ServletResponse response, Visit visit) {
-		HttpServletResponse httpResponse = (HttpServletResponse)response;
+		var httpResponse = (HttpServletResponse)response;
 		httpResponse.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
 		if (blockedVisitors.asMap().putIfAbsent(visit.visitor.getIpAddress(), Boolean.TRUE) == null)
 			LOGGER.info("Visitor has been blocked: {}, reason: {}, user-agent: {}", visit.visitor, visit.message, httpRequest.getHeader("User-Agent"));

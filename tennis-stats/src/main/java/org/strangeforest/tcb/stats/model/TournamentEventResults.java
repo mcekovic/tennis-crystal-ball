@@ -43,7 +43,7 @@ public class TournamentEventResults {
 
 	public void addMatch(TournamentEventMatch match) {
 		matches.put(match.getMatchNum(), match);
-		ResultRound round = ResultRound.valueOf(match.getRound());
+		var round = ResultRound.valueOf(match.getRound());
 		matchesByRound.computeIfAbsent(round, r -> new ArrayList<>()).add(match);
 	}
 

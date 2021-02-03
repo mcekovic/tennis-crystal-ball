@@ -53,8 +53,8 @@ public abstract class ResultsStreaksCategory extends RecordCategory {
 			"INNER JOIN tournament_event le ON le.tournament_event_id = s.last_event_id",
 			"r.value, r.start_season, r.start_date, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_season, r.end_date, r.end_tournament_event_id, r.end_tournament, r.end_level" + prefix(partition, ", r."), "r.value DESC", "r.value DESC, r.end_date",
 			StreakRecordDetail.class, (playerId, recordDetail) -> {
-				String url = format("/playerProfile?playerId=%1$d&tab=events%2$s&result=%3$s&fromDate=%4$td-%4$tm-%4$tY&toDate=%5$td-%5$tm-%5$tY", playerId, domain.urlParam, resultUrlParam, recordDetail.getStartDate(), recordDetail.getEndDate());
-				Integer tournamentId = recordDetail.getTournamentId();
+			var url = format("/playerProfile?playerId=%1$d&tab=events%2$s&result=%3$s&fromDate=%4$td-%4$tm-%4$tY&toDate=%5$td-%5$tm-%5$tY", playerId, domain.urlParam, resultUrlParam, recordDetail.getStartDate(), recordDetail.getEndDate());
+			var tournamentId = recordDetail.getTournamentId();
 				if (tournamentId != null)
 					url += "&tournamentId=" + tournamentId;
 				return url;

@@ -184,8 +184,8 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 	}
 
 	private static Record greatestItemPct(RecordType type, ItemType itemType, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
-		int minEntries = perfCategory.getMinEntries() * 2;
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var minEntries = perfCategory.getMinEntries() * 2;
 		return new Record<>(
 			domain.id + itemType.name + type.id + "Pct", "Greatest " + suffix(domain.name, " ") + itemType.name + prefix(type.name, " ") + " Pct.",
 			/* language=SQL */
@@ -216,8 +216,8 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 	}
 
 	private static Record greatestItemPctVs(RecordType type, ItemType itemType, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
-		int minEntries = perfCategory.getMinEntries() * 2;
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var minEntries = perfCategory.getMinEntries() * 2;
 		return new Record<>(
 			"Vs" + domain.id + itemType.name + type.id + "Pct", "Greatest " + itemType.name + prefix(type.name, " ") + " Pct. Vs " + domain.name,
 			/* language=SQL */
@@ -250,8 +250,8 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 	}
 
 	private static Record greatestSeasonItemPct(RecordType type, ItemType itemType) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(ALL.perfCategory);
-		int minEntries = perfCategory.getMinEntries() / 5;
+		var perfCategory = PerformanceCategory.get(ALL.perfCategory);
+		var minEntries = perfCategory.getMinEntries() / 5;
 		return new Record<>(
 			"Season" + itemType.name + type.id + "Pct", "Greatest " +  itemType.name + prefix(type.name, " ") + " Pct. in Single Season",
 			/* language=SQL */

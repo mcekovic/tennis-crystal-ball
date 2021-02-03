@@ -35,6 +35,7 @@ import static org.strangeforest.tcb.util.CompareUtil.*;
 public class TournamentService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+	@Autowired private PerformanceService performanceService;
 
 	private static final String TOURNAMENT_ITEMS_QUERY = //language=SQL
 		"SELECT tournament_id, name, level FROM tournament WHERE NOT linked ORDER BY name";
@@ -165,23 +166,50 @@ public class TournamentService {
 
 	private static final String TOURNAMENT_RECORD_QUERY =
 		"WITH record_results AS (\n" +
-		"  SELECT player_id, count(result) AS count,\n" +
-		"    rank() OVER (ORDER BY count(result) DESC) AS rank, rank() OVER (ORDER BY count(result) DESC, max(e.season)) AS order\n" +
+		"  SELECT r.player_id, count(r.result) AS count,\n" +
+		"    rank() OVER (ORDER BY count(r.result) DESC) AS rank, rank() OVER (ORDER BY count(r.result) DESC, max(e.season)) AS order\n" +
 		"  FROM player_tournament_event_result r\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE e.tournament_id = :tournamentId AND r.result >= :result::tournament_event_result\n" +
-		"  GROUP BY player_id\n" +
+		"  GROUP BY r.player_id\n" +
 		")\n" +
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.count\n" +
 		"FROM record_results r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.rank <= coalesce((SELECT max(r2.rank) FROM record_results r2 WHERE r2.order = :maxPlayers), :maxPlayers)\n" +
+		"WHERE r.rank <= :maxPlayers\n" +
 		"ORDER BY r.order, p.goat_points DESC, p.name";
+
+	private static final String TOURNAMENT_GOAT_POINTS_QUERY =
+		"SELECT g.rank, player_id, p.name, p.country_id, p.active, g.goat_points\n" +
+		"FROM player_tournament_goat_points g\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE g.tournament_id = :tournamentId AND g.rank <= :maxPlayers\n" +
+		"ORDER BY g.rank, g.last_season, p.goat_points DESC, p.name";
 
 	private static final String TOURNAMENT_EVENT_COUNT_QUERY =
 		"SELECT count(tournament_event_id) event_count\n" +
 		"FROM tournament_event\n" +
 		"WHERE tournament_id = :tournamentId";
+
+	private static final String TOURNAMENT_EVENT_SEEDS_QUERY =
+		"WITH seed_match AS (\n" +
+		"  SELECT match_num, round, winner_id AS player_id, winner_seed AS seed, winner_entry AS entry, winner_rank AS rank, winner_elo_rating AS elo_rating\n" +
+		"  FROM match\n" +
+		"  WHERE winner_seed IS NOT NULL AND tournament_event_id = :tournamentEventId\n" +
+		"  UNION\n" +
+		"  SELECT match_num, round, loser_id AS player_id, loser_seed AS seed, loser_entry AS entry, loser_rank AS rank, loser_elo_rating AS elo_rating\n" +
+		"  FROM match\n" +
+		"  WHERE loser_seed IS NOT NULL AND tournament_event_id = :tournamentEventId\n" +
+		"), seed_match_ranked AS (\n" +
+		"  SELECT player_id, seed, entry, rank, elo_rating, rank() OVER (PARTITION BY player_id ORDER BY round, match_num) AS seed_rank\n" +
+		"  FROM seed_match\n" +
+		")\n" +
+		"SELECT player_id, p.name, p.country_id, p.active, s.seed, s.entry, s.rank, p.best_rank, s.elo_rating, r.result\n" +
+		"FROM seed_match_ranked s\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"INNER JOIN player_tournament_event_result r USING (player_id)\n" +
+		"WHERE s.seed_rank = 1 AND tournament_event_id = :tournamentEventId\n" +
+		"ORDER BY s.seed";
 
 	private static final String TOURNAMENT_EVENT_MAP_PROPERTIES_QUERY =
 		"SELECT map_properties FROM tournament_event\n" +
@@ -260,7 +288,7 @@ public class TournamentService {
 
 	@Cacheable("Tournaments")
 	public List<Tournament> getTournaments(TournamentEventFilter filter) {
-		List<Tournament> tournaments = jdbcTemplate.query(
+		var tournaments = jdbcTemplate.query(
 			format(TOURNAMENTS_QUERY, filter.hasSpeedRange() ? EVENT_STATS_JOIN : "", filter.getCriteria()),
 			filter.getParams(),
 			(rs, rowNum) -> mapTournament(rs)
@@ -269,6 +297,7 @@ public class TournamentService {
 		return tournaments;
 	}
 
+	@Cacheable("Tournament")
 	public Tournament getTournament(int tournamentId) {
 		return jdbcTemplate.query(
 			TOURNAMENT_QUERY, params("tournamentId", tournamentId),
@@ -283,24 +312,24 @@ public class TournamentService {
 	}
 
 	private Tournament mapTournament(ResultSet rs) throws SQLException {
-		int tournamentId = rs.getInt("tournament_id");
-		String extTournamentId = rs.getString("ext_tournament_id");
-		String name = rs.getString("name");
+		var tournamentId = rs.getInt("tournament_id");
+		var extTournamentId = rs.getString("ext_tournament_id");
+		var name = rs.getString("name");
 		Map<String, Integer> levels = new HashMap<>();
 		Map<String, Integer> surfaces = new HashMap<>();
 		Map<String, List<Integer>> speeds = new HashMap<>();
 		List<Integer> seasons = new ArrayList<>();
-		int playerCount = 0;
-		double participation = 0.0;
-		int strength = 0;
-		int averageEloRating = 0;
+		var playerCount = 0;
+		var participation = 0.0;
+		var strength = 0;
+		var averageEloRating = 0;
 		try {
-			JsonNode events = READER.readTree(rs.getString("events"));
-			for (JsonNode event : events) {
+			var events = READER.readTree(rs.getString("events"));
+			for (var event : events) {
 				levels.compute(event.get("level").asText(), TournamentService::increment);
-				String surface = event.get("surface").asText();
+				var surface = event.get("surface").asText();
 				surfaces.compute(surface, TournamentService::increment);
-				JsonNode speedNode = event.get("court_speed");
+				var speedNode = event.get("court_speed");
 				if (!speedNode.isNull())
 					speeds.computeIfAbsent(surface, aSurface -> new ArrayList<>()).add(speedNode.asInt());
 				seasons.add(event.get("season").asInt());
@@ -313,22 +342,22 @@ public class TournamentService {
 		catch (IOException ex) {
 			throw new SQLException(ex);
 		}
-		List<String> levelList = sortKeysByValuesDesc(levels, comparing(TournamentLevel::decode));
-		List<String> surfaceList = sortKeysByValuesDesc(surfaces, comparing(Surface::decode));
-		Map<String, Integer> avgSpeeds = speeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
+		var levelList = sortKeysByValuesDesc(levels, comparing(TournamentLevel::decode));
+		var surfaceList = sortKeysByValuesDesc(surfaces, comparing(Surface::decode));
+		var avgSpeeds = speeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
 			(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().orElseThrow())
 		));
-		int eventCount = seasons.size();
-		String formattedSeasons = formatSeasons(seasons);
-		int avgPlayerCount = eventCount > 0 ? (int)Math.round((double)playerCount / eventCount) : 0;
-		double avgParticipation = eventCount > 0 ? participation / eventCount : 0.0;
-		int avgStrength =  eventCount > 0 ? (int)Math.round((double)strength / eventCount) : 0;
-		int avgAverageEloRating =  eventCount > 0 ? (int)Math.round((double)averageEloRating / eventCount) : 0;
+		var eventCount = seasons.size();
+		var formattedSeasons = formatSeasons(seasons);
+		var avgPlayerCount = eventCount > 0 ? (int)Math.round((double)playerCount / eventCount) : 0;
+		var avgParticipation = eventCount > 0 ? participation / eventCount : 0.0;
+		var avgStrength =  eventCount > 0 ? (int)Math.round((double)strength / eventCount) : 0;
+		var avgAverageEloRating =  eventCount > 0 ? (int)Math.round((double)averageEloRating / eventCount) : 0;
 
 		List<PlayerRow> topPlayers = new ArrayList<>();
 		try {
-			JsonNode topPlayersNode = READER.readTree(rs.getString("top_players"));
-			for (JsonNode topPlayer : topPlayersNode) {
+			var topPlayersNode = READER.readTree(rs.getString("top_players"));
+			for (var topPlayer : topPlayersNode) {
 				topPlayers.add(new PlayerRow(
 					topPlayer.get("titles").asInt(),
 					topPlayer.get("player_id").asInt(),
@@ -358,8 +387,8 @@ public class TournamentService {
 	private static String formatSeasons(List<Integer> seasons) {
 		if (seasons.isEmpty())
 			return "";
-		StringBuilder sb = new StringBuilder();
-		Integer seasonRangeStart = seasons.get(0);
+		var sb = new StringBuilder();
+		var seasonRangeStart = seasons.get(0);
 		int lastSeason = seasons.get(seasons.size() - 1);
 		for (int season = seasonRangeStart; season <= lastSeason; season++) {
 			if (!seasons.contains(season)) {
@@ -390,8 +419,8 @@ public class TournamentService {
 
 	@Cacheable("TournamentIdByName")
 	public int findTournamentId(String name, String extId) {
-		boolean hasExtId = !isNullOrEmpty(extId);
-		MapSqlParameterSource params = params("name", name);
+		var hasExtId = !isNullOrEmpty(extId);
+		var params = params("name", name);
 		if (hasExtId)
 			params.addValue("extId", extId);
 		return jdbcTemplate.query(format(TOURNAMENT_ID_QUERY, hasExtId ? TOURNAMENT_MAPPING_JOIN : "", hasExtId ? EXT_ID_CONDITION : ""), params, rs -> {
@@ -417,9 +446,9 @@ public class TournamentService {
 
 	@Cacheable("TournamentEvents.Table")
 	public BootgridTable<TournamentEvent> getTournamentEventsTable(TournamentEventFilter filter, String orderBy, int pageSize, int currentPage) {
-		BootgridTable<TournamentEvent> table = new BootgridTable<>(currentPage);
-		AtomicInteger tournamentEvents = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
+		var table = new BootgridTable<TournamentEvent>(currentPage);
+		var tournamentEvents = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(TOURNAMENT_EVENTS_QUERY, "", "", filter.getCriteria(), orderBy),
 			filter.getParams().addValue("offset", offset),
@@ -433,12 +462,12 @@ public class TournamentService {
 	}
 
 	public TournamentEvent getTournamentEvent(int tournamentEventId) {
-		TournamentEvent event = jdbcTemplate.query(
+		var event = jdbcTemplate.query(
 			format(TOURNAMENT_EVENT_QUERY, TITLE_DIFFICULTY_COLUMNS, TITLE_DIFFICULTY_JOIN),
 			params("tournamentEventId", tournamentEventId),
 			rs -> {
 				if (rs.next()) {
-					TournamentEvent tournamentEvent = mapTournamentEvent(rs);
+					var tournamentEvent = mapTournamentEvent(rs);
 					tournamentEvent.setMapProperties(rs.getString("map_properties"));
 					tournamentEvent.setTitleDifficulty(getDouble(rs, "difficulty"), getDouble(rs, "avg_rank"), getInteger(rs, "avg_elo_rating"));
 					return tournamentEvent;
@@ -447,9 +476,9 @@ public class TournamentService {
 					throw new NotFoundException("Tournament event", tournamentEventId);
 			}
 		);
-		String level = event.getLevel();
+		var level = event.getLevel();
 		if (List.of("D", "T").contains(level)) {
-			int season = event.getSeason();
+			var season = event.getSeason();
 			jdbcTemplate.query(
 				TEAM_TOURNAMENT_EVENT_WINNER_QUERY, params("level", level).addValue("season", season),
 				rs -> {
@@ -470,7 +499,7 @@ public class TournamentService {
 	}
 
 	private static TournamentEvent mapTournamentEvent(ResultSet rs) throws SQLException {
-		TournamentEvent tournamentEvent = new TournamentEvent(
+		var tournamentEvent = new TournamentEvent(
 			rs.getInt("tournament_event_id"),
 			rs.getInt("tournament_id"),
 			rs.getString("ext_tournament_id"),
@@ -505,8 +534,8 @@ public class TournamentService {
 
 	@Cacheable("TournamentEventIdByName")
 	public int findTournamentEventId(String name, String extId, Integer season) {
-		boolean hasExtId = !isNullOrEmpty(extId);
-		MapSqlParameterSource params = params("name", name)
+		var hasExtId = !isNullOrEmpty(extId);
+		var params = params("name", name)
 			.addValue("season", season);
 		if (hasExtId)
 			params.addValue("extId", extId);
@@ -537,16 +566,57 @@ public class TournamentService {
 		);
 	}
 
+	public List<RecordDetailRow> getTournamentGOATPoints(int tournamentId, int maxPlayers) {
+		return jdbcTemplate.query(
+			TOURNAMENT_GOAT_POINTS_QUERY,
+			params("tournamentId", tournamentId)
+				.addValue("maxPlayers", maxPlayers),
+			(rs, rowNum) -> new RecordDetailRow<RecordDetail>(
+				rs.getInt("rank"),
+				rs.getInt("player_id"),
+				rs.getString("name"),
+				getInternedString(rs, "country_id"),
+				rs.getBoolean("active"),
+				new IntegerRecordDetail(rs.getInt("goat_points")),
+				(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&tournamentId=%2$d", playerId, tournamentId)
+			)
+		);
+	}
+
 	@Cacheable("Tournament.EventCount")
 	public int getTournamentEventCount(int tournamentId) {
 		return jdbcTemplate.queryForObject(TOURNAMENT_EVENT_COUNT_QUERY, params("tournamentId", tournamentId), Integer.class);
 	}
 
+	public List<SeededPlayer> getTournamentEventSeeds(int tournamentEventId) {
+		var seeds = jdbcTemplate.query(
+			TOURNAMENT_EVENT_SEEDS_QUERY,
+			params("tournamentEventId", tournamentEventId),
+			(rs, rowNum) -> new SeededPlayer(
+				rs.getInt("player_id"),
+				rs.getString("name"),
+				getInteger(rs, "seed"),
+				rs.getString("entry"),
+				rs.getString("country_id"),
+				getBoolean(rs, "active"),
+				getInteger(rs, "rank"),
+				getInteger(rs, "best_rank"),
+				getInteger(rs, "elo_rating"),
+				rs.getString("result")
+			)
+		);
+		for (var seed : seeds) {
+			var careerPerf = performanceService.getPlayerPerformance(seed.getId(), PerfStatsFilter.ALL);
+			seed.setFavoriteSurface(new FavoriteSurface(careerPerf));
+		}
+		return seeds;
+	}
+
 	public String getTournamentEventMapProperties(int tournamentEventId) {
 		return jdbcTemplate.queryForObject(
 			TOURNAMENT_EVENT_MAP_PROPERTIES_QUERY,
-			params("tournamentEventId",
-			tournamentEventId), String.class
+			params("tournamentEventId", tournamentEventId),
+			String.class
 		);
 	}
 
@@ -560,8 +630,8 @@ public class TournamentService {
 
 	@Cacheable("PlayersTournamentsIntersection")
 	public Map<TournamentLevel, List<TournamentItem>> getPlayersTournamentsIntersection(int playerId1, int playerId2) {
-		List<TournamentItem> tournaments1 = fetchPlayerTournamentItems(playerId1);
-		List<TournamentItem> tournaments2 = fetchPlayerTournamentItems(playerId2);
+		var tournaments1 = fetchPlayerTournamentItems(playerId1);
+		var tournaments2 = fetchPlayerTournamentItems(playerId2);
 		return groupTournamentsByLevel(tournaments1.stream().filter(tournaments2::contains).collect(toList()));
 	}
 
@@ -595,25 +665,25 @@ public class TournamentService {
 				String bestLevel = null;
 				LocalDate lastDate = null;
 				String lastResult = null, lastLevel = null;
-				int lastTournamentEventId = 0;
-				int titles = 0;
+				var lastTournamentEventId = 0;
+				var titles = 0;
 				try {
-					JsonNode events = READER.readTree(rs.getString("events"));
-					for (JsonNode event : events) {
-						String level = event.get("level").asText();
+					var events = READER.readTree(rs.getString("events"));
+					for (var event : events) {
+						var level = event.get("level").asText();
 						levels.compute(level, TournamentService::increment);
-						String surface = event.get("surface").asText();
+						var surface = event.get("surface").asText();
 						surfaces.compute(surface, TournamentService::increment);
-						JsonNode speedNode = event.get("court_speed");
+						var speedNode = event.get("court_speed");
 						if (!speedNode.isNull())
 							speeds.computeIfAbsent(surface, aSurface -> new ArrayList<>()).add(speedNode.asInt());
 						seasons.add(event.get("season").asInt());
-						EventResult result = EventResult.decode(event.get("result").asText());
+						var result = EventResult.decode(event.get("result").asText());
 						if (nullsLastCompare(result.getOrder(), bestResult != null ? bestResult.getOrder() : null) < 0) {
 							bestResult = result;
 							bestLevel = level;
 						}
-						LocalDate date = parseJSONDate(event.get("date").asText());
+						var date = parseJSONDate(event.get("date").asText());
 						if (nullsFirstCompare(date, lastDate) > 0) {
 							lastDate = date;
 							lastResult = result.getCode();
@@ -627,7 +697,7 @@ public class TournamentService {
 				catch (IOException ex) {
 					throw new SQLException(ex);
 				}
-				Map<String, Integer> avgSpeeds = speeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
+				var avgSpeeds = speeds.entrySet().stream().collect(toMap(Entry::getKey, e ->
 					(int)Math.round(e.getValue().stream().mapToInt(Integer::intValue).average().orElseThrow())
 				));
 				return new PlayerTournament(
@@ -651,9 +721,9 @@ public class TournamentService {
 	}
 
 	public BootgridTable<PlayerTournamentEvent> getPlayerTournamentEventsTable(int playerId, TournamentEventResultFilter filter, String orderBy, int pageSize, int currentPage) {
-		BootgridTable<PlayerTournamentEvent> table = new BootgridTable<>(currentPage);
-		AtomicInteger tournamentEvents = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
+		var table = new BootgridTable<PlayerTournamentEvent>(currentPage);
+		var tournamentEvents = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(PLAYER_TOURNAMENT_EVENTS_QUERY, filter.hasStatsFilter() ? TOURNAMENT_STATS_JOIN : "", filter.getCriteria(), orderBy),
 			filter.getParams()
@@ -685,22 +755,22 @@ public class TournamentService {
 	}
 
 	private TournamentItem tournamentItemMapper(ResultSet rs, int rowNum) throws SQLException {
-		int tournamentId = rs.getInt("tournament_id");
-		String name = rs.getString("name");
-		String level = getInternedString(rs, "level");
+		var tournamentId = rs.getInt("tournament_id");
+		var name = rs.getString("name");
+		var level = getInternedString(rs, "level");
 		return new TournamentItem(tournamentId, name, level);
 	}
 
 	private TournamentEventItem tournamentEventItemMapper(ResultSet rs, int rowNum) throws SQLException {
-		int tournamentEventId = rs.getInt("tournament_event_id");
-		String name = rs.getString("name");
-		int season = rs.getInt("season");
-		String level = getInternedString(rs, "level");
+		var tournamentEventId = rs.getInt("tournament_event_id");
+		var name = rs.getString("name");
+		var season = rs.getInt("season");
+		var level = getInternedString(rs, "level");
 		return new TournamentEventItem(tournamentEventId, name, season, level);
 	}
 
 	public Map<EventResult, List<PlayerTournamentEvent>> getPlayerSeasonHighlights(int playerId, int season, int maxResults) {
-		BootgridTable<PlayerTournamentEvent> results = getPlayerTournamentEventsTable(playerId, new TournamentEventResultFilter(season), "result DESC, level, date", Integer.MAX_VALUE, 1);
+		var results = getPlayerTournamentEventsTable(playerId, new TournamentEventResultFilter(season), "result DESC, level, date", Integer.MAX_VALUE, 1);
 		return results.getRows().stream()
 			.collect(groupingBy(r -> EventResult.valueOf(r.result()), LinkedHashMap::new, toList()))
 			.entrySet().stream().limit(maxResults).collect(toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));

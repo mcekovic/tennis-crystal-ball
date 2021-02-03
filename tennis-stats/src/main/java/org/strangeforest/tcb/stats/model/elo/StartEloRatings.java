@@ -40,7 +40,7 @@ public abstract class StartEloRatings {
 	public static double startRating(Integer rank) {
 		if (rank != null) {
 			RatingPoint prevPoint = null;
-			for (RatingPoint point : START_RATING_TABLE) {
+			for (var point : START_RATING_TABLE) {
 				if (rank == point.rank)
 					return point.eloRating;
 				else if (rank < point.rank) {

@@ -22,6 +22,7 @@ import static java.lang.String.*;
 import static java.util.Collections.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.util.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
@@ -39,8 +40,7 @@ public class TournamentForecastService {
 	private static final String IN_PROGRESS_EVENTS_QUERY = //language=SQL
 		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating, e.court_speed, e.completed\n" +
 		"FROM in_progress_event e\n" +
-		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
-		"WHERE TRUE %1$s\n" +
+		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)%1$s\n" +
 		"ORDER BY %2$s OFFSET :offset";
 
 	private static final String IN_PROGRESS_EVENT_ID_QUERY =
@@ -114,11 +114,11 @@ public class TournamentForecastService {
 
 	@Cacheable("InProgressEvents")
 	public BootgridTable<InProgressEvent> getInProgressEventsTable(InProgressEventFilter filter, PriceFormat priceFormat, String orderBy, int pageSize, int currentPage) {
-		BootgridTable<InProgressEvent> table = new BootgridTable<>(currentPage);
-		AtomicInteger inProgressEvents = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
+		var table = new BootgridTable<InProgressEvent>(currentPage);
+		var inProgressEvents = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(IN_PROGRESS_EVENTS_QUERY, filter.getCriteria(), orderBy),
+			format(IN_PROGRESS_EVENTS_QUERY, where(filter.getCriteria()), orderBy),
 			filter.getParams().addValue("offset", offset),
 			rs -> {
 				if (inProgressEvents.incrementAndGet() <= pageSize)
@@ -126,13 +126,13 @@ public class TournamentForecastService {
 			}
 		);
 		table.setTotal(offset + inProgressEvents.get());
-		for (InProgressEvent inProgressEvent : table.getRows())
+		for (var inProgressEvent : table.getRows())
 			inProgressEvent.setFavorites(findFavoritePlayers(inProgressEvent.getId(), 2, priceFormat));
 		return table;
 	}
 
 	private static InProgressEvent mapInProgressEvent(ResultSet rs) throws SQLException {
-		InProgressEvent inProgressEvent = new InProgressEvent(
+		var inProgressEvent = new InProgressEvent(
 			rs.getInt("in_progress_event_id"),
 			rs.getInt("tournament_id"),
 			getLocalDate(rs, "date"),
@@ -166,8 +166,8 @@ public class TournamentForecastService {
 
 	@Cacheable("InProgressEventForecast")
 	public InProgressEventForecast getInProgressEventForecast(int inProgressEventId) {
-		InProgressEvent inProgressEvent = getInProgressEvent(inProgressEventId);
-		List<FavoritePlayer> favorites = findFavoritePlayers(inProgressEventId, 4, null);
+		var inProgressEvent = getInProgressEvent(inProgressEventId);
+		var favorites = findFavoritePlayers(inProgressEventId, 4, null);
 		inProgressEvent.setFavorites(favorites);
 		return fetchInProgressEventForecast(inProgressEvent, "");
 	}
@@ -182,9 +182,9 @@ public class TournamentForecastService {
 	}
 
 	private InProgressEventForecast fetchInProgressEventForecast(InProgressEvent event, String condition) {
-		InProgressEventForecast forecast = new InProgressEventForecast(event);
-		int inProgressEventId = event.getId();
-		List<PlayerForecast> players = fetchPlayers(inProgressEventId);
+		var forecast = new InProgressEventForecast(event);
+		var inProgressEventId = event.getId();
+		var players = fetchPlayers(inProgressEventId);
 		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, condition), params("inProgressEventId", inProgressEventId), rs -> {
 			addForecast(forecast, players, rs);
 		});
@@ -195,7 +195,7 @@ public class TournamentForecastService {
 
 	private List<PlayerForecast> fetchPlayers(int inProgressEventId) {
 		List<PlayerForecast> players = new ArrayList<>();
-		AtomicInteger emptyCount = new AtomicInteger();
+		var emptyCount = new AtomicInteger();
 		jdbcTemplate.query(IN_PROGRESS_MATCHES_QUERY, params("inProgressEventId", inProgressEventId), rs -> {
 			players.add(mapForecastPlayer(rs, "player1_", emptyCount));
 			players.add(mapForecastPlayer(rs, "player2_", emptyCount));
@@ -215,23 +215,23 @@ public class TournamentForecastService {
 	}
 
 	private void addNextEloRatings(InProgressEventForecast forecast) {
-		PlayersForecast currentForecast = forecast.getCurrentForecast();
+		var currentForecast = forecast.getCurrentForecast();
 		jdbcTemplate.query(IN_PROGRESS_NEXT_ELO_RATINGS_QUERY, params("inProgressEventId", forecast.getEvent().getId()), rs -> {
-			String round = getInternedString(rs, "round");
-			PlayersForecast playersForecast = forecast.getPlayersForecast(round);
+			var round = getInternedString(rs, "round");
+			var playersForecast = forecast.getPlayersForecast(round);
 			setNextEloRatings(round, currentForecast, playersForecast, rs, "player1_");
 			setNextEloRatings(round, currentForecast, playersForecast, rs, "player2_");
 		});
 	}
 
 	private void setNextEloRatings(String round, PlayersForecast currentForecast, PlayersForecast playersForecast, ResultSet rs, String prefix) throws SQLException {
-		Integer playerId = getInteger(rs, prefix + "id");
+		var playerId = getInteger(rs, prefix + "id");
 		if (playerId != null) {
-			Integer nextEloRating = getInteger(rs, prefix + "next_elo_rating");
-			Integer nextRecentEloRating = getInteger(rs, prefix + "next_recent_elo_rating");
-			Integer nextSurfaceEloRating = getInteger(rs, prefix + "next_surface_elo_rating");
-			Integer nextInOutEloRating = getInteger(rs, prefix + "next_in_out_elo_rating");
-			Integer nextSetEloRating = getInteger(rs, prefix + "next_set_elo_rating");
+			var nextEloRating = getInteger(rs, prefix + "next_elo_rating");
+			var nextRecentEloRating = getInteger(rs, prefix + "next_recent_elo_rating");
+			var nextSurfaceEloRating = getInteger(rs, prefix + "next_surface_elo_rating");
+			var nextInOutEloRating = getInteger(rs, prefix + "next_in_out_elo_rating");
+			var nextSetEloRating = getInteger(rs, prefix + "next_set_elo_rating");
 			if (currentForecast != null && KOResult.valueOf(round).compareTo(currentForecast.getEntryRound()) >= 0)
 				currentForecast.setNextEloRatings(playerId, nextEloRating, nextRecentEloRating, nextSurfaceEloRating, nextInOutEloRating, nextSetEloRating);
 			if (playersForecast != null)
@@ -240,7 +240,7 @@ public class TournamentForecastService {
 	}
 
 	private PlayerForecast mapForecastPlayer(ResultSet rs, String prefix, AtomicInteger emptyCount) throws SQLException {
-		int id = rs.getInt(prefix + "id");
+		var id = rs.getInt(prefix + "id");
 		if (id == 0)
 			id = -emptyCount.incrementAndGet();
 		return new PlayerForecast(id,
@@ -262,14 +262,14 @@ public class TournamentForecastService {
 
 	@Cacheable("InProgressEventCompletedMatches")
 	public TournamentEventResults getInProgressEventCompletedMatches(int inProgressEventId) {
-		TournamentEventResults results = new TournamentEventResults();
+		var results = new TournamentEventResults();
 		jdbcTemplate.query(
 			COMPLETED_MATCHES_QUERY, params("inProgressEventId", inProgressEventId),
 			rs -> {
-				short winnerIndex = rs.getShort("winner");
-				MatchPlayer winner = mapMatchPlayer(rs, format("player%1$d_", winnerIndex));
-				MatchPlayer loser = mapMatchPlayer(rs, format("player%1$d_", 3 - winnerIndex));
-				String outcome = loser != null ? getInternedString(rs, "outcome") : BYE;
+				var winnerIndex = rs.getShort("winner");
+				var winner = mapMatchPlayer(rs, format("player%1$d_", winnerIndex));
+				var loser = mapMatchPlayer(rs, format("player%1$d_", 3 - winnerIndex));
+				var outcome = loser != null ? getInternedString(rs, "outcome") : BYE;
 				results.addMatch(new TournamentEventMatch(
 					rs.getLong("in_progress_match_id"),
 					rs.getShort("match_num"),
@@ -286,14 +286,14 @@ public class TournamentForecastService {
 	}
 
 	private static List<SetScore> mapSetScores(ResultSet rs, short winner) throws SQLException {
-		List<Integer> games1 = getIntegers(rs, "p1_set_games");
-		List<Integer> games2 = getIntegers(rs, "p2_set_games");
-		List<Integer> tbPoints1 = getIntegers(rs, "p1_set_tb_pt");
-		List<Integer> tbPoints2 = getIntegers(rs, "p2_set_tb_pt");
-		List<Integer> wGames = winner == 1 ? games1 : games2;
-		List<Integer> lGames = winner == 2 ? games1 : games2;
-		List<Integer> wTBPoints = winner == 1 ? tbPoints1 : tbPoints2;
-		List<Integer> lTBPoints = winner == 2 ? tbPoints1 : tbPoints2;
+		var games1 = getIntegers(rs, "p1_set_games");
+		var games2 = getIntegers(rs, "p2_set_games");
+		var tbPoints1 = getIntegers(rs, "p1_set_tb_pt");
+		var tbPoints2 = getIntegers(rs, "p2_set_tb_pt");
+		var wGames = winner == 1 ? games1 : games2;
+		var lGames = winner == 2 ? games1 : games2;
+		var wTBPoints = winner == 1 ? tbPoints1 : tbPoints2;
+		var lTBPoints = winner == 2 ? tbPoints1 : tbPoints2;
 		List<SetScore> score = new ArrayList<>(games1.size());
 		for (int index = 0, sets = games1.size(); index < sets; index++)
 			score.add(new SetScore(wGames.get(index), lGames.get(index), wTBPoints.get(index), lTBPoints.get(index)));
@@ -305,31 +305,31 @@ public class TournamentForecastService {
 
 	@Cacheable("InProgressEventProbableMatches")
 	public ProbableMatches getInProgressEventProbableMatches(int inProgressEventId, Integer playerId) {
-		InProgressEvent event = getInProgressEvent(inProgressEventId);
-		InProgressEventForecast forecast = fetchInProgressEventForecast(event, CURRENT_CONDITION);
+		var event = getInProgressEvent(inProgressEventId);
+		var forecast = fetchInProgressEventForecast(event, CURRENT_CONDITION);
 
-		PlayersForecast current = forecast.getCurrentForecast();
-		TournamentEventResults probableMatches = new TournamentEventResults();
-		AtomicInteger matchId = new AtomicInteger();
-		AtomicInteger matchNum = new AtomicInteger();
+		var current = forecast.getCurrentForecast();
+		var probableMatches = new TournamentEventResults();
+		var matchId = new AtomicInteger();
+		var matchNum = new AtomicInteger();
 		Iterable<PlayerForecast> remainingPlayers = current.getPlayerForecasts();
-		for (KOResult result = KOResult.valueOf(current.getFirstResult()); result.hasNext(); result = result.next())
+		for (var result = KOResult.valueOf(current.getFirstResult()); result.hasNext(); result = result.next())
 			remainingPlayers = addProbableMatches(event, probableMatches, remainingPlayers, result, matchId, matchNum, playerId);
 		return new ProbableMatches(event, probableMatches, current.getKnownPlayers());
 	}
 
 	private List<PlayerForecast> addProbableMatches(InProgressEvent event, TournamentEventResults probableMatches, Iterable<PlayerForecast> remainingPlayers,
 	                                                KOResult result, AtomicInteger matchId, AtomicInteger matchNum, Integer playerId) {
-		String round = result.name();
-		String nextRound = result.next().name();
+		var round = result.name();
+		var nextRound = result.next().name();
 		List<PlayerForecast> nextRemainingPlayers = new ArrayList<>();
-		LocalDate today = LocalDate.now();
-		for (Iterator<PlayerForecast> iter = remainingPlayers.iterator(); iter.hasNext(); ) {
-			PlayerForecast player1 = getNextCandidate(iter, round, playerId);
-			PlayerForecast player2 = getNextCandidate(iter, round, playerId);
+		var today = LocalDate.now();
+		for (var iter = remainingPlayers.iterator(); iter.hasNext(); ) {
+			var player1 = getNextCandidate(iter, round, playerId);
+			var player2 = getNextCandidate(iter, round, playerId);
 			if (player1 != null && player2 != null) {
 				if (playerWins(player1, player2, nextRound, playerId) == player2) {
-					PlayerForecast player = player1; player1 = player2; player2 = player;
+					var player = player1; player1 = player2; player2 = player;
 				}
 				addMatchProbability(event, player1, player2, round, today);
 				probableMatches.addMatch(new TournamentEventMatch(
@@ -345,10 +345,10 @@ public class TournamentForecastService {
 	private static PlayerForecast getNextCandidate(Iterator<PlayerForecast> iterator, String round, Integer playerId) {
 		if (!iterator.hasNext())
 			return null;
-		PlayerForecast candidate1 = iterator.next();
+		var candidate1 = iterator.next();
 		if (!iterator.hasNext())
 			return null;
-		PlayerForecast candidate2 = iterator.next();
+		var candidate2 = iterator.next();
 		return playerWins(candidate1, candidate2, round, playerId);
 	}
 
@@ -361,7 +361,7 @@ public class TournamentForecastService {
 	}
 
 	private void addMatchProbability(InProgressEvent event, PlayerForecast player1, PlayerForecast player2, String round, LocalDate date) {
-		MatchPrediction prediction = predictMatch(player1.getId(), player2.getId(), event, date, round);
+		var prediction = predictMatch(player1.getId(), player2.getId(), event, date, round);
 		player1.addForecast("M_" + round, prediction.getWinProbability1());
 		player2.addForecast("M_" + round, prediction.getWinProbability2());
 	}
@@ -372,23 +372,23 @@ public class TournamentForecastService {
 	@Cacheable("InProgressEventPlayerPath")
 	public PlayerPath getInProgressEventPlayerPath(int inProgressEventId, Integer playerId) {
 		PlayerForecast player = null;
-		InProgressEventForecast forecast = self.getInProgressEventForecast(inProgressEventId);
-		TournamentEventResults completed = new TournamentEventResults();
-		PlayerPathMatches probable = new PlayerPathMatches();
+		var forecast = self.getInProgressEventForecast(inProgressEventId);
+		var completed = new TournamentEventResults();
+		var probable = new PlayerPathMatches();
 		if (playerId != null) {
 			// Completed matches
-			TournamentEventResults matches = self.getInProgressEventCompletedMatches(inProgressEventId);
-			for (TournamentEventMatch match : matches.getMatches()) {
-				MatchPlayer winner = match.getWinner();
-				MatchPlayer loser = match.getLoser();
-				boolean isWinner = winner.getId() == playerId;
-				boolean isLoser = loser != null && loser.getId() == playerId;
+			var matches = self.getInProgressEventCompletedMatches(inProgressEventId);
+			for (var match : matches.getMatches()) {
+				var winner = match.getWinner();
+				var loser = match.getLoser();
+				var isWinner = winner.getId() == playerId;
+				var isLoser = loser != null && loser.getId() == playerId;
 				if (isWinner || isLoser) {
-					PlayersForecast roundForecast = forecast.getPlayersForecast(match.getRound());
+					var roundForecast = forecast.getPlayersForecast(match.getRound());
 					if (roundForecast == null)
 						roundForecast = forecast.getCurrentForecast();
-					PlayerForecast winnerForecast = roundForecast.getPlayerForecast(winner.getId());
-					PlayerForecast	loserForecast = loser != null ? roundForecast.getPlayerForecast(loser.getId()) : null;
+					var winnerForecast = roundForecast.getPlayerForecast(winner.getId());
+					var loserForecast = loser != null ? roundForecast.getPlayerForecast(loser.getId()) : null;
 					completed.addMatch(new TournamentEventMatch(
 						match.getId(), match.getMatchNum(), match.getRound(), winnerForecast, loserForecast, match.getScore(), match.getOutcome(), match.isHasStats()
 					));
@@ -399,24 +399,24 @@ public class TournamentForecastService {
 				}
 			}
 			// Probable opponents
-			PlayersForecast current = forecast.getCurrentForecast();
-			PlayerForecast playerForecast = current.getPlayerForecast(playerId);
+			var current = forecast.getCurrentForecast();
+			var playerForecast = current.getPlayerForecast(playerId);
 			if (playerForecast != null)
 				player = playerForecast;
-			Optional<Integer> optionalIndex = current.findIndex(playerId);
+			var optionalIndex = current.findIndex(playerId);
 			if (playerForecast != null && playerForecast.getRawProbability(current.getFirstResult()) > 0.0 && optionalIndex.isPresent()) {
 				int index = optionalIndex.get();
-				AtomicInteger matchId = new AtomicInteger(1000);
-				AtomicInteger matchNum = new AtomicInteger(1000);
-				KOResult firstResult = KOResult.valueOf(current.getFirstResult());
-				KOResult result = firstResult;
-				String firstRound = firstResult.prev().name();
-				InProgressEvent event = forecast.getEvent();
-				LocalDate today = LocalDate.now();
+				var matchId = new AtomicInteger(1000);
+				var matchNum = new AtomicInteger(1000);
+				var firstResult = KOResult.valueOf(current.getFirstResult());
+				var result = firstResult;
+				var firstRound = firstResult.prev().name();
+				var event = forecast.getEvent();
+				var today = LocalDate.now();
 				while (true) {
-					String round = result.prev().name();
+					var round = result.prev().name();
 					if (!completed.getRounds().contains(ResultRound.valueOf(round))) {
-						for (PlayerForecast opponent : current.getOpponents(index, result.ordinal() - firstResult.ordinal())) {
+						for (var opponent : current.getOpponents(index, result.ordinal() - firstResult.ordinal())) {
 							if (opponent.isBye())
 								continue;
 							if (round.equals(firstRound))
@@ -426,7 +426,7 @@ public class TournamentForecastService {
 							probable.addMatch(new TournamentEventMatch(
 								matchId.incrementAndGet(), (short)matchNum.incrementAndGet(), round, playerForecast, opponent, emptyList(), null, false
 							));
-							MatchPrediction prediction = predictMatch(playerId, opponent.getId(), event, today, round);
+							var prediction = predictMatch(playerId, opponent.getId(), event, today, round);
 							playerForecast.addForecast("M_" + round + '_' + opponent.getId(), prediction.getWinProbability1());
 						}
 					}
@@ -450,25 +450,35 @@ public class TournamentForecastService {
 	// Favorites
 
 	@Cacheable("InProgressEventFavorites")
-	public InProgressEventFavorites getInProgressEventFavorites(int inProgressEventId, int count, ForecastEloType eloType) {
-		InProgressEvent event = getInProgressEvent(inProgressEventId);
-		Surface surface = Surface.safeDecode(event.getSurface());
-		Map<Integer, PlayerForecast> players = fetchPlayers(inProgressEventId).stream().collect(toMap(MatchPlayer::getId, identity()));
-		String extraColumns = format(FAVORITE_EXTRA_COLUMNS, eloType.getColumnPrefix());
-		List<FavoritePlayerEx> favorites = jdbcTemplate.query(format(FIND_FAVORITES_QUERY, extraColumns), params("inProgressEventId", inProgressEventId).addValue("favoriteCount", count), this::mapFavoritePlayerEx);
-		for (FavoritePlayerEx favorite : favorites) {
-			PlayerForecast player = players.get(favorite.getPlayerId());
+	public InProgressEventFavorites getInProgressEventFavorites(int inProgressEventId, ForecastEloType eloType) {
+		var event = getInProgressEvent(inProgressEventId);
+		var surface = Surface.safeDecode(event.getSurface());
+		var players = fetchPlayers(inProgressEventId).stream().collect(toMap(MatchPlayer::getId, identity()));
+		var extraColumns = format(FAVORITE_EXTRA_COLUMNS, eloType.getColumnPrefix());
+		var params = params("inProgressEventId", inProgressEventId).addValue("favoriteCount", favoriteCount(event.getPlayerCount()));
+		var favorites = jdbcTemplate.query(format(FIND_FAVORITES_QUERY, extraColumns), params, this::mapFavoritePlayerEx);
+		for (var favorite : favorites) {
+			var player = players.get(favorite.getPlayerId());
 			if (player != null) {
 				favorite.setSeed(player.getSeed());
 				favorite.setEntry(player.getEntry());
 			}
-			PlayerPerformance careerPerf = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.ALL);
+			var careerPerf = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.ALL);
 			favorite.setFavoriteSurface(new FavoriteSurface(careerPerf));
-			PlayerPerformance last52WeeksPerf = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.forSeason(-1));
+			var last52WeeksPerf = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.forSeason(-1));
 			favorite.setLast52WeeksWonLost(last52WeeksPerf.getMatches());
 			favorite.setLast52WeeksSurfaceWonLost(surface != null ? last52WeeksPerf.getSurfaceMatches(surface) : WonLost.EMPTY);
 		}
 		return new InProgressEventFavorites(favorites, surface, event.isIndoor());
+	}
+
+	private int favoriteCount(int playerCount) {
+		if (playerCount >= 100)
+			return 20;
+		if (playerCount >= 75)
+			return 15;
+		else
+			return 10;
 	}
 
 	private FavoritePlayerEx mapFavoritePlayerEx(ResultSet rs, int rowNum) throws SQLException {

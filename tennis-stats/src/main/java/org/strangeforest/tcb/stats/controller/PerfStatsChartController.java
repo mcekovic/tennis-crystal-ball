@@ -27,7 +27,7 @@ public class PerfStatsChartController extends PageController {
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "byAge", defaultValue = F) Boolean byAge
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("players", players);
 		modelMap.addAttribute("category", category);
 		modelMap.addAttribute("chartType", chartType);
@@ -50,7 +50,7 @@ public class PerfStatsChartController extends PageController {
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "byAge", defaultValue = F) Boolean byAge
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("players", players);
 		modelMap.addAttribute("category", category);
 		modelMap.addAttribute("surface", surface);
@@ -78,7 +78,7 @@ public class PerfStatsChartController extends PageController {
 		@RequestParam(name = "bySeason", defaultValue = F) boolean bySeason,
 		@RequestParam(name = "byAge", defaultValue = F) Boolean byAge
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("players", players);
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("level", level);

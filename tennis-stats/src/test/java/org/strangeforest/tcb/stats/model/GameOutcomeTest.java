@@ -12,14 +12,14 @@ class GameOutcomeTest {
 
 	@Test
 	void testEqualP() {
-		GameOutcome game = new GameOutcome(0.5);
+		var game = new GameOutcome(0.5);
 
 		assertThat(game.pWin()).isEqualTo(0.5, OFFSET);
 	}
 
 	@Test
 	void testFinalStep() {
-		GameOutcome game = new GameOutcome(0.8);
+		var game = new GameOutcome(0.8);
 
 		assertThat(game.pWin(4, 0)).isEqualTo(1.0);
 		assertThat(game.pWin(4, 1)).isEqualTo(1.0);
@@ -31,7 +31,7 @@ class GameOutcomeTest {
 
 	@Test
 	void testDeuce() {
-		GameOutcome game = new GameOutcome(0.75);
+		var game = new GameOutcome(0.75);
 
 		assertThat(game.pWin(4, 3)).isEqualTo(0.975, OFFSET);
 		assertThat(game.pWin(4, 4)).isEqualTo(0.9, OFFSET);

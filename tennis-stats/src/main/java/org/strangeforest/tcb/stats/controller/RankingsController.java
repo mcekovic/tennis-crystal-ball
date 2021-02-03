@@ -46,7 +46,7 @@ public class RankingsController extends PageController {
 	private ModelAndView showRankingsTable(RankType rankType, Integer season, LocalDate date, boolean eloOnly) {
 		if (date != null)
 			season = date.getYear();
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("rankCategories", eloOnly ? EnumSet.of(ELO) : EnumSet.of(ATP, ELO));
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("tableDate", rankingsService.getRankingsDate(rankType, season, date));
@@ -63,7 +63,7 @@ public class RankingsController extends PageController {
 	public ModelAndView peakEloRatings(
 		@RequestParam(name = "rankType", defaultValue = "ELO_RATING") RankType rankType
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("rankTypes", ELO.getRankTypes());
 		modelMap.addAttribute("rankType", rankType);
 		return new ModelAndView("peakEloRatings", modelMap);
@@ -84,7 +84,7 @@ public class RankingsController extends PageController {
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "byAge", defaultValue = F) Boolean byAge
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("players", players);
 		modelMap.addAttribute("refRank", refRank);
 		modelMap.addAttribute("rankType", rankType);

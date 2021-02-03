@@ -278,10 +278,10 @@ public class RivalriesService {
 	}
 
 	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int playerId, RivalryPlayerListFilter filter, RivalrySeriesFilter seriesFilter, String orderBy, int pageSize, int currentPage) {
-		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
-		AtomicInteger rivalries = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
-		String join = rivalriesJoin(filter.getRivalryFilter());
+		var table = new BootgridTable<PlayerRivalryRow>(currentPage);
+		var rivalries = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
+		var join = rivalriesJoin(filter.getRivalryFilter());
 		jdbcTemplate.query(
 			format(PLAYER_RIVALRIES_QUERY,
 				join,
@@ -297,12 +297,12 @@ public class RivalriesService {
 				.addValue("offset", offset),
 			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
-					int bestRank = rs.getInt("best_rank");
-					int opponentId = rs.getInt("opponent_id");
-					String name = rs.getString("name");
-					String countryId = getInternedString(rs, "country_id");
-					boolean active = rs.getBoolean("active");
-					PlayerRivalryRow row = new PlayerRivalryRow(bestRank, opponentId, name, countryId, active);
+					var bestRank = rs.getInt("best_rank");
+					var opponentId = rs.getInt("opponent_id");
+					var name = rs.getString("name");
+					var countryId = getInternedString(rs, "country_id");
+					var active = rs.getBoolean("active");
+					var row = new PlayerRivalryRow(bestRank, opponentId, name, countryId, active);
 					row.setWonLost(mapWonLost(rs));
 					row.setLastMatch(mapLastMatch(rs));
 					table.addRow(row);
@@ -314,8 +314,8 @@ public class RivalriesService {
 	}
 
 	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
-		String criteria = filter.getCriteria();
-		String join = rivalriesJoin(filter);
+		var criteria = filter.getCriteria();
+		var join = rivalriesJoin(filter);
 		List<HeadsToHeadsRivalry> rivalries = !playerIds.isEmpty() ? jdbcTemplate.query(
 			format(HEADS_TO_HEADS_QUERY,
 				join,
@@ -325,10 +325,10 @@ public class RivalriesService {
 			),
 			filter.getParams().addValue("playerIds", playerIds),
 			(rs, rowNum) -> {
-				RivalryPlayer player1 = mapPlayer(rs, "_1");
-				RivalryPlayer player2 = mapPlayer(rs, "_2");
-				WonLost wonLost = mapWonLost(rs);
-				MatchInfo lastMatch = mapLastMatch(rs);
+				var player1 = mapPlayer(rs, "_1");
+				var player2 = mapPlayer(rs, "_2");
+				var wonLost = mapWonLost(rs);
+				var lastMatch = mapLastMatch(rs);
 				return new HeadsToHeadsRivalry(player1, player2, wonLost, lastMatch);
 			}
 		) : emptyList();
@@ -337,19 +337,19 @@ public class RivalriesService {
 
 	@Cacheable("GreatestRivalries.Table")
 	public BootgridTable<GreatestRivalry> getGreatestRivalriesTable(RivalryFilter filter, Integer bestRank, Integer minMatches, String orderBy, int pageSize, int currentPage) {
-		BootgridTable<GreatestRivalry> table = new BootgridTable<>(currentPage);
-		AtomicInteger rivalries = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
-		String criteria = filter.getCriteria();
-		String lastMatchCriteria = criteria;
-		MapSqlParameterSource params = filter.getParams()
+		var table = new BootgridTable<GreatestRivalry>(currentPage);
+		var rivalries = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
+		var criteria = filter.getCriteria();
+		var lastMatchCriteria = criteria;
+		var params = filter.getParams()
 			.addValue("minMatches", getGreatestRivalriesMinMatches(filter, bestRank, minMatches))
 			.addValue("offset", offset);
 		if (bestRank != null) {
 			criteria += BEST_RANK_CRITERIA;
 			params.addValue("bestRank", bestRank);
 		}
-		String join = rivalriesJoin(filter);
+		var join = rivalriesJoin(filter);
 		jdbcTemplate.query(
 			format(GREATEST_RIVALRIES_QUERY,
 				join + (bestRank != null ? BEST_RANK_JOIN : ""),
@@ -361,12 +361,12 @@ public class RivalriesService {
 			params,
 			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
-					int rank = rs.getInt("rivalry_rank");
-					RivalryPlayer player1 = mapPlayer(rs, "_1");
-					RivalryPlayer player2 = mapPlayer(rs, "_2");
-					WonLost wonLost = mapWonLost(rs);
-					int rivalryScore = rs.getInt("rivalry_score");
-					MatchInfo lastMatch = mapLastMatch(rs);
+					var rank = rs.getInt("rivalry_rank");
+					var player1 = mapPlayer(rs, "_1");
+					var player2 = mapPlayer(rs, "_2");
+					var wonLost = mapWonLost(rs);
+					var rivalryScore = rs.getInt("rivalry_score");
+					var lastMatch = mapLastMatch(rs);
 					table.addRow(new GreatestRivalry(rank, player1, player2, wonLost, rivalryScore, lastMatch));
 				}
 			}
@@ -380,10 +380,10 @@ public class RivalriesService {
 			return minMatchesOverride;
 		double minMatches = MIN_GREATEST_RIVALRIES_MATCHES;
 
-		LocalDate today = LocalDate.now();
-		Range<LocalDate> dateRange = Range.closed(LocalDate.of(dataService.getFirstSeason(), 1, 1), today);
+		var today = LocalDate.now();
+		var dateRange = Range.closed(LocalDate.of(dataService.getFirstSeason(), 1, 1), today);
 		if (filter.hasSeason()) {
-			Range<Integer> seasonRange = filter.getSeasonRange();
+			var seasonRange = filter.getSeasonRange();
 			dateRange = intersection(dateRange, toRange(
 				seasonRange.hasLowerBound() ? LocalDate.of(seasonRange.lowerEndpoint(), 1, 1) : null,
 				seasonRange.hasUpperBound() ? LocalDate.of(seasonRange.upperEndpoint(), 12, 31) : null
@@ -422,9 +422,9 @@ public class RivalriesService {
 	}
 
 	private static double getMinMatchesFactor(Period period) {
-		int years = period.getYears();
+		var years = period.getYears();
 		if (years == 0) {
-			int months = period.getMonths();
+			var months = period.getMonths();
 			if (months == 0)
 				months = 1;
 			if (months < 10)
@@ -439,12 +439,12 @@ public class RivalriesService {
 	}
 
 	private double getMinMatchesTournamentFactor(int tournamentId) {
-		int eventCount = tournamentService.getTournamentEventCount(tournamentId);
+		var eventCount = tournamentService.getTournamentEventCount(tournamentId);
 		return MIN_MATCHES_TOURNAMENT_FACTOR_MAP.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().orElseThrow().getValue();
 	}
 
 	private String rivalriesJoin(RivalryFilter filter) {
-		StringBuilder sb = new StringBuilder(100);
+		var sb = new StringBuilder(100);
 		if (filter.hasSpeedRange())
 			sb.append(EVENT_STATS_JOIN);
 		return sb.toString();

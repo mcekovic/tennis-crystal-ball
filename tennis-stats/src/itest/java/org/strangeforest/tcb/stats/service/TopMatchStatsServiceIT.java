@@ -15,8 +15,8 @@ class TopMatchStatsServiceIT {
 
 	@Test
 	void topMatchStats() {
-		int playerCount = topMatchStatsService.getPlayerCount("aces", PerfStatsFilter.ALL);
-		BootgridTable<TopMatchStatsRow> topMatchStats = topMatchStatsService.getTopMatchStatsTable("aces", playerCount, PerfStatsFilter.ALL, "value DESC", 20, 1);
+		var playerCount = topMatchStatsService.getPlayerCount("aces", PerfStatsFilter.ALL);
+		var topMatchStats = topMatchStatsService.getTopMatchStatsTable("aces", playerCount, PerfStatsFilter.ALL, "value DESC", 20, 1);
 
 		assertThat(topMatchStats.getRowCount()).isEqualTo(20);
 		assertThat(topMatchStats.getRows()).hasSize(20);

@@ -69,9 +69,9 @@ public class PlayerProfileController extends PageController {
 	) {
 		if (playerId == null && name == null)
 			throw new NotFoundException("Player", null);
-		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
+		var player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("season", season);
@@ -105,17 +105,17 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerProfileTab(
 		@RequestParam(name = "playerId") int playerId
 	) {
-		Player player = playerService.getPlayer(playerId);
-		PlayerPerformance performance = performanceService.getPlayerPerformance(playerId);
-		FavoriteSurface favoriteSurface = new FavoriteSurface(performance);
-		int seasonCount = playerService.getPlayerSeasons(playerId).size();
-		Integer bestSeason = playerService.getPlayerBestSeason(playerId);
-		BootgridTable<PlayerTournamentEvent> lastEvent = tournamentService.getPlayerTournamentEventsTable(playerId, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
-		Map<String, Integer> surfaceTitles = performanceService.getPlayerSurfaceTitles(playerId);
-		Map<String, Integer> teamTitles = performanceService.getPlayerTeamTitles(playerId);
-		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
+		var player = playerService.getPlayer(playerId);
+		var performance = performanceService.getPlayerPerformance(playerId);
+		var favoriteSurface = new FavoriteSurface(performance);
+		var seasonCount = playerService.getPlayerSeasons(playerId).size();
+		var bestSeason = playerService.getPlayerBestSeason(playerId);
+		var lastEvent = tournamentService.getPlayerTournamentEventsTable(playerId, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
+		var surfaceTitles = performanceService.getPlayerSurfaceTitles(playerId);
+		var teamTitles = performanceService.getPlayerTeamTitles(playerId);
+		var playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("favoriteSurface", favoriteSurface);
 		modelMap.addAttribute("seasonCount", seasonCount);
@@ -144,14 +144,14 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season
 	) {
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		var seasons = playerService.getPlayerSeasons(playerId);
 		if (season == null)
 			season = !seasons.isEmpty() ? seasons.get(0) : Integer.valueOf(LocalDate.now().getYear());
-		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season, 4);
-		PlayerPerformanceEx seasonPerf = performanceService.getPlayerPerformanceEx(playerId, PerfStatsFilter.forSeason(season));
-		PlayerSeasonGOATPoints seasonGOATPoints = goatPointsService.getPlayerSeasonGOATPoints(playerId, season);
+		var seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season, 4);
+		var seasonPerf = performanceService.getPlayerPerformanceEx(playerId, PerfStatsFilter.forSeason(season));
+		var seasonGOATPoints = goatPointsService.getPlayerSeasonGOATPoints(playerId, season);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("seasons", seasons);
@@ -174,7 +174,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerName", playerService.getPlayerName(playerId));
 		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
@@ -220,7 +220,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerName", playerService.getPlayerName(playerId));
 		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
@@ -248,9 +248,9 @@ public class PlayerProfileController extends PageController {
 		if (!isNullOrEmpty(opponent)) {
 			modelMap.addAttribute("opponent", opponent);
 			if (opponent.startsWith(OpponentFilter.OPPONENT_PREFIX)) {
-				String opponentIdStr = opponent.substring(OpponentFilter.OPPONENT_PREFIX.length());
+				var opponentIdStr = opponent.substring(OpponentFilter.OPPONENT_PREFIX.length());
 				if (!isNullOrEmpty(opponentIdStr)) {
-					int opponentId = Integer.parseInt(opponentIdStr);
+					var opponentId = Integer.parseInt(opponentIdStr);
 					modelMap.addAttribute("opponentName", playerService.getPlayerName(opponentId));
 				}
 				else
@@ -272,9 +272,9 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerTimeline(
 		@RequestParam(name = "playerId") int playerId
 	) {
-		PlayerTimeline timeline = timelineService.getPlayerTimeline(playerId);
+		var timeline = timelineService.getPlayerTimeline(playerId);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("rankTypes", RankCategory.ELO.getRankTypes());
@@ -291,7 +291,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "h2h", required = false) Integer h2h,
 		@RequestParam(name = "matches", required = false) Integer matches
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerName", playerService.getPlayerName(playerId));
 		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
@@ -319,10 +319,10 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "bySeason", defaultValue = "false") boolean bySeason
 	) {
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		RankingHighlights rankingHighlights = rankingsService.getRankingHighlights(playerId);
+		var seasons = playerService.getPlayerSeasons(playerId);
+		var rankingHighlights = rankingsService.getRankingHighlights(playerId);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("rankType", rankType);
 		if (season != null) {
@@ -356,12 +356,12 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter));
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		var perf = performanceService.getPlayerPerformanceEx(playerId, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter));
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
@@ -397,9 +397,9 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerPerformanceChart(
 		@RequestParam(name = "playerId") int playerId
 	) {
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		var seasons = playerService.getPlayerSeasons(playerId);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
@@ -431,12 +431,12 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter));
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		var stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, opponentFilter));
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
@@ -469,8 +469,8 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
-			MatchFilter compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);
-			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
+			var compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);
+			var compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
 			if (!compareStats.isEmpty())
 				modelMap.addAttribute("compareStats", compareStats);
 			modelMap.addAttribute("compareSeason", compareSeason);
@@ -485,9 +485,9 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerStatsChart(
 		@RequestParam(name = "playerId") int playerId
 	) {
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		var seasons = playerService.getPlayerSeasons(playerId);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -505,9 +505,9 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "result", required = false) String result
 	) {
-		String name = playerService.getPlayerName(playerId);
+		var name = playerService.getPlayerName(playerId);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
@@ -529,10 +529,10 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "season", required = false) Integer season
 	) {
-		Map<String, Collection<String>> levelResults = goatPointsService.getLevelResults();
-		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId, Surface.safeDecode(surface), true);
+		var levelResults = goatPointsService.getLevelResults();
+		var goatPoints = goatPointsService.getPlayerGOATPoints(playerId, Surface.safeDecode(surface), true);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surface", surface);
@@ -548,7 +548,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "infamous", required = false) Boolean infamous
 	) {
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("infamous", infamous);
 		modelMap.addAttribute("recordCategoryClasses", Records.getRecordCategoryClasses());

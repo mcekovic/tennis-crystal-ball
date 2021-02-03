@@ -21,7 +21,7 @@ class RankingsServiceIT {
 
 	@Test
 	void rankingsTopN() {
-		List<PlayerRanking> playerRankings = rankingsService.getRankingsTopN(RANK, 10);
+		var playerRankings = rankingsService.getRankingsTopN(RANK, 10);
 
 		assertThat(playerRankings).hasSize(10);
 	}
@@ -62,9 +62,9 @@ class RankingsServiceIT {
 	}
 
 	private void rankingsTableTest(RankType rankType) {
-		LocalDate currentRankingDate = rankingsService.getCurrentRankingDate(rankType);
+		var currentRankingDate = rankingsService.getCurrentRankingDate(rankType);
 
-		BootgridTable<PlayerDiffRankingsRow> playerRankings = rankingsService.getRankingsTable(rankType, currentRankingDate, PlayerListFilter.ALL, "rank", 20, 1);
+		var playerRankings = rankingsService.getRankingsTable(rankType, currentRankingDate, PlayerListFilter.ALL, "rank", 20, 1);
 
 		assertThat(playerRankings.getRowCount()).isEqualTo(20);
 		assertThat(playerRankings.getRows()).hasSize(20);
@@ -107,8 +107,8 @@ class RankingsServiceIT {
 	}
 
 	private void peakEloRatingsTest(RankType rankType) {
-		int playerCount = rankingsService.getPeakEloRatingsCount(rankType, PlayerListFilter.ALL);
-		BootgridTable<PlayerPeakEloRankingsRow> playerRankings = rankingsService.getPeakEloRatingsTable(playerCount, rankType, PlayerListFilter.ALL, 20, 1);
+		var playerCount = rankingsService.getPeakEloRatingsCount(rankType, PlayerListFilter.ALL);
+		var playerRankings = rankingsService.getPeakEloRatingsTable(playerCount, rankType, PlayerListFilter.ALL, 20, 1);
 
 		assertThat(playerRankings.getRowCount()).isEqualTo(20);
 		assertThat(playerRankings.getRows()).hasSize(20);
@@ -181,7 +181,7 @@ class RankingsServiceIT {
 	}
 
 	private void rankingsTimelineTest(RankType points) {
-		TopRankingsTimeline rankingsTimeline = rankingsService.getTopRankingsTimeline(points);
+		var rankingsTimeline = rankingsService.getTopRankingsTimeline(points);
 
 		assertThat(rankingsTimeline.getTopRanks()).isEqualTo(5);
 		assertThat(rankingsTimeline.getSeasons().size()).isGreaterThanOrEqualTo(35);
@@ -190,9 +190,9 @@ class RankingsServiceIT {
 
 	@Test
 	void rankingHighlights() {
-		int playerId = fixtures.getPlayerId("Roger Federer");
+		var playerId = fixtures.getPlayerId("Roger Federer");
 
-		RankingHighlights rankingHighlights = rankingsService.getRankingHighlights(playerId);
+		var rankingHighlights = rankingsService.getRankingHighlights(playerId);
 
 		assertThat(rankingHighlights).isNotNull();
 	}

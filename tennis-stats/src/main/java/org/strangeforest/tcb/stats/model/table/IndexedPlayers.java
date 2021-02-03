@@ -13,14 +13,14 @@ public class IndexedPlayers {
 	}
 
 	public IndexedPlayers union(IndexedPlayers players) {
-		IndexedPlayers union = new IndexedPlayers();
+		var union = new IndexedPlayers();
 		union.merge(this);
 		union.merge(players);
 		return union;
 	}
 
 	private void merge(IndexedPlayers players) {
-		for (Integer playerId : players.playerIndexMap.keySet())
+		for (var playerId : players.playerIndexMap.keySet())
 			playerIndexMap.put(playerId, playerIndexMap.size());
 		this.players.addAll(players.players);
 	}

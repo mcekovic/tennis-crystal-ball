@@ -10,7 +10,7 @@ class RankCategoryTest {
 	@Test
 	void rankCategoryIsLoaded() {
 		assertThat(RankCategory.values()).isNotEmpty();
-		for (RankCategory category : RankCategory.values())
+		for (var category : RankCategory.values())
 			assertThat(category.getRankTypes()).isNotEmpty();
 	}
 }

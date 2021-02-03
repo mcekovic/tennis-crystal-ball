@@ -41,7 +41,7 @@ public class TournamentLevelService {
 
 	@Cacheable("TournamentLevelTimeline")
 	public TournamentLevelTimeline getTournamentLevelTimeline(String level, boolean fullName) {
-		TournamentLevelTimeline timeline = new TournamentLevelTimeline();
+		var timeline = new TournamentLevelTimeline();
 		fetchTournamentLevelTimeline(timeline, level, fullName);
 		timeline.addMissingSeasonLastTournaments();
 		return timeline;
@@ -49,8 +49,8 @@ public class TournamentLevelService {
 
 	@Cacheable("TournamentLevelsTimeline")
 	public TournamentLevelTimeline getTournamentLevelGroupTimeline(TournamentLevelGroup levelGroup, boolean fullName) {
-		TournamentLevelTimeline timeline = new TournamentLevelTimeline();
-		for (TournamentLevel level : levelGroup.getLevels())
+		var timeline = new TournamentLevelTimeline();
+		for (var level : levelGroup.getLevels())
 			fetchTournamentLevelTimeline(timeline, level.getCode(), fullName);
 		return timeline;
 	}
@@ -60,7 +60,7 @@ public class TournamentLevelService {
 			String.format(TIMELINE_QUERY, fullName ? "name" : "last_name"),
 			params("level", level),
 			rs -> {
-				TournamentLevelTimelineItem item = new TournamentLevelTimelineItem(
+				var item = new TournamentLevelTimelineItem(
 					rs.getInt("tournament_id"),
 					rs.getString("name"),
 					rs.getInt("season"),
@@ -79,7 +79,7 @@ public class TournamentLevelService {
 	}
 
 	private TournamentLevelTimelinePlayer mapPlayer(ResultSet rs, String prefix, int rank) throws SQLException {
-		TournamentLevelTimelinePlayer player = new TournamentLevelTimelinePlayer(rank,
+		var player = new TournamentLevelTimelinePlayer(rank,
 			rs.getInt(prefix + "id"),
 			rs.getString(prefix + "name"),
 			getInternedString(rs, prefix + "country_id"),
@@ -98,7 +98,7 @@ public class TournamentLevelService {
 			TEAM_TIMELINE_QUERY,
 			params("level", level),
 			(rs, rowNum) -> {
-				TeamTournamentLevelTimelineItem item = new TeamTournamentLevelTimelineItem(
+				var item = new TeamTournamentLevelTimelineItem(
 					rs.getInt("season"),
 					rs.getInt("tournament_event_id"),
 					getInternedString(rs, "surface")

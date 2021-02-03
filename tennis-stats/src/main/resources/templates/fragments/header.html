@@ -91,17 +91,18 @@
 					<li th:class="${path == '/topPerformers' || path == '/performanceChart' || path == '/resultsChart' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Performance<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/topPerformers' ? 'active' : _}"><a href="/topPerformers"><i class="fa fa-tasks fa-fw"></i> Top Performers</a></li>
-							<li th:class="${path == '/performanceChart' ? 'active' : _}"><a href="/performanceChart"><i class="fa fa-bar-chart fa-fw"></i> Performance Chart</a></li>
 							<li th:class="${path == '/titlesAndResults' ? 'active' : _}"><a href="/titlesAndResults"><i class="fa fa-trophy fa-fw"></i> Titles and Results<sup class="new-feature"></sup></a></li>
 							<li th:class="${path == '/resultsChart' ? 'active' : _}"><a href="/resultsChart"><i class="fa fa-area-chart fa-fw"></i> Titles and Results Chart<sup class="new-feature"></sup></a></li>
+							<li th:class="${path == '/topPerformers' ? 'active' : _}"><a href="/topPerformers"><i class="fa fa-tasks fa-fw"></i> Top Performers</a></li>
+							<li th:class="${path == '/performanceChart' ? 'active' : _}"><a href="/performanceChart"><i class="fa fa-bar-chart fa-fw"></i> Performance Chart</a></li>
+							<li th:class="${path == '/mentalToughness' ? 'active' : _}"><a href="/mentalToughness"><i class="fa fa-heartbeat fa-fw"></i> Mental Toughness<sup class="new-feature"></sup></a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/statsLeaders' || path == '/topMatchStats' || path == '/statsChart' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Statistics<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/statsLeaders' ? 'active' : _}"><a href="/statsLeaders"><span class="glyphicon glyphicon-stats fa-fw"></span> Statistics Leaders</a></li>
-							<li th:class="${path == '/topMatchStats' ? 'active' : _}"><a href="/topMatchStats"><span class="fa fa-thermometer fa-fw"></span> Top Match Stats<sup class="new-feature"></sup></a></li>
+							<li th:class="${path == '/topMatchStats' ? 'active' : _}"><a href="/topMatchStats"><span class="fa fa-thermometer fa-fw"></span> Top Match Stats</a></li>
 							<li th:class="${path == '/statsChart' ? 'active' : _}"><a href="/statsChart"><i class="fa fa-bar-chart fa-fw"></i> Statistics Chart</a></li>
 						</ul>
 					</li>

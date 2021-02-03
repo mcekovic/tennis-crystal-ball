@@ -68,10 +68,10 @@ public class GOATLegendService {
 	@Cacheable(value = "Global", key = "'TournamentGOATPoints'")
 	public List<TournamentGOATPoints> getTournamentGOATPoints() {
 		return jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, (rs, rowNum) -> {
-			String level = getInternedString(rs, "level");
-			String result = getInternedString(rs, "result");
-			int goatPoints = rs.getInt("goat_points");
-			boolean additive = rs.getBoolean("additive");
+			var level = getInternedString(rs, "level");
+			var result = getInternedString(rs, "result");
+			var goatPoints = rs.getInt("goat_points");
+			var additive = rs.getBoolean("additive");
 			return new TournamentGOATPoints(level, result, goatPoints, additive);
 		});
 	}
@@ -155,9 +155,9 @@ public class GOATLegendService {
 	@Cacheable(value = "Global", key = "'BigWinMatchFactors'")
 	public List<BigWinMatchFactor> getBigWinMatchFactors() {
 		return jdbcTemplate.query(BIG_WIN_MATCH_FACTOR_QUERY, (rs, rowNum) -> {
-			String level = getInternedString(rs, "level");
-			String round = getInternedString(rs, "round");
-			int matchFactor = rs.getInt("match_factor");
+			var level = getInternedString(rs, "level");
+			var round = getInternedString(rs, "round");
+			var matchFactor = rs.getInt("match_factor");
 			return new BigWinMatchFactor(level, round, matchFactor);
 		});
 	}
@@ -174,19 +174,19 @@ public class GOATLegendService {
 
 	@Cacheable("RecordsGOATPoints")
 	public Map<String, Map<Record, String>> getRecordsGOATPoints(String surface) {
-		Surface aSurface = Surface.safeDecode(surface);
+		var aSurface = Surface.safeDecode(surface);
 		Map<String, String> goatPoints = new HashMap<>();
 		jdbcTemplate.query(format(RECORDS_GOAT_POINTS, aSurface == null ? "" : "surface_"), rs -> {
-			String recordId = rs.getString("record_id");
+			var recordId = rs.getString("record_id");
 			if (aSurface != null)
 				recordId = recordId.replace("$", aSurface.getText());
-			String goatPointsCSV = rs.getString("goat_points");
+			var goatPointsCSV = rs.getString("goat_points");
 			goatPoints.put(recordId, goatPointsCSV);
 		});
 		Map<String, Map<Record, String>> recordGOATPoints = new LinkedHashMap<>();
-		for (RecordCategory category : Records.getRecordCategories()) {
-			for (Record record : category.getRecords()) {
-				String points = goatPoints.get(record.getId());
+		for (var category : Records.getRecordCategories()) {
+			for (var record : category.getRecords()) {
+				var points = goatPoints.get(record.getId());
 				if (points != null)
 					recordGOATPoints.computeIfAbsent(record.getCategory().getName(), cat -> new LinkedHashMap<>()).put(record, points);
 			}
@@ -197,8 +197,8 @@ public class GOATLegendService {
 	@Cacheable("RecordGOATPoints")
 	public List<RankGOATPoints> getRecordGOATPoints(String recordId) {
 		return jdbcTemplate.query(RECORD_GOAT_POINTS, params("recordId", recordId), (rs, rowNum) -> {
-			int rank = rs.getInt("rank");
-			int goatPoints = rs.getInt("goat_points");
+			var rank = rs.getInt("rank");
+			var goatPoints = rs.getInt("goat_points");
 			return new RankGOATPoints(rank, goatPoints);
 		});
 	}
@@ -228,26 +228,26 @@ public class GOATLegendService {
 
 	private List<RankGOATPoints> getRankGOATPoints(String tableName, String rankColumn, String pointsColumn) {
 		return jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), (rs, rowNum) -> {
-			int rank = rs.getInt(rankColumn);
-			int goatPoints = rs.getInt(pointsColumn);
+			var rank = rs.getInt(rankColumn);
+			var goatPoints = rs.getInt(pointsColumn);
 			return new RankGOATPoints(rank, goatPoints);
 		});
 	}
 
 	private List<RankRangeGOATPoints> getRankRangeGOATPoints(String tableName, String pointsColumn) {
 		return jdbcTemplate.query(format(RANK_RANGE_GOAT_POINTS_QUERY, tableName, pointsColumn), (rs, rowNum) -> {
-			int rankFrom = rs.getInt("rank_from");
-			int rankTo = rs.getInt("rank_to");
-			int goatPoints = rs.getInt(pointsColumn);
+			var rankFrom = rs.getInt("rank_from");
+			var rankTo = rs.getInt("rank_to");
+			var goatPoints = rs.getInt(pointsColumn);
 			return new RankRangeGOATPoints(rankFrom, rankTo, goatPoints);
 		});
 	}
 
 	private List<PerfStatGOATPoints> getPerfStatGOATPoints(String goatPointsTable, String categoryTable) {
 		return jdbcTemplate.query(format(PERF_STAT_GOAT_POINTS_QUERY, goatPointsTable, categoryTable), (rs, rowNum) -> {
-			String categoryId = rs.getString("category_id");
-			String category = rs.getString("category");
-			String goatPoints = rs.getString("goat_points");
+			var categoryId = rs.getString("category_id");
+			var category = rs.getString("category");
+			var goatPoints = rs.getString("goat_points");
 			return new PerfStatGOATPoints(categoryId, category, goatPoints);
 		});
 	}

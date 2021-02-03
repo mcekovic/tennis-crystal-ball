@@ -26,11 +26,11 @@ public class PlayerTimelineController extends BaseController {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "seasons") String seasons
 	) {
-		RankingTimeline timeline = rankingsService.getPlayerRankingTimeline(playerId);
-		List<Integer> seasonList = toSeasons(seasons);
+		var timeline = rankingsService.getPlayerRankingTimeline(playerId);
+		var seasonList = toSeasons(seasons);
 		ensureSeasons(timeline.getSeasonsWeeksAtRank(), seasonList, WeeksAtRank.EMPTY);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("seasons", seasonList);
 		return new ModelAndView("playerTimelineRanking", modelMap);
@@ -42,11 +42,11 @@ public class PlayerTimelineController extends BaseController {
 		@RequestParam(name = "rankType", defaultValue = "ELO_RANK") RankType rankType,
 		@RequestParam(name = "seasons") String seasons
 	) {
-		RankingTimeline timeline = rankingsService.getPlayerEloRankingTimeline(playerId, rankType);
-		List<Integer> seasonList = toSeasons(seasons);
+		var timeline = rankingsService.getPlayerEloRankingTimeline(playerId, rankType);
+		var seasonList = toSeasons(seasons);
 		ensureSeasons(timeline.getSeasonsWeeksAtRank(), seasonList, WeeksAtRank.EMPTY);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("seasons", seasonList);
 		return new ModelAndView("playerTimelineRanking", modelMap);
@@ -57,12 +57,12 @@ public class PlayerTimelineController extends BaseController {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "seasons") String seasons
 	) {
-		PlayerPerformance careerPerf = performanceService.getPlayerPerformance(playerId);
-		List<Integer> seasonList = toSeasons(seasons);
-		Map<Integer, PlayerPerformance> seasonsPerf = performanceService.getPlayerSeasonsPerformance(playerId);
+		var careerPerf = performanceService.getPlayerPerformance(playerId);
+		var seasonList = toSeasons(seasons);
+		var seasonsPerf = performanceService.getPlayerSeasonsPerformance(playerId);
 		ensureSeasons(seasonsPerf, seasonList, PlayerPerformance.EMPTY);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("careerPerf", careerPerf);
 		modelMap.addAttribute("seasons", seasonList);
 		modelMap.addAttribute("seasonsPerf", seasonsPerf);
@@ -74,12 +74,12 @@ public class PlayerTimelineController extends BaseController {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "seasons") String seasons
 	) {
-		PlayerStats careerStats = statisticsService.getPlayerStats(playerId);
-		List<Integer> seasonList = toSeasons(seasons);
-		Map<Integer, PlayerStats> seasonsStats = statisticsService.getPlayerSeasonsStats(playerId);
+		var careerStats = statisticsService.getPlayerStats(playerId);
+		var seasonList = toSeasons(seasons);
+		var seasonsStats = statisticsService.getPlayerSeasonsStats(playerId);
 		ensureSeasons(seasonsStats, seasonList, PlayerStats.EMPTY);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("careerStats", careerStats);
 		modelMap.addAttribute("seasons", seasonList);
@@ -92,7 +92,7 @@ public class PlayerTimelineController extends BaseController {
 	}
 
 	private <T> void ensureSeasons(Map<Integer, T> seasonsData, List<Integer> seasons, T empty) {
-		for (Integer season : seasons) {
+		for (var season : seasons) {
 			if (!seasonsData.containsKey(season))
 				seasonsData.put(season, empty);
 		}

@@ -16,7 +16,7 @@ public class SSLEndpoint {
 
 	@WriteOperation
 	public String renewSSLCertificate() {
-		int exitCode = command.renewSSLCertificate();
+		var exitCode = command.renewSSLCertificate();
 		return format("SSL certificate renewed [%1$s]", exitCode);
 	}
 }

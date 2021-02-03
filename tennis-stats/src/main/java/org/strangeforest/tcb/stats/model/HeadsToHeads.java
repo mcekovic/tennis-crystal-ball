@@ -16,13 +16,13 @@ public class HeadsToHeads {
 	public HeadsToHeads(List<HeadsToHeadsRivalry> rivalries) {
 		this.rivalryMap = new HashMap<>();
 		Map<Integer, HeadsToHeadsRivalry> map = new HashMap<>();
-		for (HeadsToHeadsRivalry rivalry : rivalries) {
-			RivalryPlayer player1 = rivalry.getPlayer1();
-			RivalryPlayer player2 = rivalry.getPlayer2();
+		for (var rivalry : rivalries) {
+			var player1 = rivalry.getPlayer1();
+			var player2 = rivalry.getPlayer2();
 			addRivalry(map, player1, rivalry.getWonLost());
 			addRivalry(map, player2, rivalry.getWonLost().inverted());
-			int playerId1 = player1.getPlayerId();
-			int playerId2 = player2.getPlayerId();
+			var playerId1 = player1.getPlayerId();
+			var playerId2 = player2.getPlayerId();
 			this.rivalryMap.put(new RivalryKey(playerId1, playerId2), rivalry);
 			this.rivalryMap.put(new RivalryKey(playerId2, playerId1), rivalry.inverted());
 		}
@@ -48,8 +48,8 @@ public class HeadsToHeads {
 	}
 
 	private static void addRivalry(Map<Integer, HeadsToHeadsRivalry> rivalryMap, RivalryPlayer player, WonLost wonLost) {
-		int playerId = player.getPlayerId();
-		HeadsToHeadsRivalry rivalry = rivalryMap.get(playerId);
+		var playerId = player.getPlayerId();
+		var rivalry = rivalryMap.get(playerId);
 		if (rivalry == null) {
 			rivalry = new HeadsToHeadsRivalry(player, null, wonLost, null);
 			rivalryMap.put(playerId, rivalry);
@@ -70,7 +70,7 @@ public class HeadsToHeads {
 		@Override public boolean equals(Object o) {
 			if (this == o) return true;
 			if (!(o instanceof RivalryKey)) return false;
-			RivalryKey key = (RivalryKey)o;
+			var key = (RivalryKey)o;
 			return playerId1 == key.playerId1 && playerId2 == key.playerId2;
 		}
 

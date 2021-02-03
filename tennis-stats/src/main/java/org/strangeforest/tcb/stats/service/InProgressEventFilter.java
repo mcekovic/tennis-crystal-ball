@@ -18,7 +18,7 @@ public class InProgressEventFilter {
 	private final boolean completed;
 	private final String searchPhrase;
 
-	private static final String NOT_COMPLETED_CRITERION = "AND NOT completed AND NOT exists(SELECT te.tournament_event_id FROM tournament_event te WHERE te.tournament_id = e.tournament_id AND te.season = extract(YEAR FROM tournament_end(e.date, e.level, e.draw_size)))";
+	private static final String NOT_COMPLETED_CRITERION = " AND NOT completed AND NOT exists(SELECT te.tournament_event_id FROM tournament_event te WHERE te.tournament_id = e.tournament_id AND te.season = extract(YEAR FROM tournament_end(e.date, e.level, e.draw_size)))";
 	private static final String SEARCH_CRITERION = " AND name ILIKE '%' || :searchPhrase || '%'";
 
 	public InProgressEventFilter(boolean completed, String searchPhrase) {
@@ -27,7 +27,7 @@ public class InProgressEventFilter {
 	}
 
 	public String getCriteria() {
-		StringBuilder criteria = new StringBuilder();
+		var criteria = new StringBuilder();
 		if (!completed)
 			criteria.append(NOT_COMPLETED_CRITERION);
 		if (!isNullOrEmpty(searchPhrase))
@@ -36,7 +36,7 @@ public class InProgressEventFilter {
 	}
 
 	public MapSqlParameterSource getParams() {
-		MapSqlParameterSource params = new MapSqlParameterSource();
+		var params = new MapSqlParameterSource();
 		if (!isNullOrEmpty(searchPhrase))
 			params.addValue("searchPhrase", searchPhrase);
 		return params;
@@ -48,7 +48,7 @@ public class InProgressEventFilter {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof InProgressEventFilter)) return false;
-		InProgressEventFilter filter = (InProgressEventFilter)o;
+		var filter = (InProgressEventFilter)o;
 		return completed == filter.completed && stringsEqual(searchPhrase, filter.searchPhrase);
 	}
 

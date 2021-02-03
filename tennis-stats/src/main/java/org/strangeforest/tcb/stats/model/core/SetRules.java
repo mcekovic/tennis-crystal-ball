@@ -64,7 +64,7 @@ public class SetRules {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof SetRules)) return false;
-		SetRules rules = (SetRules) o;
+		var rules = (SetRules) o;
 		return games == rules.games && gamesDiff == rules.gamesDiff &&	Objects.equals(game, rules.game) &&
 			Objects.equals(tieBreakAt, rules.tieBreakAt) && Objects.equals(tieBreak, rules.tieBreak);
 	}

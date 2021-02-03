@@ -5,9 +5,9 @@ import static java.lang.Character.*;
 public abstract class NameUtil {
 
 	public static String shortenName(String name) {
-		StringBuilder sb = new StringBuilder(name.length());
-		String[] words = name.split(" ");
-		for (int i = 0; i < words.length; i++) {
+		var sb = new StringBuilder(name.length());
+		var words = name.split(" ");
+		for (var i = 0; i < words.length; i++) {
 			if (i > 0)
 				sb.append(' ');
 			if (i < words.length - 1)

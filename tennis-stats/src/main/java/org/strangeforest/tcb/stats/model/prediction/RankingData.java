@@ -80,7 +80,7 @@ public final class RankingData {
 	}
 
 	public RankingData copy() {
-		RankingData copy = new RankingData();
+		var copy = new RankingData();
 		copy.rank = rank;
 		copy.rankPoints = rankPoints;
 		copy.eloRating = eloRating;

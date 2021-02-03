@@ -49,7 +49,7 @@ public class PredictionResult {
 			++this.predictable;
 			if (predicted) // Prediction was correct
 				++this.predicted;
-			double loserProbability = 1 - winnerProbability;
+			var loserProbability = 1 - winnerProbability;
 			p += predicted ? winnerProbability : loserProbability;
 			pLog += winnerProbability > 0.0 ? log(winnerProbability) : -2.0 * E;
 			pDelta2 += loserProbability * loserProbability;
@@ -153,7 +153,7 @@ public class PredictionResult {
 	// Object methods
 
 	@Override public String toString() {
-		ToStringHelper builder = toStringHelper(this)
+		var builder = toStringHelper(this)
 			.add("rate", format("%1$.3f%%", predictionRate))
 			.add("predictable", format("%1$.3f%%", predictablePct))
 			.add("brier", format("%1$.5f", brier))

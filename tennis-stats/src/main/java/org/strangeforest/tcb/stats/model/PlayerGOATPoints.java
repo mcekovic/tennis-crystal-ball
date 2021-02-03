@@ -92,8 +92,8 @@ public class PlayerGOATPoints {
 	}
 
 	public void aggregateTournamentBreakdownAndMergeTourFinals() {
-		for (PlayerSeasonGOATPoints seasonPoints : playerSeasonsPoints) {
-			PlayerTournamentGOATPoints seasonBreakdown = seasonPoints.getTournamentBreakdown();
+		for (var seasonPoints : playerSeasonsPoints) {
+			var seasonBreakdown = seasonPoints.getTournamentBreakdown();
 			seasonBreakdown.mergeTourFinals();
 			tournamentBreakdown.addAll(seasonBreakdown);
 		}

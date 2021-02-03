@@ -31,9 +31,11 @@ COMMIT;
 
 -- Split Careers
 
-CALL split_careers('Alexander Zverev Sr', 'Alexander Zverev', '2000-01-01');
-CALL split_careers('Ramanathan Krishnan', 'Ramesh Krishnan', '1976-11-01');
-CALL split_careers('Anatoli Volkov', 'Alexander Volkov', '1985-01-01');
+DO $$ BEGIN
+    CALL split_careers('Alexander Zverev Sr', 'Alexander Zverev', '2000-01-01');
+    CALL split_careers('Ramanathan Krishnan', 'Ramesh Krishnan', '1976-11-01');
+    CALL split_careers('Anatoli Volkov', 'Alexander Volkov', '1985-01-01');
+END $$;
 
 COMMIT;
 
@@ -47,21 +49,28 @@ COMMIT;
 
 -- Link same tournaments
 
-CALL link_tournament('581', '580'); -- Australian Open
-CALL link_tournament('3935', '3934'); -- WCT Challenge Cup
-CALL link_tournament('3944', '316'); -- Baastad
-CALL link_tournament('1506', '650'); -- Birmingham
-CALL link_tournament('712', '650'); -- Birmingham
-CALL link_tournament('3943', '417'); -- Boston
-CALL link_tournament('3938', '347'); -- Bournemouth
-CALL link_tournament('3942', '313'); -- Bristol
-CALL link_tournament('3939', '344'); -- Caracas
-CALL link_tournament('2049', '741'); -- Eastbourne
-CALL link_tournament('468', '7290'); -- Estoril
-CALL link_tournament('820', '405'); -- Houston
-CALL link_tournament('1727', '663'); -- Louisville
-CALL link_tournament('2050', '315'); -- Newport
-CALL link_tournament('8998', '339'); -- Adelaide
+DO $$ BEGIN
+    CALL link_tournament('581', '580'); -- Australian Open
+    CALL link_tournament('3935', '3934'); -- WCT Challenge Cup
+    CALL link_tournament('3944', '316'); -- Baastad
+    CALL link_tournament('1506', '650'); -- Birmingham
+    CALL link_tournament('712', '650'); -- Birmingham
+    CALL link_tournament('3943', '417'); -- Boston
+    CALL link_tournament('3938', '347'); -- Bournemouth
+    CALL link_tournament('3942', '313'); -- Bristol
+    CALL link_tournament('3939', '344'); -- Caracas
+    CALL link_tournament('2049', '741'); -- Eastbourne
+    CALL link_tournament('468', '7290'); -- Estoril
+    CALL link_tournament('820', '405'); -- Houston
+    CALL link_tournament('1727', '663'); -- Louisville
+    CALL link_tournament('2050', '315'); -- Newport
+END $$;
+
+COMMIT;
+
+-- Link tournament events
+
+CALL link_tournament_events('404', '708', int4range(1982, 1982, '[]')); -- Australian Open
 
 COMMIT;
 
@@ -142,5 +151,9 @@ WHERE tournament_event_id IN (
 UPDATE tournament
 SET level = 'A'
 WHERE name = 'Stuttgart Masters';
+
+UPDATE tournament
+SET name = 'Canada Masters'
+WHERE tournament_id = (SELECT tournament_id FROM tournament_mapping WHERE ext_tournament_id = '421');
 
 COMMIT;

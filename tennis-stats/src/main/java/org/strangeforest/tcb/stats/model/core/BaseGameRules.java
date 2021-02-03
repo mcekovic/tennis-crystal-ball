@@ -26,7 +26,7 @@ public abstract class BaseGameRules {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof BaseGameRules)) return false;
-		BaseGameRules rules = (BaseGameRules) o;
+		var rules = (BaseGameRules) o;
 		return points == rules.points && pointsDiff == rules.pointsDiff;
 	}
 

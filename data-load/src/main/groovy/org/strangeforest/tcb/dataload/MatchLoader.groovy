@@ -45,7 +45,7 @@ class MatchLoader extends BaseCSVLoader {
 			return null
 		def dcInfo = level == 'D' ? extractDCTournamentInfo(record, season) : null
 		params.ext_tournament_id = mapExtTournamentId(season, extTourneyId, mappedLevel, dcInfo)
-		def eventName = mapEventName(name, mappedLevel, season, dcInfo)
+		def eventName = mapEventName(name, mappedLevel, season, extTourneyId, dcInfo)
 		params.tournament_name = mappedLevel != 'O' ? eventName : 'Olympics'
 		params.event_name = eventName
 		params.tournament_level = mappedLevel
@@ -141,7 +141,6 @@ class MatchLoader extends BaseCSVLoader {
 	}
 
 	static isInvalid(int season, String name) {
-		(season == 1971 && name == 'Toronto WCT')	||
 		(season == 1982 && name == 'Itaparica')
 	}
 
@@ -164,13 +163,14 @@ class MatchLoader extends BaseCSVLoader {
 				case 'M024': return '422'
 				case 'M035': return '418'
 				case 'M052': return '6932'
+				case 'M056': return '339'
 				case '306': return season == 2009 ? '319' : extTourneyId
 				default:	return extTourneyId
 			}
 		}
 	}
 
-	static mapEventName(String name, String level, int season, DavisCupTournamentInfo dcInfo) {
+	static mapEventName(String name, String level, int season, String extTournamentId, DavisCupTournamentInfo dcInfo) {
 		switch (level) {
 			case 'G': switch (name) {
 				case 'Us Open': return 'US Open'
@@ -181,7 +181,11 @@ class MatchLoader extends BaseCSVLoader {
 			case 'O': return season == 2016 ? 'Rio Olympics' : name
 			case 'D': return dcInfo.name
 			default:
-				if (name.equals('Santiago') && season in 2012..2013)
+				if (name.equals('Atp Cup'))
+					return 'ATP Cup'
+				else if (extTournamentId == '7696')
+					return 'Next Gen Finals'
+				else if (name.equals('Santiago') && season in 2012..2013)
 					return 'Vina del Mar'
 				else if (name.equals('Cabo San Lucas') && season == 2018)
 					return 'Los Cabos'
@@ -196,7 +200,7 @@ class MatchLoader extends BaseCSVLoader {
 			case 'F':
 				if (name.contains("WCT"))
 					return 'A'
-				else if (name.startsWith('Next Gen'))
+				else if (extTournamentId == '7696')
 					return 'H'
 				else
 					return 'F'
@@ -206,16 +210,15 @@ class MatchLoader extends BaseCSVLoader {
 				else if (
 					(name.equals('Cincinnati') && season in 1968..1980) ||
 					(name.equals('Delray Beach') && season == 1985) ||
-					(name.equals('Montreal / Toronto') && (season in 1969..1971 || season in 1976..1977)) ||
+					(name.equals('Montreal / Toronto') && season in 1969..1971) ||
+					(name.equals('Toronto') && season in 1976..1977) ||
 					(name.equals('Rome') && season in 1968..1969)
 				)
 					return 'B'
 				else
 					return 'M'
 			case 'A':
-				if (name.startsWith('Australian Open') && season == 1977)
-					return 'G'
-				else if (extTournamentId == '605' && season >= 2016)
+				if (extTournamentId == '605' && season >= 2016)
 					return 'F'
 				else if ( // Alternative Tour Finals
 					(name.equals('Tennis Champions Classic') && season in 1970..1971) || // Tennis Champions Classic
@@ -224,23 +227,24 @@ class MatchLoader extends BaseCSVLoader {
 				)
 					return 'L'
 				else if (
-					(name.startsWith('Boston') && season in 1970..1977) ||
+					(name.startsWith('Boston') && extTournamentId == '417' && season in 1970..1977) ||
 					(name.startsWith('Forest Hills') && season in 1982..1985) ||
 					(name.equals('Hamburg') && season in 1978..1989) ||
 					(name.equals('Indianapolis') && season in 1974..1977) ||
-					(name.startsWith('Johannesburg') && extTournamentId == '426' && season in 1972..1973)||
+					(name.startsWith('Johannesburg') && extTournamentId == '426' && season in 1970..1973)||
 					(name.startsWith('Johannesburg') && extTournamentId == '254' && season == 1974)||
 					(name.startsWith('Las Vegas') && season in 1972..1981 && extTournamentId == '413') ||
 					(name.startsWith('Los Angeles') && season in 1970..1973 && extTournamentId == '423') ||
 					(name.startsWith('Monte Carlo') && season in 1970..1989) ||
 					(name.startsWith('Paris') && season == 1989) ||
 					(name.startsWith('Philadelphia') && season in 1970..1986) ||
+					(name.equals('Sydney') && season == 1970) ||
 					(name.equals('Sydney Outdoor') && season == 1971) ||
 					(name.equals('Stockholm') && (season in 1972..1980 || season in 1984..1989)) ||
 					(name.equals('Stockholm Open') && season in 1970..1971) ||
 					(name.equals('Tokyo Indoor') && season in 1978..1988) ||
-					(name.startsWith('Washington') && extTournamentId.equals('418') && season in 1975..1977) ||
-					(name.equals('Wembley') && (season in 1970..1971 || season in 1976..1983))
+					(name.startsWith('Washington') && extTournamentId == '418' && season in 1975..1977) ||
+					(name.equals('Wembley') && extTournamentId == '430' && (season in 1970..1971 || season in 1976..1983))
 				)
 					return 'M'
 				else if (name.contains('Olympics'))
@@ -258,16 +262,17 @@ class MatchLoader extends BaseCSVLoader {
 					(name.equals('Hamburg') && season >= 2009) ||
 					(name.equals('Indianapolis') && season in 1990..2002) ||
 					(name.equals('Kitzbuhel') && season in 1999..2008) ||
-					(name.equals('London') && (season in 1998..2000 || season >= 2018)) ||
+					(name.equals('London') && season in 1998..2000) ||
 					(name.equals('Memphis') && (season in 1990..1992 || season in 1994..2013)) ||
 					(name.equals('Mexico City') && season == 2000) ||
 					(name.equals('Milan') && season in 1991..1997) ||
 					(name.equals('New Haven') && season in 1990..1998) ||
-					(name.equals('Queen\'s Club') && (season in 2015..2017)) ||
+					(name.equals('Queen\'s Club') && season >= 2015) ||
 					(name.equals('Philadelphia') && season in 1990..1998) ||
 					(name.equalsIgnoreCase('Rio de Janeiro') && season >= 2014) ||
 					(name.equals('Rotterdam') && season >= 1999) ||
 					(name.equals('Singapore') && season in 1997..1999) ||
+					(name.equals('St Petersburg') && season == 2020) ||
 					(name.equals('Stuttgart Outdoor') && season in 1990..2000) ||
 					(name.equals('Stuttgart') && (season == 2001 || season in 2003..2008)) ||
 					(name.equals('Stuttgart Indoor') && season in 1990..1995) ||
@@ -289,11 +294,10 @@ class MatchLoader extends BaseCSVLoader {
 					return 'A'
 				else if (
 					(name.equals('Dusseldorf') && extTournamentId == '615') ||
-					(name.equals('Nations Cup') && extTournamentId == '615')
+					(name.equals('Nations Cup') && extTournamentId == '615') ||
+					(name.equalsIgnoreCase('ATP Cup') && extTournamentId == '8888')
 				)
 					return 'T'
-				else if (name.equals('Barranquilla'))
-					return 'H'
 				else
 					return 'B'
 			case 'D': return 'D'
@@ -339,6 +343,7 @@ class MatchLoader extends BaseCSVLoader {
 			case 'R7': return 'QF'
 			case 'R3': return 'SF'
 			case 'R1': return 'F'
+			case 'ER': return 'RR'
 			default: return round
 		}
 	}
@@ -369,14 +374,17 @@ class MatchLoader extends BaseCSVLoader {
 	}
 
 	static mapEntry(String entry) {
-		if (entry) {
-			switch (entry) {
-				case 'S': return 'SE'
-				case 'Alt':
-				case 'ALT': return 'AL'
-			}
+		if (!entry)
+			return null
+		entry = entry.trim()
+		if (!entry)
+			return null
+		switch (entry) {
+			case 'S': return 'SE'
+			case 'Alt':
+			case 'ALT': return 'AL'
+			default: entry
 		}
-		entry
 	}
 
 	static mapRank(String rank) {

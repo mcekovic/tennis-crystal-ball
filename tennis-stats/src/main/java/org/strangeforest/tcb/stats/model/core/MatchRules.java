@@ -56,7 +56,7 @@ public class MatchRules {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof MatchRules)) return false;
-		MatchRules rules = (MatchRules) o;
+		var rules = (MatchRules) o;
 		return bestOf == rules.bestOf && Objects.equals(set, rules.set) && Objects.equals(decidingSet, rules.decidingSet);
 	}
 

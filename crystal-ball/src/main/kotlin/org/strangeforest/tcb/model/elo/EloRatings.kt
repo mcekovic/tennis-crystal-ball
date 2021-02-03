@@ -6,8 +6,8 @@ class EloRatings {
 
 	companion object {
 
-		fun kFactor(level: String, round: String, bestOf: Int, outcome: String?): Double {
-			return 32.0 * when (level) {
+		fun kFactor(level: String, round: String, bestOf: Int, outcome: String?): Double =
+			32.0 * when (level) {
 				"G" -> 1.00
 				"F" -> 0.90
 				"L" -> 0.85
@@ -36,6 +36,5 @@ class EloRatings {
 				"W/O" -> 0.50
 				else -> throw IllegalArgumentException()
 			}
-		}
 	}
 }

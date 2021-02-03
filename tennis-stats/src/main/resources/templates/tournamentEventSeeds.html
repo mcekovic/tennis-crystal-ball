@@ -1,0 +1,56 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="seeds" type="java.util.List<org.strangeforest.tcb.stats.model.SeededPlayer>"*/-->
+	<script type="text/javascript">
+		$(function() {
+			decorateSurface("#seedsTableBody > tr > td > span.favorite-surface");
+		});
+		function showSeedStats(playerId, event) {
+			var $seedStats = $("#seedStats-" + playerId);
+			if (!$seedStats.hasClass("loaded")) {
+				event.preventDefault();
+				var url = "/seedStats?playerId=" + playerId + "&tournamentEventId=" + [(${tournamentEventId})];
+				$.get(url, function(data) {
+					$seedStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
+					$seedStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+					$seedStats.data("statsURL", url);
+				});
+			}
+		}
+	</script>
+	<br/>
+	<table class="table table-condensed table-hover table-striped text-nowrap">
+		<thead>
+			<tr>
+				<th class="text-right" style="width: 50px">Seed</th>
+				<th>Player</th>
+				<th class="text-right">Rank</th>
+				<th class="text-right hidden-xs">Best Rank</th>
+				<th class="text-right" title="Elo Rating">Elo</th>
+				<th class="visible-lg" title="Favorite surface">Fav. Surface</th>
+				<th class="text-center">Result</th>
+				<th class="text-center hidden-sm hidden-xs">Stats</th>
+			</tr>
+		</thead>
+		<tbody th:unless="${seeds.isEmpty()}" id="seedsTableBody">
+			<tr th:each="seed : ${seeds}">
+				<td class="text-right" th:text="${seed.seedAndEntry()}">1</td>
+				<td>
+					<img th:src="@{/images/flags/{code}.png(code=${seed.country.code})}" src="/images/flags/ch.png" th:title="${seed.country.id}" title="SUI" width="24" height="20"/>
+					<a th:href="@{/playerProfile(playerId=${seed.id})}" th:text="${seed.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+					<img th:if="${seed.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+				</td>
+				<td class="text-right"><a th:href="@{/playerProfile(playerId=${seed.id}, tab=ranking, rankType=RANK)}" th:text="${seed.rank}" title="Show ranking chart">1</a></td>
+				<td class="text-right hidden-xs" th:text="${seed.bestRank}">1</td>
+				<td class="text-right"><a th:href="@{/playerProfile(playerId=${seed.id}, tab=ranking, rankType=ELO_RATING)}" th:text="${seed.eloRating}" title="Show Elo rating chart">2432</a></td>
+				<td class="visible-lg" th:with="favoriteSurface=${seed.favoriteSurface}"><span th:if="${!favoriteSurface.empty}" class="label favorite-surface" style="vertical-align: 10%" th:data-surface="${favoriteSurface.code != null ? favoriteSurface.code : _}"><span th:text="${favoriteSurface}" th:title="${favoriteSurface.surfaceGroup != null ? favoriteSurface.surfaceGroup.surfacesText : _}">Hard</span> <span class="" th:text="${#numbers.formatDecimal(favoriteSurface.specialization, 0, 0)} + '%'" title="Surface specialization rating">25%</span></span></td>
+				<td class="text-center"><a th:class="|label black bg-result-${seed.result}|" th:href="@{/playerProfile(playerId=${seed.id},tab=matches,tournamentEventId=${tournamentEventId})}" title="Show tournament matches" th:text="${seed.result}">W</a></td>
+				<td class="text-center hidden-sm hidden-xs"><a th:id="|seedStats-${seed.id}|" href="#" class="label label-info label-btn" th:onclick="|showSeedStats(${seed.id}, event)|" th:title="|${seed.name} Statistics|"><span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats</a></td>
+			</tr>
+		</tbody>
+	</table>
+	<th:block th:if="${seeds.isEmpty()}">
+		<br/>
+		<div class="alert alert-warning">No seeded players found</div>
+	</th:block>
+</th:block>

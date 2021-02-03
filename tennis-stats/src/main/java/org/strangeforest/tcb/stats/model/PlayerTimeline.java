@@ -33,11 +33,11 @@ public class PlayerTimeline {
 	}
 
 	private List<PlayerTournamentTimeline> getTournaments(Set<TournamentLevel> levels) {
-		List<PlayerTournamentTimeline> selectedTournaments = tournaments.values().stream().filter(tournament -> levels.contains(tournament.maxLevel())).collect(toList());
+		var selectedTournaments = tournaments.values().stream().filter(tournament -> levels.contains(tournament.maxLevel())).collect(toList());
 		Collections.sort(selectedTournaments);
 		TournamentLevel lastLevel = null;
-		for (PlayerTournamentTimeline tournament : selectedTournaments) {
-			TournamentLevel level = tournament.maxLevel();
+		for (var tournament : selectedTournaments) {
+			var level = tournament.maxLevel();
 			tournament.setFirstByLevel(!Objects.equals(level, lastLevel));
 			lastLevel = level;
 		}
@@ -57,7 +57,7 @@ public class PlayerTimeline {
 	}
 
 	public void addItem(PlayerTimelineItem item) {
-		PlayerTournamentTimeline tournament = getTournamentTimeline(item);
+		var tournament = getTournamentTimeline(item);
 		tournament.addItem(item);
 		seasons.add(item.getSeason());
 	}

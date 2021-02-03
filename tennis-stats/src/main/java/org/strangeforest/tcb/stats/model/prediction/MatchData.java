@@ -91,7 +91,7 @@ public final class MatchData {
 
 	public double getOpponentEloScore() {
 		if (opponentEloRating != null) {
-			double ratingDelta = opponentEloRating - StartEloRatings.START_RATING;
+			var ratingDelta = opponentEloRating - StartEloRatings.START_RATING;
 			if (ratingDelta > 0.0) {
 				if (oMatches > pMatches)
 					ratingDelta = -ratingDelta;

@@ -150,7 +150,7 @@ public class MatchesService {
 
 
 	public TournamentEventResults getTournamentEventResults(int tournamentEventId) {
-		TournamentEventResults results = new TournamentEventResults();
+		var results = new TournamentEventResults();
 		jdbcTemplate.query(
 			TOURNAMENT_EVENT_MATCHES_QUERY, params("tournamentEventId", tournamentEventId),
 			rs -> {
@@ -170,34 +170,34 @@ public class MatchesService {
 	}
 
 	private static List<SetScore> mapSetScores(ResultSet rs) throws SQLException {
-		Object[] setScores = (Object[])rs.getArray("set_scores").getArray();
+		var setScores = (Object[])rs.getArray("set_scores").getArray();
 		List<SetScore> score = new ArrayList<>(setScores.length);
-		for (Object setScore : setScores)
+		for (var setScore : setScores)
 			score.add(mapSetScore(setScore.toString()));
 		return score;
 	}
 
 	private static SetScore mapSetScore(String setScore) {
 		// (wGames,lGames,wTBPoints,lTBPoints)
-		int pos1 = setScore.indexOf(',');
-		int wGames = Integer.valueOf(setScore.substring(1, pos1));
+		var pos1 = setScore.indexOf(',');
+		var wGames = Integer.parseInt(setScore.substring(1, pos1));
 		pos1++;
-		int pos2 = setScore.indexOf(',', pos1);
-		int lGames = Integer.valueOf(setScore.substring(pos1, pos2));
+		var pos2 = setScore.indexOf(',', pos1);
+		var lGames = Integer.parseInt(setScore.substring(pos1, pos2));
 		pos2++;
-		int pos3 = setScore.indexOf(',', pos2);
-		Integer wTBPoints = pos3 > pos2 ? Integer.valueOf(setScore.substring(pos2, pos3)) : null;
+		var pos3 = setScore.indexOf(',', pos2);
+		var wTBPoints = pos3 > pos2 ? Integer.valueOf(setScore.substring(pos2, pos3)) : null;
 		pos3++;
-		int pos4 = setScore.length() - 1;
-		Integer lTBPoints = pos4 > pos3 ? Integer.valueOf(setScore.substring(pos3, pos4)) : null;
+		var pos4 = setScore.length() - 1;
+		var lTBPoints = pos4 > pos3 ? Integer.valueOf(setScore.substring(pos3, pos4)) : null;
 		return new SetScore(wGames, lGames, wTBPoints, lTBPoints);
 	}
 
 
 	public BootgridTable<Match> getPlayerMatchesTable(int playerId, MatchFilter filter, boolean h2h, String orderBy, int pageSize, int currentPage) {
-		BootgridTable<Match> table = new BootgridTable<>(currentPage);
-		AtomicInteger matches = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
+		var table = new BootgridTable<Match>(currentPage);
+		var matches = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(PLAYER_MATCHES_QUERY, filter.isBigWin() ? ", bw.goat_points big_win_points" : "", h2h ? PLAYER_H2H_COLUMNS : "", playerMatchesJoin(filter), filter.getCriteria(), orderBy),
 			filter.getParams()
@@ -205,7 +205,7 @@ public class MatchesService {
 				.addValue("offset", offset),
 			rs -> {
 				if (matches.incrementAndGet() <= pageSize) {
-					Match match = mapMatch(rs);
+					var match = mapMatch(rs);
 					if (filter.isBigWin())
 						match.setBigWinPoints(getDouble(rs, "big_win_points"));
 					if (h2h)
@@ -220,11 +220,11 @@ public class MatchesService {
 
 	@Cacheable("GreatestMatches.Table")
 	public BootgridTable<Match> getGreatestMatchesTable(MatchFilter filter, Integer bestRank, String orderBy, int pageSize, int currentPage) {
-		BootgridTable<Match> table = new BootgridTable<>(currentPage);
-		AtomicInteger matches = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
-		String criteria = filter.getCriteria();
-		MapSqlParameterSource params = filter.getParams()
+		var table = new BootgridTable<Match>(currentPage);
+		var matches = new AtomicInteger();
+		var offset = (currentPage - 1) * pageSize;
+		var criteria = filter.getCriteria();
+		var params = filter.getParams()
 			.addValue("minMatchScore", MIN_MATCH_SCORE)
 			.addValue("offset", offset);
 		if (bestRank != null) {
@@ -236,7 +236,7 @@ public class MatchesService {
 			params,
 			rs -> {
 				if (matches.incrementAndGet() <= pageSize) {
-					Match match = mapMatch(rs);
+					var match = mapMatch(rs);
 					match.setRank(rs.getInt("rank"));
 					match.setMatchScore(rs.getInt("match_score"));
 					table.addRow(match);
@@ -248,7 +248,7 @@ public class MatchesService {
 	}
 
 	private String playerMatchesJoin(MatchFilter filter) {
-		StringBuilder sb = new StringBuilder(100);
+		var sb = new StringBuilder(100);
 		if (filter.hasResult())
 			sb.append(TOURNAMENT_EVENT_RESULT_JOIN);
 		if (filter.hasStatsFilter())
@@ -279,7 +279,7 @@ public class MatchesService {
 	}
 
 	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix) throws SQLException {
-		int playerId = rs.getInt(prefix + "id");
+		var playerId = rs.getInt(prefix + "id");
 		if (!rs.wasNull()) {
 			return new MatchPlayer(
 				playerId,
@@ -294,7 +294,7 @@ public class MatchesService {
 	}
 
 	private static MatchPlayer mapMatchPlayerEx(ResultSet rs, String prefix) throws SQLException {
-		int playerId = rs.getInt(prefix + "id");
+		var playerId = rs.getInt(prefix + "id");
 		if (!rs.wasNull()) {
 			return new MatchPlayerEx(
 				playerId,
@@ -349,8 +349,8 @@ public class MatchesService {
 
 	private Map<String, List<String>> sameCountryIdsMap() {
 		Map<String, List<String>> sameCountryIdsMap = new HashMap<>();
-		for (String countryId : countryIds.get()) {
-			CountryCode countryCode = Country.code(countryId);
+		for (var countryId : countryIds.get()) {
+			var countryCode = Country.code(countryId);
 			if (countryCode != null)
 				sameCountryIdsMap.computeIfAbsent(countryCode.getAlpha3(), mainCountryId -> new ArrayList<>()).add(countryId);
 		}

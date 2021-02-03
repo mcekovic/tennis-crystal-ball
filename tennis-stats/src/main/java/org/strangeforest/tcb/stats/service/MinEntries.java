@@ -153,10 +153,10 @@ public class MinEntries {
 	private static final int MIN_ENTRIES_COUNTRY_FACTOR = 10;
 
 	public int getFilteredMinEntries(int minEntries, PerfStatsFilter filter) {
-		LocalDate today = LocalDate.now();
-		Range<LocalDate> dateRange = Range.closed(LocalDate.of(dataService.getFirstSeason(), 1, 1), today);
+		var today = LocalDate.now();
+		var dateRange = Range.closed(LocalDate.of(dataService.getFirstSeason(), 1, 1), today);
 		if (filter.hasSeason()) {
-			Integer season = filter.getSeason();
+			var season = filter.getSeason();
 			dateRange = intersection(dateRange, Range.closed(LocalDate.of(season, 1, 1), LocalDate.of(season, 12, 31)), EMPTY_DATE_RANGE);
 		}
 		if (filter.isLast52Weeks())
@@ -188,7 +188,7 @@ public class MinEntries {
 			minEntries /= getMinEntriesTournamentFactor(filter.getTournamentId());
 		
 		if (filter.hasOpponent()) {
-			OpponentFilter opponentFilter = filter.getOpponentFilter();
+			var opponentFilter = filter.getOpponentFilter();
 			if (opponentFilter.hasOpponent())
 				minEntries *= getMinEntriesWeight(opponentFilter.getOpponent().name(), MIN_ENTRIES_OPPONENT_WEIGHT_MAP);
 			if (opponentFilter.hasCountries())
@@ -206,9 +206,9 @@ public class MinEntries {
 	}
 
 	private static double getMinEntriesWeight(Period period) {
-		int years = period.getYears();
+		var years = period.getYears();
 		if (years == 0) {
-			int months = period.getMonths();
+			var months = period.getMonths();
 			if (months == 0)
 				months = 1;
 			if (months < 10)
@@ -223,7 +223,7 @@ public class MinEntries {
 	}
 
 	private double getMinEntriesTournamentFactor(int tournamentId) {
-		int eventCount = tournamentService.getTournamentEventCount(tournamentId);
+		var eventCount = tournamentService.getTournamentEventCount(tournamentId);
 		return MIN_ENTRIES_TOURNAMENT_FACTOR_MAP.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().orElseThrow().getValue();
 	}
 }

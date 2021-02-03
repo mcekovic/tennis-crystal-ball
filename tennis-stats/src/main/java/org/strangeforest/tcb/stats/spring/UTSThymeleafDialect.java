@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.spring;
 
+import java.text.*;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
@@ -56,6 +57,10 @@ public class UTSThymeleafDialect extends AbstractDialect implements IExpressionO
 
 		public EventResult result(String result) {
 			return EventResult.decode(result);
+		}
+
+		public String formatDecimal(double number, String format) {
+			return new DecimalFormat(format).format(number);
 		}
 
 		public String toFormattedPrice(double probability, String format) {

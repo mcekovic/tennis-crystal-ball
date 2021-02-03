@@ -26,12 +26,12 @@ public abstract class CompareUtil {
 	}
 
 	public static <T extends Comparable<T>> int compareLists(List<T> list1, List<T> list2) {
-		int size1 = list1.size();
-		int size2 = list2.size();
+		var size1 = list1.size();
+		var size2 = list2.size();
 		for (int i = 0, count = max(size1, size2); i < count; i++) {
-			T item1 = i < size1 ? list1.get(i) : null;
-			T item2 = i < size2 ? list2.get(i) : null;
-			int result = nullsLastCompare(item1, item2);
+			var item1 = i < size1 ? list1.get(i) : null;
+			var item2 = i < size2 ? list2.get(i) : null;
+			var result = nullsLastCompare(item1, item2);
 			if (result != 0)
 				return result;
 		}
@@ -43,7 +43,7 @@ public abstract class CompareUtil {
 	}
 
 	public static <T, R extends Comparable> List<? extends R> mapSortList(List<T> items, Function<? super T, ? extends R> mapper) {
-		List<? extends R> list = mapList(items, mapper);
+		var list = mapList(items, mapper);
 		sort(list);
 		return list;
 	}

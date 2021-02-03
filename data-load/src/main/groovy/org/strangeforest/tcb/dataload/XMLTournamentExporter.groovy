@@ -9,11 +9,18 @@ import groovy.xml.*
 class XMLTournamentExporter {
 
 	static final String FETCH_TOURNAMENT_EVENT_SQL = //language=SQL
-		'SELECT e.tournament_event_id, t.name tournament_name, e.name, e.date, e.level, e.surface, e.indoor, e.draw_type, e.draw_size\n' +
+		SELECT_TOURNAMENT_EVENT_SQL +
+		'WHERE m.ext_tournament_id = :extId AND e.season = :season'
+
+	static final String FETCH_TOURNAMENT_EVENT_BY_ID_SQL = //language=SQL
+		SELECT_TOURNAMENT_EVENT_SQL +
+		'WHERE e.tournament_event_id = :id'
+
+	static final String SELECT_TOURNAMENT_EVENT_SQL = //language=SQL
+		'SELECT e.tournament_event_id, m.ext_tournament_id AS ext_id, t.name tournament_name, e.name, e.season, e.date, e.level, e.surface, e.indoor, e.draw_type, e.draw_size\n' +
 		'FROM tournament_event e\n' +
 		'INNER JOIN tournament_mapping m USING (tournament_id)\n' +
-		'INNER JOIN tournament t USING (tournament_id)\n' +
-		'WHERE m.ext_tournament_id = :extId AND e.season = :season'
+		'INNER JOIN tournament t USING (tournament_id)\n'
 
 	static final String FETCH_TOURNAMENT_EVENT_PLAYERS_SQL = //language=SQL
 		'SELECT DISTINCT m.winner_seed seed, m.winner_entry entry, pw.name, m.winner_country_id country_id\n' +
@@ -21,7 +28,7 @@ class XMLTournamentExporter {
 		'INNER JOIN player_v pw ON m.winner_id = pw.player_id\n' +
 		'WHERE m.tournament_event_id = :tournamentEventId\n' +
 		'UNION DISTINCT\n' +
-	   'SELECT DISTINCT m.loser_seed seed, m.loser_entry entry, pl.name, m.loser_country_id country_id\n' +
+		'SELECT DISTINCT m.loser_seed seed, m.loser_entry entry, pl.name, m.loser_country_id country_id\n' +
 		'FROM match m\n' +
 		'INNER JOIN player_v pl ON m.loser_id = pl.player_id\n' +
 		'WHERE m.tournament_event_id = :tournamentEventId\n' +
@@ -48,15 +55,24 @@ class XMLTournamentExporter {
 		this.sql = sql
 	}
 
-	def exportTournament(String extId, int season, String path = null) {
+	def exportTournamentEvent(String extId, int season, String path = null) {
 		def event = sql.firstRow([extId: extId, season: season], FETCH_TOURNAMENT_EVENT_SQL)
+		exportTournamentEvent(event, path)
+	}
+
+	def exportTournamentEvent(int id, String path = null) {
+		def event = sql.firstRow([id: id], FETCH_TOURNAMENT_EVENT_BY_ID_SQL)
+		exportTournamentEvent(event, path)
+	}
+
+	def exportTournamentEvent(Map event, String path = null) {
 		def players = sql.rows(FETCH_TOURNAMENT_EVENT_PLAYERS_SQL, [tournamentEventId: event.tournament_event_id])
 		def matches = sql.rows(FETCH_TOURNAMENT_EVENT_MATCHES_SQL, [tournamentEventId: event.tournament_event_id])
 
-		def eventNameId = event.name.toLowerCase().replace(' ', '-')
+		def eventNameId = event.name.toLowerCase().replace(' ', '-').replace('/', '-')
 		def fileName = path
-			? path + "/${season}/${eventNameId}-${extId}.xml"
-			: "data-load/src/main/resources/tournaments/${season}-${eventNameId}.xml"
+			? path + "/${event.season}/${eventNameId}-${event.ext_id}-${event.date}.xml"
+			: "data-load/src/main/resources/tournaments/${event.season}-${eventNameId}-${event.ext_id}-${event.date}.xml"
 		Files.createDirectories(Path.of(fileName).parent)
 		def writer = new FileWriter(fileName)
 		def xml = new MarkupBuilder(writer)
@@ -66,7 +82,7 @@ class XMLTournamentExporter {
 		xml.mkp.xmlDeclaration(version: '1.0', encoding: 'UTF-8')
 		xml.'tournament-data'(xmlns: 'https://www.strangeforest.org/schema/tcb') {
 			def date = formatDate(event.date)
-			tournament(season: season, 'tournament-name': event.tournament_name, name: event.name, date: date, 'ext-id': extId) {
+			tournament(season: event.season, 'tournament-name': event.tournament_name, name: event.name, date: date, 'ext-id': event.ext_id) {
 				level(event.level)
 				surface(event.surface)
 				indoor(event.indoor)
@@ -92,7 +108,7 @@ class XMLTournamentExporter {
 			}
 		}
 
-		println "Tournament ${event.name} ($extId) for season $season exported to: $fileName"
+		println "Tournament ${event.name} ($event.ext_id) for season $event.season exported to: $fileName"
 	}
 
 	private static String formatDate(Date date) {

@@ -11,12 +11,12 @@ import static org.strangeforest.tcb.stats.model.core.Surface.*;
 
 public class DominanceSeason {
 
-	private static final double DOMINANCE_RATIO_COEFFICIENT = 1500.0;
+	private static final double DOMINANCE_RATIO_COEFFICIENT = 1600.0;
 	private static final Map<Surface, Double> SURFACE_DOMINANCE_RATIO_COEFFICIENT = Map.of(
-		HARD,   400.0,
-		CLAY,   130.0,
-		GRASS,   60.0,
-		CARPET, 110.0
+		HARD,   450.0,
+		CLAY,   140.0,
+		GRASS,   70.0,
+		CARPET, 120.0
 	);
 
 	public static double getDominanceRatioCoefficient(Surface surface) {
@@ -38,8 +38,8 @@ public class DominanceSeason {
 	public DominanceSeason(int season, Surface surface) {
 		this.season = season;
 		this.surface = surface;
-		LocalDate today = LocalDate.now();
-		int year = today.getYear();
+		var today = LocalDate.now();
+		var year = today.getYear();
 		ongoing = season == year && today.getMonth().compareTo(Month.NOVEMBER) < 0;
 		eligibleForEra = season < year || !ongoing;
 		averageEloRatings = new HashMap<>();
@@ -126,9 +126,9 @@ public class DominanceSeason {
 	}
 
 	void processPlayer(PlayerDominanceTimeline player) {
-		SeasonPoints seasonPoints = player.getSeasonPoints(season);
+		var seasonPoints = player.getSeasonPoints(season);
 		if (seasonPoints != null) {
-			int playerPoints = seasonPoints.getPoints();
+			var playerPoints = seasonPoints.getPoints();
 			dominanceRatioPoints += playerPoints * player.getGoatPoints();
 			if (bestPlayer == null || playerPoints > bestPlayerPoints || (playerPoints == bestPlayerPoints && player.getGoatPoints() > bestPlayer.getGoatPoints())) {
 				bestPlayer = player;

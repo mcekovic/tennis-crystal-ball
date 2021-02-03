@@ -33,7 +33,7 @@ public class RankingsResource {
 
 	private static final int MAX_PLAYERS = 1000;
 
-	private static Map<String, String> ORDER_MAP = Map.of(
+	private static final Map<String, String> ORDER_MAP = Map.of(
 		"rank", "rank",
 		"bestRank", "best_rank",
 		"points", "points NULLS LAST",
@@ -63,16 +63,16 @@ public class RankingsResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
+		var filter = new PlayerListFilter(active, searchPhrase);
 		if (rankType.category == ELO && peak) {
-			int playerCount = Math.min(MAX_PLAYERS, rankingsService.getPeakEloRatingsCount(rankType, filter));
-			int pageSize = rowCount > 0 ? rowCount : playerCount;
+			var playerCount = Math.min(MAX_PLAYERS, rankingsService.getPeakEloRatingsCount(rankType, filter));
+			var pageSize = rowCount > 0 ? rowCount : playerCount;
 			return rankingsService.getPeakEloRatingsTable(playerCount, rankType, filter, pageSize, current);
 		}
 		else {
 			date = rankingsService.getRankingsDate(rankType, season, date);
-			int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
-			String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+			var pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
+			var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 			return rankingsService.getRankingsTable(rankType, date, filter, orderBy, pageSize, current);
 		}
 	}
@@ -100,12 +100,12 @@ public class RankingsResource {
 		@RequestParam(name = "byAge", defaultValue = F) boolean byAge,
 		@RequestParam(name = "compensatePoints", defaultValue = F) boolean compensatePoints
 	) {
-		Range<LocalDate> dateRange = !bySeason ? toDateRange(timeSpan, fromDate, toDate) : null;
-		Range<Integer> seasonRange = bySeason ? toSeasonRange(timeSpan, fromSeason, toSeason) : null;
+		var dateRange = !bySeason ? toDateRange(timeSpan, fromDate, toDate) : null;
+		var seasonRange = bySeason ? toSeasonRange(timeSpan, fromSeason, toSeason) : null;
 		if (playerId != null && playerId.length > 0)
 			return rankingChartService.getRankingDataTable(playerId, refRank, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		else {
-			List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+			var inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 			return rankingChartService.getRankingsDataTable(inputPlayers, refRank, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		}
 	}

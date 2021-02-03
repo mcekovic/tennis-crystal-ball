@@ -100,8 +100,8 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 	}
 
 	public void addOppositionMatches(Map<Opponent, WonLost> opposition) {
-		WonLost wonLost = WonLost.EMPTY;
-		for (Map.Entry<Opponent, WonLost> entry : opposition.entrySet()) {
+		var wonLost = WonLost.EMPTY;
+		for (var entry : opposition.entrySet()) {
 			wonLost = wonLost.add(entry.getValue());
 			if (!wonLost.isEmpty())
 				oppositionMatches.put(entry.getKey(), wonLost);
@@ -113,8 +113,8 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 	}
 
 	public void addScoreCounts(Map<PerfMatchScore, Integer> scores) {
-		Map<Integer, Integer> bestOfCounts = scores.entrySet().stream().collect(groupingBy(e -> e.getKey().getBestOf(), summingInt(Entry::getValue)));
-		for (Map.Entry<PerfMatchScore, Integer> entry : scores.entrySet()) {
+		var bestOfCounts = scores.entrySet().stream().collect(groupingBy(e -> e.getKey().getBestOf(), summingInt(Entry::getValue)));
+		for (var entry : scores.entrySet()) {
 			int count = entry.getValue();
 			if (count > 0)
 				scoreCounts.put(entry.getKey(), new WonLost(count, bestOfCounts.get(entry.getKey().getBestOf()) - count));
@@ -135,8 +135,8 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 	}
 
 	public void addResultCounts(Map<EventResult, Integer> results) {
-		int total = results.values().stream().mapToInt(Integer::intValue).sum();
-		for (Map.Entry<EventResult, Integer> entry : results.entrySet()) {
+		var total = results.values().stream().mapToInt(Integer::intValue).sum();
+		for (var entry : results.entrySet()) {
 			int count = entry.getValue();
 			if (count > 0)
 				resultCounts.put(entry.getKey(), new WonLost(count, total - count));

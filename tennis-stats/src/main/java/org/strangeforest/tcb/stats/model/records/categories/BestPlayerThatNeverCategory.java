@@ -57,7 +57,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 	}
 
 	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn, String condition, String domainTitleOverride, String notes) {
-		String domainTitle = domainTitleOverride != null ? prefix(domainTitleOverride, " ") : prefix(domain.name, " ") + " Title" + prefix(domain.nameSuffix, " ");
+		var domainTitle = domainTitleOverride != null ? prefix(domainTitleOverride, " ") : prefix(domain.name, " ") + " Title" + prefix(domain.nameSuffix, " ");
 		return new Record<>(
 			"BestPlayerThatNeverWon" + domain.id + "Title", "Best Player That Never Won" + domainTitle,
 			/* language=SQL */
@@ -71,7 +71,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 	}
 
 	private static Record bestPlayerThatNeverWonMedal(RecordDomain domain, String condition, String notes) {
-		String domainTitle = prefix(domain.name, " ") + " Medal" + prefix(domain.nameSuffix, " ");
+		var domainTitle = prefix(domain.name, " ") + " Medal" + prefix(domain.nameSuffix, " ");
 		return new Record<>(
 			"BestPlayerThatNeverWon" + domain.id + "Medal", "Best Player That Never Won" + domainTitle,
 			/* language=SQL */

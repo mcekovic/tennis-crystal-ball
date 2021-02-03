@@ -113,14 +113,14 @@ class PredictionVerificationIT extends BasePredictionVerificationIT {
 
 	@Test
 	void singleAreaAllItemsPredictions() throws InterruptedException {
-		for (PredictionArea area : PredictionArea.values())
+		for (var area : PredictionArea.values())
 			verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.areaEqualWeights(area));
 	}
 
 	@Test
 	void singleItemPredictions() throws InterruptedException {
-		for (PredictionArea area : PredictionArea.values()) {
-			for (PredictionItem item : area.getItems())
+		for (var area : PredictionArea.values()) {
+			for (var item : area.getItems())
 				verifyPredictionPrintInfo(FROM_DATE, TO_DATE, new PredictionConfig(area, 1.0, item, 1.0));
 		}
 	}
@@ -134,23 +134,23 @@ class PredictionVerificationIT extends BasePredictionVerificationIT {
 	// Util
 
 	private void verifyPredictionPrintInfo(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
-		PredictionVerificationResult result = verifyPrediction(fromDate, toDate);
+		var result = verifyPrediction(fromDate, toDate);
 		printResultDistribution(result);
 	}
 
 	private void verifyPredictionPrintInfo(LocalDate fromDate, LocalDate toDate, TuningSet tuningSet) throws InterruptedException {
-		PredictionVerificationResult result = verifyPrediction(fromDate, toDate, tuningSet);
+		var result = verifyPrediction(fromDate, toDate, tuningSet);
 		printResultDistribution(result);
 	}
 
 	private void verifyPredictionPrintInfo(LocalDate fromDate, LocalDate toDate, PredictionConfig config) throws InterruptedException {
-		PredictionVerificationResult result = verifyPrediction(fromDate, toDate, config);
+		var result = verifyPrediction(fromDate, toDate, config);
 		printWeights(config, false);
 		printResultDistribution(result);
 	}
 
 	private void verifyPredictionPrintInfo(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
-		PredictionVerificationResult result = verifyPrediction(fromDate, toDate, config, tuningSet);
+		var result = verifyPrediction(fromDate, toDate, config, tuningSet);
 		printWeights(config, false);
 		printResultDistribution(result);
 	}

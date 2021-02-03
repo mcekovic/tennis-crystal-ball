@@ -14,10 +14,26 @@ class TopPerformersServiceIT {
 	@Autowired private TopPerformersService topPerformersService;
 
 	@Test
-	void goatTopN() {
-		BootgridTable<TopPerformerRow> topPerformers = topPerformersService.getTopPerformersTable("matches", 100, PerfStatsFilter.ALL, 50, "won_lost_pct", 20, 1);
+	void topPerformers() {
+		var topPerformers = topPerformersService.getTopPerformersTable("matches", 100, PerfStatsFilter.ALL, 50, "won_lost_pct DESC", 20, 1);
 
 		assertThat(topPerformers.getRowCount()).isEqualTo(20);
 		assertThat(topPerformers.getRows()).hasSize(20);
+	}
+
+	@Test
+	void titlesAndResults() {
+		var topPerformers = topPerformersService.getTitlesAndResultsTable(100, PerfStatsFilter.ALL, "count DESC", 20, 1);
+
+		assertThat(topPerformers.getRowCount()).isEqualTo(20);
+		assertThat(topPerformers.getRows()).hasSize(20);
+	}
+
+	@Test
+	void mentalToughness() {
+		var mentalToughness = topPerformersService.getMentalToughnessTable(100, PerfStatsFilter.ALL, 50, "rating DESC", 20, 1);
+
+		assertThat(mentalToughness.getRowCount()).isEqualTo(20);
+		assertThat(mentalToughness.getRows()).hasSize(20);
 	}
 }

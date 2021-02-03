@@ -22,9 +22,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- weeks
+-- raw_weeks
 
-CREATE OR REPLACE FUNCTION weeks(
+CREATE OR REPLACE FUNCTION raw_weeks(
 	p_from DATE,
 	p_to DATE
 ) RETURNS REAL AS $$
@@ -34,6 +34,40 @@ BEGIN
 	ELSE
 		RETURN 1;
 	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- weeks
+
+CREATE OR REPLACE FUNCTION weeks(
+	p_from DATE,
+	p_to DATE
+) RETURNS REAL AS $$
+DECLARE
+    frozen_begin DATE = '2020-03-23';
+    frozen_end DATE = '2020-08-24';
+BEGIN
+    IF p_to IS NULL THEN
+        RETURN 1;
+    END IF;
+    IF p_from < frozen_begin THEN
+        IF p_to <= frozen_begin THEN
+            RETURN raw_weeks(p_from, p_to);
+        ELSIF p_to <= frozen_end THEN
+            RETURN raw_weeks(p_from, frozen_begin);
+        ELSE
+            RETURN raw_weeks(p_from, frozen_begin) + raw_weeks(frozen_end, p_to);
+        END IF;
+    ELSIF p_from < frozen_end THEN
+        IF p_to <= frozen_end THEN
+            RETURN 0;
+        ELSE
+            RETURN raw_weeks(frozen_end, p_to);
+        END IF;
+    ELSE
+        RETURN raw_weeks(p_from, p_to);
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -152,11 +186,9 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION player_rank_points(
 	p_player_id INTEGER,
 	p_date DATE
--- ) RETURNS rank_points AS $$
-) RETURNS TABLE(rank INTEGER, rank_points INTEGER) AS $$
+) RETURNS rank_points AS $$
 BEGIN
--- 	RETURN (SELECT (r.rank, r.rank_points) FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date ORDER BY rank_date DESC LIMIT 1);
-	RETURN QUERY SELECT r.rank, r.rank_points FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date ORDER BY rank_date DESC LIMIT 1;
+	RETURN (SELECT (r.rank, r.rank_points) FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date ORDER BY rank_date DESC LIMIT 1);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -200,10 +232,10 @@ CREATE OR REPLACE FUNCTION player_elo_ratings(
 BEGIN
 	RETURN (
 		SELECT (elo_rating, recent_elo_rating,
-			CASE p_surface WHEN 'H' THEN hard_elo_rating WHEN 'C' THEN clay_elo_rating WHEN 'G' THEN grass_elo_rating WHEN 'P' THEN carpet_elo_rating ELSE NULL END,
+			CASE p_surface WHEN 'H' THEN hard_elo_rating WHEN 'C' THEN clay_elo_rating WHEN 'G' THEN grass_elo_rating WHEN 'P' THEN carpet_elo_rating END,
 			CASE WHEN p_indoor THEN indoor_elo_rating ELSE outdoor_elo_rating END, set_elo_rating)
 		FROM player_elo_ranking
-	   WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date
+	    WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date
 		ORDER BY rank_date DESC LIMIT 1
 	);
 END;

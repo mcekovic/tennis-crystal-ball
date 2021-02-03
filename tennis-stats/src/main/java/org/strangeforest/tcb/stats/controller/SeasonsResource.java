@@ -18,7 +18,7 @@ public class SeasonsResource {
 
 	private static final int MAX_SEASONS = 100;
 
-	private static Map<String, String> SEASONS_ORDER_MAP = Map.ofEntries(
+	private static final Map<String, String> SEASONS_ORDER_MAP = Map.ofEntries(
 		entry("season", "season"),
 		entry("tournamentCount", "tournament_count"),
 		entry("grandSlamCount", "grand_slam_count"),
@@ -38,7 +38,7 @@ public class SeasonsResource {
 	);
 	private static final OrderBy SEASONS_DEFAULT_ORDER = OrderBy.desc("season");
 
-	private static Map<String, String> BEST_SEASONS_ORDER_MAP = Map.ofEntries(
+	private static final Map<String, String> BEST_SEASONS_ORDER_MAP = Map.ofEntries(
 		entry("season", "season"),
 		entry("goatPoints", "goat_points"),
 		entry("grandSlamTitles", "grand_slam_titles"),
@@ -63,8 +63,8 @@ public class SeasonsResource {
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam Map<String, String> requestParams
 	) {
-		String orderBy = BootgridUtil.getOrderBy(requestParams, SEASONS_ORDER_MAP, SEASONS_DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : MAX_SEASONS;
+		var orderBy = BootgridUtil.getOrderBy(requestParams, SEASONS_ORDER_MAP, SEASONS_DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : MAX_SEASONS;
 		return seasonsService.getSeasons(orderBy, pageSize, current);
 	}
 
@@ -76,11 +76,11 @@ public class SeasonsResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
-		int seasonCount = seasonsService.getBestSeasonCount(surface, filter);
+		var filter = new PlayerListFilter(searchPhrase);
+		var seasonCount = seasonsService.getBestSeasonCount(surface, filter);
 
-		String orderBy = BootgridUtil.getOrderBy(requestParams, BEST_SEASONS_ORDER_MAP, BEST_SEASONS_DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : seasonCount;
+		var orderBy = BootgridUtil.getOrderBy(requestParams, BEST_SEASONS_ORDER_MAP, BEST_SEASONS_DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : seasonCount;
 		return seasonsService.getBestSeasonsTable(seasonCount, surface, filter, orderBy, pageSize, current);
 	}
 

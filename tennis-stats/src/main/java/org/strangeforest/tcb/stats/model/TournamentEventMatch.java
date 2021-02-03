@@ -53,7 +53,7 @@ public class TournamentEventMatch {
 	}
 
 	public String getFormattedScore() {
-		String scr = score.stream().map(SetScore::formatted).collect(joining(" "));
+		var scr = score.stream().map(SetScore::formatted).collect(joining(" "));
 		if (!Strings.isNullOrEmpty(outcome) && !outcome.equals("BYE"))
 			scr += ' ' + outcome;
 		return scr;

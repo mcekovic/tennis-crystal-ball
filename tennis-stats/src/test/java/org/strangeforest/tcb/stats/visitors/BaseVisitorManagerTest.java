@@ -38,13 +38,13 @@ abstract class BaseVisitorManagerTest {
 
 	Visitor visitAndVerifyFirstVisit(String ipAddress, VerificationMode mode) {
 		when(repository.find(ipAddress)).thenReturn(Optional.empty());
-		when(repository.create(any(), any(), any(), any())).thenAnswer(invocation -> {
-			Object[] args = invocation.getArguments();
-			Instant now = Instant.now();
+		lenient().when(repository.create(any(), any(), any(), any())).thenAnswer(invocation -> {
+			var args = invocation.getArguments();
+			var now = Instant.now();
 			return new Visitor(1L, (String)args[0], (String)args[1], (String)args[2], (String)args[3], 1, now, now);
 		});
 
-		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
+		var visitor = manager.visit(ipAddress, WEB_BROWSER.name()).visitor;
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getHits()).isEqualTo(1);

@@ -34,7 +34,7 @@ public class TournamentItem implements Comparable<TournamentItem> {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		TournamentItem tournament = (TournamentItem)o;
+		var tournament = (TournamentItem)o;
 		return id == tournament.id && Objects.equals(name, tournament.name) && Objects.equals(level, tournament.level);
 	}
 

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.Set<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="speeds" type="org.strangeforest.tcb.stats.model.core.CourtSpeed[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.Map<org.strangeforest.tcb.stats.model.core.TournamentLevel, List<org.strangeforest.tcb.stats.model.core.TournamentItem>>"*/-->
+<!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
+	<title>Mental Toughness</title>
+	<template>
+	<meta name="description" content="Tennis mental toughness leaders filtered by various filters"/>
+	<script type="text/javascript">
+		$(function() {
+			var $mentalToughnessTable = $("#mentalToughnessTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($mentalToughnessTable, ["decidingSetsPct", "fifthSetsPct", "finalsPct", "tieBreaksPct", "decidingSetTieBreaksPct"], deviceGreaterOrEqual(device, "md"));
+			if (deviceGreaterOrEqual("md", device))
+				setBootgridColumnsWidths($mentalToughnessTable, ["name"], [150]);
+			$mentalToughnessTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/mentalToughnessTable",
+				requestHandler: function(request) {
+					request.season = $("#season").val();
+					request.fromDate = $("#fromDate").val();
+					request.toDate = $("#toDate").val();
+					request.level = $("#level").val();
+					request.bestOf = $("#bestOf").val();
+					request.surface = $("#surface").val();
+					request.indoor = $("#indoor").val();
+					request.speed = $("#speed").val();
+					request.round = $("#round").val();
+					request.result = $("#result").val();
+					request.tournamentId = $("#tournament").val();
+					request.opponent = $("#opponent").val();
+					request.countryId = $("#country").val();
+					request.minPoints = $("#minPointsOverride").val();
+					var active = $("#active").prop("checked");
+					if (active)
+						request.active = active;
+					return request;
+				},
+				rowCount: [20, 50, 100, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"player": playerCountryFormatter,
+					"rating": function(column, row) {
+						return "<a href='" + mentalToughnessPlayerMatchesUrl(row.playerId) + "' title='Show matches'>" + row.rating + "</a>";
+					},
+					"decidingSetsPct": function(column, row) {
+						return "<a href='" + mentalToughnessPlayerMatchesUrl(row.playerId, 'decidingSets') + "' title='" + row.decidingSets + "'>" + row.decidingSetsPct + "</a>";
+					},
+					"fifthSetsPct": function(column, row) {
+						return "<a href='" + mentalToughnessPlayerMatchesUrl(row.playerId, 'fifthSets') + "' title='" + row.fifthSets + "'>" + row.fifthSetsPct + "</a>";
+					},
+					"finalsPct": function(column, row) {
+						return "<a href='" + mentalToughnessPlayerMatchesUrl(row.playerId, 'finals') + "' title='" + row.finals + "'>" + row.finalsPct + "</a>";
+					},
+					"tieBreaksPct": function(column, row) {
+						return "<a href='" + mentalToughnessPlayerMatchesUrl(row.playerId, 'tieBreaks') + "' title='" + row.tieBreaks + "'>" + row.tieBreaksPct + "</a>";
+					},
+					"decidingSetTieBreaksPct": function(column, row) {
+						return "<a href='" + mentalToughnessPlayerMatchesUrl(row.playerId, 'decidingSetTBs') + "' title='" + row.decidingSetTieBreaks + "'>" + row.decidingSetTieBreaksPct + "</a>";
+					}
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No mental toughness results found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+			var $search = $("#mentalToughnessTable-header").find("div.search");
+			$search.before($("#activeDiv").remove());
+			$search.after($("#clearDiv").remove());
+			addBootgridCsvDownload("mentalToughnessTable", "MentalToughness.csv", ["playerId", "country_code"]);
+			setBootgridTitles($mentalToughnessTable, [
+				{id: "rating", title: "Mental toughness rating"},
+				{id: "pointsWon", title: "Mental points won"},
+				{id: "pointsLost", title: "Mental points lost"},
+				{id: "decidingSetsPct", title: "Deciding sets"},
+				{id: "fifthSetsPct", title: "Fifth sets"},
+				{id: "finalsPct", title: "Finals"},
+				{id: "tieBreaksPct", title: "Tie-breaks"},
+				{id: "decidingSetTieBreaksPct", title: "Deciding set tie-breaks"}
+			]);
+			minPointsChanged();
+			dateRangePicker("fromDate", "toDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function minPointsChanged() {
+			var url = "/mentalToughnessMinPoints";
+			url += "?season=" + $("#season").val();
+			var fromDate = getDate("fromDate", "from date");
+			if (fromDate) url += "&fromDate=" + fromDate;
+			else if (fromDate === null) return false;
+			var toDate = getDate("toDate", "to date");
+			if (toDate) url += "&toDate=" + toDate;
+			else if (toDate === null) return false;
+			url += "&level=" + $("#level").val();
+			url += "&bestOf=" + $("#bestOf").val();
+			url += "&surface=" + $("#surface").val();
+			url += "&indoor=" + $("#indoor").val();
+			url += "&speed=" + $("#speed").val();
+			url += "&round=" + encodeURIComponent($("#round").val());
+			url += "&result=" + encodeURIComponent($("#result").val());
+			url += "&tournamentId=" + $("#tournament").val();
+			url += "&opponent=" + $("#opponent").val();
+			url += "&countryId=" + $("#country").val();
+			var $minPoints = $("#minPointsOverride");
+			if (!validateNumber($minPoints))
+				return false;
+			var minPoints = $minPoints.val();
+			if (minPoints && minPoints < 2) {
+				$minPoints.tooltip({title: "Minimum mental points must be greater or equal to 2", placement: "bottom"}).tooltip("show");
+				$minPoints.focus();
+				return false;
+			}
+			url += "&minPoints=" + minPoints;
+			$.get(url, function (data) {
+				$("#minPoints").html(data);
+			});
+			return true;
+		}
+		function reloadMentalToughness() {
+			if (minPointsChanged())
+				$("#mentalToughnessTable").bootgrid("reload");
+		}
+		function dateFilterChanged() {
+			var $active = $("#active");
+			var hasDateFilter = $("#season").val() || $("#fromDate").val() || $("#toDate").val();
+			if (hasDateFilter)
+				$active.prop("checked", false);
+			$active.prop("disabled", hasDateFilter);
+		}
+		function clearMentalToughnessFilter() {
+			$("#season").val("");
+			$("#fromDate").val("");
+			$("#toDate").val(""); dateFilterChanged();
+			$("#level").val("");
+			$("#bestOf").val("");
+			$("#surface").val("");
+			$("#indoor").val("");
+			$("#speed").val("");
+			$("#round").val("");
+			$("#result").val("");
+			$("#opponent").val("");
+			$("#tournament").val("");
+			$("#country").val("");
+			$("#minPointsOverride").val("");
+			$("#active").prop("checked", false);
+			$("#mentalToughnessTable").bootgrid("search", "");
+			reloadMentalToughness();
+		}
+		function mentalToughnessPlayerMatchesUrl(playerId, category) {
+			return performancePlayerMatchesUrl(playerId, "", "", category)
+		}
+	</script>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<th:block th:include="fragments/ads :: responsive"/>
+	<div class="row margin-top">
+		<div class="col-md-3">
+			<h3 class="text-nowrap" style="display: inline"><i class="fa fa-heartbeat"></i> Mental Toughness</h3>
+		</div>
+		<div class="col-md-2">
+			<select id="season" class="form-control" onchange="dateFilterChanged(); reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
+				<option value="">Career</option>
+				<option value="-1">Last 52 weeks</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="level" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}">Big Tournaments</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="round" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+				<option value="">All rounds</option>
+				<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+			</select>
+		</div>
+		<div class="col-md-1">
+			<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
+					Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="advancedFilter" class="collapse">
+		<div class="row margin-top">
+			<div class="col-md-4">
+				<div id="dateRange" class="input-group">
+					<label for="fromDate" class="input-group-addon">From:</label>
+					<input id="fromDate" type="text" maxlength="10" class="form-control" onchange="dateFilterChanged(); reloadMentalToughness()"/>
+					<label for="toDate" class="input-group-addon">To:</label>
+					<input id="toDate" type="text" maxlength="10" class="form-control" onchange="dateFilterChanged(); reloadMentalToughness()"/>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<select id="indoor" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+					<option value="">Outdoor / Indoor</option>
+					<option value="false">Outdoor</option>
+					<option value="true">Indoor</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="result" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by tournament result">
+					<option value="">All results</option>
+					<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}">Win</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<select id="country" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+					<option value="">Vs all countries</option>
+					<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+				</select>
+			</div>
+		</div>
+		<div class="row margin-top">
+			<div class="col-md-2">
+				<select id="opponent" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+					<option value="">Vs all</option>
+					<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+						<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
+					</optgroup>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="bestOf" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+					<option value="">Best of any</option>
+					<option value="3">Best of 3</option>
+					<option value="5">Best of 5</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="speed" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by court speed">
+					<option value="">All speeds</option>
+					<option th:each="aSpeed : ${speeds}" th:value="${aSpeed.code}" th:class="|points-${aSpeed.speed}|" style="color: white" value="50" class="points-50" th:text="${aSpeed.text}">Medium</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<select id="tournament" class="form-control" onchange="reloadMentalToughness()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+					<option value="">All tournaments</option>
+					<optgroup th:each="lts : ${tournaments}" th:label="${lts.key.text}" label="Grand Slam" th:class="'bg-level-' + ${lts.key.code}">
+						<option th:each="tournament : ${lts.value}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+					</optgroup>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
+					<label for="minPointsOverride" class="input-group-addon">Min. points:</label>
+					<input id="minPointsOverride" type="text" size="6" class="form-control" oninput="reloadMentalToughness()" onchange="reloadMentalToughness()"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="activeDiv" class="btn-group margin-right">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+				<input id="active" type="checkbox" onchange="reloadMentalToughness()"/> Active
+			</label>
+		</div>
+	</div>
+	<div id="clearDiv" class="btn-group margin-right">
+		<button type="button" class="btn btn-default" onclick="clearMentalToughnessFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<i class="fa fa-eraser"></i>
+		</button>
+	</div>
+	<table id="mentalToughnessTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
+			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Player</th>
+			<th data-column-id="rating" data-formatter="rating" data-order="desc" data-width="80" data-align="right" data-header-align="right">Rating</th>
+			<th data-column-id="pointsWon" data-type="numeric" data-width="90" data-align="right" data-header-align="right">Pts. Won</th>
+			<th data-column-id="pointsLost" data-type="numeric" data-width="90" data-align="right" data-header-align="right">Pts. Lost</th>
+			<th data-column-id="decidingSetsPct" data-formatter="decidingSetsPct" data-width="75" data-align="right" data-header-align="right">Dec. S.</th>
+			<th data-column-id="fifthSetsPct" data-formatter="fifthSetsPct" data-width="75" data-align="right" data-header-align="right">5-th S.</th>
+			<th data-column-id="finalsPct" data-formatter="finalsPct" data-width="75" data-align="right" data-header-align="right">Finals</th>
+			<th data-column-id="tieBreaksPct" data-formatter="tieBreaksPct" data-width="75" data-align="right" data-header-align="right">Tie-Br.</th>
+			<th data-column-id="decidingSetTieBreaksPct" data-formatter="decidingSetTieBreaksPct" data-width="75" data-align="right" data-header-align="right">DS TB</th>
+		</tr>
+		</thead>
+	</table>
+	<p>
+		<i>* Minimum <span id="minPoints">100 Mental Points</span></i><br/>
+		<i>** [[#{performance.mentalToughnessRating.title}]]</i><br/>
+		<i>*** [[#{performance.mentalPoint.title}]]</i>
+	</p>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

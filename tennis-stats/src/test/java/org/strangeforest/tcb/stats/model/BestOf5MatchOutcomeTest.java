@@ -13,14 +13,14 @@ class BestOf5MatchOutcomeTest {
 
 	@Test
 	void testEqualP() {
-		MatchOutcome match = new MatchOutcome(0.65, 0.35, BEST_OF_5_MATCH);
+		var match = new MatchOutcome(0.65, 0.35, BEST_OF_5_MATCH);
 
 		assertThat(match.pWin()).isEqualTo(0.5, OFFSET);
 	}
 
 	@Test
 	void testFinalStep() {
-		MatchOutcome match = new MatchOutcome(0.8, 0.4, BEST_OF_5_MATCH);
+		var match = new MatchOutcome(0.8, 0.4, BEST_OF_5_MATCH);
 
 		assertThat(match.pWin(3, 0)).isEqualTo(1.0);
 		assertThat(match.pWin(3, 1)).isEqualTo(1.0);
@@ -32,7 +32,7 @@ class BestOf5MatchOutcomeTest {
 
 	@Test
 	void testSymmetry() {
-		MatchOutcome match = new MatchOutcome(0.8, 0.4, BEST_OF_5_MATCH);
+		var match = new MatchOutcome(0.8, 0.4, BEST_OF_5_MATCH);
 
 		assertThat(match.pWin(0, 0)).isEqualTo(match.pWin(0, 0, 0, 0, 0, 0, true).getPMatch(), OFFSET);
 		assertThat(match.pWin(0, 0, 0, 0, 0, 0, true).getPMatch()).isEqualTo(match.pWin(0, 0, 0, 0, 0, 0, false).getPMatch(), OFFSET);

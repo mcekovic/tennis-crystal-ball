@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="2017" tournament-name="Next Gen Finals" name="Next Gen Finals" date="2017-11-07" ext-id="7696">
+    <level>H</level>
+    <surface>H</surface>
+    <indoor>true</indoor>
+    <draw-type>RR</draw-type>
+    <draw-size>8</draw-size>
+    <player seed="1" name="Andrey Rublev" country="RUS" />
+    <player seed="2" name="Karen Khachanov" country="RUS" />
+    <player seed="3" name="Denis Shapovalov" country="CAN" />
+    <player seed="4" name="Borna Coric" country="CRO" />
+    <player seed="5" name="Jared Donaldson" country="USA" />
+    <player seed="6" name="Hyeon Chung" country="KOR" />
+    <player seed="7" name="Daniil Medvedev" country="RUS" />
+    <player seed="8" name="Gianluigi Quinzi" country="ITA" />
+    <!-- RR -->
+    <match match-num="4" round="RR" best-of="3" winner="Andrey Rublev" loser="Denis Shapovalov" score="4-1 3-4(8) 4-3(2) 0-4 4-3(3) RET" outcome="RET" minutes="122">
+      <winner-stats ace="2" df="6" sv-pt="107" fst-in="73" fst-won="49" snd-won="17" sv-gms="14" bp-sv="10" bp-fc="13" />
+      <loser-stats ace="8" df="3" sv-pt="83" fst-in="52" fst-won="42" snd-won="15" sv-gms="13" bp-sv="0" bp-fc="2" />
+    </match>
+    <match match-num="5" round="RR" best-of="3" winner="Borna Coric" loser="Karen Khachanov" score="3-4(3) 2-4 4-2 4-0 4-2 RET" outcome="RET" minutes="109">
+      <winner-stats ace="4" df="0" sv-pt="78" fst-in="55" fst-won="43" snd-won="13" sv-gms="14" bp-sv="2" bp-fc="3" />
+      <loser-stats ace="9" df="1" sv-pt="80" fst-in="47" fst-won="34" snd-won="16" sv-gms="14" bp-sv="6" bp-fc="10" />
+    </match>
+    <match match-num="6" round="RR" best-of="3" winner="Daniil Medvedev" loser="Jared Donaldson" score="3-4(3) 4-2 4-3(1) 4-0 RET" outcome="RET" minutes="89">
+      <winner-stats ace="6" df="1" sv-pt="69" fst-in="47" fst-won="34" snd-won="14" sv-gms="11" bp-sv="5" bp-fc="6" />
+      <loser-stats ace="2" df="5" sv-pt="73" fst-in="40" fst-won="28" snd-won="14" sv-gms="11" bp-sv="8" bp-fc="12" />
+    </match>
+    <match match-num="7" round="RR" best-of="3" winner="Hyeon Chung" loser="Gianluigi Quinzi" score="1-4 4-1 4-2 3-4(6) 4-3(3) RET" outcome="RET" minutes="127">
+      <winner-stats ace="2" df="5" sv-pt="88" fst-in="53" fst-won="44" snd-won="17" sv-gms="14" bp-sv="5" bp-fc="7" />
+      <loser-stats ace="6" df="0" sv-pt="93" fst-in="64" fst-won="42" snd-won="15" sv-gms="14" bp-sv="9" bp-fc="12" />
+    </match>
+    <match match-num="8" round="RR" best-of="3" winner="Denis Shapovalov" loser="Gianluigi Quinzi" score="4-1 4-1 3-4(5) 4-3(5) RET" outcome="RET" minutes="89">
+      <winner-stats ace="10" df="3" sv-pt="69" fst-in="39" fst-won="34" snd-won="16" sv-gms="11" bp-sv="2" bp-fc="3" />
+      <loser-stats ace="0" df="1" sv-pt="70" fst-in="44" fst-won="30" snd-won="13" sv-gms="11" bp-sv="7" bp-fc="11" />
+    </match>
+    <match match-num="9" round="RR" best-of="3" winner="Borna Coric" loser="Daniil Medvedev" score="4-3(5) 2-4 4-1 4-2 RET" outcome="RET" minutes="94">
+      <winner-stats ace="2" df="3" sv-pt="68" fst-in="42" fst-won="33" snd-won="17" sv-gms="12" bp-sv="5" bp-fc="6" />
+      <loser-stats ace="4" df="3" sv-pt="65" fst-in="38" fst-won="27" snd-won="15" sv-gms="11" bp-sv="5" bp-fc="7" />
+    </match>
+    <match match-num="10" round="RR" best-of="3" winner="Hyeon Chung" loser="Andrey Rublev" score="4-0 4-1 4-3(1) RET" outcome="RET" minutes="68">
+      <winner-stats ace="3" df="2" sv-pt="52" fst-in="28" fst-won="20" snd-won="12" sv-gms="8" bp-sv="7" bp-fc="9" />
+      <loser-stats ace="0" df="3" sv-pt="47" fst-in="29" fst-won="14" snd-won="5" sv-gms="7" bp-sv="2" bp-fc="7" />
+    </match>
+    <match match-num="11" round="RR" best-of="3" winner="Karen Khachanov" loser="Jared Donaldson" score="4-1 4-3(3) 4-2 RET" outcome="RET" minutes="60">
+      <winner-stats ace="8" df="1" sv-pt="49" fst-in="31" fst-won="24" snd-won="12" sv-gms="9" bp-sv="1" bp-fc="2" />
+      <loser-stats ace="2" df="1" sv-pt="46" fst-in="28" fst-won="18" snd-won="7" sv-gms="8" bp-sv="1" bp-fc="4" />
+    </match>
+    <match match-num="12" round="RR" best-of="3" winner="Andrey Rublev" loser="Gianluigi Quinzi" score="1-4 4-0 4-3(3) 0-4 4-3(3) RET" outcome="RET" minutes="106">
+      <winner-stats ace="6" df="1" sv-pt="72" fst-in="43" fst-won="30" snd-won="19" sv-gms="12" bp-sv="6" bp-fc="9" />
+      <loser-stats ace="5" df="3" sv-pt="86" fst-in="49" fst-won="35" snd-won="19" sv-gms="13" bp-sv="9" bp-fc="11" />
+    </match>
+    <match match-num="13" round="RR" best-of="3" winner="Borna Coric" loser="Jared Donaldson" score="4-3(2) 4-1 4-3(5) RET" outcome="RET" minutes="77">
+      <winner-stats ace="3" df="1" sv-pt="48" fst-in="28" fst-won="25" snd-won="14" sv-gms="8" bp-sv="0" bp-fc="1" />
+      <loser-stats ace="6" df="6" sv-pt="63" fst-in="34" fst-won="23" snd-won="14" sv-gms="9" bp-sv="4" bp-fc="7" />
+    </match>
+    <match match-num="14" round="RR" best-of="3" winner="Daniil Medvedev" loser="Karen Khachanov" score="2-4 4-3(6) 4-3(3) 4-2 RET" outcome="RET" minutes="110">
+      <winner-stats ace="2" df="4" sv-pt="81" fst-in="47" fst-won="33" snd-won="21" sv-gms="12" bp-sv="3" bp-fc="5" />
+      <loser-stats ace="2" df="3" sv-pt="79" fst-in="52" fst-won="36" snd-won="13" sv-gms="12" bp-sv="8" bp-fc="10" />
+    </match>
+    <match match-num="15" round="RR" best-of="3" winner="Hyeon Chung" loser="Denis Shapovalov" score="1-4 4-3(5) 4-3(4) 4-1 RET" outcome="RET" minutes="96">
+      <winner-stats ace="0" df="1" sv-pt="70" fst-in="47" fst-won="36" snd-won="15" sv-gms="11" bp-sv="5" bp-fc="6" />
+      <loser-stats ace="12" df="5" sv-pt="76" fst-in="42" fst-won="35" snd-won="12" sv-gms="11" bp-sv="6" bp-fc="7" />
+    </match>
+    <!-- SF -->
+    <match match-num="2" round="SF" best-of="3" winner="Andrey Rublev" loser="Borna Coric" score="4-1 4-3(6) 4-1 RET" outcome="RET" minutes="62">
+      <winner-stats ace="6" df="1" sv-pt="53" fst-in="37" fst-won="31" snd-won="9" sv-gms="9" bp-sv="1" bp-fc="1" />
+      <loser-stats ace="3" df="1" sv-pt="49" fst-in="33" fst-won="23" snd-won="4" sv-gms="7" bp-sv="1" bp-fc="3" />
+    </match>
+    <match match-num="3" round="SF" best-of="3" winner="Hyeon Chung" loser="Daniil Medvedev" score="4-1 4-1 3-4(4) 1-4 4-0 RET" outcome="RET" minutes="111">
+      <winner-stats ace="1" df="6" sv-pt="78" fst-in="45" fst-won="31" snd-won="13" sv-gms="12" bp-sv="10" bp-fc="13" />
+      <loser-stats ace="3" df="5" sv-pt="79" fst-in="45" fst-won="29" snd-won="11" sv-gms="13" bp-sv="4" bp-fc="11" />
+    </match>
+    <!-- BR -->
+    <match match-num="16" round="BR" best-of="3" winner="Daniil Medvedev" loser="Borna Coric" score="W/O" outcome="W/O" />
+    <!-- F -->
+    <match match-num="1" round="F" best-of="3" winner="Hyeon Chung" loser="Andrey Rublev" score="3-4(5) 4-3(2) 4-2 4-2 RET" outcome="RET" minutes="118">
+      <winner-stats ace="1" df="3" sv-pt="80" fst-in="56" fst-won="43" snd-won="9" sv-gms="12" bp-sv="7" bp-fc="9" />
+      <loser-stats ace="0" df="4" sv-pt="83" fst-in="40" fst-won="24" snd-won="23" sv-gms="12" bp-sv="6" bp-fc="10" />
+    </match>
+  </tournament>
+</tournament-data>

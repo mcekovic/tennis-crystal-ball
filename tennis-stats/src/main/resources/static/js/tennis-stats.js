@@ -727,9 +727,9 @@ function detectDevice() {
 
 // Perf/Stats
 
-function performancePlayerMatchesUrl(playerId, outcome, prefix) {
+function performancePlayerMatchesUrl(playerId, outcome, prefix, category) {
 	var url = "/playerProfile?playerId=" + playerId + "&tab=matches";
-	var category = paramValue("category", prefix);
+	category = category ? category : paramValue("category", prefix);
 	var season = paramValue("season", prefix);
 	if (season) url += "&season=" + season;
 	var fromDate = paramValue("fromDate", prefix);

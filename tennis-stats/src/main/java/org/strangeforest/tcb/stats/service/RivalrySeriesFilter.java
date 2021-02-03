@@ -29,8 +29,8 @@ public class RivalrySeriesFilter {
 	private final Integer matches;
 
 	public RivalrySeriesFilter(String opponent, Collection<String> opponentCountryIds, Integer h2h, Integer matches) {
-		boolean hasOpponent = !isNullOrEmpty(opponent);
-		boolean isBestRank = hasOpponent && INTEGER.matcher(opponent).matches();
+		var hasOpponent = !isNullOrEmpty(opponent);
+		var isBestRank = hasOpponent && INTEGER.matcher(opponent).matches();
 		this.opponentBestRank = isBestRank ? Integer.parseInt(opponent) : null;
 		this.opponent = hasOpponent && !isBestRank ? Opponent.valueOf(opponent) : null;
 		this.opponentCountryIds = opponentCountryIds != null ? opponentCountryIds : Collections.emptyList();
@@ -39,7 +39,7 @@ public class RivalrySeriesFilter {
 	}
 
 	public String getCriteria() {
-		StringBuilder criteria = new StringBuilder();
+		var criteria = new StringBuilder();
 		if (opponentBestRank != null)
 			criteria.append(OPPONENT_BEST_RANK_CRITERIA);
 		if (opponent != null)
@@ -54,7 +54,7 @@ public class RivalrySeriesFilter {
 	}
 
 	public MapSqlParameterSource getParams() {
-		MapSqlParameterSource params = new MapSqlParameterSource();
+		var params = new MapSqlParameterSource();
 		if (opponentBestRank != null)
 			params.addValue("opponentBestRank", opponentBestRank);
 		if (!opponentCountryIds.isEmpty())
@@ -73,7 +73,7 @@ public class RivalrySeriesFilter {
 		if (this == o) return true;
 		if (!(o instanceof RivalrySeriesFilter)) return false;
 		if (!super.equals(o)) return false;
-		RivalrySeriesFilter filter = (RivalrySeriesFilter)o;
+		var filter = (RivalrySeriesFilter)o;
 		return Objects.equals(opponentBestRank, filter.opponentBestRank) && opponent == filter.opponent && opponentCountryIds.equals(filter.opponentCountryIds) && Objects.equals(h2h, filter.h2h) && Objects.equals(matches, filter.matches);
 	}
 

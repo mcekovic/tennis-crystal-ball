@@ -392,7 +392,7 @@ public class RankingHighlights {
 		}
 
 		@Override public int compareTo(FrequentRank<T> frequentRank) {
-			int result = duration.compareTo(frequentRank.duration);
+			var result = duration.compareTo(frequentRank.duration);
 			return result != 0 ? result : -Integer.compare(rank, frequentRank.rank);
 		}
 	}

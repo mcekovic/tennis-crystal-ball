@@ -82,8 +82,8 @@ class PercentageUtilTest {
 
 	@Test
 	void commutativePctDiffTest() {
-		for (double p1 = 0.0; p1 <= 1.0; p1 += 0.1) {
-			for (double p2 = 0.0; p2 <= 1.0; p2 += 0.1)
+		for (var p1 = 0.0; p1 <= 1.0; p1 += 0.1) {
+			for (var p2 = 0.0; p2 <= 1.0; p2 += 0.1)
 				assertThat(pctDiff(p1, p2)).isCloseTo(-pctDiff(p2, p1), OFFSET);
 		}
 	}

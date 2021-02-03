@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="https://www.strangeforest.org/schema/tcb">
+  <tournament season="2008" tournament-name="Moscow" name="Moscow" date="2008-10-06" ext-id="438">
+    <level>B</level>
+    <surface>H</surface>
+    <indoor>true</indoor>
+    <draw-type>KO</draw-type>
+    <draw-size>32</draw-size>
+    <player seed="1" name="Nikolay Davydenko" country="RUS" />
+    <player seed="2" name="Igor Andreev" country="RUS" />
+    <player seed="3" name="Mikhail Youzhny" country="RUS" />
+    <player seed="4" name="Paul Henri Mathieu" country="FRA" />
+    <player seed="5" name="Mikhail Kukushkin" country="KAZ" />
+    <player seed="6" name="Michael Llodra" country="FRA" />
+    <player seed="7" name="Marat Safin" country="RUS" />
+    <player seed="8" name="Janko Tipsarevic" country="SRB" />
+    <player entry="Q" name="Denis Istomin" country="UZB" />
+    <player entry="Q" name="Harel Levy" country="ISR" />
+    <player entry="Q" name="Jiri Vanek" country="CZE" />
+    <player entry="Q" name="Noam Okun" country="ISR" />
+    <player entry="WC" name="Alexander Kudryavtsev" country="RUS" />
+    <player entry="WC" name="Evgeny Donskoy" country="RUS" />
+    <player entry="WC" name="Yuri Schukin" country="KAZ" />
+    <player name="Denis Gremelmayr" country="GER" />
+    <player name="Dudi Sela" country="ISR" />
+    <player name="Fabrice Santoro" country="FRA" />
+    <player name="Florent Serra" country="FRA" />
+    <player name="Guillermo Garcia Lopez" country="ESP" />
+    <player name="Igor Kunitsyn" country="RUS" />
+    <player name="Jeremy Chardy" country="FRA" />
+    <player name="Julien Benneteau" country="FRA" />
+    <player name="Mischa Zverev" country="GER" />
+    <player name="Nicolas Devilder" country="FRA" />
+    <player name="Potito Starace" country="ITA" />
+    <player name="Robby Ginepri" country="USA" />
+    <player name="Sergiy Stakhovsky" country="UKR" />
+    <player name="Teymuraz Gabashvili" country="RUS" />
+    <player name="Victor Hanescu" country="ROU" />
+    <player name="Viktor Troicki" country="SRB" />
+    <player name="Yen Hsun Lu" country="TPE" />
+    <!-- R32 -->
+    <match match-num="16" round="R32" best-of="3" winner="Nikolay Davydenko" loser="Florent Serra" score="6-1 7-5" minutes="79">
+      <winner-stats ace="6" df="1" sv-pt="62" fst-in="31" fst-won="20" snd-won="25" sv-gms="10" bp-sv="4" bp-fc="4" />
+      <loser-stats ace="1" df="0" sv-pt="60" fst-in="46" fst-won="29" snd-won="5" sv-gms="9" bp-sv="4" bp-fc="7" />
+    </match>
+    <match match-num="17" round="R32" best-of="3" winner="Igor Andreev" loser="Yen Hsun Lu" score="6-2 RET" outcome="RET" minutes="39">
+      <winner-stats ace="1" df="1" sv-pt="27" fst-in="16" fst-won="12" snd-won="6" sv-gms="4" bp-sv="0" bp-fc="0" />
+      <loser-stats ace="0" df="2" sv-pt="26" fst-in="15" fst-won="9" snd-won="5" sv-gms="4" bp-sv="0" bp-fc="2" />
+    </match>
+    <match match-num="18" round="R32" best-of="3" winner="Teymuraz Gabashvili" loser="Mikhail Youzhny" score="7-5 4-6 7-6(1)" minutes="163">
+      <winner-stats ace="9" df="6" sv-pt="102" fst-in="58" fst-won="46" snd-won="23" sv-gms="17" bp-sv="6" bp-fc="8" />
+      <loser-stats ace="7" df="7" sv-pt="114" fst-in="70" fst-won="53" snd-won="21" sv-gms="17" bp-sv="5" bp-fc="7" />
+    </match>
+    <match match-num="19" round="R32" best-of="3" winner="Paul Henri Mathieu" loser="Sergiy Stakhovsky" score="6-3 6-2" minutes="87">
+      <winner-stats ace="0" df="2" sv-pt="55" fst-in="30" fst-won="23" snd-won="17" sv-gms="9" bp-sv="3" bp-fc="3" />
+      <loser-stats ace="4" df="0" sv-pt="61" fst-in="41" fst-won="26" snd-won="8" sv-gms="8" bp-sv="9" bp-fc="12" />
+    </match>
+    <match match-num="20" round="R32" best-of="3" winner="Igor Kunitsyn" loser="Mikhail Kukushkin" score="6-1 4-6 6-1" minutes="104">
+      <winner-stats ace="3" df="0" sv-pt="63" fst-in="36" fst-won="26" snd-won="17" sv-gms="12" bp-sv="2" bp-fc="4" />
+      <loser-stats ace="2" df="5" sv-pt="79" fst-in="48" fst-won="25" snd-won="13" sv-gms="12" bp-sv="6" bp-fc="12" />
+    </match>
+    <match match-num="21" round="R32" best-of="3" winner="Denis Istomin" loser="Michael Llodra" score="7-6(2) 6-3" minutes="86">
+      <winner-stats ace="3" df="4" sv-pt="81" fst-in="55" fst-won="42" snd-won="12" sv-gms="11" bp-sv="5" bp-fc="6" />
+      <loser-stats ace="1" df="3" sv-pt="65" fst-in="49" fst-won="34" snd-won="7" sv-gms="10" bp-sv="1" bp-fc="3" />
+    </match>
+    <match match-num="22" round="R32" best-of="3" winner="Marat Safin" loser="Noam Okun" score="7-6(5) 3-6 6-4" minutes="126">
+      <winner-stats ace="12" df="1" sv-pt="93" fst-in="49" fst-won="39" snd-won="23" sv-gms="15" bp-sv="4" bp-fc="6" />
+      <loser-stats ace="7" df="2" sv-pt="106" fst-in="68" fst-won="48" snd-won="24" sv-gms="16" bp-sv="8" bp-fc="10" />
+    </match>
+    <match match-num="23" round="R32" best-of="3" winner="Janko Tipsarevic" loser="Alexander Kudryavtsev" score="4-6 6-3 7-6(6)" minutes="126">
+      <winner-stats ace="12" df="3" sv-pt="102" fst-in="58" fst-won="46" snd-won="25" sv-gms="16" bp-sv="1" bp-fc="2" />
+      <loser-stats ace="19" df="3" sv-pt="92" fst-in="47" fst-won="42" snd-won="23" sv-gms="15" bp-sv="2" bp-fc="3" />
+    </match>
+    <match match-num="24" round="R32" best-of="3" winner="Julien Benneteau" loser="Harel Levy" score="6-4 6-3" minutes="78">
+      <winner-stats ace="9" df="3" sv-pt="53" fst-in="39" fst-won="34" snd-won="5" sv-gms="9" bp-sv="0" bp-fc="0" />
+      <loser-stats ace="1" df="1" sv-pt="72" fst-in="45" fst-won="27" snd-won="13" sv-gms="10" bp-sv="7" bp-fc="10" />
+    </match>
+    <match match-num="25" round="R32" best-of="3" winner="Jeremy Chardy" loser="Potito Starace" score="3-6 6-1 6-4" minutes="104">
+      <winner-stats ace="4" df="2" sv-pt="77" fst-in="50" fst-won="35" snd-won="19" sv-gms="13" bp-sv="0" bp-fc="1" />
+      <loser-stats ace="3" df="3" sv-pt="89" fst-in="50" fst-won="31" snd-won="23" sv-gms="13" bp-sv="3" bp-fc="6" />
+    </match>
+    <match match-num="26" round="R32" best-of="3" winner="Guillermo Garcia Lopez" loser="Nicolas Devilder" score="6-2 6-4" minutes="84">
+      <winner-stats ace="1" df="4" sv-pt="59" fst-in="36" fst-won="30" snd-won="8" sv-gms="9" bp-sv="5" bp-fc="6" />
+      <loser-stats ace="4" df="4" sv-pt="67" fst-in="40" fst-won="23" snd-won="11" sv-gms="9" bp-sv="7" bp-fc="11" />
+    </match>
+    <match match-num="27" round="R32" best-of="3" winner="Robby Ginepri" loser="Jiri Vanek" score="6-3 6-4" minutes="62">
+      <winner-stats ace="5" df="1" sv-pt="48" fst-in="34" fst-won="30" snd-won="10" sv-gms="10" bp-sv="0" bp-fc="0" />
+      <loser-stats ace="11" df="3" sv-pt="65" fst-in="42" fst-won="33" snd-won="8" sv-gms="9" bp-sv="3" bp-fc="5" />
+    </match>
+    <match match-num="28" round="R32" best-of="3" winner="Fabrice Santoro" loser="Yuri Schukin" score="4-6 7-6(2) 6-4" minutes="155">
+      <winner-stats ace="13" df="2" sv-pt="100" fst-in="60" fst-won="49" snd-won="24" sv-gms="16" bp-sv="1" bp-fc="2" />
+      <loser-stats ace="7" df="5" sv-pt="113" fst-in="66" fst-won="50" snd-won="25" sv-gms="16" bp-sv="7" bp-fc="8" />
+    </match>
+    <match match-num="29" round="R32" best-of="3" winner="Dudi Sela" loser="Victor Hanescu" score="6-3 3-6 6-2" minutes="95">
+      <winner-stats ace="2" df="2" sv-pt="77" fst-in="42" fst-won="26" snd-won="24" sv-gms="13" bp-sv="0" bp-fc="2" />
+      <loser-stats ace="8" df="4" sv-pt="76" fst-in="58" fst-won="38" snd-won="7" sv-gms="13" bp-sv="2" bp-fc="6" />
+    </match>
+    <match match-num="30" round="R32" best-of="3" winner="Viktor Troicki" loser="Evgeny Donskoy" score="6-1 6-3" minutes="51">
+      <winner-stats ace="9" df="2" sv-pt="40" fst-in="25" fst-won="23" snd-won="9" sv-gms="8" bp-sv="0" bp-fc="0" />
+      <loser-stats ace="1" df="1" sv-pt="48" fst-in="26" fst-won="16" snd-won="10" sv-gms="8" bp-sv="2" bp-fc="6" />
+    </match>
+    <match match-num="31" round="R32" best-of="3" winner="Mischa Zverev" loser="Denis Gremelmayr" score="6-3 7-6(7)" minutes="88">
+      <winner-stats ace="7" df="5" sv-pt="73" fst-in="39" fst-won="30" snd-won="19" sv-gms="11" bp-sv="2" bp-fc="4" />
+      <loser-stats ace="2" df="2" sv-pt="89" fst-in="52" fst-won="32" snd-won="19" sv-gms="10" bp-sv="12" bp-fc="15" />
+    </match>
+    <!-- R16 -->
+    <match match-num="8" round="R16" best-of="3" winner="Nikolay Davydenko" loser="Guillermo Garcia Lopez" score="6-1 6-1" minutes="55">
+      <winner-stats ace="4" df="1" sv-pt="41" fst-in="30" fst-won="27" snd-won="3" sv-gms="7" bp-sv="1" bp-fc="1" />
+      <loser-stats ace="0" df="1" sv-pt="47" fst-in="26" fst-won="15" snd-won="5" sv-gms="7" bp-sv="5" bp-fc="10" />
+    </match>
+    <match match-num="9" round="R16" best-of="3" winner="Jeremy Chardy" loser="Igor Andreev" score="3-6 7-5 6-4" minutes="121">
+      <winner-stats ace="10" df="3" sv-pt="97" fst-in="61" fst-won="42" snd-won="19" sv-gms="16" bp-sv="4" bp-fc="7" />
+      <loser-stats ace="6" df="3" sv-pt="79" fst-in="54" fst-won="40" snd-won="12" sv-gms="15" bp-sv="0" bp-fc="3" />
+    </match>
+    <match match-num="10" round="R16" best-of="3" winner="Paul Henri Mathieu" loser="Dudi Sela" score="6-7(3) 7-5 7-6" minutes="168">
+      <winner-stats ace="6" df="0" sv-pt="103" fst-in="63" fst-won="49" snd-won="24" sv-gms="18" bp-sv="0" bp-fc="2" />
+      <loser-stats ace="6" df="4" sv-pt="126" fst-in="74" fst-won="48" snd-won="27" sv-gms="18" bp-sv="3" bp-fc="6" />
+    </match>
+    <match match-num="11" round="R16" best-of="3" winner="Marat Safin" loser="Julien Benneteau" score="6-4 0-6 6-2" minutes="88">
+      <winner-stats ace="11" df="6" sv-pt="64" fst-in="38" fst-won="31" snd-won="10" sv-gms="12" bp-sv="2" bp-fc="5" />
+      <loser-stats ace="6" df="3" sv-pt="82" fst-in="52" fst-won="33" snd-won="16" sv-gms="12" bp-sv="6" bp-fc="9" />
+    </match>
+    <match match-num="12" round="R16" best-of="3" winner="Viktor Troicki" loser="Janko Tipsarevic" score="6-3 6-4" minutes="82">
+      <winner-stats ace="4" df="3" sv-pt="53" fst-in="26" fst-won="22" snd-won="13" sv-gms="10" bp-sv="3" bp-fc="5" />
+      <loser-stats ace="1" df="1" sv-pt="68" fst-in="42" fst-won="26" snd-won="10" sv-gms="9" bp-sv="4" bp-fc="8" />
+    </match>
+    <match match-num="13" round="R16" best-of="3" winner="Igor Kunitsyn" loser="Robby Ginepri" score="6-4 6-3" minutes="81">
+      <winner-stats ace="3" df="0" sv-pt="65" fst-in="38" fst-won="24" snd-won="12" sv-gms="9" bp-sv="4" bp-fc="7" />
+      <loser-stats ace="3" df="2" sv-pt="58" fst-in="36" fst-won="18" snd-won="8" sv-gms="10" bp-sv="1" bp-fc="7" />
+    </match>
+    <match match-num="14" round="R16" best-of="3" winner="Fabrice Santoro" loser="Denis Istomin" score="6-2 6-4" minutes="86">
+      <winner-stats ace="1" df="0" sv-pt="53" fst-in="25" fst-won="21" snd-won="15" sv-gms="9" bp-sv="3" bp-fc="4" />
+      <loser-stats ace="1" df="0" sv-pt="69" fst-in="42" fst-won="23" snd-won="13" sv-gms="9" bp-sv="5" bp-fc="9" />
+    </match>
+    <match match-num="15" round="R16" best-of="3" winner="Mischa Zverev" loser="Teymuraz Gabashvili" score="6-2 2-6 6-1" minutes="104">
+      <winner-stats ace="6" df="2" sv-pt="70" fst-in="44" fst-won="28" snd-won="16" sv-gms="11" bp-sv="3" bp-fc="5" />
+      <loser-stats ace="4" df="4" sv-pt="90" fst-in="49" fst-won="36" snd-won="13" sv-gms="12" bp-sv="9" bp-fc="14" />
+    </match>
+    <!-- QF -->
+    <match match-num="4" round="QF" best-of="3" winner="Marat Safin" loser="Nikolay Davydenko" score="7-6(5) 4-6 6-4" minutes="147">
+      <winner-stats ace="17" df="3" sv-pt="106" fst-in="69" fst-won="49" snd-won="19" sv-gms="16" bp-sv="4" bp-fc="7" />
+      <loser-stats ace="3" df="6" sv-pt="109" fst-in="61" fst-won="45" snd-won="24" sv-gms="16" bp-sv="6" bp-fc="9" />
+    </match>
+    <match match-num="5" round="QF" best-of="3" winner="Fabrice Santoro" loser="Paul Henri Mathieu" score="6-3 2-0 RET" outcome="RET" minutes="43">
+      <winner-stats ace="8" df="0" sv-pt="32" fst-in="15" fst-won="13" snd-won="12" sv-gms="6" bp-sv="3" bp-fc="3" />
+      <loser-stats ace="2" df="0" sv-pt="29" fst-in="15" fst-won="10" snd-won="5" sv-gms="5" bp-sv="4" bp-fc="6" />
+    </match>
+    <match match-num="6" round="QF" best-of="3" winner="Igor Kunitsyn" loser="Jeremy Chardy" score="6-4 6-2" minutes="63">
+      <winner-stats ace="1" df="0" sv-pt="48" fst-in="35" fst-won="22" snd-won="11" sv-gms="9" bp-sv="0" bp-fc="1" />
+      <loser-stats ace="3" df="0" sv-pt="49" fst-in="35" fst-won="21" snd-won="6" sv-gms="9" bp-sv="1" bp-fc="5" />
+    </match>
+    <match match-num="7" round="QF" best-of="3" winner="Mischa Zverev" loser="Viktor Troicki" score="6-4 3-6 7-5" minutes="148">
+      <winner-stats ace="6" df="4" sv-pt="97" fst-in="57" fst-won="44" snd-won="12" sv-gms="15" bp-sv="7" bp-fc="12" />
+      <loser-stats ace="9" df="6" sv-pt="119" fst-in="69" fst-won="47" snd-won="18" sv-gms="16" bp-sv="14" bp-fc="20" />
+    </match>
+    <!-- SF -->
+    <match match-num="2" round="SF" best-of="3" winner="Marat Safin" loser="Mischa Zverev" score="W/O" outcome="W/O" />
+    <match match-num="3" round="SF" best-of="3" winner="Igor Kunitsyn" loser="Fabrice Santoro" score="6-4 6-3" minutes="91">
+      <winner-stats ace="2" df="0" sv-pt="51" fst-in="23" fst-won="16" snd-won="15" sv-gms="9" bp-sv="0" bp-fc="3" />
+      <loser-stats ace="1" df="4" sv-pt="75" fst-in="41" fst-won="25" snd-won="11" sv-gms="10" bp-sv="9" bp-fc="15" />
+    </match>
+    <!-- F -->
+    <match match-num="1" round="F" best-of="3" winner="Igor Kunitsyn" loser="Marat Safin" score="7-6(6) 6-7(4) 6-3" minutes="170">
+      <winner-stats ace="7" df="0" sv-pt="110" fst-in="51" fst-won="38" snd-won="38" sv-gms="17" bp-sv="5" bp-fc="6" />
+      <loser-stats ace="21" df="6" sv-pt="113" fst-in="55" fst-won="39" snd-won="32" sv-gms="16" bp-sv="8" bp-fc="10" />
+    </match>
+  </tournament>
+</tournament-data>

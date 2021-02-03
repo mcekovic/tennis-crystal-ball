@@ -17,15 +17,32 @@ static loadTournaments(SqlPool sqlPool, Integer season = null) {
 		if (eventInfos) {
 			def newExtIds = eventInfos.collect { info -> info.extId }
 			println "New completed tournaments for season $season: $newExtIds"
-			eventInfos.each { info ->
+			for (info in eventInfos)
 				atpTournamentLoader.loadTournament(season, info.urlId, info.extId, info.current)
-			}
 		}
 		else
 			println "No new completed tournaments found for season $season"
 	}
 }
 
+static listMissingTournaments(SqlPool sqlPool, Integer season = null) {
+	sqlPool.withSql {sql ->
+		def atpTournamentLoader = new ATPTourTournamentLoader(sql)
+		season = season ?: LocalDate.now().year
+		def eventInfos = findCompletedEvents(season)
+		def seasonExtIds = atpTournamentLoader.findSeasonEventExtIds(season)
+		eventInfos.removeAll { info -> info.extId in seasonExtIds }
+		if (eventInfos) {
+			println "\nMissing tournaments for season $season:"
+			for (info in eventInfos) {
+				def url = ATPTourTournamentLoader.tournamentUrl(false, season, info.urlId, info.extId, false)
+				println "$info.date $info.name ($url)"
+			}
+		}
+		else
+			println "\nNo missing tournaments found for season $season"
+	}
+}
 
 static findCompletedEvents(int season) {
 	def doc = retriedGetDoc("https://www.atptour.com/en/scores/results-archive?year=$season")
@@ -33,9 +50,11 @@ static findCompletedEvents(int season) {
 	def DATE_FORMATTER = DateTimeFormatter.ofPattern('yyyy.MM.dd')
 	doc.select('tr.tourney-result').each {result ->
 		def url = result.select('td.tourney-details > a.button-border').attr('href')
-		if (result.select('div.tourney-detail-winner > a')) {
+		def winner = result.select('div.tourney-detail-winner')
+		if (winner && winner.text().contains('SGL') && winner.select('a')) {
 			def date = LocalDate.parse(result.select('td.title-content > span.tourney-dates').text(), DATE_FORMATTER)
-			eventInfos << new EventInfo(date, url)
+			def name = result.select('td.title-content > span.tourney-title').text()?.trim()
+			eventInfos << new EventInfo(date, url, name)
 		}
 	}
 	eventInfos

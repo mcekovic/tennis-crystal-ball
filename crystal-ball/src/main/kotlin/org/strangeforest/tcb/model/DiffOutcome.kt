@@ -1,16 +1,12 @@
 package org.strangeforest.tcb.model
 
-abstract class DiffOutcome	protected constructor(
-	private val maxItems: Int,
-	private val itemsDiff: Int,
-	private val pItemWin: (Int) -> Double
+abstract class DiffOutcome	(
+	val maxItems: Int,
+	val itemsDiff: Int,
+	val pItemWin: (Int) -> Double
 ) {
 
-	fun pWin(): Double {
-		return pWin(0, 0)
-	}
-
-	fun pWin(items1: Int, items2: Int): Double {
+	fun pWin(items1: Int = 0, items2: Int = 0): Double {
 		if (items1 == maxItems) {
 			val diff = items1 - items2
 			return if (diff >= itemsDiff)

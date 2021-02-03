@@ -82,8 +82,8 @@ public class VisitorRepository {
 	}
 
 	public Visitor create(String ipAddress, String countryId, String country, String agentType) {
-		int hits = 1;
-		Instant lastHit = Instant.now();
+		var hits = 1;
+		var lastHit = Instant.now();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(CREATE,
 			params("ipAddress", ipAddress)
@@ -93,9 +93,9 @@ public class VisitorRepository {
 				.addValue("hits", hits)
 				.addValue("lastHit", Timestamp.from(lastHit)),
 		keyHolder, new String[] {"visitor_id", "first_hit"});
-		Map<String, Object> keys = keyHolder.getKeys();
-		long visitorId = ((Number)keys.get("visitor_id")).longValue();
-		Timestamp firstHit = (Timestamp)keys.get("first_hit");
+		var keys = keyHolder.getKeys();
+		var visitorId = ((Number)keys.get("visitor_id")).longValue();
+		var firstHit = (Timestamp)keys.get("first_hit");
 		return new Visitor(visitorId, ipAddress, countryId, country, agentType, hits, firstHit.toInstant(), lastHit);
 	}
 
@@ -146,8 +146,8 @@ public class VisitorRepository {
 		jdbcTemplate.getJdbcOperations().query(
 			format(STATS_BY_QUERY, dimension, stat.getExpression(), interval.getExpression(), robotsCondition(robots)),
 			rs -> {
-				String country = rs.getString(dimension);
-				BigDecimal value = rs.getBigDecimal("value");
+				var country = rs.getString(dimension);
+				var value = rs.getBigDecimal("value");
 				visitorsMap.put(country, value);
 			}
 		);

@@ -24,9 +24,9 @@ static loadRankings(SqlPool sqlPool) {
 			def formattedDate = date.format(ofPattern("yyyy-MM-dd"))
 			println "Loading rankings for $formattedDate"
 			def playerCount = 500
-			retry(4, 0L, { th -> th instanceof SQLException }, { retry ->
+			retry(4, 0L, { int retry ->
 				atpRankingsLoader.load(formattedDate, playerCount - 100 * retry)
-			})
+			}, { th -> th instanceof SQLException })
 		}
 	}
 }

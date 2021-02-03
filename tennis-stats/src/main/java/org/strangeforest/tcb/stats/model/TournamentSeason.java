@@ -26,7 +26,7 @@ public class TournamentSeason {
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof TournamentSeason)) return false;
-		TournamentSeason tournament = (TournamentSeason)o;
+		var tournament = (TournamentSeason)o;
 		return tournamentId == tournament.tournamentId && season == tournament.season;
 	}
 

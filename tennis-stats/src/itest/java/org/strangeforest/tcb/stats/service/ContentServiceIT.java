@@ -17,8 +17,8 @@ class ContentServiceIT {
 	@Test
 	void testAllRecordsOfTheDay() {
 		Map<Record, Integer> records = new HashMap<>();
-		for (int day = 1; day <= 365; day++) {
-			RecordOfTheDay recordOfTheDay = contentService.getRecordOfTheDay(day);
+		for (var day = 1; day <= 365; day++) {
+			var recordOfTheDay = contentService.getRecordOfTheDay(day);
 			records.compute(recordOfTheDay.getRecord(), (r, c) -> c != null ? c + 1 : 1);
 		}
 		assertThat(records.values().stream().mapToInt(c -> c).max().orElseThrow()).isLessThanOrEqualTo(13);

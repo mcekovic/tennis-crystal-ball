@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.dataload
 
+import org.jsoup.HttpStatusException
 import org.junit.jupiter.api.*
 
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
@@ -9,8 +10,8 @@ class LoaderUtilTest {
 	@Test
 	void 'Retry test'() {
 		def i = 0
-		retry(5, 0L, { th -> th instanceof IllegalArgumentException }) {
-			if (++i <= 2) throw new RuntimeException('Booom!!!', new IllegalArgumentException('Wrong data.'))
+		retry(5, 0L) {
+			if (++i <= 2) throw new RuntimeException('Booom!!!', new HttpStatusException('Bad request', 401, ''))
 		}
 	}
 

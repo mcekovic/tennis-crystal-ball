@@ -37,9 +37,9 @@ public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFact
 	}
 
 	@Override protected void postProcessContext(Context context) {
-		SecurityConstraint securityConstraint = new SecurityConstraint();
+		var securityConstraint = new SecurityConstraint();
 		securityConstraint.setUserConstraint("CONFIDENTIAL");
-		SecurityCollection collection = new SecurityCollection();
+		var collection = new SecurityCollection();
 		collection.addPattern("/*");
 		securityConstraint.addCollection(collection);
 		context.addConstraint(securityConstraint);
@@ -49,9 +49,9 @@ public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFact
 		this.connector = connector;
 		connector.setScheme("https");
 		connector.setSecure(true);
-		ProtocolHandler protocol = connector.getProtocolHandler();
+		var protocol = connector.getProtocolHandler();
 		if (protocol instanceof AbstractHttp11Protocol) {
-			AbstractHttp11Protocol httpProtocol = (AbstractHttp11Protocol)protocol;
+			var httpProtocol = (AbstractHttp11Protocol)protocol;
 			httpProtocol.setSSLEnabled(true);
 			httpProtocol.setSSLDisableCompression(false);
 			sslProperties.customizeProtocol(httpProtocol);
@@ -59,15 +59,15 @@ public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFact
 	}
 
 	private void addRedirectConnector() {
-		Connector connector = new Connector();
+		var connector = new Connector();
 		redirectConnector = connector;
 		connector.setScheme("http");
 		connector.setPort(redirectPort());
 		connector.setSecure(false);
 		connector.setRedirectPort(port());
-		ProtocolHandler protocol = connector.getProtocolHandler();
+		var protocol = connector.getProtocolHandler();
 		if (protocol instanceof AbstractProtocol) {
-			AbstractProtocol aProtocol = (AbstractProtocol)protocol;
+			var aProtocol = (AbstractProtocol)protocol;
 			sslProperties.customizeRedirectProtocol(aProtocol);
 		}
 		addAdditionalTomcatConnectors(connector);
@@ -108,13 +108,13 @@ public class SSLTomcatServletWebServerFactory extends TomcatServletWebServerFact
 	}
 
 	public void startRedirectConnector() throws Exception {
-		ProtocolHandler protocolHandler = redirectConnector.getProtocolHandler();
+		var protocolHandler = redirectConnector.getProtocolHandler();
 		protocolHandler.init();
 		protocolHandler.start();
 	}
 
 	public void stopRedirectConnector() throws Exception {
-		ProtocolHandler protocolHandler = redirectConnector.getProtocolHandler();
+		var protocolHandler = redirectConnector.getProtocolHandler();
 		protocolHandler.stop();
 		protocolHandler.destroy();
 	}

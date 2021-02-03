@@ -168,7 +168,7 @@ public class HeadToHeadCategory extends RecordCategory {
 	}
 
 	private static Record mostH2HMatches(ItemType item, RecordType type, RecordDomain domain) {
-		String tournaments = EnumSet.of(BIG_TOURNAMENTS, SMALL_TOURNAMENTS).contains(domain) ? "Tournaments" : "";
+		var tournaments = EnumSet.of(BIG_TOURNAMENTS, SMALL_TOURNAMENTS).contains(domain) ? "Tournaments" : "";
 		return new Record<>(
 			domain.id + tournaments + "H2H" + item.name + type.name, "Most " + suffix(domain.name, " ") + suffix(tournaments, " ") + "Head-to-Head " + item.name + " " + type.name + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
@@ -188,8 +188,8 @@ public class HeadToHeadCategory extends RecordCategory {
 	}
 
 	private static Record greatestH2HPct(ItemType item, PctRecordType type, RecordDomain domain) {
-		int minMatches = getMinMatches(item, domain);
-		String tournaments = EnumSet.of(BIG_TOURNAMENTS, SMALL_TOURNAMENTS).contains(domain) ? "Tournaments" : "";
+		var minMatches = getMinMatches(item, domain);
+		var tournaments = EnumSet.of(BIG_TOURNAMENTS, SMALL_TOURNAMENTS).contains(domain) ? "Tournaments" : "";
 		return new Record<>(
 			domain.id + tournaments + "H2H" + item.name + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + suffix(tournaments, " ") + "Head-to-Head " + item.name + " " + type.name + " Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
@@ -213,7 +213,7 @@ public class HeadToHeadCategory extends RecordCategory {
 	}
 
 	private static int getMinMatches(ItemType item, RecordDomain domain) {
-		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
+		var perfCategory = PerformanceCategory.get(domain.perfCategory);
 		return Math.max(3, 10 * perfCategory.getMinEntries() / (item.minEntriesFactor * PerformanceCategory.get("matches").getMinEntries()));
 	}
 }

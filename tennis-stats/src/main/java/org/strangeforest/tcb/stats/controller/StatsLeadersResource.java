@@ -23,7 +23,7 @@ public class StatsLeadersResource {
 	@Autowired private StatsLeadersService statsLeadersService;
 	@Autowired private MatchesService matchesService;
 
-	private static Map<String, String> ORDER_MAP = Collections.singletonMap("value", "value");
+	private static final Map<String, String> ORDER_MAP = Collections.singletonMap("value", "value");
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("name");
 
 	@GetMapping("/statsLeadersTable")
@@ -50,14 +50,14 @@ public class StatsLeadersResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, null);
-		int playerCount = statsLeadersService.getPlayerCount(category, filter, minEntries);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		var filter = new PerfStatsFilter(active, searchPhrase, season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, null);
+		var playerCount = statsLeadersService.getPlayerCount(category, filter, minEntries);
 
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : playerCount;
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : playerCount;
 		return statsLeadersService.getStatsLeadersTable(category, playerCount, filter, minEntries, orderBy, pageSize, current);
 	}
 
@@ -74,12 +74,12 @@ public class StatsLeadersResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PerfStatsFilter filter = new PerfStatsFilter(null, searchPhrase, null, null, null, null, null, null, null, round, null, null, inProgressEventId, opponentFilter, null);
-		int playerCount = statsLeadersService.getInProgressEventPlayerCount(category, filter, minEntries);
+		var opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		var filter = new PerfStatsFilter(null, searchPhrase, null, null, null, null, null, null, null, round, null, null, inProgressEventId, opponentFilter, null);
+		var playerCount = statsLeadersService.getInProgressEventPlayerCount(category, filter, minEntries);
 
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		int pageSize = rowCount > 0 ? rowCount : playerCount;
+		var orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		var pageSize = rowCount > 0 ? rowCount : playerCount;
 		return statsLeadersService.getInProgressEventStatsLeadersTable(category, playerCount, filter, minEntries, orderBy, pageSize, current);
 	}
 
@@ -102,10 +102,10 @@ public class StatsLeadersResource {
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "minEntries", required = false) Integer minEntries
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PerfStatsFilter filter = new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		var filter = new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter);
 		return statsLeadersService.getStatsLeadersMinEntries(category, filter, minEntries);
 	}
 }

@@ -41,11 +41,11 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		MatchFilter filter = MatchFilter.forStats(null, null, level, surface, indoor, speedRange, result, null, null, searchPhrase);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = MatchFilter.forStats(null, null, level, surface, indoor, speedRange, result, null, null, searchPhrase);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
@@ -75,13 +75,13 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		StatsFilter statsFilter = StatsFilter.forStats(statsCategory, statsFrom, statsTo);
-		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, statsFilter, searchPhrase);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var statsFilter = StatsFilter.forStats(statsCategory, statsFrom, statsTo);
+		var filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, speedRange, result, tournamentId, statsFilter, searchPhrase);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
@@ -120,16 +120,16 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareSurface", required = false) String compareSurface,
 		@RequestParam(name = "playerIndex", required = false) Integer playerIndex
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
-		StatsFilter statsFilter = StatsFilter.forStats(statsCategory, statsFrom, statsTo);
-		ScoreFilter scoreFilter = ScoreFilter.forStats(score);
-		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		var outcomeFilter = OutcomeFilter.forStats(outcome);
+		var statsFilter = StatsFilter.forStats(statsCategory, statsFrom, statsTo);
+		var scoreFilter = ScoreFilter.forStats(score);
+		var filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, speedRange, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
@@ -154,11 +154,11 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		MatchFilter filter = MatchFilter.forStats(null, null, level, surface, indoor, speedRange, result, tournamentId, null, searchPhrase);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = MatchFilter.forStats(null, null, level, surface, indoor, speedRange, result, tournamentId, null, searchPhrase);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
@@ -177,16 +177,38 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		MatchFilter filter = MatchFilter.forTournamentEvent(tournamentEventId);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		var filter = MatchFilter.forTournamentEvent(tournamentEventId);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventStats", modelMap);
+	}
+
+	@GetMapping("/seedStats")
+	public ModelAndView seedStats(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "tournamentEventId") int tournamentEventId,
+		@RequestParam(name = "tab", required = false) String tab,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
+	) {
+		var filter = MatchFilter.forTournamentEvent(tournamentEventId);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
+
+		var modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
+		modelMap.addAttribute("tab", tab);
+		modelMap.addAttribute("stats", stats);
+		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
+		return new ModelAndView("seedStats", modelMap);
 	}
 
 	@GetMapping("/rivalryStats")
@@ -211,12 +233,12 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		Range<Integer> speedRange = CourtSpeed.toSpeedRange(speed);
-		MatchFilter filter = MatchFilter.forOpponent(opponentId, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, score);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		var dateRange = RangeUtil.toRange(fromDate, toDate);
+		var speedRange = CourtSpeed.toSpeedRange(speed);
+		var filter = MatchFilter.forOpponent(opponentId, season, dateRange, level, bestOf, surface, indoor, speedRange, round, tournamentId, outcome, score);
+		var stats = statisticsService.getPlayerStats(playerId, filter);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("opponentId", opponentId);
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
@@ -237,9 +259,9 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareOpponent", defaultValue = F) boolean compareOpponent,
 		@RequestParam(name = "inProgress", defaultValue = F) boolean inProgress
 	) {
-		MatchStats matchStats = statisticsService.getMatchStats(matchId, inProgress);
+		var matchStats = statisticsService.getMatchStats(matchId, inProgress);
 
-		ModelMap modelMap = new ModelMap();
+		var modelMap = new ModelMap();
 		modelMap.addAttribute("matchId", matchId);
 		modelMap.addAttribute("categoryGroups", StatsCategory.getMatchCategoryGroups());
 		modelMap.addAttribute("tab", tab);
@@ -254,9 +276,9 @@ public class PlayerStatsController extends BaseController {
 	private void addCompareStats(ModelMap modelMap, int playerId, boolean compare, Integer compareSeason, String compareLevel, String compareSurface) {
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
-			MatchFilter compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);
-			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
-			String relativeTo = relativeTo(compareSeason, compareLevel, compareSurface);
+			var compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);
+			var compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
+			var relativeTo = relativeTo(compareSeason, compareLevel, compareSurface);
 
 			if (!compareStats.isEmpty())
 				modelMap.addAttribute("compareStats", compareStats);
@@ -275,21 +297,21 @@ public class PlayerStatsController extends BaseController {
 	private void addCompareMatchStats(ModelMap modelMap, long matchId, boolean compare, boolean compareSeason, boolean compareLevel, boolean compareSurface, boolean compareRound, boolean compareOpponent, boolean inProgress) {
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
-			MatchInfo match = matchesService.getMatch(matchId, inProgress);
-			Integer season = compareSeason ? match.getSeason() : null;
-			String level = compareLevel ? match.getLevel() : null;
-			String surface = compareSurface ? match.getSurface() : null;
-			String round = compareRound ? match.getRound() : null;
-			int playerId1 = match.getWinnerId();
-			int playerId2 = match.getLoserId();
-			Integer opponentId1 = compareOpponent ? playerId2 : null;
-			Integer opponentId2 = compareOpponent ? playerId1 : null;
-			MatchFilter compareFilter1 = MatchFilter.forStats(season, level, surface, round, opponentId1);
-			PlayerStats compareStats1 = statisticsService.getPlayerStats(playerId1, compareFilter1);
-			String relativeTo1 = relativeTo(season, level, surface, round, opponentId1 != null ? playerService.getPlayerName(opponentId1) : null);
-			MatchFilter compareFilter2 = MatchFilter.forStats(season, level, surface, round, opponentId2);
-			PlayerStats compareStats2 = statisticsService.getPlayerStats(playerId2, compareFilter2);
-			String relativeTo2 = relativeTo(season, level, surface, round, opponentId2 != null ? playerService.getPlayerName(opponentId2) : null);
+			var match = matchesService.getMatch(matchId, inProgress);
+			var season = compareSeason ? match.getSeason() : null;
+			var level = compareLevel ? match.getLevel() : null;
+			var surface = compareSurface ? match.getSurface() : null;
+			var round = compareRound ? match.getRound() : null;
+			var playerId1 = match.getWinnerId();
+			var playerId2 = match.getLoserId();
+			var opponentId1 = compareOpponent ? playerId2 : null;
+			var opponentId2 = compareOpponent ? playerId1 : null;
+			var compareFilter1 = MatchFilter.forStats(season, level, surface, round, opponentId1);
+			var compareStats1 = statisticsService.getPlayerStats(playerId1, compareFilter1);
+			var relativeTo1 = relativeTo(season, level, surface, round, opponentId1 != null ? playerService.getPlayerName(opponentId1) : null);
+			var compareFilter2 = MatchFilter.forStats(season, level, surface, round, opponentId2);
+			var compareStats2 = statisticsService.getPlayerStats(playerId2, compareFilter2);
+			var relativeTo2 = relativeTo(season, level, surface, round, opponentId2 != null ? playerService.getPlayerName(opponentId2) : null);
 
 			if (!compareStats1.isEmpty())
 				modelMap.addAttribute("compareStats1", compareStats1);

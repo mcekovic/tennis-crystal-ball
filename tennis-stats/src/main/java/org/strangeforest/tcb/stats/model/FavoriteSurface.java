@@ -28,7 +28,7 @@ public class FavoriteSurface {
 	private static final String NONE = "None";
 
 	public FavoriteSurface(PlayerPerformance performance) {
-		WonLost overall = performance.getMatches();
+		var overall = performance.getMatches();
 		if (overall.getTotal() < MIN_MATCHES) {
 			setNotAvailable();
 			return;
@@ -38,7 +38,7 @@ public class FavoriteSurface {
 		addSurface(surfaces, CLAY, performance.getClayMatches(), overall);
 		addSurface(surfaces, GRASS, performance.getGrassMatches(), overall);
 		addSurface(surfaces, CARPET, performance.getCarpetMatches(), overall);
-		int surfaceCount = surfaces.size();
+		var surfaceCount = surfaces.size();
 		if (surfaceCount == 0) {
 			setNotAvailable();
 			return;
@@ -49,31 +49,31 @@ public class FavoriteSurface {
 			return;
 		}
 		surfaces.sort(naturalOrder());
-		SurfaceWonPct worstSurface = surfaces.get(0);
-		SurfaceWonPct bestSurface = surfaces.get(surfaceCount - 1);
+		var worstSurface = surfaces.get(0);
+		var bestSurface = surfaces.get(surfaceCount - 1);
 		specialization = pctDiff(bestSurface.wonPct, worstSurface.wonPct);
 		if (specialization <= ALL_ROUNDER_SPREAD_PCT && surfaceCount >= 3) {
 			setAllRounder();
 			return;
 		}
-		SurfaceWonPct secondBestSurface = surfaces.get(surfaceCount - 2);
-		double bestSurfaceGap = pctDiff(bestSurface.wonPct, secondBestSurface.wonPct);
+		var secondBestSurface = surfaces.get(surfaceCount - 2);
+		var bestSurfaceGap = pctDiff(bestSurface.wonPct, secondBestSurface.wonPct);
 		if (bestSurfaceGap >= BEST_SURFACE_GAP_PCT) {
 			setSurface(bestSurface.surface);
 			return;
 		}
 		if (surfaceCount >= 3) {
-			SurfaceWonPct thirdBestSurface = surfaces.get(surfaceCount - 3);
-			double secondBestSurfaceGap = pctDiff(secondBestSurface.wonPct, thirdBestSurface.wonPct);
+			var thirdBestSurface = surfaces.get(surfaceCount - 3);
+			var secondBestSurfaceGap = pctDiff(secondBestSurface.wonPct, thirdBestSurface.wonPct);
 			if (bestSurfaceGap >= SECOND_BEST_SURFACE_GAP_PCT && bestSurfaceGap * SECOND_BEST_SURFACE_GAP_FACTOR >= secondBestSurfaceGap) {
 				setSurface(bestSurface.surface);
 				return;
 			}
-			int maxWonPctGapIndex = getMaxWonPctGapIndex(surfaces);
-			List<SurfaceWonPct> favoriteSurfaces = surfaces.stream().skip(maxWonPctGapIndex).collect(toList());
-			int favoriteSurfaceCount = favoriteSurfaces.size();
+			var maxWonPctGapIndex = getMaxWonPctGapIndex(surfaces);
+			var favoriteSurfaces = surfaces.stream().skip(maxWonPctGapIndex).collect(toList());
+			var favoriteSurfaceCount = favoriteSurfaces.size();
 			if (favoriteSurfaceCount >= 2) {
-				for (SurfaceGroup group : SurfaceGroup.values()) {
+				for (var group : SurfaceGroup.values()) {
 					Set<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
 					if (groupSurfaces.size() == favoriteSurfaceCount) {
 						if (groupSurfaces.equals(favoriteSurfaces.stream().map(s -> s.surface).collect(toSet()))) {
@@ -82,9 +82,9 @@ public class FavoriteSurface {
 						}
 					}
 				}
-				for (SurfaceGroup group : SurfaceGroup.values()) {
+				for (var group : SurfaceGroup.values()) {
 					Set<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
-					int groupSurfaceCount = groupSurfaces.size();
+					var groupSurfaceCount = groupSurfaces.size();
 					if (groupSurfaceCount >= 2 && groupSurfaceCount < favoriteSurfaceCount) {
 						maxWonPctGapIndex = getMaxWonPctGapIndex(favoriteSurfaces);
 						if (groupSurfaces.equals(favoriteSurfaces.stream().skip(maxWonPctGapIndex).map(s -> s.surface).collect(toSet()))) {
@@ -100,10 +100,10 @@ public class FavoriteSurface {
 	}
 
 	private static int getMaxWonPctGapIndex(List<SurfaceWonPct> surfaces) {
-		double maxWonPctGap = 0.0;
-		int maxWonPctGapIndex = 0;
+		var maxWonPctGap = 0.0;
+		var maxWonPctGapIndex = 0;
 		for (int index = 1, count = surfaces.size(); index < count; index++) {
-			double wonPctGap = pctDiff(surfaces.get(index).wonPct, surfaces.get(index - 1).wonPct);
+			var wonPctGap = pctDiff(surfaces.get(index).wonPct, surfaces.get(index - 1).wonPct);
 			if (wonPctGap >= maxWonPctGap) {
 				maxWonPctGap = wonPctGap;
 				maxWonPctGapIndex = index;

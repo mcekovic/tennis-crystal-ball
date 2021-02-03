@@ -57,14 +57,14 @@ public abstract class StatsFormatUtil {
 	public static String formatTime(Number time) {
 		if (time == null)
 			return "";
-		int minutes = time.intValue();
+		var minutes = time.intValue();
 		return formatTime(minutes);
 	}
 
 	public static String formatTimeDiff(Number fromTime, Number toTime) {
 		if (fromTime == null || toTime == null)
 			return "";
-		int minutes = toTime.intValue() - fromTime.intValue();
+		var minutes = toTime.intValue() - fromTime.intValue();
 		return (minutes >= 0 ? "+" : "-") + formatTime(abs(minutes));
 	}
 
@@ -78,7 +78,7 @@ public abstract class StatsFormatUtil {
 
 	public static String diffClass(Number from, Number to, boolean inverted) {
 		if (from != null && to != null) {
-			double diff = to.doubleValue() - from.doubleValue();
+			var diff = to.doubleValue() - from.doubleValue();
 			if (inverted)
 				diff = -diff;
 			return diff > 0.0 ? "positive" : (diff < 0.0 ? "negative" : "no-diff");
@@ -92,7 +92,7 @@ public abstract class StatsFormatUtil {
 	}
 
 	public static String relativeTo(Integer compareSeason, String compareLevel, String compareSurface, String compareRound, String compareOpponent) {
-		StringBuilder relativeTo = new StringBuilder();
+		var relativeTo = new StringBuilder();
 		if (compareSeason != null)
 			relativeTo.append(compareSeason != -1 ? compareSeason : "Last 52 weeks");
 		if (!Strings.isNullOrEmpty(compareLevel)) {

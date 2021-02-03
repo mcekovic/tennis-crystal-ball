@@ -51,7 +51,7 @@ public class LockManager<T> {
 	}
 
 	private synchronized EntryLock getLock(T key) {
-		EntryLock lock = locks.get(key);
+		var lock = locks.get(key);
 		if (lock == null) {
 			lock = new EntryLock();
 			locks.put(key, lock);
@@ -61,7 +61,7 @@ public class LockManager<T> {
 	}
 
 	private synchronized void unlock(T key) {
-		EntryLock lock = locks.get(key);
+		var lock = locks.get(key);
 		if (lock == null || !lock.isLocked())
 			throw new IllegalStateException("Key not locked: " + key);
 		if (lock.decRefCount() <= 0)

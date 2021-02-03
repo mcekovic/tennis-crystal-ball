@@ -38,7 +38,7 @@ public abstract class Records {
 	}
 
 	public static Record getRecord(String recordId) {
-		Record record = RECORDS.get(recordId);
+		var record = RECORDS.get(recordId);
 		if (record == null)
 			throw new NotFoundException("Record", recordId);
 		return record;
@@ -55,7 +55,7 @@ public abstract class Records {
 	private static void register(String categoryClass, RecordCategory recordCategory, boolean infamous) {
 		(infamous ? INFAMOUS_RECORD_CATEGORIES : RECORD_CATEGORIES).add(recordCategory);
 		(infamous ? INFAMOUS_RECORD_CATEGORY_CLASSES : RECORD_CATEGORY_CLASSES).computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(recordCategory);
-		for (Record record : recordCategory.getRecords()) {
+		for (var record : recordCategory.getRecords()) {
 			record.setCategory(recordCategory);
 			record.setInfamous(infamous);
 			RECORDS.put(record.getId(), record);

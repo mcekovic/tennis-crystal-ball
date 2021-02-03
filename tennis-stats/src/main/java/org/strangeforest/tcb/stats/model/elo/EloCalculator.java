@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.elo;
 
+import java.time.*;
+import java.time.temporal.*;
 import java.util.*;
 
 import static java.lang.Math.*;
@@ -30,6 +32,9 @@ public abstract class EloCalculator {
 	private static final double DEFAULT_INACTIVITY_ADJ_FACTOR = 1.0;
 	private static final Map<String, Double> INACTIVITY_ADJ_FACTOR = Map.of("R", 2.0, "H", 0.85, "C", 0.75, "G", 0.5, "P", 0.5, "O", 0.85, "I", 0.6);
 
+	private static final LocalDate FROZEN_BEGIN = LocalDate.of(2020, 3, 23);
+	private static final LocalDate FROZEN_END = LocalDate.of(2020, 8, 24);
+
 //	public static volatile double tuningValue;
 
 	/**
@@ -37,7 +42,7 @@ public abstract class EloCalculator {
 	 * @return Elo K-Factor
 	 */
 	public static double kFactor(String level, String round, short bestOf, String outcome) {
-		double kFactor = K_FACTOR;
+		var kFactor = K_FACTOR;
 		switch (level) {
 			case "G": break;
 			case "F": kFactor *= 0.90; break;
@@ -86,34 +91,34 @@ public abstract class EloCalculator {
 	public static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
 		if (Objects.equals(outcome, "ABD"))
 			return 0.0;
-		double delta = 1.0 / (1.0 + pow(10.0, (winnerRating - loserRating) / RATING_SCALE));
+		var delta = 1.0 / (1.0 + pow(10.0, (winnerRating - loserRating) / RATING_SCALE));
 		return kFactor(level, round, bestOf, outcome) * delta;
 	}
 
 	public static double deltaRating(EloSurfaceFactors eloSurfaceFactors, double winnerRating, double loserRating, MatchForElo match, String type) {
-		String level = match.level;
-		String round = match.round;
-		short bestOf = Character.isLowerCase(type.charAt(0)) ? (short)5 : match.bestOf;
-		String outcome = match.outcome;
-		double delta = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome);
+		var level = match.level;
+		var round = match.round;
+		var bestOf = Character.isLowerCase(type.charAt(0)) ? (short)5 : match.bestOf;
+		var outcome = match.outcome;
+		var delta = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome);
 		switch (type) {
 			case "E": return delta;
 			case "R": return RECENT_K_FACTOR * delta;
 			case "H": case "C": case "G": case "P":
 			case "O": case "I": return eloSurfaceFactors.surfaceKFactor(type, match.endDate.getYear()) * delta;
 			default: {
-				double wDelta = delta;
-				double lDelta = deltaRating(loserRating, winnerRating, level, round, bestOf, outcome);
+				var wDelta = delta;
+				var lDelta = deltaRating(loserRating, winnerRating, level, round, bestOf, outcome);
 				switch (type) {
 					case "s": return SET_K_FACTOR * (wDelta * match.wSets - lDelta * match.lSets);
 					case "g": return GAME_K_FACTOR * (wDelta * match.wGames - lDelta * match.lGames);
 					case "sg": return SERVICE_GAME_K_FACTOR * (wDelta * match.wSvGms * returnToServeRatio(match.surface) - lDelta * match.lRtGms);
 					case "rg": return RETURN_GAME_K_FACTOR * (wDelta * match.wRtGms - lDelta * match.lSvGms * returnToServeRatio(match.surface));
 					case "tb": {
-						int wTBs = match.wTbs;
-						int lTBs = match.lTbs;
+						var wTBs = match.wTbs;
+						var lTBs = match.lTbs;
 						if (lTBs > wTBs) {
-							double d = wDelta; wDelta = lDelta; lDelta = d;
+							var d = wDelta; wDelta = lDelta; lDelta = d;
 						}
 						return TIE_BREAK_K_FACTOR * (wDelta * wTBs - lDelta * lTBs);
 					}
@@ -147,9 +152,9 @@ public abstract class EloCalculator {
 	 * Adjusts rating after period of inactivity using logistic function
  	 */
 	public static double adjustRating(double rating, int daysSinceLastMatch, String type) {
-		double adjustmentFactor = inactivityAdjustmentFactor(type);
-		double maxAdjustment = ratingDiffForType((rating - START_RATING) / INACTIVITY_ADJ_RATING_FACTOR, type);
-		double adjustment = adjustmentFactor * maxAdjustment * (1.0 / (1.0 + pow(E, (INACTIVITY_ADJ_PERIOD - adjustmentFactor * daysSinceLastMatch) / INACTIVITY_ADJ_GRADIENT)) - INACTIVITY_ADJ_DRIFT) / (1 - INACTIVITY_ADJ_DRIFT);
+		var adjustmentFactor = inactivityAdjustmentFactor(type);
+		var maxAdjustment = ratingDiffForType((rating - START_RATING) / INACTIVITY_ADJ_RATING_FACTOR, type);
+		var adjustment = adjustmentFactor * maxAdjustment * (1.0 / (1.0 + pow(E, (INACTIVITY_ADJ_PERIOD - adjustmentFactor * daysSinceLastMatch) / INACTIVITY_ADJ_GRADIENT)) - INACTIVITY_ADJ_DRIFT) / (1 - INACTIVITY_ADJ_DRIFT);
 		return max(START_RATING, rating - adjustment);
 	}
 
@@ -170,17 +175,17 @@ public abstract class EloCalculator {
 	}
 
 	static double ratingForType(double rating, String type) {
-		Double factor = ratingTypeFactor(type);
+		var factor = ratingTypeFactor(type);
 		return factor != null ? START_RATING + (rating - START_RATING) * factor : rating;
 	}
 
 	static double ratingFromType(double typeRating, String type) {
-		Double factor = ratingTypeFactor(type);
+		var factor = ratingTypeFactor(type);
 		return factor != null ? START_RATING + (typeRating - START_RATING) / factor : typeRating;
 	}
 
 	static double ratingDiffForType(double ratingDiff, String type) {
-		Double factor = ratingTypeFactor(type);
+		var factor = ratingTypeFactor(type);
 		return factor != null ? ratingDiff * factor : ratingDiff;
 	}
 
@@ -198,5 +203,30 @@ public abstract class EloCalculator {
 
 	public static double eloWinProbability(double eloRating1, double eloRating2) {
 		return 1.0 / (1.0 + pow(10.0, (eloRating2 - eloRating1) / RATING_SCALE));
+	}
+
+	public static int daysBetween(LocalDate from, LocalDate to) {
+		if (from.isBefore(FROZEN_BEGIN)) {
+			if (to.isAfter(FROZEN_BEGIN)) {
+				if (to.isAfter(FROZEN_END))
+					return rawDaysBetween(from, FROZEN_BEGIN) + rawDaysBetween(FROZEN_END, to);
+				else
+					return rawDaysBetween(from, FROZEN_BEGIN);
+			}
+			else
+				return rawDaysBetween(from, to);
+		}
+		else if (from.isBefore(FROZEN_END)) {
+			if (to.isAfter(FROZEN_END))
+				return rawDaysBetween(FROZEN_END, to);
+			else
+				return 0;
+		}
+		else
+			return rawDaysBetween(from, to);
+	}
+
+	private static int rawDaysBetween(LocalDate from, LocalDate to) {
+		return (int)ChronoUnit.DAYS.between(from, to);
 	}
 }
