@@ -40,10 +40,6 @@
 - Records Book - Various match, tournament result and ranking records, famous and infamous (the best player that never...)
 - Live Scores - Live Scores via [Enetscores](https://www.enetscores.com) by Enetpulse
 
-### Technology
-
-PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groovy...
-
 ### Web Site
 https://www.ultimatetennisstatistics.com
 
@@ -51,6 +47,58 @@ https://www.ultimatetennisstatistics.com
 - For Jeff Sackmann ATP CSV repository: https://github.com/JeffSackmann/tennis_atp (as of commit cf2201c on 2 dec 2019)
 - Database setup instructions: [#232](https://github.com/mcekovic/tennis-crystal-ball/issues/232)
 - Docker image [mcekovic/uts-database](https://hub.docker.com/r/mcekovic/uts-database) with PostgreSQL database pre-populated with ATP tennis data as of season 2019: [#337](https://github.com/mcekovic/tennis-crystal-ball/issues/337) 
+
+### Technology
+PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groovy...
+
+### Design
+```mermaid
+flowchart LR
+  subgraph uts[Tennis Stats]
+    direction TB
+    subgraph app[Spring Boot Java App]
+      direction TB
+      mvc(Spring<br>MVC) --> elo(Elo Ratings<br>Manager) & tcb(Tennis<br>Crystal Ball<br>Predictor)
+    end
+    tn[[Tomcat<br>Native]] --> mvc
+    app --> cb[Let's Encrypt<br>Certbot] -- SSL certificate --> tn
+  end
+  
+  subgraph dl[Data Load]
+    direction TB
+    load(Data Load<br>Groovy Script) --> gd[[Geckodriver]]
+  end
+  app -- spawn --> load
+  app & load ---> db[(<br>PostgreSQL<br>DB)]
+  load --> repo[Jeff Sackman<br>Tennis Repo]
+  gd --> ff[Headless<br>Firefox] --> www([www])
+  
+  style uts fill:DimGray
+  style app fill:CadetBlue
+  style mvc fill:Indigo
+  style elo fill:DarkOrchid
+  style tcb fill:DarkMagenta
+  style tn fill:ForestGreen
+  style cb fill:Crimson
+  style dl fill:DimGray
+  style load fill:Brown
+  style gd fill:IndianRed
+  style ff fill:OrangeRed
+  style db fill:SteelBlue
+  style repo fill:DarkSlateGray
+  style www fill:SkyBlue,color:Black
+  
+  click mvc href "https://github.com/mcekovic/tennis-crystal-ball/tree/master/tennis-stats/src/main/java/org/strangeforest/tcb/stats/controller" _blank
+  click elo href "https://github.com/mcekovic/tennis-crystal-ball/tree/master/tennis-stats/src/main/java/org/strangeforest/tcb/stats/model/elo" _blank
+  click tcb href "https://github.com/mcekovic/tennis-crystal-ball/tree/master/tennis-stats/src/main/java/org/strangeforest/tcb/stats/model/prediction" _blank
+  click tn href "https://tomcat.apache.org/native-doc" _blank
+  click cb href "https://certbot.eff.org" _blank
+  click load href "https://groovy-lang.org" _blank
+  click gd href "https://github.com/mozilla/geckodriver" _blank
+  click ff href "https://www.mozilla.org/en-US/firefox" _blank
+  click db href "https://www.postgresql.org" _blank
+  click repo href "https://github.com/JeffSackmann/tennis_atp" _blank
+```
 
 ### Screenshots
 
