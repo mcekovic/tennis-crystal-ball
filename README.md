@@ -51,7 +51,7 @@ https://www.ultimatetennisstatistics.com
 ### Technology
 PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groovy...
 
-### Design
+### Architecture
 ```mermaid
 flowchart LR
   user((User)) --> tn
@@ -59,7 +59,9 @@ flowchart LR
     direction TB
     subgraph app[Spring Boot Java App]
       direction TB
-      mvc(Spring<br>MVC) --> elo(Elo Ratings<br>Manager) & tcb(Tennis<br>Crystal Ball<br>Predictor)
+      cc[Caffeine<br>Cache]
+      mvc(Spring<br>MVC) --> tcb(Tennis<br>Crystal Ball<br>Predictor) & elo(Elo Ratings<br>Manager)
+      mvc & tcb & elo --> cc
     end
     tn[[Tomcat<br>Native]] --> mvc
     app --> cb[Let's Encrypt<br>Certbot] -- SSL certificate ---> tn
@@ -78,10 +80,11 @@ flowchart LR
   style mvc fill:Indigo
   style elo fill:DarkOrchid
   style tcb fill:DarkMagenta
+  style cc fill:Maroon
   style tn fill:ForestGreen
   style cb fill:Crimson
   style dl fill:DimGray
-  style load fill:Brown
+  style load fill:RoyalBlue
   style gd fill:IndianRed
   style ff fill:OrangeRed
   style db fill:SteelBlue
@@ -90,6 +93,7 @@ flowchart LR
   click mvc href "https://github.com/mcekovic/tennis-crystal-ball/tree/master/tennis-stats/src/main/java/org/strangeforest/tcb/stats/controller" _blank
   click elo href "https://github.com/mcekovic/tennis-crystal-ball/tree/master/tennis-stats/src/main/java/org/strangeforest/tcb/stats/model/elo" _blank
   click tcb href "https://github.com/mcekovic/tennis-crystal-ball/tree/master/tennis-stats/src/main/java/org/strangeforest/tcb/stats/model/prediction" _blank
+  click cc href "https://github.com/ben-manes/caffeine" _blank
   click tn href "https://tomcat.apache.org/native-doc" _blank
   click cb href "https://certbot.eff.org" _blank
   click load href "https://groovy-lang.org" _blank
