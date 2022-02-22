@@ -54,6 +54,7 @@ PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groo
 ### Design
 ```mermaid
 flowchart LR
+  user((User)) --> tn
   subgraph uts[Tennis Stats]
     direction TB
     subgraph app[Spring Boot Java App]
@@ -61,17 +62,16 @@ flowchart LR
       mvc(Spring<br>MVC) --> elo(Elo Ratings<br>Manager) & tcb(Tennis<br>Crystal Ball<br>Predictor)
     end
     tn[[Tomcat<br>Native]] --> mvc
-    app --> cb[Let's Encrypt<br>Certbot] -- SSL certificate --> tn
+    app --> cb[Let's Encrypt<br>Certbot] -- SSL certificate ---> tn
   end
-  
   subgraph dl[Data Load]
     direction TB
-    load(Data Load<br>Groovy Script) --> gd[[Geckodriver]]
+    load(Data Load<br>Groovy Script) --> gd[[Selenium<br>Geckodriver]] --> ff[Headless<br>Firefox]
   end
-  app -- spawn --> load
+  app -- spawn ---> load
   app & load ---> db[(<br>PostgreSQL<br>DB)]
   load --> repo[Jeff Sackman<br>Tennis Repo]
-  gd --> ff[Headless<br>Firefox] --> www([www])
+  ff --> www([www])
   
   style uts fill:DimGray
   style app fill:CadetBlue
@@ -86,7 +86,6 @@ flowchart LR
   style ff fill:OrangeRed
   style db fill:SteelBlue
   style repo fill:DarkSlateGray
-  style www fill:SkyBlue,color:Black
   
   click mvc href "https://github.com/mcekovic/tennis-crystal-ball/tree/master/tennis-stats/src/main/java/org/strangeforest/tcb/stats/controller" _blank
   click elo href "https://github.com/mcekovic/tennis-crystal-ball/tree/master/tennis-stats/src/main/java/org/strangeforest/tcb/stats/model/elo" _blank
